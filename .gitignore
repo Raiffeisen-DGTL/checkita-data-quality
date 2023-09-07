@@ -1,0 +1,12 @@
+# user-specific stuff:
+.idea/
+.bsp/
+.lib/
+.local/
+
+# build directories:
+/target
+/checkita-core/target
+/project/target
+/project/project
+/internal

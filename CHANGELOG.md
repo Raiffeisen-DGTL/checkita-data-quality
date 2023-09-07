@@ -1,0 +1,133 @@
+## 0.3.0 (2023-07-31)
+
+### Features
+
+* Change DB model:
+  * Added referenceDateTime and executionDateTime
+  * Type in DB - timestamp with tz
+  * Render format can be setup in application.conf
+  * Job-conf variables are changed to referenceDateTime and executionDateTime
+  * Changed init sql script and also added alter sql script
+* Added option to sent aggregated messaged to Kafka: one per each target type
+* Added option to run DQ in Shared Spark Context
+* Added new types of history DB: Hive and File (both managed by spark without extra services)
+
+### Bug Fixes
+
+* Fixed SQL checks
+* Made DQ case-insensitive in terms of column names
+* Docs updates
+
+## 0.2.0 (2023-06-21)
+
+### Features
+
+* Adding support of Spark 2.4+ and Spark 3+
+* Project is rebuild for Scala 2.12.18
+* Added test for HdfsReader
+
+### Bug Fixes
+
+* Fixed HdfsReader in terms of loading fixed-width files: added casting to requested column types
+* HBase source is temporarily turned off (due to connector is incompatible with newer versions of Scala and Spark)
+
+## 0.1.10 (2023-06-15)
+
+### Features
+
+* Adding Kafka support:
+  * New section in run configuration to describe connection to Kafka Brokers
+  * New type of source to read from Kafka topic
+  * Output of all targets to Kafka topic
+* Adding Mattermost notifications:
+  * New section added to application configuration to describe connection to Mattermost API.
+  * CheckAlerts and summary reports can be sent to Mattermost.
+  * Notifications can be sent to both channels and user direct messages.
+* Added new DQ application argument -v to pass extra variables to be prepended to application configuration file. Can be used to pass secrets for email, mattermost and storage DB on startup.
+* Documentation is updated according to new features.
+
+### Bug Fixes
+
+* Fixed email configuration for cases when smpt support anonymous connection (user and password are undefined)
+
+## 0.1.9 (2023-05-17)
+
+### Features
+
+* Enable mailing notifications
+* Added summary section to targets to set up summary reports sending via email
+* Added checkAlerts section to targets to set up critical check alerts via email
+* Added errorCollection section to targets to set up error collection (stored to HDFS only for now)
+* Refactored metric error collection: single file with unified format will be written
+* Modified config model for virtualSources to allow set the saving options directly when declaring virtual source.
+* Update application config files with default production settings for mailing
+* Update documentation
+
+### Bug Fixes
+
+* Update spark accumulator for metric error collection
+* Add TLS Support to mailer
+* Change mail attachments to ByteArrayDataSource in order to provide attachment as a byte stream instead of file.
+* Minor documentation fixes
+* Prevent empty file creation when errors accumulator is empty (this is also the case when keyFields are not set)
+
+## 0.1.8 (2023-04-20)
+
+### Features
+
+* Enable metric error collection.
+* Add keyFields to source for purpose of metric error collection.
+* Update metrics to make them Statusable whenever possible.
+* Enhance DQ command line arguments to allow passing arbitrary number of variables on startup which will be added to
+  DQ configuration file in runtime and may be references within it.
+* Updated documentation to reflect aforementioned changes.
+
+### Bug Fixes
+
+* Updated metric tests to cover Statusable calculation.
+* Refactored configuration file parsing: now the variables are prepended to configuration file by means of streams
+  and no temporary file is created.
+
+## 0.1.7 (2023-04-04)
+
+### Features
+
+* Added numberNutBetween metric
+* Added new results view to database init sql
+* Added jobId to metric results model
+
+### Bug Fixes
+
+* Fixed composed metric calculator: increased power operation priority
+* Fixed database config reading
+* Fixed RDBMS source reading
+* Fixed HistoryDBManager to additionally filter query results by jobId
+
+## 0.1.6 (2022-08-23)
+
+### Features
+
+* Added unit tests for column and file metric calculators;
+* Refactored date-related metrics to make them work with timestamp column type correctly;
+
+### Bug Fixes
+
+* Fix build.sbt for production environment
+* Add hive meta schema initialisation (script for schema initialisation in DQ database, not part of DQ application);
+* Fix schema creation in db-init.sql (script for schema initialisation in DQ database, not part of DQ application);
+* Other minor bug fixes. 
+
+## 0.1.5 (2022-07-01)
+
+### Features
+
+* Added documentation
+* SBT build is updated in terms of assembling uber-jars.
+
+## 0.1.4 (2022-06-22)
+
+### Features
+
+* New ConfigReader is added
+* Format of metrics configuration file should be set within application.conf (0.x for old format 1.x for new format)
+* Documentation on how to fill various sections of job configuration file is added.
