@@ -6,7 +6,7 @@ object Dependencies {
   val scopt  = "com.github.scopt" %% "scopt" % "4.1.0"
   
   // Databases:
-  val postgres = "org.postgresql" % "postgresql" % "42.5.4"
+  val postgres = "org.postgresql" % "postgresql" % "42.6.0"
   val oracle = "com.oracle.database.jdbc" % "ojdbc8" % "23.2.0.0"
   val sqlite = "org.xerial" % "sqlite-jdbc" % "3.42.0.0"
   
@@ -29,6 +29,12 @@ object Dependencies {
   // ScalaTest
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.15" % Test
   
+  //Mustache templates:
+  val mustache = "com.github.spullara.mustache.java" % "compiler" % "0.9.10"
+  
+  //Logger
+  val log4j = "log4j" % "log4j" % "1.2.17"
+  
   val checkita_core = Seq(
     algebirdCore,
     commonText,
@@ -40,6 +46,8 @@ object Dependencies {
     oracle,
     sqlite,
     json,
-    scalaTest
+    scalaTest,
+    mustache,
+    log4j
   )
 }

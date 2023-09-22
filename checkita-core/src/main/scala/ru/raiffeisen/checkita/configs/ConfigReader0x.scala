@@ -90,11 +90,12 @@ class ConfigReader0x(configPath: String)(implicit resultsWriter: DBManager, sett
         case "TABLE" =>
           val id         = generalConfig.getString("id")
           val databaseId = generalConfig.getString("database")
-          val table      = generalConfig.getString("table")
+          val table      = Try { generalConfig.getString("table") }.toOption
+          val query      = Try { generalConfig.getString("query") }.toOption
           val username   = Try { generalConfig.getString("username") }.toOption
           val password   = Try { generalConfig.getString("password") }.toOption
 
-          id -> TableConfig(id, databaseId, table, username, password, keyFieldList)
+          id -> TableConfig(id, databaseId, table, query, username, password, keyFieldList)
         case "HIVE" =>
           val id    = generalConfig.getString("id")
           val query = generalConfig.getString("query")

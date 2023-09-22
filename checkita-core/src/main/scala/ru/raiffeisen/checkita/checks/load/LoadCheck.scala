@@ -2,8 +2,8 @@ package ru.raiffeisen.checkita.checks.load
 
 import org.apache.hadoop.fs.FileSystem
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import ru.raiffeisen.checkita.checks.{CheckStatusEnum, LoadCheckResult}
 import ru.raiffeisen.checkita.checks.load.ExeEnum.LCType
+import ru.raiffeisen.checkita.checks.{CheckStatusEnum, LoadCheckResult}
 import ru.raiffeisen.checkita.sources.{HdfsFile, SourceConfig, SourceTypes}
 import ru.raiffeisen.checkita.utils.{DQSettings, Logging}
 

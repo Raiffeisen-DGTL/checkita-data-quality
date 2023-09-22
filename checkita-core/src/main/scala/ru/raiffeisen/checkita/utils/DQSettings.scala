@@ -168,6 +168,7 @@ class DQSettings(conf: Config,
     .set("spark.hadoop.hive.merge.smallfiles.avgsize", "128000000")
     .set("spark.hadoop.hive.txn.manager", "org.apache.hadoop.hive.ql.lockmgr.DummyTxnManager")
     .set("spark.hadoop.hive.vectorized.execution.enabled", "true")
+    .set("spark.sql.caseSensitive", "false")
 
   if (local) sparkConf.setMaster("local[*]")
   if (s3Bucket.isDefined)

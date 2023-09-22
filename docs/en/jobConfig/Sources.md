@@ -18,6 +18,9 @@ The following source types are currently supported:
     * ***parquet***: .parquet files;
     * ***orc***: .orc files.
     * ***delta***: reading delta-tables files from Databricks
+* **custom**: Defines custom source using user-defined options.
+  Given source type should be used to load data from the sources that are 
+  not supported explicitly in one of the source types, described above.
 
 The **sources** section in the configuration file looks like this:
 
@@ -49,10 +52,18 @@ sources: {
 To read data from a database table, you need to specify the following parameters (***all of them are required***):
 
 * `id` - source identifier
-* `database` - database identifier from the [databases](Databases.md) section
-* `table` - table name (the schema is specified in the database connection parameters, if necessary)
+* `database` - database identifier from the [databases](Databases.md) section.
+* `table [optional]` - table name (the schema is specified in the database connection parameters, if necessary).
+* `query [optional]` - query to execute. Query result will be loaded as data source.
+  **Query will be executed on the database side.**
 * `keyFields [optional]` is a list of key columns that identify the string in the source.
   Used to report errors when calculating metrics.
+
+> Important: For proper source definition it is required to set either `table` (read entire table) 
+> or `query` (read query result only) parameter. It is prohibited to use both parameters simultaneously.
+> 
+> Also, it should be noted that HOCON format supports multi-line string values which are useful to write a queries.
+> In order to provide multi-line string value, one must be enclosed in triple quotes.
 
 Example:
 
@@ -258,4 +269,28 @@ Example:
 delta:[
    {id: "delta_file", path: "/data/some_folder_with_orc_files/", keyFields: ["id", "name"]}
 ]
+```
+
+## Custom
+
+Enables data loading from the sources that are not supported explicitly in the above source types.
+The following parameters are used in order to define custom source:
+
+* `id` - source identifier;
+* `format` - format name, which will be used by Spark to load data.
+* `path [optional]` - Path to load data from.
+* `options [optional]` - Options that will be used by Spark to load data.
+* `keyFields [optional]` - is a list of key columns that identify the string in the source.
+  Used to report errors when calculating metrics.
+
+The aforementioned parameters are used to read data by spark in general way by transforming them to a 
+spark reader as follows:
+```
+val df = spark.read.format(format).options(options).load(path)
+```
+
+If additional libraries are required to load data from the custom source,
+then these libraries must be added to spark job on startup as follows:
+```bash
+--jars jar1.jar,jar2.jar
 ```

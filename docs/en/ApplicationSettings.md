@@ -67,6 +67,11 @@ The `application.conf` file specifies the following application parameters:
     * `mailing_script_path`: path to the bash script for sending messages;
     * `config`:
         * `address`: sender's e-mail;
+        * `name`: sender's name (by default: `CIBAA DataQuality`)
+        * `summarySubjectTemplate`: subject template for job summary report email notifications.
+          Default template is: `Data Quality summary for JobID: {{ jobId }}`
+        * `checkAlertSubjectTemplate`: subject template for failed check alert email notifications.
+          Default template is: `Data Quality failed check alert for JobID: {{ jobId }}`
         * `hostname`: SMTP server host;
         * `smtpPort`: SMTP server port;
         * `username`: login;

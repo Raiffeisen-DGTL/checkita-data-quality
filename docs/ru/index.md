@@ -1,6 +1,6 @@
 # Checkita Data Quality Framework
 
-**Latest Release: 0.3.0**
+**Latest Release: 0.3.4**
 
 ---
 

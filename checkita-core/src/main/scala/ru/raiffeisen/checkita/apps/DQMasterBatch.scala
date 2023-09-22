@@ -10,10 +10,10 @@ import ru.raiffeisen.checkita.exceptions.IllegalParameterException
 import ru.raiffeisen.checkita.metrics.MetricProcessor.MetricErrors
 import ru.raiffeisen.checkita.metrics.{ColumnMetric, ColumnMetricResult, ComposedMetricCalculator, ComposedMetricResult, FileMetric, FileMetricResult, MetricProcessor, MetricResult, TypedResult}
 import ru.raiffeisen.checkita.sources.VirtualSourceProcessor.getActualSources
-import ru.raiffeisen.checkita.sources.{HdfsFile, HiveTableConfig, KafkaSourceConfig, Source, TableConfig}
+import ru.raiffeisen.checkita.sources.{CustomSourceConfig, HdfsFile, HiveTableConfig, KafkaSourceConfig, Source, SourceConfig, TableConfig}
 import ru.raiffeisen.checkita.targets.{CheckAlertEmailTargetConfig, CheckAlertKafkaTargetConfig, CheckAlertMMTargetConfig, ErrorCollectionHdfsTargetConfig, ErrorCollectionKafkaTargetConfig, HdfsTargetConfig, HiveTargetConfig, ResultsKafkaTargetConfig, SummaryEmailTargetConfig, SummaryKafkaTargetConfig, SummaryMMTargetConfig}
 import ru.raiffeisen.checkita.utils.enums.ResultTargets
-import ru.raiffeisen.checkita.utils.io.{HdfsReader, HdfsWriter, HiveReader}
+import ru.raiffeisen.checkita.utils.io.{CustomSourceReader, HdfsReader, HdfsWriter, HiveReader}
 import ru.raiffeisen.checkita.utils.io.dbmanager.DBManager
 import ru.raiffeisen.checkita.utils.io.kafka.{KafkaManager, KafkaOutput}
 import ru.raiffeisen.checkita.utils.io.mattermost.MMManager
@@ -99,26 +99,25 @@ object DQMasterBatch extends DQMainClass with DQSparkContext with Logging {
     val (sources: Seq[Source], lcResults: Seq[LoadCheckResult]) = configuration.sourcesConfigMap
       .map {
         case (source, conf) =>
+          val loadChecks: Seq[LoadCheck] = configuration.loadChecksMap.getOrElse(source, Seq.empty[LoadCheck])
+          val runPreLoadChecks = (conf: SourceConfig) =>
+            loadChecks.filter(_.exeType == ExeEnum.pre).map(x => x.run(Some(conf)))
+          val runPostLoadChecks = (src: Source) =>
+            loadChecks.filter(_.exeType == ExeEnum.post).map(x => x.run(None, Try(src.df).toOption))
+
           conf match {
             case hdfsFile: HdfsFile =>
-              val loadChecks: Seq[LoadCheck] = configuration.loadChecksMap.getOrElse(source, Seq.empty[LoadCheck])
-
-              val preLoadRes: Seq[LoadCheckResult] =
-                loadChecks.filter(_.exeType == ExeEnum.pre).map(x => x.run(Some(hdfsFile))(fs, sparkSession, settings))
-
+              val preLoadRes: Seq[LoadCheckResult] = runPreLoadChecks(hdfsFile)
               val src: Seq[Source] = HdfsReader
                 .load(hdfsFile).map(df => Source(source, df, conf.keyFields))
-
-              val postLoadRes: Seq[LoadCheckResult] = loadChecks
-                .filter(_.exeType == ExeEnum.post)
-                .map(x => x.run(None, Try(src.head.df).toOption)(fs, sparkSession, settings))
-
+              val postLoadRes: Seq[LoadCheckResult] = runPostLoadChecks(src.head)
               (src, preLoadRes ++ postLoadRes)
             case hiveTableConfig: HiveTableConfig =>
               val src: Seq[Source] = HiveReader
                 .loadHiveTable(hiveTableConfig)(sparkSession)
                 .map(df => Source(source, df, conf.keyFields))
-              (src, Seq.empty[LoadCheckResult])
+              val postLoadRes: Seq[LoadCheckResult] = runPostLoadChecks(src.head)
+              (src, postLoadRes)
             //            case hbConf: HBaseSrcConfig =>
             //              (
             //                Seq(Source(source, settings.refDateString, HBaseLoader.loadToDF(hbConf), conf.keyFields)),
@@ -127,14 +126,10 @@ object DQMasterBatch extends DQMainClass with DQSparkContext with Logging {
             case tableConf: TableConfig =>
               val databaseConfig = configuration.dbConfigMap(tableConf.dbId)
               log.info(s"Loading table ${tableConf.table} from ${tableConf.dbId}")
-              val df: DataFrame =
-                (tableConf.password, tableConf.password) match {
-                  case (Some(u), Some(p)) =>
-                    databaseConfig.loadData(tableConf.table, Some(u), Some(p))
-                  case _ =>
-                    databaseConfig.loadData(tableConf.table)
-                }
-              (Seq(Source(source, df, conf.keyFields)), Seq.empty[LoadCheckResult])
+              val df: DataFrame = databaseConfig.loadData(tableConf.id, tableConf.table, tableConf.query)
+              val src = Seq(Source(source, df, tableConf.keyFields))
+              val postLoadRes: Seq[LoadCheckResult] = runPostLoadChecks(src.head)
+              (src, postLoadRes)
             case kafkaConf: KafkaSourceConfig =>
               val manager = kafkaManagers(kafkaConf.brokerId)
               log.info(
@@ -144,18 +139,23 @@ object DQMasterBatch extends DQMainClass with DQSparkContext with Logging {
 
               Try(manager.loadData(kafkaConf)) match {
                 case Success(df) =>
-                  (Seq(Source(source, df, kafkaConf.keyFields)), Seq.empty[LoadCheckResult])
+                  val src = Seq(Source(source, df, kafkaConf.keyFields))
+                  val postLoadRes: Seq[LoadCheckResult] = runPostLoadChecks(src.head)
+                  (src, postLoadRes)
                 case Failure(_) =>
                   log.info("Failed to load from kafka topic.")
                   (Seq.empty[Source], Seq.empty[LoadCheckResult])
               }
-
+            case customConf: CustomSourceConfig =>
+              val src: Seq[Source] = CustomSourceReader.load(customConf)
+                .map(df => Source(source, df, customConf.keyFields))
+              val postLoadRes: Seq[LoadCheckResult] = runPostLoadChecks(src.head)
+              (src, postLoadRes)
             case x => throw IllegalParameterException(x.getType.toString)
           }
       }
       .foldLeft((Seq.empty[Source], Seq.empty[LoadCheckResult]))((x, y) => (x._1 ++ y._1, x._2 ++ y._2))
-
-    resultsWriter.saveResultsToDB(lcResults.map(_.toDbFormat), "results_check_load")
+    
     if (sources.length != configuration.sourcesConfigMap.size) {
       val failSrc: Seq[String] = configuration.sourcesConfigMap
         .filterNot(x => sources.map(_.id).toSet.contains(x._1)).map(x =>s"- ${x._1}: ${x._2.getType}").toSeq
@@ -172,6 +172,15 @@ object DQMasterBatch extends DQMainClass with DQSparkContext with Logging {
     // virtualSources will contains both direct sources and virtual sources:
     val virtualSources: Seq[Source]    = getActualSources(configuration.virtualSourcesConfigMap, sourceMap).values.toSeq
 
+    log.info("Performing post load checks for virtual sources...")
+    val vsLcResults = virtualSources.flatMap{ vs =>
+      val loadChecks: Seq[LoadCheck] = configuration.loadChecksMap.getOrElse(vs.id, Seq.empty[LoadCheck])
+        .filter(_.exeType == ExeEnum.post)
+      loadChecks.map(lc => lc.run(None, Some(vs.df)))
+    }
+
+    resultsWriter.saveResultsToDB((lcResults ++ vsLcResults).map(_.toDbFormat), "results_check_load")
+    
     log.info("Saving required sources...")
     virtualSources.foreach {
       case src if vsToSave.contains(src.id) =>
@@ -393,13 +402,17 @@ object DQMasterBatch extends DQMainClass with DQSparkContext with Logging {
               emailConf,
               finalCheckResults,
               lcResults,
-              aggregatedMetricErrors
+              aggregatedMetricErrors,
+              colMetricResultsList,
+              virtualSources
             )
             case mmConf: SummaryMMTargetConfig => NotificationManager.sendSummaryToMM(
               mmConf,
               finalCheckResults,
               lcResults,
-              aggregatedMetricErrors
+              aggregatedMetricErrors,
+              colMetricResultsList,
+              virtualSources
             )
             case kafkaConf: SummaryKafkaTargetConfig => NotificationManager.sendSummaryToKafka(
               kafkaConf,
@@ -422,10 +435,10 @@ object DQMasterBatch extends DQMainClass with DQSparkContext with Logging {
           }
         case "ERRORCOLLECTION" => tar._2.foreach {
           case hdfsConf: ErrorCollectionHdfsTargetConfig => saveErrors(
-            hdfsConf, aggregatedMetricErrors, configuration.jobId
+            hdfsConf, aggregatedMetricErrors, colMetricResultsList, virtualSources, configuration.jobId
           )
           case kafkaConf: ErrorCollectionKafkaTargetConfig => sendErrorsToKafka(
-            kafkaConf, aggregatedMetricErrors, configuration.jobId, kafkaManagers(kafkaConf.brokerId)
+            kafkaConf, aggregatedMetricErrors, configuration.jobId, colMetricResultsList, virtualSources, kafkaManagers(kafkaConf.brokerId)
           )
         }
         case "RESULTS" => tar._2.foreach { conf =>

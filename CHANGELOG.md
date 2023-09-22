@@ -1,3 +1,57 @@
+## 0.3.5 (2023-09-19)
+
+### Bug Fixes
+
+* Ensure that JDBC connection is alive prior saving results.
+  There could be situation when Application runs quite long and DB server can close idle connection due to
+  inactivity. In such cases it is required to open it again before saving results.
+
+## 0.3.4 (2023-09-14)
+
+### Features
+
+* Added support of customisable email subject templates.
+
+### Bug Fixes
+
+* Fixed duplicateValues metric: some duplicate values can only be determined during metric calculator merge.
+* Fix sender name for check Alert. It was hardcoded but need to refer the name configured in application configuration file.
+* Fixed email encoding: changed to UTF-8
+
+## 0.3.3 (2023-09-04)
+
+### Features
+
+* Added new metric: duplicateValues.
+* Enhanced joinSql virtual source by allowing to supply it with arbitrary number of parent sources.
+* Enhanced table source by allowing to supply it with query to execute (on the DB side) and thus, read only query results.
+* Docs update
+
+## 0.3.2 (2023-08-25)
+
+### Features
+
+* Added email sender name customization
+* Added functionality to provide html and markdown templates to build body of check alerts and 
+  summary report messages when sending them to either email or Mattermost.
+* Added custom source
+* Docs update
+
+### Bug Fixes
+
+* Pass both source and virtual sources to target processors
+* Fix json serialization bugs.
+
+## 0.3.1 (2023-08-17)
+
+### Bug Fixes
+
+* Fix params json when sending results to kafka
+* Add sourceId and sourceKeyFields to errorCollection reports (or kafka messages)
+* Fix CSV headers for checkAlert attachments
+* Fix column metric result representation when saving to DB (sourceId and metric description were mixed)
+* Add MD5 hash to message key when sending results to Kafka in order to ensure idempotent message consumption.
+
 ## 0.3.0 (2023-07-31)
 
 ### Features

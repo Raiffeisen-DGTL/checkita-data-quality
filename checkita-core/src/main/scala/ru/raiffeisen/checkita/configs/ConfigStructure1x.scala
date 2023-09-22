@@ -48,6 +48,7 @@ object ConfigSourceSubTypes extends ConfigEnumRefl[String] {
   //  val hbase: String = "hbase" - disable hbase loading until. Reason - need to refactor for newer versions of Spark
   val hdfs: String = "hdfs"
   val kafka: String = "kafka"
+  val custom: String = "custom"
   val values: List[String] = getValues(this)
 }
 
@@ -164,6 +165,7 @@ object ConfigColumnMetrics extends ConfigEnumRefl[MetricConfig] {
     "approximateDistinctValues", Seq(MetricParameter("accuracyError", "double", isOptional = true))
   )
   val nullValues: MetricConfig = MetricConfig("nullValues")
+  val duplicateValues: MetricConfig = MetricConfig("duplicateValues")
   val emptyValues: MetricConfig = MetricConfig("emptyValues")
   val completeness: MetricConfig = MetricConfig(
     "completeness", Seq(MetricParameter("includeEmptyStrings", "boolean", isOptional = true))
@@ -399,6 +401,8 @@ object ConfigSummaryEmailTargetParameters extends ConfigEnumRefl[String] {
   val metrics: String = "metrics"
   val dumpSize: String = "dumpSize"
   val mailingList: String = "mailingList"
+  val template: String = "template"
+  val templateFile: String = "templateFile"
   val values: List[String] = getValues(this)
 }
 
@@ -407,6 +411,8 @@ object ConfigSummaryMMTargetParameters extends ConfigEnumRefl[String] {
   val metrics: String = "metrics"
   val dumpSize: String = "dumpSize"
   val recipients: String = "recipients"
+  val template: String = "template"
+  val templateFile: String = "templateFile"
   val values: List[String] = getValues(this)
 }
 
@@ -421,6 +427,8 @@ object ConfigEmailAlertTargetParameters extends ConfigEnumRefl[String] {
   val id: String = "id"
   val checks: String = "checks"
   val mailingList: String = "mailingList"
+  val template: String = "template"
+  val templateFile: String = "templateFile"
   val values: List[String] = getValues(this)
 }
 
@@ -428,6 +436,8 @@ object ConfigMMAlertTargetParameters extends ConfigEnumRefl[String] {
   val id: String = "id"
   val checks: String = "checks"
   val recipients: String = "recipients"
+  val template: String = "template"
+  val templateFile: String = "templateFile"
   val values: List[String] = getValues(this)
 }
 

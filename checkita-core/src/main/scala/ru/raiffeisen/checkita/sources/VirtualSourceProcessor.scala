@@ -51,21 +51,15 @@ object VirtualSourceProcessor {
                   Source(vid, virtualSourceDF, keyFields)
 
                 case VirtualFileJoinSql(id, parentSourceIds, sqlCode, keyFields, save, persist) =>
-                  val leftParent  = parentSourceIds.head
-                  val rightParent = parentSourceIds(1)
-                  log.info(s"Processing '$id', type: 'JOIN-SQL', parent: L:'$leftParent', R:'$rightParent'")
+                  val parentSources = actualSourcesMapAccumulator.filterKeys(parentSourceIds.contains).values.toSeq
+                  log.info(s"Processing '$id', type: 'JOIN-SQL', parent sources: ${parentSourceIds.mkString("[", ",", "]")}")
                   log.info(s"SQL: $sqlCode")
 
-                  val dfSourceLeft: DataFrame = actualSourcesMapAccumulator(leftParent).df
-                  val dfSourceRight: DataFrame = actualSourcesMapAccumulator(rightParent).df
-                  val colLeft  = dfSourceLeft.columns.toSeq.mkString(",")
-                  val colRight = dfSourceRight.columns.toSeq.mkString(",")
+                  parentSources.foreach(src => src.df.createOrReplaceTempView(src.id))
 
-                  dfSourceLeft.createOrReplaceTempView(leftParent)
-                  dfSourceRight.createOrReplaceTempView(rightParent)
-
-                  log.debug(s"column left $colLeft")
-                  log.debug(s"column right $colRight")
+                  parentSources.foreach(src =>
+                    log.debug(s"Source '${src.id}' columns list: ${src.df.columns.toSeq.mkString("[", ",", "]")}")
+                  )
 
                   val preDf = sparkSes.sql(sqlCode)
                   val virtualSourceDF = preDf.select(preDf.columns.map(c => col(c).as(c.toLowerCase)) : _*)

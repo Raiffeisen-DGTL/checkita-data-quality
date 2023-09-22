@@ -9,7 +9,7 @@ import org.apache.spark.sql.functions.{col, from_json, udf}
 import org.apache.spark.sql.types.StringType
 import org.json.XML
 import ru.raiffeisen.checkita.sources.{KafkaConfig, KafkaSourceConfig}
-import ru.raiffeisen.checkita.utils.{DQSettings, kafkaKeyGenerator}
+import ru.raiffeisen.checkita.utils.{DQSettings, kafkaKeyGenerator, optionSeqToMap}
 import ru.raiffeisen.checkita.utils.enums.KafkaFormats
 
 import java.util.Properties
@@ -115,9 +115,4 @@ case class KafkaManager(config: KafkaConfig) {
       consumer.close()
     }
   }
-
-  private def optionSeqToMap(optionsSeq: Seq[String]): Map[String, String] =
-    optionsSeq.map(_.split("=", 2)).collect{
-      case Array(k, v) => k -> v
-    }.toMap
 }

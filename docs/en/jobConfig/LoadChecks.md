@@ -16,6 +16,8 @@ The following types of Load Checks are currently supported:
     * `exactColumnNum` - check that the number of columns matches the given one.
     * `minColumnNum` - check that the number of columns is not less than the specified one.
 
+> **Important!** `Pre` load checks works only with hdfs-file sources: `hdfs`.
+
 To describe Load Check in the configuration file, you must specify the following parameters:
 
 * `id` - check id

@@ -35,7 +35,8 @@ case class SystemTargetConfig(
  */
 case class CheckAlertEmailTargetConfig(id: String,
                                        checks: Seq[String],
-                                       mailingList: Seq[String]) extends TargetConfig {
+                                       mailingList: Seq[String],
+                                       template: Option[String] = None) extends TargetConfig {
   override def getType: TargetType = Targets.checkAlert
 }
 
@@ -49,7 +50,8 @@ case class CheckAlertEmailTargetConfig(id: String,
  */
 case class CheckAlertMMTargetConfig(id: String,
                                     checks: Seq[String],
-                                    recipients: Seq[String]) extends TargetConfig {
+                                    recipients: Seq[String],
+                                    template: Option[String] = None) extends TargetConfig {
   override def getType: TargetType = Targets.checkAlert
 }
 
@@ -81,7 +83,8 @@ case class CheckAlertKafkaTargetConfig(id: String,
 case class SummaryEmailTargetConfig(mailingList: Seq[String],
                                     metrics: Seq[String] = Seq.empty[String],
                                     dumpSize: Int = 100,
-                                    attachMetricErrors: Boolean = false) extends TargetConfig {
+                                    attachMetricErrors: Boolean = false,
+                                    template: Option[String] = None) extends TargetConfig {
   override def getType: TargetType = Targets.summary
 }
 
@@ -96,7 +99,8 @@ case class SummaryEmailTargetConfig(mailingList: Seq[String],
 case class SummaryMMTargetConfig(recipients: Seq[String],
                                  metrics: Seq[String] = Seq.empty[String],
                                  dumpSize: Int = 100,
-                                 attachMetricErrors: Boolean = false) extends TargetConfig {
+                                 attachMetricErrors: Boolean = false,
+                                 template: Option[String] = None) extends TargetConfig {
   override def getType: TargetType = Targets.summary
 }
 

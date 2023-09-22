@@ -39,6 +39,7 @@ final class JdbcDBManager(settings: DQSettings) extends DBManager with Logging {
    */
   def saveResultsToDB(metrics: Seq[AnyRef], tb: String): Unit = {
     if (dbConfig.isDefined && connection.isDefined) {
+      val curConnection = connection.filter(_.isValid(30)).getOrElse(dbConfig.get.getConnection)
       val table = makeTableName(dbConfig.get.schema, tb)
       log.info(s"Saving '$table'")
       try {
@@ -51,7 +52,7 @@ final class JdbcDBManager(settings: DQSettings) extends DBManager with Logging {
 
         val insertSql = "INSERT INTO " + table + fieldStructString + "VALUES" + paramString
 
-        val statement = connection.get.prepareStatement(insertSql)
+        val statement = curConnection.prepareStatement(insertSql)
 
         metrics.foreach(res => {
           fieldNames.zip(Stream from 1).foreach{f =>
@@ -65,7 +66,7 @@ final class JdbcDBManager(settings: DQSettings) extends DBManager with Logging {
                     case _         => false
                   })
                   .asInstanceOf[Seq[String]]
-                val array: Array = connection.get.createArrayOf("text", xs.toArray)
+                val array: Array = curConnection.createArrayOf("text", xs.toArray)
                 statement.setArray(f._2, array)
               case x: String => statement.setString(f._2, x)
               case x: Int => statement.setInt(f._2, x)
@@ -76,7 +77,6 @@ final class JdbcDBManager(settings: DQSettings) extends DBManager with Logging {
           }
           statement.addBatch()
         })
-
         statement.executeBatch()
         log.info("Success!")
       } catch {

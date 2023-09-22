@@ -3,7 +3,7 @@ package ru.raiffeisen.checkita.metrics.column
 import ru.raiffeisen.checkita.metrics.CalculatorStatus.CalculatorStatus
 import ru.raiffeisen.checkita.metrics.MetricProcessor.ParamMap
 import ru.raiffeisen.checkita.metrics.{CalculatorStatus, MetricCalculator, StatusableCalculator}
-import ru.raiffeisen.checkita.utils.{getParametrizedMetricTail, tryToDate, tryToString}
+import ru.raiffeisen.checkita.utils.{getParametrizedMetricTail, tryToDate, tryToDouble, tryToString}
 
 import scala.util.Try
 
@@ -45,6 +45,56 @@ object BasicStringMetrics {
 
   }
 
+  /**
+   * Calculates count of duplicates values in processed elements
+   * WARNING: Uses set without any kind of trimming and hashing. Return the exact count.
+   * @note When provided with multiple columns input, considers tuple of column values as a single key, i.e.
+   *       duplicate is found when entire tuple match is found.
+   * @param uniqueValues Set of processed values
+   * @return result map with keys:
+   *         "DUPLICATE_VALUES"
+   */
+  case class DuplicateValuesMetricCalculator(numDuplicates: Long,
+                                             uniqueValues: Set[String],
+                                             protected val status: CalculatorStatus = CalculatorStatus.OK,
+                                             protected val failCount: Int = 0)
+    extends StatusableCalculator {
+
+    def this(paramMap: Map[String, Any]) {
+      this(0, Set.empty[String])
+    }
+
+    override def increment(values: Seq[Any]): MetricCalculator = {
+      val valuesString = values.map{ v =>
+        val str = tryToString(v)
+        val dbl = tryToDouble(v)
+        // first we try to represent value as number than as string.
+        // In case of failure - represent value as NONE
+        // such behaviour allows us to compare different number representation as string values,
+        // i.e. "4" == 4.0 -> duplicate found!
+        dbl orElse str getOrElse "NONE"
+      }.mkString("")
+      if (uniqueValues.contains(valuesString)) DuplicateValuesMetricCalculator(
+        numDuplicates + 1, uniqueValues, CalculatorStatus.FAILED, failCount + 1
+      ) else this.copy(uniqueValues = uniqueValues + valuesString, status = CalculatorStatus.OK)
+    }
+
+    override def result(): Map[String, (Double, Option[String])] =
+      Map("DUPLICATE_VALUES" -> (numDuplicates.toDouble, None))
+
+    override def merge(m2: MetricCalculator): MetricCalculator = {
+      val that = m2.asInstanceOf[DuplicateValuesMetricCalculator]
+
+      DuplicateValuesMetricCalculator(
+        this.numDuplicates + that.numDuplicates + this.uniqueValues.intersect(that.uniqueValues).size,
+        this.uniqueValues ++ that.uniqueValues,
+        this.status,
+        this.failCount + that.getFailCounter
+      )
+    }
+
+  }
+  
   /**
    * Calculates amount of rows that match the provided regular expression
    *
