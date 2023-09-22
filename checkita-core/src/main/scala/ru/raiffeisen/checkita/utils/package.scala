@@ -11,12 +11,15 @@ import org.joda.time.format.DateTimeFormat
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization
 import ru.raiffeisen.checkita.exceptions.IllegalParameterException
+import ru.raiffeisen.checkita.metrics.ColumnMetricResult
 import ru.raiffeisen.checkita.metrics.MetricProcessor.{MetricErrors, ParamMap}
+import ru.raiffeisen.checkita.sources.Source
 import ru.raiffeisen.checkita.targets._
 import ru.raiffeisen.checkita.utils.io.HdfsWriter
 import ru.raiffeisen.checkita.utils.io.kafka.{KafkaManager, KafkaOutput}
 import ru.raiffeisen.checkita.utils.mailing.{Mail, MailerConfiguration}
 
+import java.security.MessageDigest
 import java.sql.Timestamp
 import java.text.DecimalFormat
 import java.time.{ZoneId, ZonedDateTime}
@@ -51,6 +54,8 @@ package object utils extends Logging {
 
   def saveErrors(conf: ErrorCollectionHdfsTargetConfig,
                  content: MetricErrors,
+                 metricResults: Seq[ColumnMetricResult],
+                 sources: Seq[Source],
                  jobId: String)(implicit fs: FileSystem,
                                 sc: SparkContext,
                                 sparkSes: SparkSession,
@@ -58,7 +63,8 @@ package object utils extends Logging {
     if (content.nonEmpty) {
       log.info(s"Saving metric errors...")
       val baseHeader: StructType =
-        StructType(Seq("METRIC_ID", "METRIC_COLUMNS", "ROW_DATA").map(StructField(_, StringType)))
+        StructType(Seq("METRIC_ID", "SOURCE_ID", "SOURCE_KEY_FIELDS", "METRIC_COLUMNS", "ROW_DATA")
+          .map(StructField(_, StringType)))
 
       val requestedMetrics = conf.metrics
 
@@ -66,6 +72,9 @@ package object utils extends Logging {
         val metIdWithCols = m._1.split("%~%", -1).toSeq
         val metId = metIdWithCols.head
         val metCols = metIdWithCols.tail.mkString("[", ", ", "]")
+        val sourceId = metricResults.filter(_.metricId == metId).head.sourceId
+        val keyFields = sources.filter(_.id == sourceId).head.keyFields.mkString("[\"", "\", \"", "\"]")
+
         val rowCols = m._2._1
 
         if (requestedMetrics.isEmpty || requestedMetrics.contains(metId))
@@ -73,7 +82,7 @@ package object utils extends Logging {
             val rowJson = rowCols.zip(rowData).map {
               case (k, v) => "\"" + k + "\": \"" + v + "\""
             }.mkString("{", ", ", "}")
-            Row.fromSeq(Seq(metId, metCols, rowJson))
+            Row.fromSeq(Seq(metId, sourceId, keyFields, metCols, rowJson))
           }
         else Seq.empty[Row]
       }.toSeq
@@ -98,6 +107,8 @@ package object utils extends Logging {
   def sendErrorsToKafka(conf: ErrorCollectionKafkaTargetConfig,
                         content: MetricErrors,
                         jobId: String,
+                        metricResults: Seq[ColumnMetricResult],
+                        sources: Seq[Source],
                         writer: KafkaManager)(implicit settings: DQSettings): Unit = {
     if (content.nonEmpty) {
       log.info(s"Saving metric errors...")
@@ -108,6 +119,9 @@ package object utils extends Logging {
         val metIdWithCols = m._1.split("%~%", -1).toSeq
         val metId = metIdWithCols.head
         val metCols = metIdWithCols.tail.mkString("[\"", "\", \"", "\"]")
+        val sourceId = metricResults.filter(_.metricId == metId).head.sourceId
+        val keyFields = sources.filter(_.id == sourceId).head.keyFields.mkString("[\"", "\", \"", "\"]")
+        
         val rowCols = m._2._1
 
         if (requestedMetrics.isEmpty || requestedMetrics.contains(metId))
@@ -121,6 +135,8 @@ package object utils extends Logging {
                |    "jobId": "$jobId",
                |    "referenceDate": "${conf.date.getOrElse(settings.referenceDateString)}",
                |    "metricId": "$metId",
+               |    "sourceId": "$sourceId",
+               |    "sourceKeyFields": $keyFields,
                |    "metricColumns": $metCols,
                |    "rowData": $rowJson
                |  }
@@ -140,16 +156,19 @@ package object utils extends Logging {
     }
   }
 
-  def sendCheckAlertMail(recievers: Seq[String], text: Option[String], attachments: Seq[BinaryAttachment])(
-    implicit mailer: MailerConfiguration): Unit = {
+  def sendCheckAlertMail(recievers: Seq[String],
+                         text: Option[String],
+                         subject: Option[String],
+                         attachments: Seq[BinaryAttachment])(implicit mailer: MailerConfiguration): Unit = {
 
     val defaultText = "Some of requested checks failed. Please, check attached csv."
-    //    val attachment = CustomAttachment(fileName, fileStream)
-
+    
+    val defaultSubject = "Data Quality failed check alert"
+    
     Mail a Mail(
-      from = (mailer.address, "Checkita DataQuality"),
+      from = (mailer.address, mailer.name),
       to = recievers,
-      subject = "Data Quality failed check alert",
+      subject = subject.getOrElse(defaultSubject),
       message = text.getOrElse(defaultText),
       attachment = attachments
     )
@@ -222,7 +241,7 @@ package object utils extends Logging {
    */
   def mapToJsonString(map: Map[String, Any]): String = {
     implicit val formats: DefaultFormats.type = org.json4s.DefaultFormats
-    if (map.isEmpty) "" else Serialization.write(map)
+    if (map.isEmpty) "{}" else Serialization.write(map)
   }
 
 
@@ -359,9 +378,10 @@ package object utils extends Logging {
    * @return Kafka message key string
    */
   def kafkaKeyGenerator(msg: String, explicitEntity: Option[String] = None)
-                       (implicit setting: DQSettings): String =
+                       (implicit setting: DQSettings): String = {
+    val md5hash = MessageDigest.getInstance("MD5").digest(msg.getBytes).map("%02x".format(_)).mkString
     if (explicitEntity.nonEmpty)
-      s"${explicitEntity.get}@${setting.referenceDateString}@${setting.executionDateString}"
+      s"${explicitEntity.get}@${setting.referenceDateString}@${setting.executionDateString}@$md5hash"
     else {
       val entityPattern = """"entityType": "(.+?)"""".r
       val jobIdPattern = """"jobId": "(.+?)"""".r
@@ -371,8 +391,9 @@ package object utils extends Logging {
       val jobId = Try {
         jobIdPattern.findFirstMatchIn(msg).get.group(1)
       }.getOrElse("unknownJobId")
-      s"$entity@$jobId@${setting.referenceDateString}@${setting.executionDateString}"
+      s"$entity@$jobId@${setting.referenceDateString}@${setting.executionDateString}@$md5hash"
     }
+  }
 
   /**
    * Converts java ZonedDateTime to sql Timestamp at UTC timezone.
@@ -383,4 +404,15 @@ package object utils extends Logging {
     val ldt = zdt.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime
     Timestamp.valueOf(ldt)
   }
+
+  /**
+   * Convert sequence of string options (in format of k=v) into a Map
+   * @param optionsSeq Sequence of string options
+   * @return Map of options
+   */
+  def optionSeqToMap(optionsSeq: Seq[String]): Map[String, String] =
+    optionsSeq.map(_.split("=", 2)).collect{
+      case Array(k, v) => k -> v
+    }.toMap
+
 }

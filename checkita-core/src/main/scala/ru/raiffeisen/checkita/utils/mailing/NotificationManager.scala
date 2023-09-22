@@ -3,8 +3,11 @@ package ru.raiffeisen.checkita.utils.mailing
 import org.apache.spark.sql.Row
 import ru.raiffeisen.checkita.checks.{CheckResult, CheckStatusEnum, CheckSuccess, LoadCheckResult}
 import ru.raiffeisen.checkita.configs.ConfigReader
+import ru.raiffeisen.checkita.metrics.ColumnMetricResult
 import ru.raiffeisen.checkita.metrics.MetricProcessor.MetricErrors
+import ru.raiffeisen.checkita.sources.Source
 import ru.raiffeisen.checkita.targets.{CheckAlertEmailTargetConfig, CheckAlertKafkaTargetConfig, CheckAlertMMTargetConfig, SummaryEmailTargetConfig, SummaryKafkaTargetConfig, SummaryMMTargetConfig}
+import ru.raiffeisen.checkita.utils.Templating.renderTemplate
 import ru.raiffeisen.checkita.utils.io.kafka.{KafkaManager, KafkaOutput}
 import ru.raiffeisen.checkita.utils.io.mattermost.MMManager
 import ru.raiffeisen.checkita.utils.io.mattermost.MMModels.MMMessage
@@ -16,23 +19,29 @@ object NotificationManager {
 
   private def buildMetricErrorStream(requestedMetrics: Seq[String],
                                      metricErrors: MetricErrors,
+                                     metricResults: Seq[ColumnMetricResult],
+                                     sources: Seq[Source],
                                      dumpSize: Int): BinaryAttachment = {
 
-    val data = "\"METRIC_ID\"\t\"METRIC_COLUMNS\"\t\"ROW_DATA\"\n" + metricErrors.flatMap { m =>
-      val metIdWithCols = m._1.split("%~%", -1).toSeq
-      val metId = metIdWithCols.head
-      val metCols = metIdWithCols.tail.mkString("[", ", ", "]")
-      val rowCols = m._2._1
+    val data = "\"METRIC_ID\"\t\"SOURCE_ID\"\t\"SOURCE_KEY_FIELDS\"\t\"METRIC_COLUMNS\"\t\"ROW_DATA\"\n" +
+      metricErrors.flatMap { m =>
+        val metIdWithCols = m._1.split("%~%", -1).toSeq
+        val metId = metIdWithCols.head
+        val metCols = metIdWithCols.tail.mkString("[", ", ", "]")
+        val sourceId = metricResults.filter(_.metricId == metId).head.sourceId
+        val keyFields = sources.filter(_.id == sourceId).head.keyFields.mkString("[\"", "\", \"", "\"]")
 
-      if (requestedMetrics.isEmpty || requestedMetrics.contains(metId))
-        m._2._2.zipWithIndex.filter(_._2 < dumpSize).map(_._1).map { rowData =>
-          val rowJson = rowCols.zip(rowData).map{
-            case (k, v) => "\"" + k + "\": \"" + v + "\""
-          }.mkString("{", ", ", "}")
+        val rowCols = m._2._1
+  
+        if (requestedMetrics.isEmpty || requestedMetrics.contains(metId))
+          m._2._2.zipWithIndex.filter(_._2 < dumpSize).map(_._1).map { rowData =>
+            val rowJson = rowCols.zip(rowData).map{
+              case (k, v) => "\"" + k + "\": \"" + v + "\""
+            }.mkString("{", ", ", "}")
 
-          metId + "\t" + metCols + "\t" + rowJson
-        }
-      else Seq.empty[Row]
+            metId + "\t" + sourceId + "\t" + keyFields + "\t" + metCols + "\t" + rowJson
+          }
+        else Seq.empty[Row]
     }.mkString("\n")
 
     BinaryAttachment("metricErrors.tsv", data.getBytes(StandardCharsets.UTF_8))
@@ -43,7 +52,7 @@ object NotificationManager {
     "CHECK_ID",
     "CHECK_NAME",
     "DESCRIPTION",
-    "CHECKED_FILE",
+    "SOURCE_ID",
     "BASE_METRIC",
     "COMPARED_METRIC",
     "COMPARED_THRESHOLD",
@@ -51,18 +60,20 @@ object NotificationManager {
     "UPPER_BOUND",
     "STATUS",
     "MESSAGE",
-    "EXEC_DATE"
+    "REFERENCE_DATETIME",
+    "EXECUTION_DATETIME"
   ).mkString("\"", "\",\"", "\"")
 
   private val failedLoadChecksCsvHeader = Seq(
     "JOB_ID",
     "CHECK_ID",
-    "SOURCE_DATE",
-    "SOURCE_ID",
     "CHECK_NAME",
+    "SOURCE_ID",
     "EXPECTED",
     "STATUS",
-    "MESSAGE"
+    "MESSAGE",
+    "REFERENCE_DATETIME",
+    "EXECUTION_DATETIME"
   ).mkString("\"", "\",\"", "\"")
 
   private def buildFailedChecksStream(
@@ -105,19 +116,53 @@ object NotificationManager {
     } else Seq.empty[BinaryAttachment]
   }
 
+  private def getParamMap(checks: Seq[String],
+                          finalCheckResults: Seq[CheckResult],
+                          finalLoadCheckResults: Seq[LoadCheckResult])
+                         (implicit settings: DQSettings,
+                          configuration: ConfigReader): Map[String, String] = {
+
+    val requestedChecks: Seq[CheckResult] = finalCheckResults.filter { x =>
+      if (checks.isEmpty) true else checks.contains(x.checkId)
+    }
+    val requestedLoadChecks: Seq[LoadCheckResult] = finalLoadCheckResults.filter { x =>
+      if (checks.isEmpty) true else checks.contains(x.checkId)
+    }
+
+    val failedChecks = requestedChecks.filter(_.status != "Success").map(_.checkId)
+    val failedLoadChecks = requestedLoadChecks.filter(_.status != CheckStatusEnum.Success).map(_.checkId)
+    val status: String = if (failedChecks.length + failedLoadChecks.length == 0) "SUCCESS" else "FAILURE"
+
+    Map(
+      "jobId" -> configuration.jobId,
+      "referenceDateTime" -> settings.referenceDateString,
+      "jobConfigPath" -> settings.jobConf,
+      "numLoadChecks" -> requestedLoadChecks.size.toString,
+      "numChecks" -> requestedChecks.size.toString,
+      "jobStatus" -> status,
+      "numFailedLoadChecks" -> failedLoadChecks.size.toString,
+      "numFailedChecks" -> failedChecks.size.toString,
+      "listFailedLoadChecks" -> failedLoadChecks.mkString("[", ", ", "]"),
+      "listFailedChecks" -> failedChecks.mkString("[", ", ", "]")
+    )
+  }
+  
   def sendSummary(conf: SummaryEmailTargetConfig,
                   finalCheckResults: Seq[CheckResult],
                   finalLoadCheckResults: Seq[LoadCheckResult],
-                  metricErrors: MetricErrors)(implicit settings: DQSettings,
-                                              configuration: ConfigReader): Unit = {
+                  metricErrors: MetricErrors,
+                  metricResults: Seq[ColumnMetricResult],
+                  sources: Seq[Source])(implicit settings: DQSettings,
+                                        configuration: ConfigReader): Unit = {
+
     if (settings.notifications) {
 
-      val summary = new Summary(configuration, Some(finalCheckResults), Some(finalLoadCheckResults))
+      val summary = new Summary(configuration, Some(finalCheckResults), Some(finalLoadCheckResults), conf.template)
       val text = summary.toMailString()
 
       val errorsAttachment = if (conf.attachMetricErrors && metricErrors.nonEmpty) {
         log.info("Metric errors are requested as attachment to summary report. Building metric errors report...")
-        Seq(buildMetricErrorStream(conf.metrics, metricErrors, conf.dumpSize))
+        Seq(buildMetricErrorStream(conf.metrics, metricErrors, metricResults, sources, conf.dumpSize))
       } else Seq.empty[BinaryAttachment]
 
       (settings.mailingMode, settings.mailingConfig) match {
@@ -136,9 +181,9 @@ object NotificationManager {
 
           if (conf.mailingList.nonEmpty) {
             Mail a Mail(
-              from = (mailerConf.address, "Checkita DataQuality"),
+              from = (mailerConf.address, mailerConf.name),
               to = conf.mailingList,
-              subject = s"Data Quality summary for ${summary.jobId} ",
+              subject = summary.renderSubject(mailerConf.summarySubjectTemplate),
               message = text,
               attachment = errorsAttachment
             )
@@ -154,17 +199,19 @@ object NotificationManager {
   def sendSummaryToMM(conf: SummaryMMTargetConfig,
                       finalCheckResults: Seq[CheckResult],
                       finalLoadCheckResults: Seq[LoadCheckResult],
-                      metricErrors: MetricErrors)(implicit settings: DQSettings,
-                                                  configuration: ConfigReader,
-                                                  mmManager: Option[MMManager]): Unit = {
+                      metricErrors: MetricErrors,
+                      metricResults: Seq[ColumnMetricResult],
+                      sources: Seq[Source])(implicit settings: DQSettings,
+                                            configuration: ConfigReader,
+                                            mmManager: Option[MMManager]): Unit = {
     if (settings.notifications) {
 
-      val summary = new Summary(configuration, Some(finalCheckResults), Some(finalLoadCheckResults))
+      val summary = new Summary(configuration, Some(finalCheckResults), Some(finalLoadCheckResults), conf.template)
       val text = summary.toMMString()
 
       val errorsAttachment = if (conf.attachMetricErrors && metricErrors.nonEmpty) {
         log.info("Metric errors are requested as attachment to summary report. Building metric errors report...")
-        Seq(buildMetricErrorStream(conf.metrics, metricErrors, conf.dumpSize))
+        Seq(buildMetricErrorStream(conf.metrics, metricErrors, metricResults, sources, conf.dumpSize))
       } else Seq.empty[BinaryAttachment]
 
       mmManager match {
@@ -254,20 +301,23 @@ object NotificationManager {
       conf.checks, finalCheckResults, finalLoadCheckResults
     )
 
+    val params = getParamMap(conf.checks, finalCheckResults, finalLoadCheckResults)
     if (attachments.nonEmpty) {
       (settings.mailingMode, settings.mailingConfig) match {
         case (Some("internal"), _) => ()  // do nothing
         case (Some("external"), Some(mconf)) =>
-          val text =
+          val text = conf.template.flatMap(t => renderTemplate(t, params)).getOrElse(
             s"""
-               |Job ID: ${configuration.jobId}
-               |Reference date**: ${settings.referenceDateString}
-               |Run configuration path: ${settings.jobConf}
+               |Job ID: ${params("jobId")}
+               |Reference date: ${params("referenceDateTime")}
+               |Run configuration path: ${params("jobConfigPath")}
                |
                |Some of watched checks failed. Please, review attached files.
                |""".stripMargin
 
-          sendCheckAlertMail(conf.mailingList, Some(text), attachments)(mconf)
+          )
+          val subject = renderTemplate(mconf.checkAlertSubjectTemplate, params)
+          sendCheckAlertMail(conf.mailingList, Some(text), subject, attachments)(mconf)
         case (_, _) => log.error("Mailing configuration is incorrect!")
       }
     }
@@ -283,18 +333,20 @@ object NotificationManager {
       conf.checks, finalCheckResults, finalLoadCheckResults
     )
 
+    val params = getParamMap(conf.checks, finalCheckResults, finalLoadCheckResults)
     if (attachments.nonEmpty) {
-      val text =
+      val text = conf.template.flatMap(t => renderTemplate(t, params)).getOrElse(
         s"""
            |##### DQ Failed Checks Alerts :alert:
            |
-           |**Job ID**: `${configuration.jobId}`
-           |**Reference date**: `${settings.referenceDateString}`
-           |**Run configuration path**: `${settings.jobConf}`
+           |**Job ID**: `${params("jobId")}`
+           |**Reference date**: `${params("referenceDateTime")}`
+           |**Run configuration path**: `${params("jobConfigPath")}`
            |
            |Some of watched checks failed. Please, review attached files.
            |""".stripMargin
-
+      )
+      
       mmManager match {
         case Some(manager) =>
           if (conf.recipients.nonEmpty) manager send MMMessage(conf.recipients, text, attachments)

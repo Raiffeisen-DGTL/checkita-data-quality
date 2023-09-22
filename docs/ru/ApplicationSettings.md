@@ -65,6 +65,11 @@
     * `mailing_script_path`: путь к bash-скрипту для отправки сообщений;
     * `config`:
         * `address`: e-mail отправителя;
+        * `name`: имя отправителя (по умолчанию: `CIBAA DataQuality`)
+        * `summarySubjectTemplate`: шаблон темы письма для отчетов о завершении расчета.
+          Шаблон по умолчанию: `Data Quality summary for JobID: {{ jobId }}`
+        * `checkAlertSubjectTemplate`: шаблон темы письма для уведомлений о неуспешных проверках.
+          Шаблон по умолчанию: `Data Quality failed check alert for JobID: {{ jobId }}`
         * `hostname`: хост SMTP сервера;
         * `smtpPort`: порт SMTP сервера;
         * `username`: логин;

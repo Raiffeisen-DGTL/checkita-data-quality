@@ -140,8 +140,33 @@ Counts the number of nulls in cells.
 There are no additional parameters (`params`).
 
 Metric **is** `Satusable`:
+
 * Succeeds if the value in the column is **not** `Null`;
 * Error if the value in the column is `Null`.
+
+
+### duplicateValues
+
+Counts the number of duplicates.
+There are no additional parameters (`params`).
+
+> Important: If metric is supplied with sequence of columns,
+> then duplicated value is full match of the tuple of values in the provided columns, i.e.
+>
+>  * `['PI', 3.14, 'short'] и ['PI', 3.14, 'short']` - these tuples duplicates.
+>  * `['PI', 3.14, 'short'] и ['PI', 'short', 3.14]` - these tuples are **NOT** duplicates
+>  * `['PI', 3.14, null] и ['PI', null, 3.14]` - these tuples are **NOT** duplicates
+
+Metric **is** `Satusable`:
+
+* Succeeds if the value in the column (or tuple of values in the given columns) is unique;
+* Error when duplicate is found.
+
+> Important: Due to specificity of distributed computation, datasets are split into parts and processed in parallel.
+> Thus, rows with duplicates might occur in different threads. In such cases duplicates can only be identified during
+> `reduce` stage and, therefore, there would be no opportunity to collect data rows that correspond to these duplicates.
+> ***Long story short: Metric will find all duplicates but for some of them the metric errors 
+> with data rows won't be collectd.***"
 
 ### emptyValues
 
@@ -149,6 +174,7 @@ Counts the number of empty cells (with an empty string).
 There are no additional parameters (`params`).
 
 Metric **is** `Satusable`:
+
 * Succeeds if the value in the column **is not** an empty string;
 * Error if the value in the column is an empty string.
 
@@ -255,6 +281,7 @@ Extra options:
   * `eq` (==), `lt` (<), `lte` (<=), `gt` (>), `gte` (>=).
 
 Metric **is** `Satusable`:
+
 * Succeeds if the value in the column satisfies the string length condition;
 * Error otherwise.
 
@@ -269,6 +296,7 @@ Counts the number of cells in a column/columns whose values fall into the specif
 Additional parameters: `domain` - list of possible values.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the value in the column fall into the specified set of values;
 * Error otherwise.
 
@@ -283,6 +311,7 @@ Counts the number of cells in a column/columns whose values do **not** fall into
 Additional parameters: `domain` - list of possible values.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the value in the column **does not** fall into the specified set of values;
 * Error otherwise.
 
@@ -296,6 +325,7 @@ Counts the number of cells that have the same value as the given value.
 Additional parameters: `compareValue` - target value.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the value in the column matches the given one;
 * Error otherwise.
 
@@ -309,6 +339,7 @@ Counts the number of cells that match the regular expression.
 Additional options: `regex` - regular expression to match.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the value in the column matches the given regular expression;
 * Error otherwise.
 
@@ -325,6 +356,7 @@ Counts the number of cells whose values **do not** match the regular expression.
 Additional options: `regex` - regular expression to match.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the value in the column **does not** match the given regular expression;
 * Error otherwise.
 
@@ -342,6 +374,7 @@ it is assumed that they fit any date format and the metric will return the total
 Accordingly, the date format does not need to be specified.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the string value in the column has the specified date format;
 * Error otherwise.
 
@@ -362,6 +395,7 @@ Extra options:
   * The default comparison rule is `inbound`.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the numeric value in the column fits the specified format with given rule;
 * Error otherwise.
 
@@ -407,6 +441,7 @@ Counts the number of cells where a string value can be converted to a number (do
 There are no additional parameters (`params`).
 
 Metric **is** `Satusable`:
+
 * Succeeds if the string value in the column can be converted to a numeric value;
 * Error otherwise.
 
@@ -417,6 +452,7 @@ Counts the number of cells whose numeric values fall into the specified set of v
 Additional parameters: `domain` - list of possible numeric values.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the numeric value in the column falls into the specified set;
 * Error otherwise.
 
@@ -431,6 +467,7 @@ Counts the number of cells whose numeric values **do not** fall into the specifi
 Additional parameters: `domain` - list of possible numeric values.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the numeric value in the column **does not** fall into the specified set;
 * Error otherwise.
 
@@ -448,6 +485,7 @@ Extra options:
   The default is false.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the numeric value in the column is less than the given one;
 * Error otherwise.
 
@@ -465,6 +503,7 @@ Extra options:
   The default is false.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the numeric value in the column is greater than the given one;
 * Error otherwise.
 
@@ -483,6 +522,7 @@ Extra options:
   The default is false.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the numeric value in the column is within the given range;
 * Error otherwise.
 
@@ -501,6 +541,7 @@ Extra options:
   The default is false.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the numeric value in the column is outside the given range;
 * Error otherwise.
 
@@ -514,6 +555,7 @@ Counts the number of cells that have a numeric value that matches the specified 
 Additional parameters: `compareValue` - target numeric value.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the numeric value in the column matches the given one;
 * Error otherwise.
 
@@ -573,6 +615,7 @@ Counts the number of rows where the values in the cells of the specified columns
 There are no additional parameters (`params`).
 
 Metric **is** `Satusable`:
+
 * Successful if the values in the specified columns match;
 * Error otherwise.
 
@@ -589,6 +632,7 @@ Extra options:
   it is assumed that they fit any date format. Accordingly, the date format does not need to be specified.
 
 Metric **is** `Satusable`:
+
 * Succeeds if the date difference between two columns is less than the specified threshold;
 * Error otherwise.
 
@@ -609,6 +653,7 @@ Extra options:
   `threshold` must be in the range [0, 1].**
 
 Metric **is** `Satusable`:
+
 * Succeeds if the Levenshtein distance between string values in columns is less than or equal to the specified threshold;
 * Error otherwise.
 
@@ -623,6 +668,7 @@ For the correct calculation of the metric, the columns must not contain empty ce
 There are no additional parameters (`params`).
 
 Metric **is** `Satusable`:
+
 * Succeeds if the values in the columns are not empty and are numeric;
 * Error otherwise.
 
@@ -633,6 +679,7 @@ For the correct calculation of the metric, the columns must not contain empty ce
 There are no additional parameters (`params`).
 
 Metric **is** `Satusable`:
+
 * Succeeds if the values in the columns are not empty and are numeric;
 * Error otherwise.
 
@@ -643,6 +690,7 @@ For the correct calculation of the metric, the columns must not contain empty ce
 There are no additional parameters (`params`).
 
 Metric **is** `Satusable`:
+
 * Succeeds if the values in the columns are not empty and are numeric;
 * Error otherwise.
 

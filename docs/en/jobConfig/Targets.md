@@ -109,6 +109,16 @@ To set up email notifications about checks, it is required to specify the follow
 * `checks [optional]` - list of check identifiers for which notifications will be sent.
   By default - all checks described in the configuration file.
 * `mailingList` - list of recipients for sending notifications.
+* `template [optional]` - HTML template to build email body.
+* `templateFile [optional]` - HTML template file to build email body.
+
+> Important: `template` parameter has higher priority than `templateFile` one. Thus, if both of them are set then
+> explicitly defined template from `template` parameter will be used.
+> If not templates are set then standard email body will be build.
+>
+> Templates support parameter substitution using following syntax: `{{ parameterName }}`.
+>
+> List of available parameter names is shown below.
 
 ### Send Alerts to Mattermost
 
@@ -120,6 +130,16 @@ To configure notifications for reviews in Mattermost, you must specify the follo
 * `recipients` - list of recipients for sending notifications. Notifications can be sent both to channels and direct users.
   > **Important:** Channel names must start with `#`, and to send notifications to a direct user, you need to
   > specify the name of his account, prefixed with `@`, for example: `@someUser`
+* `template [optional]` - Markdown template to build message body.
+* `templateFile [optional]` - Markdown template file to build message body.
+
+> Important: `template` parameter has higher priority than `templateFile` one. Thus, if both of them are set then
+> explicitly defined template from `template` parameter will be used.
+> If not templates are set then standard email body will be build.
+>
+> Templates support parameter substitution using following syntax: `{{ parameterName }}`.
+>
+> List of available parameter names is shown below.
 
 ### Send Alerts to Kafka
 
@@ -131,6 +151,22 @@ To set up sending messages about checks with a `Failure` status to Kafka, it is 
 * `brokerId` - id of the Kafka broker described in the [MessageBrokers](MessageBrokers.md) section.
 * `topic` is the name of the Kafka topic to send messages to.
 * `options [optional]` - additional options for sending messages to Kafka.
+
+
+### Template Parameters for Check Alerts:
+
+The following parameters can be used in templates for check alert notifications:
+* `jobId` - ID of the current job;
+* `referenceDateTime` - Date for which the job is executed;
+* `jobConfigPath` - Path to a HOCON file with job configuration;
+* `numLoadChecks` - Total number of load checks watched by this alert configuration;
+* `numChecks` - Total number of checks watched by this alert configuration;
+* `jobStatus` - Job status. It should be always `Failure` for check alerts since they are sent only when at least
+  one check has failed;
+* `numFailedLoadChecks` - Total number of load checks with `Failure` status;
+* `numFailedChecks` - Total number of checks `Failure` status;
+* `listFailedLoadChecks` - List of load checks with `Failure` status (list of their IDs);
+* `listFailedChecks` - List of checks with `Failure` status (list of their IDs).
 
 ## Summary
 
@@ -144,6 +180,16 @@ To configure Email distribution of reports upon completion of each DQ calculatio
 * `dumpSize [optional]` - the maximum number of rows where the metric was calculated with an error that will be written to the report.
   The recommended value is <= `100` lines. The maximum allowed value is `10000`. The default value is `100`.
   ***Needed only if `attachMetricErrors = true`.***
+* `template [optional]` - HTML template to build email body.
+* `templateFile [optional]` - HTML template file to build email body.
+
+> Important: `template` parameter has higher priority than `templateFile` one. Thus, if both of them are set then
+> explicitly defined template from `template` parameter will be used.
+> If not templates are set then standard email body will be build.
+>
+> Templates support parameter substitution using following syntax: `{{ parameterName }}`.
+>
+> List of available parameter names is shown below.
 
 ### Send Summary Report to Mattermost
 
@@ -157,8 +203,18 @@ To configure the distribution of reports upon completion of each DQ calculation 
 * `dumpSize [optional]` - the maximum number of rows where the metric was calculated with an error that will be written to the report.
   The recommended value is <= `100` lines. The maximum allowed value is `10000`. The default value is `100`.
   ***Needed only if `attachMetricErrors = true`.***
+* `template [optional]` - Markdown template to build message body.
+* `templateFile [optional]` - Markdown template file to build message body.
 
-### Send Summary Report to Mattermost
+> Important: `template` parameter has higher priority than `templateFile` one. Thus, if both of them are set then
+> explicitly defined template from `template` parameter will be used.
+> If not templates are set then standard email body will be build.
+>
+> Templates support parameter substitution using following syntax: `{{ parameterName }}`.
+>
+> List of available parameter names is shown below.
+
+### Send Summary Report to Kafka
 
 To set up sending reports at the end of each DQ calculation in Kafka, you must specify the following parameters:
 
@@ -169,6 +225,26 @@ To set up sending reports at the end of each DQ calculation in Kafka, you must s
 * `brokerId` - id of the Kafka broker described in the [MessageBrokers](MessageBrokers.md) section.
 * `topic` - the name of the Kafka topic to send messages to.
 * `options [optional]` - additional options for sending messages to Kafka.
+
+### Template Parameters for Summary Reports:
+
+В шаблонах для отправки уведомлений о проверках на почту или в Mattermost можно использовать следующие параметры:
+The following parameters can be used in templates for summary report notifications:
+* `jobId` - ID of the current job;
+* `referenceDateTime` - Date for which the job is executed;
+* `jobConfigPath` - Path to a HOCON file with job configuration;
+* `numSources` - Total number of sources;
+* `numMetrics` - Total number of metrics;
+* `numCompMetrics` - Total number of composed metrics;
+* `numLoadChecks` - Total number of load checks;
+* `numChecks` - Total number of checks;
+* `jobStatus` - Job status;
+* `numFailedLoadChecks` - Total number of load checks with `Failure` status;
+* `numFailedChecks` - Total number of checks `Failure` status;
+* `listFailedLoadChecks` - List of load checks with `Failure` status (list of their IDs);
+* `listFailedChecks` - List of checks with `Failure` status (list of their IDs).
+
+---
 
 The following is an example of a `targets` section in a configuration file:
 

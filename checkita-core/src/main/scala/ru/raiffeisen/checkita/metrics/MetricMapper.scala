@@ -12,6 +12,7 @@ object MetricMapper extends Enumeration {
   val distinctValues: MetricDefinition = MetricDefinition("DISTINCT_VALUES", classOf[UniqueValuesMetricCalculator])
   val approxDistinctValues: MetricDefinition = MetricDefinition("APPROXIMATE_DISTINCT_VALUES", classOf[HyperLogLogMetricCalculator])
   val nullValues: MetricDefinition = MetricDefinition("NULL_VALUES", classOf[NullValuesMetricCalculator])
+  val duplicateValues: MetricDefinition = MetricDefinition("DUPLICATE_VALUES", classOf[DuplicateValuesMetricCalculator])
   val completeness: MetricDefinition = MetricDefinition("COMPLETENESS", classOf[CompletenessMetricCalculator])
   val sequenceCompleteness: MetricDefinition = MetricDefinition("SEQUENCE_COMPLETENESS", classOf[SequenceCompletenessMetricCalculator])
   val approxSequenceCompleteness: MetricDefinition = MetricDefinition("APPROXIMATE_SEQUENCE_COMPLETENESS", classOf[HLLSequenceCompletenessMetricCalculator])

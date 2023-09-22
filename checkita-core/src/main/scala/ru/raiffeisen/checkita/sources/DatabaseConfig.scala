@@ -46,9 +46,12 @@ case class DatabaseConfig(
   // the trick here is that table credentials can be different from database one,
   // so that function allow you to connect to the database with multiple credentials
   // without specification of multiple databases
-  def loadData(table: String,
+  def loadData(sourceId: String,
+               table: Option[String],
+               query: Option[String],
                user: Option[String] = this.user,
-               password: Option[String] = this.password)(
-                implicit sparkSess: SparkSession): DataFrame =
-    dbReader.loadData(makeTableName(schema, table), user, password)
+               password: Option[String] = this.password)
+              (implicit sparkSess: SparkSession): DataFrame =
+  dbReader.loadData(sourceId, table.map(t => makeTableName(schema, t)), query, user, password)
+
 }

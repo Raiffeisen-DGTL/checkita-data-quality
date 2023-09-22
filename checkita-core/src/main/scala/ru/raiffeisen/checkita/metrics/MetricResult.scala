@@ -38,7 +38,7 @@ case class ColumnMetricResult(
   override def getType: DQResultTypes.DQResultType = DQResultTypes.column
 
   def toDbFormat(implicit settings: DQSettings): ColumnMetricResultFormatted = ColumnMetricResultFormatted(
-    this.jobId, this.metricId, this.metricName, this.sourceId, this.description,
+    this.jobId, this.metricId, this.metricName, this.description, this.sourceId,
     this.columnNames.mkString("{", ", ", "}"), this.params, this.result, this.additionalResult,
     toUtcTimestamp(settings.referenceDate), toUtcTimestamp(settings.executionDate)
   )
@@ -53,7 +53,7 @@ case class ColumnMetricResult(
        |    "description": "$description",
        |    "sourceId": "$sourceId",
        |    "columnNames": ${columnNames.mkString("[\"", "\", \"", "\"]")},
-       |    "params": "$params",
+       |    "params": $params,
        |    "result": "${result.toString}",
        |    "additionalResult": "$additionalResult",
        |    "referenceDate": "${settings.referenceDateString}",
@@ -88,7 +88,7 @@ case class FileMetricResult(
        |    "description": "$description",
        |    "sourceId": "$sourceId",
        |    "result": "${result.toString}",
-       |    "additionalResult": "$additionalResult"
+       |    "additionalResult": "$additionalResult",
        |    "referenceDate": "${settings.referenceDateString}",
        |    "executionDate": "${settings.executionDateString}"
        |  }
@@ -124,7 +124,7 @@ case class ComposedMetricResult(
        |    "sourceId": "$sourceId",
        |    "formula": "$formula",
        |    "result": "${result.toString}",
-       |    "additionalResult": "$additionalResult"
+       |    "additionalResult": "$additionalResult",
        |    "referenceDate": "${settings.referenceDateString}",
        |    "executionDate": "${settings.executionDateString}"
        |  }

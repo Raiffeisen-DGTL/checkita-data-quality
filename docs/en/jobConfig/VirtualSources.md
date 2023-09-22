@@ -7,7 +7,7 @@ based on basic data sources (see [Sources](Sources.md)) applying various transfo
 The following types of virtual sources are currently supported:
 
 * `filterSql` - creates a virtual source based on an existing one by applying the specified SQL query to it.
-* `joinSql` - creates a virtual source by joining two other sources with a SQL query.
+* `joinSql` - creates a virtual source by joining two (or more) other sources with a SQL query.
 * `join` - creates a virtual source by joining two other sources without SQL query,
   but simply with a list of columns.
 
@@ -15,7 +15,7 @@ For all virtual sources, it is required to specify the following parameters:
 
 * `id` - virtual source id
 * `parentSources` - list of parent source id's
-  (list from 1st source for `filterSql` and list from 2 sources for `joinSql` or `join`)
+  (list from 1st source for `filterSql`, list from 2 sources for `join` and variable length list of sources for `joinSql`)
 * `persist [optional]` - **optional**, virtual source can be cached before the calculation of the metrics.
   To do this, one of the possible Spark StorageLevels must be specified in the `persist` field.
   If the `persist` field is missing, then the virtual source will not be cached.

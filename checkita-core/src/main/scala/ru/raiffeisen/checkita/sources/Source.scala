@@ -20,6 +20,7 @@ object SourceTypes extends Enumeration {
   val hive: SourceType = Value("HIVE")
   val hbase: SourceType = Value("HBASE")
   val kafka: SourceType = Value("KAFKA")
+  val custom: SourceType = Value("CUSTOM")
 }
 
 abstract class SourceConfig {
@@ -113,7 +114,8 @@ case class OutputFile(
 case class TableConfig(
                         id: String,
                         dbId: String,
-                        table: String,
+                        table: Option[String],
+                        query: Option[String],
                         username: Option[String],
                         password: Option[String],
                         keyFields: Seq[String] = Seq.empty
@@ -159,6 +161,16 @@ case class KafkaSourceConfig(
     )
   }
 
+}
+
+case class CustomSourceConfig(
+                               id: String,
+                               format: String,
+                               path: Option[String] = None,
+                               options: Seq[String] = Seq.empty[String],
+                               keyFields: Seq[String] = Seq.empty[String]
+                             ) extends SourceConfig {
+  override def getType: SourceType = SourceTypes.custom
 }
 
 case class Source(

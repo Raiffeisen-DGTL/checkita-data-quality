@@ -3,8 +3,8 @@ package ru.raiffeisen.checkita.utils.io
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FSDataOutputStream, FileSystem, Path}
 import org.apache.hadoop.io.IOUtils
-import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 import org.apache.spark.sql.functions.lit
+import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 import ru.raiffeisen.checkita.checks.{CheckResult, LoadCheckResult}
 import ru.raiffeisen.checkita.configs.ConfigReader
 import ru.raiffeisen.checkita.exceptions.IllegalParameterException
@@ -143,6 +143,9 @@ object HdfsWriter extends Logging {
 
     // since we want to allow you to save on the custom date
     val execDate: String = settings.referenceDateString
+      .replace(" ", "-")
+      .replace(":", "-")
+      .replace("'", "")
 
     target.fileFormat.toUpperCase match {
       case "CSV" | "TXT" => saveCsv(df, target, target.date.getOrElse(execDate))

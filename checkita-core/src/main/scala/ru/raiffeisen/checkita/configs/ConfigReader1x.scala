@@ -91,6 +91,9 @@ class ConfigReader1x(configPath: String)(implicit resultsWriter: DBManager, sett
           case subType@ConfigSourceSubTypes.kafka => kafkaSourceParser(
             Try(sourceConfig.toConfig.getObjectList(subType).toList).getOrElse(List.empty)
           )
+          case subType@ConfigSourceSubTypes.custom => customSourceParser(
+            Try(sourceConfig.toConfig.getObjectList(subType).toList).getOrElse(List.empty)
+          )
           case tableSubType => tableSourceParser(tableSubType)(
             Try(sourceConfig.toConfig.getObjectList(tableSubType).toList).getOrElse(List.empty)
           )
@@ -383,8 +386,14 @@ class ConfigReader1x(configPath: String)(implicit resultsWriter: DBManager, sett
       subtype match {
         case ConfigSourceSubTypes.table =>
           val database = sourceConfig.getString(ConfigSourceParameters.database)
-          val table = sourceConfig.getString(ConfigSourceParameters.table)
-          id -> TableConfig(id, database, table, None, None, keyFields)
+          val table = Try(sourceConfig.getString(ConfigSourceParameters.table)).toOption
+          val query = Try(sourceConfig.getString(ConfigSourceParameters.query)).toOption
+
+          require(table.isEmpty != query.isEmpty,
+            s"Configuration error for table source '$id': either table or query to load must be defined but not both."
+          )
+
+          id -> TableConfig(id, database, table, query, None, None, keyFields)
         case ConfigSourceSubTypes.hive =>
           val query = sourceConfig.getString(ConfigSourceParameters.query)
           id -> HiveTableConfig(id, query, keyFields)
@@ -431,6 +440,29 @@ class ConfigReader1x(configPath: String)(implicit resultsWriter: DBManager, sett
       )
     }.toMap
 
+  /**
+   * Parses custom sources from configuration file
+   * @param customSourceList list of configuration objects describing custom sources
+   * @return Map with custom sources (sourceId, KafkaTopic)
+   */
+  private def customSourceParser(customSourceList: List[ConfigObject]): Map[String, CustomSourceConfig] =
+    customSourceList.map { customSource =>
+      if (customSource.keySet().exists(!ConfigSourceParameters.contains(_)))
+        throw IllegalParameterException(s"Config -> sources -> custom: Invalid custom source parameter keys are found.")
+
+      val customSourceConfig = customSource.toConfig
+      val id = customSourceConfig.getString(ConfigSourceParameters.id)
+      val format = customSourceConfig.getString(ConfigSourceParameters.format)
+      val path = Try(customSourceConfig.getString(ConfigSourceParameters.path)).toOption
+      val options = Try(customSourceConfig.getStringList(ConfigSourceParameters.options).toSeq).getOrElse(Seq.empty)
+
+      val keyFields = Try(
+        customSourceConfig.getStringList(ConfigSourceParameters.keyFields).toSeq.map(_.toLowerCase)
+      ).getOrElse(Seq.empty)
+
+      id -> CustomSourceConfig(id, format, path, options, keyFields)
+    }.toMap
+  
   /**
    * Returns a function to parse list of file sources
    * from configuration file
@@ -853,7 +885,13 @@ class ConfigReader1x(configPath: String)(implicit resultsWriter: DBManager, sett
               val dumpSize = Try(targetConf.getInt(ConfigSummaryEmailTargetParameters.dumpSize)).getOrElse(100)
               val attachErrors = Try(targetConf.getBoolean(ConfigSummaryEmailTargetParameters.attachMetricErrors)).getOrElse(false)
 
-              List(targetType -> SummaryEmailTargetConfig(mailingList, metrics, dumpSize, attachErrors))
+              val templateString = Try(targetConf.getString(ConfigSummaryEmailTargetParameters.template)).toOption
+              val templateFile = Try(targetConf.getString(ConfigSummaryEmailTargetParameters.templateFile))
+                .flatMap(readTemplate).toOption
+
+              List(targetType -> SummaryEmailTargetConfig(
+                mailingList, metrics, dumpSize, attachErrors, templateString.orElse(templateFile)
+              ))
             case ConfigTargetsSubTypes.mattermost =>
               if (targetObj.keySet().exists(!ConfigSummaryMMTargetParameters.contains(_)))
                 throw IllegalParameterException(s"Config -> targets -> summary -> email: Invalid target parameter keys are found.")
@@ -864,7 +902,13 @@ class ConfigReader1x(configPath: String)(implicit resultsWriter: DBManager, sett
               val dumpSize = Try(targetConf.getInt(ConfigSummaryMMTargetParameters.dumpSize)).getOrElse(100)
               val attachErrors = Try(targetConf.getBoolean(ConfigSummaryMMTargetParameters.attachMetricErrors)).getOrElse(false)
 
-              List(targetType -> SummaryMMTargetConfig(recipients, metrics, dumpSize, attachErrors))
+              val templateString = Try(targetConf.getString(ConfigSummaryMMTargetParameters.template)).toOption
+              val templateFile = Try(targetConf.getString(ConfigSummaryMMTargetParameters.templateFile))
+                .flatMap(readTemplate).toOption
+
+              List(targetType -> SummaryMMTargetConfig(
+                recipients, metrics, dumpSize, attachErrors, templateString.orElse(templateFile)
+              ))
             case ConfigTargetsSubTypes.kafka =>
               if (targetObj.keySet().exists(!ConfigSummaryKafkaTargetParameters.contains(_)))
                 throw IllegalParameterException(s"Config -> targets -> summary -> kafka: Invalid target parameter keys are found.")
@@ -888,7 +932,11 @@ class ConfigReader1x(configPath: String)(implicit resultsWriter: DBManager, sett
               val mailingList = targetConf.getStringList(ConfigEmailAlertTargetParameters.mailingList).toSeq
               val checks = Try(targetConf.getStringList(ConfigEmailAlertTargetParameters.checks).toSeq).getOrElse(Seq.empty)
 
-              List(targetType -> CheckAlertEmailTargetConfig(id, checks, mailingList))
+              val templateString = Try(targetConf.getString(ConfigEmailAlertTargetParameters.template)).toOption
+              val templateFile = Try(targetConf.getString(ConfigEmailAlertTargetParameters.templateFile))
+                .flatMap(readTemplate).toOption
+
+              List(targetType -> CheckAlertEmailTargetConfig(id, checks, mailingList, templateString.orElse(templateFile)))
             case ConfigTargetsSubTypes.mattermost =>
               if (targetObj.keySet().exists(!ConfigMMAlertTargetParameters.contains(_)))
                 throw IllegalParameterException(s"Config -> targets -> checkAlerts -> mattermost: Invalid target parameter keys are found.")
@@ -898,7 +946,11 @@ class ConfigReader1x(configPath: String)(implicit resultsWriter: DBManager, sett
               val recipients = targetConf.getStringList(ConfigMMAlertTargetParameters.recipients).toSeq
               val checks = Try(targetConf.getStringList(ConfigMMAlertTargetParameters.checks).toSeq).getOrElse(Seq.empty)
 
-              List(targetType -> CheckAlertMMTargetConfig(id, checks, recipients))
+              val templateString = Try(targetConf.getString(ConfigMMAlertTargetParameters.template)).toOption
+              val templateFile = Try(targetConf.getString(ConfigMMAlertTargetParameters.templateFile))
+                .flatMap(readTemplate).toOption
+
+              List(targetType -> CheckAlertMMTargetConfig(id, checks, recipients, templateString.orElse(templateFile)))
             case ConfigTargetsSubTypes.kafka =>
               if (targetObj.keySet().exists(!ConfigKafkaAlertTargetParameters.contains(_)))
                 throw IllegalParameterException(s"Config -> targets -> checkAlerts -> kafka: Invalid target parameter keys are found.")
@@ -978,5 +1030,17 @@ class ConfigReader1x(configPath: String)(implicit resultsWriter: DBManager, sett
       m => compareMetricCheck(id, description, Seq.empty, cm) -> m
     )
     case _ => throw IllegalParameterException(id)
+  }
+  
+  /**
+   * Reads template string from file
+   * @param uri File path
+   * @return Template string
+   */
+  private def readTemplate(uri: String): Try[String] = Try {
+    val src = scala.io.Source.fromFile(uri)
+    val text = src.mkString
+    src.close()
+    text
   }
 }
