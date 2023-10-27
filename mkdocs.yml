@@ -1,0 +1,106 @@
+site_name: Checkita Data Quality
+
+# Repository
+repo_name: checkita-data-quality
+repo_url: https://github.com/Raiffeisen-DGTL/checkita-data-quality
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: yellow
+  logo: logo/logo.png
+  favicon: logo/favicon.png
+  icon:
+    repo: fontawesome/brands/git-alt
+  features:
+    - content.code.copy
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.indexes
+    - toc.follow
+    - toc.integrate
+
+markdown_extensions:
+  - codehilite
+  - pymdownx.highlight:
+      use_pygments: true
+      pygments_lang_class: true
+      line_spans: __span
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: docs
+      
+plugins:
+  - search
+  - i18n:
+      docs_structure: folder
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+          nav:
+            - Home: en/index.md
+            - Application Setup:
+                - en/01-application-setup/index.md
+                - en/01-application-setup/01-ApplicationSettings.md
+                - en/01-application-setup/02-ApplicationSubmit.md
+                - en/01-application-setup/03-ResultsStorage.md
+            - General Concepts:
+                - en/02-general-concepts/index.md
+                - en/02-general-concepts/01-WorkingWithDateTime.md
+                - en/02-general-concepts/02-EnvironmentAndExtraVariables.md
+                - en/02-general-concepts/03-StatusModel.md
+                - en/02-general-concepts/04-ErrorCollection.md
+            - Job Configuration:
+                - en/03-job-configuration/index.md
+                - en/03-job-configuration/01-Connections.md
+                - en/03-job-configuration/02-Schemas.md
+                - en/03-job-configuration/03-Sources.md
+                - en/03-job-configuration/04-VirtualSources.md
+                - en/03-job-configuration/05-LoadChecks.md
+                - en/03-job-configuration/06-Metrics.md
+                - en/03-job-configuration/07-Checks.md
+                - en/03-job-configuration/08-Targets.md
+                - en/03-job-configuration/09-FileOutputs.md
+                - en/03-job-configuration/10-JobConfigExample.md
+            - Changelog: changelog/CHANGELOG.md
+            - Contribution:
+                - contribution/index.md
+                - contribution/code-of-conduct.md
+                - contribution/contribution.md
+            - Scala API Doc: api/index.html
+        - locale: ru
+          name: Русский
+          build: true
+          nav:
+            - Home: ru/index.md
+            - Application Setup:
+                - ru/01-application-setup/index.md
+                - ru/01-application-setup/01-ApplicationSettings.md
+                - ru/01-application-setup/02-ApplicationSubmit.md
+                - ru/01-application-setup/03-ResultsStorage.md
+            - General Concepts:
+                - ru/02-general-concepts/index.md
+                - ru/02-general-concepts/01-WorkingWithDateTime.md
+                - ru/02-general-concepts/02-EnvironmentAndExtraVariables.md
+            - Job Configuration:
+                - ru/03-job-configuration/index.md
+                - ru/03-job-configuration/01-Connections.md
+                - ru/03-job-configuration/02-Schemas.md
+                - ru/03-job-configuration/03-Sources.md
+                - ru/03-job-configuration/04-VirtualSources.md
+                - ru/03-job-configuration/05-LoadChecks.md
+                - ru/03-job-configuration/06-Metrics.md
+                - ru/03-job-configuration/07-Checks.md
+                - ru/03-job-configuration/08-Targets.md
+            - Changelog: changelog/CHANGELOG.md
+            - Contribution:
+                - contribution/index.md
+                - contribution/code-of-conduct.md
+                - contribution/contribution.md
+            - Scala API Doc: api/index.html

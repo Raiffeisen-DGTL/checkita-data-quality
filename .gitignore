@@ -1,12 +1,27 @@
-# user-specific stuff:
+# IDE & Builds specific data:
 .idea/
 .bsp/
 .lib/
 .local/
+.bloop/
+.metals/
+.vscode/
+
+# user-specific data
+.jvmopts
+.sbtopts
+/internal
 
 # build directories:
 /target
 /checkita-core/target
+/project/.bloop
 /project/target
 /project/project
-/internal
+
+# use this package for experimentation and do not track it in VSC: 
+/checkita-core/src/main/scala/ru/raiffeisen/checkita/playground
+
+# ScalaDoc is generated during CI process (with GH Actions)
+# No need to tack it in VSC:
+/docs/api

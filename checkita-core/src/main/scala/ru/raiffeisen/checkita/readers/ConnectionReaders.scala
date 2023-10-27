@@ -1,0 +1,89 @@
+package ru.raiffeisen.checkita.readers
+
+import ru.raiffeisen.checkita.config.jobconf.Connections._
+import ru.raiffeisen.checkita.connections.DQConnection
+import ru.raiffeisen.checkita.connections.jdbc._
+import ru.raiffeisen.checkita.connections.kafka.KafkaConnection
+import ru.raiffeisen.checkita.utils.ResultUtils._
+
+import scala.util.Try
+
+object ConnectionReaders {
+
+  /**
+   * Base connection reader trait
+   * @tparam T Type of connection configuration
+   */
+  sealed trait ConnectionReader[T <: ConnectionConfig] {
+    /**
+     * Connection constructor function:
+     * builds DQConnection provided with connection configuration of type T
+     */
+    val constructor: T => DQConnection
+
+    /**
+     * Safely reads connection configuration and establishes DQConnection
+     * @param config Connection configuration
+     * @return Either a valid DQConnection or a list of connection errors.
+     */
+    def read(config: T): Result[DQConnection] = {
+      val conn = Try(constructor(config)).toResult(
+        preMsg = s"Unable to setup connection '${config.id.value}' due to following error: "
+      )
+      val connCheck = conn.flatMap(_.checkConnection)
+      conn.combine(connCheck)((c, _) => c)
+    }
+  }
+
+  /**
+   * Kafka connection reader: establishes connection to Kafka brokers.
+   */
+  implicit object KafkaConnectionReader extends ConnectionReader[KafkaConnectionConfig] {
+    val constructor: KafkaConnectionConfig => DQConnection = KafkaConnection
+  }
+
+  /**
+   * SQLite connection reader: establishes connection to SQLite database file.
+   */
+  implicit object SQLiteConnectionReader extends ConnectionReader[SQLiteConnectionConfig] {
+    val constructor: SQLiteConnectionConfig => DQConnection = SQLiteConnection
+  }
+
+  /**
+   * Postgres connection reader: establishes connection to PostgreSQL database.
+   */
+  implicit object PostgresConnectionReader extends ConnectionReader[PostgresConnectionConfig] {
+    val constructor: PostgresConnectionConfig => DQConnection = PostgresConnection
+  }
+
+  /**
+   * Oracle connection reader: establishes connection to Oracle database.
+   */
+  implicit object OracleConnectionReader extends ConnectionReader[OracleConnectionConfig] {
+    val constructor: OracleConnectionConfig => DQConnection = OracleConnection
+  }
+
+  /**
+   * General connection reader: invokes connection reader that matches provided connection configuration
+   */
+  implicit object AnyConnectionReader extends ConnectionReader[ConnectionConfig] {
+    val constructor: ConnectionConfig => DQConnection = {
+      case kafka: KafkaConnectionConfig => KafkaConnection(kafka)
+      case sqlite: SQLiteConnectionConfig => SQLiteConnection(sqlite)
+      case postgres: PostgresConnectionConfig => PostgresConnection(postgres)
+      case oracle: OracleConnectionConfig => OracleConnection(oracle)
+    }
+  }
+
+  /**
+   * Implicit conversion for connection configurations that enables read method for them.
+   * @param config Connection configuration
+   * @param reader Implicit connection reader for given connection configuration
+   * @tparam T Type of connection configuration
+   */
+  implicit class ConnectionReaderOps[T <: ConnectionConfig](config: T)
+                                                           (implicit reader: ConnectionReader[T]) {
+    def read: Result[DQConnection] = reader.read(config)
+  }
+  
+}

@@ -4,7 +4,7 @@ import sbt.Keys.onLoadMessage
 import sbt.plugins.JvmPlugin
 import sbt.{AllRequirements, AutoPlugin, Setting, settingKey}
 
-/** Sets the package type to build */
+/** sets the build environment */
 object BuildPackageTypePlugin extends AutoPlugin {
 
   // make sure it triggers automatically
@@ -45,7 +45,7 @@ object BuildPackageTypePlugin extends AutoPlugin {
       val defaultMessage = onLoadMessage.value
       val pType = packageType.value
       s"""|$defaultMessage
-          |[BUILD OPTION] PACKAGE_TYPE\t= $pType""".stripMargin
+          |Building package of type: $pType""".stripMargin
     }
   )
 
