@@ -143,6 +143,12 @@ object Targets {
    * @param metrics Sequence of metrics to collect errors for.
    *                Default: empty sequence (collect errors for all metrics)
    * @param dumpSize Maximum number of errors collected per each metric. Default: 100
+   * @param subjectTemplate Mustache template used to customize email subject. If omitted, default subject name is used.
+   * @param template Mustache Html template for email body.
+   * @param templateFile Location of file with Mustache Html template for email body. 
+   * @note Template for email body can be provided either explicitly in `template` argument
+   * or read from file provided in `templateFile` argument. Both of these arguments are allowed.
+   * Also, if both of these arguments are omitted, then default email body is used.
    */
   final case class SummaryEmailTargetConfig(
                                              recipients: Seq[Email] Refined NonEmpty,
@@ -150,6 +156,7 @@ object Targets {
                                              attachFailedChecks: Boolean = false,
                                              metrics: Seq[NonEmptyString] = Seq.empty,
                                              dumpSize: PositiveInt = 100,
+                                             subjectTemplate: Option[NonEmptyString],
                                              template: Option[NonEmptyString],
                                              templateFile: Option[URI]
                                            ) extends SummaryTargetConfig with EmailOutputConfig
@@ -197,11 +204,18 @@ object Targets {
    * @param id Check alert ID
    * @param recipients Non-empty sequence of recipients' emails.
    * @param checks Sequence of checks to send alerts for. Default: empty sequence (send alerts for all checks)
+   * @param subjectTemplate Mustache template used to customize email subject. If omitted, default subject name is used.
+   * @param template Mustache Html template for email body.
+   * @param templateFile Location of file with Mustache Html template for email body. 
+   * @note Template for email body can be provided either explicitly in `template` argument
+   * or read from file provided in `templateFile` argument. Both of these arguments are allowed.
+   * Also, if both of these arguments are omitted, then default email body is used.
    */
   final case class CheckAlertEmailTargetConfig(
                                                 id: ID,
                                                 recipients: Seq[Email] Refined NonEmpty,
                                                 checks: Seq[NonEmptyString] = Seq.empty,
+                                                subjectTemplate: Option[NonEmptyString],
                                                 template: Option[NonEmptyString],
                                                 templateFile: Option[URI]
                                               ) extends CheckAlertTargetConfig with EmailOutputConfig

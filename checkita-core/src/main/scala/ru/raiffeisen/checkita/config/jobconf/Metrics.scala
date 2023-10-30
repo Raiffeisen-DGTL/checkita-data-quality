@@ -869,7 +869,7 @@ object Metrics {
   }
 
   /**
-   * TDigest Get precentile column metric configuration
+   * TDigest Get percentile column metric configuration
    *
    * @param id          Metric ID
    * @param source      Source ID over which metric is being calculated

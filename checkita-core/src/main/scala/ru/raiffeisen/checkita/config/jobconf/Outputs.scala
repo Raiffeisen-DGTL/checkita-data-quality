@@ -112,16 +112,19 @@ object Outputs {
     val template: Option[NonEmptyString]
     val templateFile: Option[URI]
     val templateFormat: TemplateFormat
+    val subjectTemplate: Option[NonEmptyString]
   }
   
   /**
    * Base trait for targets that are sent via email.
    * Configuration for such targets must contain non-empty sequence of recipients' emails.
-   * In addition an optional message template can be provided in form of either an explicit string
+   * An optional message template can be provided in form of either an explicit string
    * or an URI to template file location.
+   * In addition, email subject can be customized by providing optional subject template.
    */
   trait EmailOutputConfig extends NotificationOutputConfig {
     val recipients: Seq[Email] Refined NonEmpty
+    val subjectTemplate: Option[NonEmptyString]
     val template: Option[NonEmptyString]
     val templateFile: Option[URI]
 
@@ -137,12 +140,13 @@ object Outputs {
    * or usernames prefixed with '@' symbols.
    * In addition an optional message template can be provided in form of either an explicit string
    * or an URI to template file location.
+   * @note Mattermost message do not have subjects, therefore, subjectTemplate is set to None
    */
   trait MattermostOutputConfig extends NotificationOutputConfig {
     val recipients: Seq[MMRecipient] Refined NonEmpty
     val template: Option[NonEmptyString]
     val templateFile: Option[URI]
-
+    val subjectTemplate: Option[NonEmptyString] = None
     val recipientsList: Seq[String] = recipients.value.map(_.value)
     val templateFormat: TemplateFormat = TemplateFormat.Markdown
   }

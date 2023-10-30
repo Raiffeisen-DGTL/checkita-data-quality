@@ -40,7 +40,7 @@ trait CheckAlertNotificationBuilder[T <: CheckAlertTargetConfig with Notificatio
        |**Some of the watched checks have failed. Please, review attached files.**
        |""".stripMargin
 
-  protected val subjectTemplate: String = s"Data Quality Failed Check Alert for job '{{ jobId }}' at {{ referenceDate }}"
+  protected val defaultSubjectTemplate: String = s"Data Quality Failed Check Alert for job '{{ jobId }}' at {{ referenceDate }}"
 
   /**
    * Build target output given the target configuration
@@ -70,7 +70,7 @@ trait CheckAlertNotificationBuilder[T <: CheckAlertTargetConfig with Notificatio
 
       NotificationMessage(
         body,
-        getSubject(results.summaryMetrics),
+        getSubject(target.subjectTemplate.map(_.value), results.summaryMetrics),
         target.recipientsList,
         checksAttachments
       )

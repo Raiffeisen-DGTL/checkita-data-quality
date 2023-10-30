@@ -16,7 +16,7 @@ trait NotificationBuilder extends BuildHelpers {
 
   protected val defaultHtmlTemplate: String
   protected val defaultMarkdownTemplate: String
-  protected val subjectTemplate: String
+  protected val defaultSubjectTemplate: String
 
   protected def buildBody(summaryMetrics: ResultSummaryMetrics,
                           format: TemplateFormat,
@@ -57,7 +57,8 @@ trait NotificationBuilder extends BuildHelpers {
       ))
     }
 
-  protected def getSubject(summaryMetrics: ResultSummaryMetrics)
+  protected def getSubject(subjectTemplate: Option[String],
+                           summaryMetrics: ResultSummaryMetrics)
                           (implicit settings: AppSettings): String =
-    renderTemplate(subjectTemplate, summaryMetrics.getFieldsMap)
+    renderTemplate(subjectTemplate.getOrElse(defaultSubjectTemplate), summaryMetrics.getFieldsMap)
 }
