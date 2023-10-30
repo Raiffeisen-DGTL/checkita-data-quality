@@ -4,7 +4,7 @@ import sbt.Keys.onLoadMessage
 import sbt.plugins.JvmPlugin
 import sbt.{AllRequirements, AutoPlugin, Setting, settingKey}
 
-/** Sets uber-jar assembly mode */
+/** sets the build environment */
 object BuildAssyModePlugin extends AutoPlugin {
 
   // make sure it triggers automatically
@@ -39,9 +39,8 @@ object BuildAssyModePlugin extends AutoPlugin {
       val defaultMessage = onLoadMessage.value
       val mode = assyMode.value
       s"""|$defaultMessage
-          |[BUILD OPTION] ASSEMBLY_MODE\t= $mode""".stripMargin
+          |Running with assembly mode: $mode""".stripMargin
     }
   )
 
 }
-

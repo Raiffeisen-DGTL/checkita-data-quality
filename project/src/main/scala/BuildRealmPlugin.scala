@@ -43,7 +43,7 @@ object BuildRealmPlugin extends AutoPlugin {
       val defaultMessage = onLoadMessage.value
       val resolverName = publishRepo.value.get.name
       s"""|$defaultMessage
-          |[BUILD OPTION] PUBLISH_REPO\t= $resolverName""".stripMargin
+          |Current Publish Repository: $resolverName""".stripMargin
     }
   )
 }

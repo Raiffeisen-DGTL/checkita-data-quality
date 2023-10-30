@@ -1,6 +1,6 @@
 import sbt._
 
-ThisBuild / version          := ReleaseVersion.version
+ThisBuild / version          := Version.releaseVersion
 ThisBuild / organization     := "ru.raiffeisen"
 ThisBuild / organizationName := "Raiffeisen"
 ThisBuild / versionScheme    := Some("semver-spec")
@@ -28,6 +28,12 @@ lazy val `checkita-core` = (project in file("checkita-core")).settings(
     Dependencies.checkita_core ++
       Utils.getSparkDependencies(sparkVersion.value, assyMode.value).values
   },
+
+  Compile / doc / target := baseDirectory.value / ".." / "docs/api",
+
+  dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.6.7",
+  dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.7",
+  dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.6.7",
 
   version := Utils.getVersionString((ThisBuild / version).value, packageType.value),
 

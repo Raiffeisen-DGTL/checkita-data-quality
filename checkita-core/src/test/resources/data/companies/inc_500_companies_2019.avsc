@@ -1,0 +1,21 @@
+{
+  "type": "record",
+  "name": "sampleDataset",
+  "namespace": "DQ",
+  "fields": [
+    {"name": "rank", "type": ["null", "int"], "default": null},
+    {"name": "profile", "type": ["null", "string"], "default": null},
+    {"name": "name", "type": ["null", "string"], "default": null},
+    {"name": "url", "type": ["null", "string"], "default": null},
+    {"name": "state", "type": ["null", "string"], "default": null},
+    {"name": "revenue", "type": ["null", "string"], "default": null},
+    {"name": "growth_pct","type": ["null", "double"], "default": null},
+    {"name": "industry", "type": ["null", "string"], "default": null},
+    {"name": "workers", "type": ["null", "int"], "default": null},
+    {"name": "previous_workers", "type": ["null", "int"], "default": null},
+    {"name": "founded", "type": ["null", "int"], "default": null},
+    {"name": "yrs_on_list", "type": ["null", "int"], "default": null},
+    {"name": "metro", "type": ["null", "string"], "default": null},
+    {"name": "city", "type": ["null", "string"], "default": null}
+  ]
+}
