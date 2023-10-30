@@ -57,7 +57,7 @@ trait SummaryNotificationBuilder[T <: SummaryTargetConfig with NotificationOutpu
        |**Failed checks**: `{{ listFailedChecks }}`
        |""".stripMargin
 
-  protected val subjectTemplate: String = s"Data Quality Summary Report for job '{{ jobId }}' at {{ referenceDate }}"
+  protected val defaultSubjectTemplate: String = s"Data Quality Summary Report for job '{{ jobId }}' at {{ referenceDate }}"
 
   /**
    * Build target output given the target configuration
@@ -87,11 +87,11 @@ trait SummaryNotificationBuilder[T <: SummaryTargetConfig with NotificationOutpu
 
     NotificationMessage(
       body,
-      getSubject(results.summaryMetrics),
+      getSubject(target.subjectTemplate.map(_.value), results.summaryMetrics),
       target.recipientsList,
       metricsAttachment ++ checksAttachments
     )
   }.toResult(
-    preMsg = s"Unable to prepare summary message with due to following error:"
+    preMsg = s"Unable to prepare summary message due to following error:"
   )
 }
