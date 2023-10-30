@@ -23,6 +23,7 @@ class MetricsSpec extends AnyWordSpec with Matchers {
         ComposedMetricConfig(ID("some_metric"), None, "$met1 + $met2"),
         RowCountMetricConfig(ID("some_metric"), "some_source", None),
         DistinctValuesMetricConfig(ID("some_metric"), "some_source", None, Refined.unsafeApply(Seq("col1"))),
+        DuplicateValuesMetricConfig(ID("some_metric"), "some_source", None, Refined.unsafeApply(Seq("col1"))),
         ApproxDistinctValuesMetricConfig(ID("some_metric"), "some_source", None, Refined.unsafeApply(Seq("col1"))),
         NullValuesMetricConfig(ID("some_metric"), "some_source", None, Refined.unsafeApply(Seq("col1"))),
         EmptyValuesMetricConfig(ID("some_metric"), "some_source", None, Refined.unsafeApply(Seq("col1"))),
