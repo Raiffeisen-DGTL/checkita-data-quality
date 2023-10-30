@@ -114,6 +114,25 @@ object Metrics {
   }
 
   /**
+   * Duplicate values column metric configuration
+   *
+   * @param id          Metric ID
+   * @param source      Source ID over which metric is being calculated
+   * @param description Metric description
+   * @param columns     Sequence of columns which are used for metric calculation
+   */
+  final case class DuplicateValuesMetricConfig(
+                                               id: ID,
+                                               source: NonEmptyString,
+                                               description: Option[NonEmptyString],
+                                               columns: NonEmptyStringSeq
+                                             ) extends AnyColumnRegularMetricConfig {
+    val metricName: MetricName = MetricName.DuplicateValues
+    val paramString: Option[String] = None
+    def initMetricCalculator: MetricCalculator = new DuplicateValuesMetricCalculator()
+  }
+
+  /**
    * Distinct values column metric configuration
    *
    * @param id          Metric ID
@@ -1021,6 +1040,7 @@ object Metrics {
    * @param approximateDistinctValues Sequence of approximateDistinctValues metrics
    * @param nullValues                Sequence of nullValues metrics
    * @param emptyValues               Sequence of emptyValues metrics
+   * @param duplicateValues           Sequence of duplicateValues metrics
    * @param completeness              Sequence of completeness metrics
    * @param minString                 Sequence of minString metrics
    * @param maxString                 Sequence of maxString metrics
@@ -1065,6 +1085,7 @@ object Metrics {
                                         approximateDistinctValues: Seq[ApproxDistinctValuesMetricConfig] = Seq.empty,
                                         nullValues: Seq[NullValuesMetricConfig] = Seq.empty,
                                         emptyValues: Seq[EmptyValuesMetricConfig] = Seq.empty,
+                                        duplicateValues: Seq[DuplicateValuesMetricConfig] = Seq.empty,
                                         completeness: Seq[CompletenessMetricConfig] = Seq.empty,
                                         sequenceCompleteness: Seq[SequenceCompletenessMetricConfig] = Seq.empty,
                                         approximateSequenceCompleteness: Seq[ApproxSequenceCompletenessMetricConfig] = Seq.empty,

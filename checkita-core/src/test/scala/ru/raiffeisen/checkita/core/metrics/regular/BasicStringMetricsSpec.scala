@@ -59,6 +59,63 @@ class BasicStringMetricsSpec extends AnyWordSpec with Matchers {
     }
   }
   
+  "DuplicateValuesMetricCalculator" must {
+    "return correct metric value for single column sequence" in {
+      val results = Seq(7, 7, 8, 3)
+      val values = testSingleColSeq zip results
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](new DuplicateValuesMetricCalculator())(
+          (m, v) => m.increment(Seq(v))).result()(MetricName.DuplicateValues.entryName)._1,
+        t._2
+      ))
+      metricResults.foreach(v => v._1 shouldEqual v._2)
+    }
+
+    "return correct metric value for multi column sequence" in {
+      val results = Seq(1, 2, 0, 2)
+      val data = Seq(
+        Seq(
+          Seq("Gpi2C7", "DgXDiA", "Gpi2C7"),
+          Seq("M66yO0", null, "xTOn6x"),
+          Seq("M66yO0", "xTOn6x", null),
+          Seq("Gpi2C7", "DgXDiA", "Gpi2C7")   
+        ),
+        Seq(
+          Seq(3.09, 3.09, 6.83),
+          Seq(6.83, 7, 2.77),
+          Seq(6.83, 7.00, 2.77),
+          Seq(3.09, 3.09, 6.83),        
+        ),
+        Seq(
+          Seq(5.85, 5.85, 5.85),
+          Seq(8.32, 8.32, 7.24),
+          Seq(7.24, 7.24, 8.32),
+          Seq(9.15, 7.24, 5.85)
+        ),
+        Seq(
+          Seq('4', "3.14", "foo"),
+          Seq(3.0, "true", "4"),
+          Seq(3, true, 4),
+          Seq(4.0, 3.14, "foo")          
+        )
+      )
+      val values = data zip results
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](new DuplicateValuesMetricCalculator())(
+          (m, v) => m.increment(v)).result()(MetricName.DuplicateValues.entryName)._1,
+        t._2
+      ))
+      metricResults.foreach(v => v._1 shouldEqual v._2)
+    }
+    "return zero when applied to empty sequence" in {
+      val values = Seq.empty
+      val metricResult = values.foldLeft[MetricCalculator](new DuplicateValuesMetricCalculator())(
+        (m, v) => m.increment(v)
+      )
+      metricResult.result()(MetricName.DuplicateValues.entryName)._1 shouldEqual 0
+    }
+  }
+
   "RegexMatchMetricCalculator" must {
     val regexList: Seq[String] = Seq(
       """^[a-zA-Z]{6}$""",
