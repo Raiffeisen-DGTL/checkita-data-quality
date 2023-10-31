@@ -1,0 +1,26 @@
+name: Upload Dependency Graph at Main
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  upload_dependency_graph:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: 'sbt'
+      - name: Set SBT Options
+        run: echo "-DSPARK_VERSION=3.5.0" > .sbtopts
+      - name: Upload Dependency Graph
+        uses: scalacenter/sbt-dependency-submission@v2.2.0      

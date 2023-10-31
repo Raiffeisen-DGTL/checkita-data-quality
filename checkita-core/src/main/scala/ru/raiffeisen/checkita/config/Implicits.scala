@@ -18,14 +18,27 @@ import ru.raiffeisen.checkita.utils.SparkUtils.{toDataType, toStorageLvlString}
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.TimeZone
+import scala.util.{Failure, Success, Try}
 
 /**
  * Implicit pureconfig hints and converters for specific types used in Job Configuration.
  */
 object Implicits {
   
-  /** SparkSqlParser is used to validate IDs */
-  private val idParser = new SparkSqlParser(new SQLConf())
+  /** SparkSqlParser used to validate IDs 
+   * @note SparkSqlParser has evolved in Spark 3.1 to use active SQLConf.
+   *       Thus, its constructor became parameterless.
+   *       Therefore, in order to instantiate SparkSqlParser it is required
+   *       to get constructor specific to current Spark version.
+   */
+  private val idParser = {
+    val parserCls = classOf[SparkSqlParser]
+    (Try(parserCls.getConstructor()), Try(parserCls.getConstructor(classOf[SQLConf]))) match {
+      case (Success(constructor), Failure(_)) => constructor.newInstance()
+      case (Failure(_), Success(constructor)) => constructor.newInstance(new SQLConf)
+      case _ => throw new NoSuchMethodException("Unable to construct Spark SQL Parser")
+    }
+  }
   
   implicit def hint[A]: ProductHint[A] = ProductHint[A](
     ConfigFieldMapping(CamelCase, CamelCase),

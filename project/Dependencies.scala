@@ -10,6 +10,12 @@ object Dependencies {
   val commonMail = "org.apache.commons" % "commons-email" % "1.5"
   val mustache = "com.github.spullara.mustache.java" % "compiler" %"0.9.10"
 
+  // XML support in json4s published in a separate package,
+  // and for latests Spark versions (starting from 3.4) using json4x-xml would
+  // either be incompatible with json4s-core or with scala-xml packages.
+  // Therefore, we will use Java Json library for XML to JSON conversions:
+  val jsonJava = "org.json" % "json" % "20231013"
+
   // refined libraries:
   val refinedVersion = "0.10.3"
   val refined = "eu.timepit" %% "refined" % refinedVersion
@@ -47,6 +53,7 @@ object Dependencies {
     commonText,
     commonMail,
     mustache,
+    jsonJava,
     refined,
     refinedScopt,
     refinedPureConfig,
