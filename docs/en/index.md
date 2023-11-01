@@ -1,6 +1,6 @@
 # Home
 
-**Latest Version: 0.0.1**
+**Latest Version: 1.0.0**
 
 To ensure quality of big data, it is necessary to perform calculations of a large number of metrics and checks
 on huge datasets, which in turn is a difficult task.

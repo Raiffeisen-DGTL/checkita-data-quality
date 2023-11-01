@@ -1,3 +1,18 @@
+# 1.0.0 (2023-11-01)
+
+
+### Bug Fixes
+
+* fixes related to project build for different version of Spark ([#10](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/10)) ([c7218bd](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/c7218bd96b377a5e3cdfbcde4ee899bff5488a03)), closes [#7](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/7)
+
+
+### Features
+
+* added template support for email subject ([#9](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/9)) ([9246f7f](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/9246f7ff2511646088cf206a72667f4882c698ff)), closes [#6](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/6)
+* adding duplicateValues metric ([#8](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/8)) ([da77daa](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/da77daab62c3dd9bb7e5d5fb4c340fa53a233c07)), closes [#5](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/5)
+* Incorporating latest updates ([1fee747](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/1fee747152cf5bfd97531274843daff2faa81a38))
+* Publishing major update of Checkita DQ ([09af3a2](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/09af3a2f065c0649849a026db41c5d3703d6233d)), closes [#3](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/3)
+
 ## 0.3.5 (2023-09-19)
 
 ### Bug Fixes
