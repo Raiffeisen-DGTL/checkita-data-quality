@@ -29,4 +29,4 @@ jobs:
           echo "-Xms1G" >> .jvmopts
           echo "-Xss100m" >> .jvmopts
       - name: Compile and Test for Spark ${{ matrix.version }}
-        run: sbt -DASSY_MODE=WITHSPARK -DSPARK_VERSION=${{ matrix.version }} checkita-core/clean checkita-core/compile checkita-core/test
+        run: sbt -DASSY_MODE=WITHSPARK -DSPARK_VERSION=${{ matrix.version }} -Duser.timezone="Europe/Moscow" checkita-core/clean checkita-core/compile checkita-core/test
