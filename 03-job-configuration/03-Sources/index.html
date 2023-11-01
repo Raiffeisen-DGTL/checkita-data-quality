@@ -1,0 +1,1499 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../02-Schemas/">
+      
+      
+        <link rel="next" href="../04-VirtualSources/">
+      
+      
+      <link rel="icon" href="../../logo/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.7">
+    
+    
+      
+        <title>Sources Configuration - Checkita Data Quality</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.4b4a2bd9.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="yellow" data-md-color-accent="indigo">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sources-configuration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Checkita Data Quality" class="md-header__button md-logo" aria-label="Checkita Data Quality" data-md-component="logo">
+      
+  <img src="../../logo/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Checkita Data Quality
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Sources Configuration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../ru/03-job-configuration/03-Sources/" hreflang="ru" class="md-select__link">
+              Русский
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    checkita-data-quality
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../01-application-setup/" class="md-tabs__link">
+          
+  
+    
+  
+  Application Setup
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../02-general-concepts/" class="md-tabs__link">
+          
+  
+    
+  
+  General Concepts
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+    
+  
+  Job Configuration
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../changelog/CHANGELOG/" class="md-tabs__link">
+        
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../contribution/" class="md-tabs__link">
+          
+  
+    
+  
+  Contribution
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../api/" class="md-tabs__link">
+        
+  
+    
+  
+  Scala API Doc
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Checkita Data Quality" class="md-nav__button md-logo" aria-label="Checkita Data Quality" data-md-component="logo">
+      
+  <img src="../../logo/logo.png" alt="logo">
+
+    </a>
+    Checkita Data Quality
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    checkita-data-quality
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../01-application-setup/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Application Setup
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Application Setup
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-application-setup/01-ApplicationSettings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Application Settings
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-application-setup/02-ApplicationSubmit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Submitting Data Quality Application
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-application-setup/03-ResultsStorage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Data Quality Results Storage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../02-general-concepts/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    General Concepts
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            General Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/01-WorkingWithDateTime/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Working with Date and Time
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/02-EnvironmentAndExtraVariables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage of Environment Variables and Extra Variables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/03-StatusModel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Status Model used in Results
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/04-ErrorCollection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metric Error Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Job Configuration
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Job Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-Connections/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Connections Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-Schemas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Schemas Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Sources Configuration
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Sources Configuration
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#file-sources-configuration" class="md-nav__link">
+    File Sources Configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="File Sources Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed-width-file-sources" class="md-nav__link">
+    Fixed Width File Sources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delimited-file-sources" class="md-nav__link">
+    Delimited File Sources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#avro-file-sources" class="md-nav__link">
+    Avro File Sources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orc-file-sources" class="md-nav__link">
+    ORC File Sources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parquet-file-sources" class="md-nav__link">
+    Parquet File Sources
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hive-sources-configuration" class="md-nav__link">
+    Hive Sources Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-sources-configuration" class="md-nav__link">
+    Table Sources Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-sources-configuration" class="md-nav__link">
+    Kafka Sources Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources-configuration-example" class="md-nav__link">
+    Sources Configuration Example
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-VirtualSources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Virtual Sources Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-LoadChecks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Load Checks Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-Metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-Checks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Checks Configurations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-Targets/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Targets Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-FileOutputs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    File Output Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-JobConfigExample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Job Configuration Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/CHANGELOG/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../contribution/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Contribution
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Contribution
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribution/code-of-conduct/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Code of Conduct
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribution/contribution/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contribution Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scala API Doc
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="sources-configuration">Sources Configuration</h1>
+<p>Reading sources is one of the major part of Data Quality job. During job execution, Checkita will read all sources into 
+a Spark DataFrames, that will be later processed to calculate metrics and perform quality checks. In addition, 
+dataframes' metadata is used to perform all types of load checks in order to ensure that source has the structure 
+as expected.</p>
+<p>Generally, sources can be read from file systems or object storage that Spark is connected to such as HDFS or S3.
+In additional, table-like source from Hive catalogue can be read. Apart from integrations natively supported by Spark,
+Checkita can read sources from external systems such as RDBMS or Kafka. For this purpose it is required to define
+connections to these systems in a first place. See <a href="../01-Connections/">Connections Configuration</a> chapter for more 
+details on connections configurations.</p>
+<p>Thus, currently Checkita supports four general types of sources:</p>
+<ul>
+<li>File sources: read files from local or remote file systems (HDFS, S3, etc.);</li>
+<li>Hive sources: read hive table from Hive catalogue;</li>
+<li>Table sources: read tables from RDBMS via JDBC connection.</li>
+<li>Kafka sources: read topics from Kafka.</li>
+</ul>
+<p>All sources must be defined in <code>sources</code> section of job configuration. 
+More details on how to configure sources of each of these types are shown below. Example of <code>sources</code> section of 
+job configuration is shown in <a href="#sources-configuration-example">Sources Configuration Example</a> below.</p>
+<h2 id="file-sources-configuration">File Sources Configuration</h2>
+<p>Currently, there are five file types that Checkita can read as a source. These are:</p>
+<ul>
+<li>Fixed-width text files;</li>
+<li>Delimited text files (CSV, TSV);</li>
+<li>ORC files;</li>
+<li>Parquet files;</li>
+<li>Avro files.</li>
+</ul>
+<p>When configuring file source, it is mandatory to indicate its type. Subsequently, configuration parameters may 
+vary for files of different types.</p>
+<p>Common parameters for sources of any file type are:</p>
+<ul>
+<li><code>id</code> - <em>Required</em>. Source ID;</li>
+<li><code>kind</code> - <em>Required</em>. File type. Can be one of the following: <code>fixed</code>, <code>delimited</code>, <code>orc</code>, <code>parquet</code>, <code>avro</code>;</li>
+<li><code>path</code> - <em>Required</em>. File path. Can be a path to a directory or a S3-bucket. In this case all files from this
+  directory/bucket will be read (assuming they all have the same schema). Note, that when reading from file system which
+  is not spark default file system, it is required to add FS prefix to the path, e.g. <code>file://</code> to read from local FS, 
+  or <code>s3a://</code> to read from S3.</li>
+<li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
+  Key fields are primarily used in error collection reports. For more details on error collection, see 
+  <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+</ul>
+<h3 id="fixed-width-file-sources">Fixed Width File Sources</h3>
+<p>In order to read fixed-width file it is additionally required to provide ID of the schema used to parse file content.
+Schema itself should be defined in <code>schemas</code> section of job configuration as described in 
+<a href="../02-Schemas/">Schemas Configuration</a> chapter. </p>
+<ul>
+<li><code>schema</code> - <em>Required</em>. Schema ID used to parse fixed-width file. 
+  The schema definition type should be either <code>fixedFull</code> or <code>fixedShort</code></li>
+</ul>
+<h3 id="delimited-file-sources">Delimited File Sources</h3>
+<p>When reading delimited text file, its schema may be inferred from file header if it is presented in the file or 
+may be explicitly defined in <code>schemas</code> section of job configuration file  as described in
+<a href="../02-Schemas/">Schemas Configuration</a> chapter.</p>
+<p>Thus, additional parameters for configuring delimited file source are:</p>
+<ul>
+<li><code>schema</code> - <em>Optional</em>. Schema ID used to parse delimited file text file. It is possible to use schema of any
+  definition type as long as it has flat structure (nested columns are not supported for delimited text files).</li>
+<li><code>header</code> - <em>Optional, default is <code>false</code></em>. Boolean parameter indicating whether schema should be inferred 
+  from file header.</li>
+<li><code>delimiter</code> - <em>Optional, default is <code>,</code></em>. Column delimiter.</li>
+<li><code>quote</code> - <em>Optional, default is <code>"</code></em>. Column enclosing character.</li>
+<li><code>escape</code> - <em>Optional, default is <code>\</code></em>. Escape character.</li>
+</ul>
+<blockquote>
+<p><strong>IMPORTANT</strong>: If the <code>header</code> parameter is absent or set to<code>false</code>, then <code>schema</code> parameter must be set.
+And vice versa, if <code>header</code> parameter is set to <code>true</code>, then <code>schema</code> parameter must not be set.
+In other words, schema may be inferred from file header or be explicitly defined, but not both.</p>
+</blockquote>
+<h3 id="avro-file-sources">Avro File Sources</h3>
+<p>Avro files can contain schema in its header. Therefore, there are two options to read avro files: either infer schema
+from file or provide it explicitly. In the second case, schema must be defined in <code>schemas</code> section of job 
+configuration file  as described in <a href="../02-Schemas/">Schemas Configuration</a> chapter. Therefore, there is only one 
+additional parameter for avro file source configuration:</p>
+<ul>
+<li><code>schema</code> - <em>Optional</em>. Schema ID used to read avro file. It is possible to use schema of any
+  definition type.</li>
+</ul>
+<h3 id="orc-file-sources">ORC File Sources</h3>
+<p>As ORC format contains schema within itself, then there are no additional parameters required to read ORC files.</p>
+<h3 id="parquet-file-sources">Parquet File Sources</h3>
+<p>As Parquet format contains schema within itself, then there are no additional parameters required to read Parquet files.</p>
+<h2 id="hive-sources-configuration">Hive Sources Configuration</h2>
+<p>In order to read data from Hive table it is required to provide following:</p>
+<ul>
+<li><code>id</code> - <em>Required</em>. Source ID;</li>
+<li><code>schema</code> - <em>Required</em>. Hive schema.</li>
+<li><code>table</code> - <em>Required</em>. Hive table.</li>
+<li><code>partitions</code> - <em>Optional</em>. List of partitions to read where each element is an object with following fields.
+  If partitions are not set then entire table is read.<ul>
+<li><code>name</code> - <em>Required</em>. Partition column name</li>
+<li><code>values</code> - <em>Required</em>. List of partition column name values to read.</li>
+</ul>
+</li>
+<li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
+  Key fields are primarily used in error collection reports. For more details on error collection, see
+  <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+</ul>
+<h2 id="table-sources-configuration">Table Sources Configuration</h2>
+<p>Table source are read from supported RDBMS via JDBC connection. There are two options to read data from RDBMS:</p>
+<ul>
+<li>read entire table content;</li>
+<li>execute query on the RDBMS side and read only query result.</li>
+</ul>
+<p>In order to set up table source, it is required to
+supply following parameters:</p>
+<ul>
+<li><code>id</code> - <em>Required</em>. Source ID;</li>
+<li><code>connection</code> - <em>Required</em>. Connection ID to use for table source. Connection ID must refer to connection configuration
+  for one of the supported RDBMS. See <a href="../01-Connections/">Connections Configuration</a> chapter for more information.</li>
+<li><code>table</code> - <em>Optional</em>. Table to read.</li>
+<li><code>query</code> - <em>Optional</em>. Query to execute. Query result is read as table source.</li>
+<li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
+  Key fields are primarily used in error collection reports. For more details on error collection, see
+  <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+</ul>
+<blockquote>
+<p><strong>IMPORTANT</strong>: Either <code>table</code> to read from must be specified or <code>query</code> to execute, but not both.
+In addition, using queries is only allowed when <code>allowSqlQueries</code> is set to true. Otherwise, any usage of arbitrary
+SQL queries will not be permitted. See <a href="../../01-application-setup/01-ApplicationSettings/#enablers">Enablers</a> chapter
+for more information.</p>
+<p><strong>TIP</strong>: HOCON format supports multiline string values. In order to define such a value, it is required to enclose
+string in triple quotes, e.g.:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1">multilineString: &quot;&quot;&quot;
+</span><span id="__span-0-2">  SELECT * from schema.table
+</span><span id="__span-0-3">  WHERE load_date = &#39;2023-08-23&#39;;
+</span><span id="__span-0-4">&quot;&quot;&quot;
+</span></code></pre></div></p>
+</blockquote>
+<h2 id="kafka-sources-configuration">Kafka Sources Configuration</h2>
+<p>Despite, it is not common situation to read messages from Kafka topics in batch-mode, such feature is presented in 
+Checkita framework. In order to set up source that reads from Kafka topic/s, it is required to provide following
+parameters:</p>
+<ul>
+<li><code>id</code> - <em>Required</em>. Source ID;</li>
+<li><code>connection</code> - <em>Required</em>. Connection ID to use for kafka source. Connection ID must refer to Kafka connection 
+  configuration. See <a href="../01-Connections/">Connections Configuration</a> chapter for more information.</li>
+<li><code>topics</code> - <em>Optional</em>. List of topics to read. Topics can be specified in either of two formats:<ul>
+<li>List of topics without indication of partitions to read (read all topic partitions): <code>["topic1", "topic2"]</code>;</li>
+<li>List of topics with indication of partitions to read: <code>["topic1@[0, 1]", "topic2@[2, 4]"]</code></li>
+<li><em>All topics must be defined using the same format.</em></li>
+</ul>
+</li>
+<li><code>topicPattern</code> - <em>Optional</em>. Topic pattern name: read all topics that match pattern.</li>
+<li><code>format</code> - Topic format. Currently, only <code>xml</code> and <code>json</code> formats are supported.</li>
+<li><code>startingOffsets</code> - <em>Optional, default is <code>earliest</code></em>. Json string setting starting offsets to read from topic.
+  By default, all topic is read.</li>
+<li><code>endingOffsets</code> - <em>Optional, default is <code>latest</code></em>. Json string setting ending offset until which to read from topic.
+  By default, read topic till the end.</li>
+<li><code>options</code> - <em>Optional</em>. Additional Spark parameters related to reading messages from Kafka topics such as:
+  <code>failOnDataLoss, kafkaConsumer.pollTimeoutMs, fetchOffset.numRetries, fetchOffset.retryIntervalMs, maxOffsetsPerTrigger</code>.
+  Parameters are provided as a strings in format of <code>parameterName=parameterValue</code>.
+  For more information, see <a href="https://spark.apache.org/docs/2.3.2/structured-streaming-kafka-integration.html">Spark Kafka Integration Guide</a>.</li>
+<li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
+  Key fields are primarily used in error collection reports. For more details on error collection, see
+  <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+</ul>
+<blockquote>
+<p><em>TIP</em>: In order to define JSON strings, they must be enclosed in triple quotes:
+<code>"""{"name1": {"name2": "value2", "name3": "value3""}}"""</code>.</p>
+</blockquote>
+<h2 id="sources-configuration-example">Sources Configuration Example</h2>
+<p>As it is shown in the example below, sources of the same type are grouped within subsections named after the type
+of the source. These subsections should contain a list of source configurations of the corresponding type.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1">  sources: {
+</span><span id="__span-1-2">    file: [
+</span><span id="__span-1-3">      {id: &quot;hdfs_fixed_file&quot;, kind: &quot;fixed&quot;, path: &quot;path/to/fixed/file.txt&quot;, schema: &quot;schema2&quot;}
+</span><span id="__span-1-4">      {
+</span><span id="__span-1-5">        id: &quot;hdfs_delimited_source&quot;,
+</span><span id="__span-1-6">        kind: &quot;delimited&quot;,
+</span><span id="__span-1-7">        path: &quot;path/to/csv/file.csv&quot;
+</span><span id="__span-1-8">        schema: &quot;schema1&quot;
+</span><span id="__span-1-9">      }
+</span><span id="__span-1-10">      {id: &quot;hdfs_avro_source&quot;, kind: &quot;avro&quot;, path: &quot;path/to/avro/file.avro&quot;, schema: &quot;avro_schema&quot;}
+</span><span id="__span-1-11">      {id: &quot;hdfs_orc_source&quot;, kind: &quot;orc&quot;, path: &quot;path/to/orc/file.orc&quot;}
+</span><span id="__span-1-12">    ]
+</span><span id="__span-1-13">    hive: [
+</span><span id="__span-1-14">      {
+</span><span id="__span-1-15">        id: &quot;hive_source_1&quot;, schema: &quot;some_schema&quot;, table: &quot;some_table&quot;,
+</span><span id="__span-1-16">        partitions: [{name: &quot;load_date&quot;, values: [&quot;2023-06-30&quot;, &quot;2023-07-01&quot;]}],
+</span><span id="__span-1-17">        keyFields: [&quot;id&quot;, &quot;name&quot;]
+</span><span id="__span-1-18">      }
+</span><span id="__span-1-19">    ]
+</span><span id="__span-1-20">    table: [
+</span><span id="__span-1-21">      {id: &quot;table_source_1&quot;, connection: &quot;oracle_db1&quot;, table: &quot;some_table&quot;, keyFields: [&quot;id&quot;, &quot;name&quot;]}
+</span><span id="__span-1-22">      {id: &quot;table_source_2&quot;, connection: &quot;sqlite_db&quot;, table: &quot;other_table&quot;}
+</span><span id="__span-1-23">    ]
+</span><span id="__span-1-24">    kafka: [
+</span><span id="__span-1-25">      {
+</span><span id="__span-1-26">        id: &quot;kafka_source_1&quot;,
+</span><span id="__span-1-27">        connection: &quot;kafka_broker&quot;,
+</span><span id="__span-1-28">        topics: [&quot;topic1.pub&quot;, &quot;topic2.pub&quot;]
+</span><span id="__span-1-29">        format: &quot;json&quot;
+</span><span id="__span-1-30">      }
+</span><span id="__span-1-31">      {
+</span><span id="__span-1-32">        id: &quot;kafka_source_2&quot;,
+</span><span id="__span-1-33">        brokerId: &quot;kafka_broker&quot;,
+</span><span id="__span-1-34">        topics: [&quot;topic3.pub@[1,3]&quot;]
+</span><span id="__span-1-35">        startingOffsets: &quot;&quot;&quot;{&quot;topic3.pub&quot;:{&quot;1&quot;:1234,&quot;3&quot;:2314}}&quot;&quot;&quot;
+</span><span id="__span-1-36">        options: [&quot;kafkaConsumer.pollTimeoutMs=300000&quot;]
+</span><span id="__span-1-37">        format: &quot;json&quot;
+</span><span id="__span-1-38">      }
+</span><span id="__span-1-39">    ]
+</span><span id="__span-1-40">  }
+</span></code></pre></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+    
+  </body>
+</html>

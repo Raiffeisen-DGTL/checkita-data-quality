@@ -1,0 +1,1788 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../07-Checks/">
+      
+      
+        <link rel="next" href="../09-FileOutputs/">
+      
+      
+      <link rel="icon" href="../../logo/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.7">
+    
+    
+      
+        <title>Targets Configuration - Checkita Data Quality</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.4b4a2bd9.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="yellow" data-md-color-accent="indigo">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#targets-configuration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Checkita Data Quality" class="md-header__button md-logo" aria-label="Checkita Data Quality" data-md-component="logo">
+      
+  <img src="../../logo/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Checkita Data Quality
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Targets Configuration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../ru/03-job-configuration/08-Targets/" hreflang="ru" class="md-select__link">
+              Русский
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    checkita-data-quality
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../01-application-setup/" class="md-tabs__link">
+          
+  
+    
+  
+  Application Setup
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../02-general-concepts/" class="md-tabs__link">
+          
+  
+    
+  
+  General Concepts
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+    
+  
+  Job Configuration
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../changelog/CHANGELOG/" class="md-tabs__link">
+        
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../contribution/" class="md-tabs__link">
+          
+  
+    
+  
+  Contribution
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../api/" class="md-tabs__link">
+        
+  
+    
+  
+  Scala API Doc
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Checkita Data Quality" class="md-nav__button md-logo" aria-label="Checkita Data Quality" data-md-component="logo">
+      
+  <img src="../../logo/logo.png" alt="logo">
+
+    </a>
+    Checkita Data Quality
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    checkita-data-quality
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../01-application-setup/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Application Setup
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Application Setup
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-application-setup/01-ApplicationSettings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Application Settings
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-application-setup/02-ApplicationSubmit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Submitting Data Quality Application
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-application-setup/03-ResultsStorage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Data Quality Results Storage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../02-general-concepts/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    General Concepts
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            General Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/01-WorkingWithDateTime/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Working with Date and Time
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/02-EnvironmentAndExtraVariables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage of Environment Variables and Extra Variables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/03-StatusModel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Status Model used in Results
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/04-ErrorCollection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metric Error Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Job Configuration
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Job Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-Connections/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Connections Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-Schemas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Schemas Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-Sources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sources Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-VirtualSources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Virtual Sources Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-LoadChecks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Load Checks Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-Metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-Checks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Checks Configurations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Targets Configuration
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Targets Configuration
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#result-targets" class="md-nav__link">
+    Result Targets
+  </a>
+  
+    <nav class="md-nav" aria-label="Result Targets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#save-results-to-file" class="md-nav__link">
+    Save Results to File
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save-results-to-hive" class="md-nav__link">
+    Save Results to Hive
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-results-to-kafka" class="md-nav__link">
+    Send Results to Kafka
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-collection-targets" class="md-nav__link">
+    Error Collection Targets
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Collection Targets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#save-metric-errors-to-file" class="md-nav__link">
+    Save Metric Errors to File
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save-metric-errors-to-hive" class="md-nav__link">
+    Save Metric Errors to Hive
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-metric-errors-to-kafka" class="md-nav__link">
+    Send Metric Errors to Kafka
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-targets" class="md-nav__link">
+    Summary Targets
+  </a>
+  
+    <nav class="md-nav" aria-label="Summary Targets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#send-summary-to-email" class="md-nav__link">
+    Send Summary to Email
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-summary-to-mattermost" class="md-nav__link">
+    Send Summary to Mattermost
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-summary-to-kafka" class="md-nav__link">
+    Send Summary to Kafka
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#check-alert-targets" class="md-nav__link">
+    Check Alert Targets
+  </a>
+  
+    <nav class="md-nav" aria-label="Check Alert Targets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#send-check-alerts-to-email" class="md-nav__link">
+    Send Check Alerts to Email
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-check-alerts-to-mattermost" class="md-nav__link">
+    Send Check Alerts to Mattermost
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unified-targets-schema" class="md-nav__link">
+    Unified Targets Schema
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#job-summary-parameters-available-for-templates" class="md-nav__link">
+    Job Summary Parameters Available for Templates
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#targets-configuration-example" class="md-nav__link">
+    Targets Configuration Example
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-FileOutputs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    File Output Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-JobConfigExample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Job Configuration Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/CHANGELOG/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../contribution/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Contribution
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Contribution
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribution/code-of-conduct/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Code of Conduct
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribution/contribution/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contribution Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scala API Doc
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="targets-configuration">Targets Configuration</h1>
+<p>Targets are designed to provide alternative channels for sending results. First of all, targets can be used to send
+notifications to users about problems in their data or just send summary of Data Quality job. In addition, targets
+provide different ways for saving results, e.g. write them to file in HDFS or send to Kafka topic.</p>
+<p>All targets are configured in <code>targets</code> section of the job configuration.
+There are four general types of targets that can be configured depending on what information is being sent or saved:</p>
+<ul>
+<li><a href="#result-targets">Result Targets</a> - used to save results as file or send them to Kafka in addition to storing into
+  Data Quality storage.</li>
+<li><a href="#error-collection-targets">Error Collection Targets</a> - used to save collected metric errors as file or to send them
+  to Kafka topic. Note that metric errors are not saved in the Data Quality storage as they contain some excerpts from 
+  data being checked. For more information, see <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a>
+  chapter.</li>
+<li><a href="#summary-targets">Summary Targets</a> - used to send notifications with summary report for Data Quality job.
+  Summary report may also be sent to Kafka topic.</li>
+<li><a href="#check-alert-targets">Check Alert Targets</a> - used to watch over some checks and send notification to users in case if
+  some watched checks have failed.</li>
+</ul>
+<h2 id="result-targets">Result Targets</h2>
+<p>Results targets are configured in the <code>results</code> subsection and can be one of the following type depending on where
+they are sent or saved:</p>
+<ul>
+<li><code>file</code> - Save results as file in local or remote (HDFS, S3, etc.) file system.</li>
+<li><code>hive</code> - Save results in HDFS as Hive table. Note that Hive table with required schema must be created prior
+  results saving.</li>
+<li><code>kafka</code> - Send results to Kafka topic in JSON format.</li>
+</ul>
+<p>For result target of any type it is required to configure list of result to be saved or sent:</p>
+<ul>
+<li><code>resultTypes</code> - <em>Required</em>. List of result types to save or sent. May include following:
+  <code>regularMetrics</code>, <code>composedMetrics</code>, <code>loadChecks</code>, <code>checks</code>. Note that all results types are reduced 
+   to <a href="#unified-targets-schema">Unified Targets Schema</a> and saved together.</li>
+</ul>
+<h3 id="save-results-to-file">Save Results to File</h3>
+<p>In order to save results to file, it is required to configure result target of <code>file</code> type. In addition to list of 
+saved results, it is required to configure file output.</p>
+<ul>
+<li><code>save</code> - <em>Required</em>. File output configuration used to save results.
+  For more information on configuring file outputs, see <a href="../09-FileOutputs/">File Output Configuration</a> chapter.</li>
+</ul>
+<p>File with results will have <a href="#unified-targets-schema">Unified Targets Schema</a>.</p>
+<h3 id="save-results-to-hive">Save Results to Hive</h3>
+<p>In order to save results to Hive table, it is required to configure result target of <code>hive</code> type. Hive table to which 
+results will be saved must be created in advance with <a href="#unified-targets-schema">Unified Targets Schema</a>.</p>
+<p>Thus, in addition to list of saved results, it is required to indicate Hive schema and table:</p>
+<ul>
+<li><code>schema</code> - <em>Required</em>. Hive schema.</li>
+<li><code>table</code> - <em>Required</em>. Hive table.</li>
+</ul>
+<p>Note that results will be appended to Hive table.</p>
+<h3 id="send-results-to-kafka">Send Results to Kafka</h3>
+<p>In order to send results to Kafka topic, it is required to configure result target of <code>kafka</code> type. 
+Connection to Kafka cluster must be configured in <code>connections</code> section of job configuration as described in 
+<a href="../01-Connections/#kafka-connection-configuration">Kafka Connection Configuration</a>. </p>
+<p>Thus, in addition to list of saved results, it is required provide following parameters:</p>
+<ul>
+<li><code>connection</code> - <em>Required</em>. Kafka connection ID.</li>
+<li><code>topic</code> - <em>Required</em>. Kafka topic to send results to.</li>
+<li><code>options</code> - <em>Optional</em>. Additional list of Kafka parameters for sending messages to topic. 
+  Parameters are provided as a strings in format of <code>parameterName=parameterValue</code>.</li>
+</ul>
+<p>Results will be saved as JSON messages. In addition, <code>aggregatedKafkaOutput</code> parameter configured in application 
+settings controls how results will be sent (see <a href="../../01-application-setup/01-ApplicationSettings/#enablers">Enablers</a> chapter):</p>
+<ul>
+<li>One message per each result.</li>
+<li>One large message with list of all results.</li>
+</ul>
+<h2 id="error-collection-targets">Error Collection Targets</h2>
+<p>Error collection targets are configured in <code>errorCollection</code> subsection and can be one of the following type depending 
+on where metric errors are sent or saved:</p>
+<ul>
+<li><code>file</code> - Save metric errors as file in local or remote (HDFS, S3, etc.) file system.</li>
+<li><code>hive</code> - Save metric errors in HDFS as Hive table. Note that Hive table with required schema must be created prior
+  metric errors saving.</li>
+<li><code>kafka</code> - Send metric errors to Kafka topic in JSON format.</li>
+</ul>
+<p>Note that metric errors are transformed to <a href="#unified-targets-schema">Unified Targets Schema</a> when send or saved.</p>
+<p>For error collection target of any type the following parameters can be supplied:</p>
+<ul>
+<li><code>metrics</code> - <em>Optional</em>. List of metric for which errors will be saved. If omitted, then errors are saved for all
+  metrics defined in Data Quality job.</li>
+<li><code>dumpSize</code> - <em>Optional, default is <code>100</code></em>. Allows additionally limit number of errors saved per metric in order to 
+  make reports more compact. Could not be larger, than application-level limitation as described in 
+  <a href="../../01-application-setup/01-ApplicationSettings/#enablers">Enablers</a> chapter.</li>
+</ul>
+<h3 id="save-metric-errors-to-file">Save Metric Errors to File</h3>
+<p>In order to save metric errors to file, it is required to configure error collection target of <code>file</code> type. 
+In addition to common error collection target parameters, it is required to configure file output:</p>
+<ul>
+<li><code>save</code> - <em>Required</em>. File output configuration used to save results.
+  For more information on configuring file outputs, see <a href="../09-FileOutputs/">File Output Configuration</a> chapter.</li>
+</ul>
+<p>File with metric errors will have <a href="#unified-targets-schema">Unified Targets Schema</a>.</p>
+<h3 id="save-metric-errors-to-hive">Save Metric Errors to Hive</h3>
+<p>In order to save metric errors to Hive table, it is required to configure result error collection target of <code>hive</code> type.
+Hive table to which metric errors will be saved must be created in advance with <a href="#unified-targets-schema">Unified Targets Schema</a>.</p>
+<p>Thus, in addition to common error collection target parameters, it is required to indicate Hive schema and table:</p>
+<ul>
+<li><code>schema</code> - <em>Required</em>. Hive schema.</li>
+<li><code>table</code> - <em>Required</em>. Hive table.</li>
+</ul>
+<p>Note that metric errors will be appended to Hive table.</p>
+<h3 id="send-metric-errors-to-kafka">Send Metric Errors to Kafka</h3>
+<p>In order to send metric errors to Kafka topic, it is required to configure error collection target of <code>kafka</code> type.
+Connection to Kafka cluster must be configured in <code>connections</code> section of job configuration as described in
+<a href="../01-Connections/#kafka-connection-configuration">Kafka Connection Configuration</a>.</p>
+<p>Thus, in addition to common error collection target parameters, it is required provide following ones:</p>
+<ul>
+<li><code>connection</code> - <em>Required</em>. Kafka connection ID.</li>
+<li><code>topic</code> - <em>Required</em>. Kafka topic to send results to.</li>
+<li><code>options</code> - <em>Optional</em>. Additional list of Kafka parameters for sending messages to topic.
+  Parameters are provided as a strings in format of <code>parameterName=parameterValue</code>.</li>
+</ul>
+<p>Metric errors will be saved as JSON messages. In addition, <code>aggregatedKafkaOutput</code> parameter configured in application
+settings controls how metric errors will be sent 
+(see <a href="../../01-application-setup/01-ApplicationSettings/#enablers">Enablers</a> chapter):</p>
+<ul>
+<li>One message per each result.</li>
+<li>One large message with list of all results. </li>
+</ul>
+<blockquote>
+<p><strong>IMPORTANT</strong>. Be careful, when using this option for saving metric errors as there could
+be a significant number of them. In order to fit into Kafka message size limits it is recommended to limit number
+of errors sent per each metric by setting <code>dumpSize</code> parameter to a reasonably low number.</p>
+</blockquote>
+<h2 id="summary-targets">Summary Targets</h2>
+<p>Checkita framework collects summary upon completion of each Data Quality job. Summary targets are designed accordingly,
+to enable sending summary reports to users. Thus, summary targets are configured in <code>summary</code> subsection and can be 
+one of the following type depending on where summary reports are sent or saved:</p>
+<ul>
+<li><code>email</code> - Send summary report to user(s) via email.</li>
+<li><code>mattermost</code> - Send summary report to mattermost either to channel or to user's direct messages.</li>
+<li><code>kafka</code> - Send summary report to Kafka topic in JSON format. When sending summary report to Kafka, it is transformed
+  to <a href="#unified-targets-schema">Unified Targets Schema</a>.</li>
+</ul>
+<p>For summary target of <code>email</code> or <code>mattermost</code> type the following parameters can be supplied:</p>
+<ul>
+<li><code>attachMetricErrors</code> - <em>Optional, default is <code>false</code></em>. Boolean parameter indicating whether report with collected
+  metric errors should be attached to email or message with summary report.</li>
+<li><code>attachFailedChecks</code> - <em>Optional, default is <code>false</code></em>. Boolean parameter indicating whether report with failed checks
+  should be attached to email or message with summary report.</li>
+<li><code>metrics</code> - <em>Optional</em>. If <code>attachMetricErrors</code> is set to <code>true</code>, then this parameter can be used to specify list of 
+  metric for which errors will be saved. If omitted, then errors are saved for all metrics defined in Data Quality job.</li>
+<li><code>dumpSize</code> - <em>Optional, default is <code>100</code></em>. If <code>attachMetricErrors</code> is set to <code>true</code>, then this parameter allows 
+  additionally limit number of errors saved per metric in order to make report more compact. 
+  Could not be larger, than application-level limitation as described in
+  <a href="../../01-application-setup/01-ApplicationSettings/#enablers">Enablers</a> chapter.</li>
+</ul>
+<h3 id="send-summary-to-email">Send Summary to Email</h3>
+<p>In order to send summary report via email, it is required to configure summary target of <code>email</code> type.
+In addition to common summary target parameters, it is required to configure following ones:</p>
+<ul>
+<li><code>recipients</code> - <em>Required</em>. List of recipients' emails to which summary report will be sent.</li>
+<li><code>template</code> - <em>Optional</em>. HTML template to build email body.</li>
+<li><code>templateFile</code> - <em>Optional</em>. Location of the file with HTML template to build email body.</li>
+</ul>
+<p>HTML template is optional. If HTML template is not provided then the default summary report body is 
+compiled. Moreover, it should be noted, that <code>template</code> parameter has higher priority than <code>templateFile</code> one. 
+Therefore, if both of them are set then explicitly defined then HTML template from <code>template</code> parameter is used.</p>
+<p>In addition, HTML templates support parameter substitution using 
+<a href="https://mustache.github.io/mustache.5.html">Mustache Template</a> notation, e.g.:
+<code>This {{ parameterName }} has a value of {{ parameterValue }}</code>. List of available parameters that can be used for
+substitution in HTML templates is given in 
+<a href="#job-summary-parameters-available-for-templates">Job Summary Parameters Available for Templates</a> chapter below.</p>
+<h3 id="send-summary-to-mattermost">Send Summary to Mattermost</h3>
+<p>In order to send summary report to mattermost, it is required to configure summary target of <code>mattermost</code> type.
+In addition to common summary target parameters, it is required to configure following ones:</p>
+<ul>
+<li><code>recipients</code> - <em>Required</em>. List of recipients' to which summary report will be sent. Message can be sent either to
+  a channel or to a user's direct messages:<ul>
+<li>When sending message to a channel, it is required to specify channel name prefixed with <code>#</code> sign: <code>#someChannel</code>.</li>
+<li>When sending message to a user's direct messages, it is required to specify username with <code>@</code> prefix: <code>@someUser</code>.</li>
+</ul>
+</li>
+<li><code>template</code> - <em>Optional</em>. Markdown template to build message body.</li>
+<li><code>templateFile</code> - <em>Optional</em>. Location of the file with Markdown template to build message body.</li>
+</ul>
+<p>Markdown template is optional. If Markdown template is not provided then the default summary report body is
+compiled. Moreover, it should be noted, that <code>template</code> parameter has higher priority than <code>templateFile</code> one.
+Therefore, if both of them are set then explicitly defined then Markdown template from <code>template</code> parameter is used.</p>
+<p>In addition, Markdown templates support parameter substitution using
+<a href="https://mustache.github.io/mustache.5.html">Mustache Template</a> notation, e.g.:
+<code>This {{ parameterName }} has a value of {{ parameterValue }}</code>. List of available parameters that can be used for
+substitution in Markdown templates is given in
+<a href="#job-summary-parameters-available-for-templates">Job Summary Parameters Available for Templates</a> chapter below.</p>
+<h3 id="send-summary-to-kafka">Send Summary to Kafka</h3>
+<p>In order to send summary report to Kafka topic, it is required to configure summary target of <code>kafka</code> type.
+Connection to Kafka cluster must be configured in <code>connections</code> section of job configuration as described in
+<a href="../01-Connections/#kafka-connection-configuration">Kafka Connection Configuration</a>.</p>
+<p>Kafka messages do not support any from of attachments, therefore, only summary report itself can be sent to Kafka topic.
+Summary report is sent in form of JSON string that will contain all the parameters defined in
+<a href="#job-summary-parameters-available-for-templates">Job Summary Parameters Available for Templates</a> chapter below.
+JSON string format will conform to <a href="#unified-targets-schema">Unified Targets Schema</a>.</p>
+<p>Thus, in order to configure <code>kafka</code> summary target it is required to specify following parameters:</p>
+<ul>
+<li><code>connection</code> - <em>Required</em>. Kafka connection ID.</li>
+<li><code>topic</code> - <em>Required</em>. Kafka topic to send results to.</li>
+<li><code>options</code> - <em>Optional</em>. Additional list of Kafka parameters for sending messages to topic.
+  Parameters are provided as a strings in format of <code>parameterName=parameterValue</code>.</li>
+</ul>
+<h2 id="check-alert-targets">Check Alert Targets</h2>
+<p>Check alert targets are developed specifically to enable notification sending in case if some of watched checks 
+have failed. These targets are configured in <code>checkAlert</code> subsection and can be one of the following type depending 
+on where alerts are sent:</p>
+<ul>
+<li><code>email</code> - Send check alert to user(s) via email.</li>
+<li><code>mattermost</code> - Send check alert to mattermost either to channel or to user's direct messages.</li>
+</ul>
+<p>For check alert target of any type the following parameters can be supplied:</p>
+<ul>
+<li><code>id</code> - <em>Required</em>. ID of check alert. There could be different check alert configurations for different sets of checks.
+  Therefore, check alerts should have an ID, in order to distinguish them.</li>
+<li><code>checks</code> - <em>Optional</em>. List of watched checks. If any of watched checks fails then alert notification is sent.
+  If omitted, then all checks defined in the Data Quality job are being watched.</li>
+</ul>
+<h3 id="send-check-alerts-to-email">Send Check Alerts to Email</h3>
+<p>In order to send check alert via email, it is required to configure check alert target of <code>email</code> type.
+In addition to common check alert target parameters, it is required to configure following ones:</p>
+<ul>
+<li><code>recipients</code> - <em>Required</em>. List of recipients' emails to which check alert will be sent.</li>
+<li><code>template</code> - <em>Optional</em>. HTML template to build email body.</li>
+<li><code>templateFile</code> - <em>Optional</em>. Location of the file with HTML template to build email body.</li>
+</ul>
+<p>HTML template is optional. If HTML template is not provided then the default check alert body is
+compiled. Moreover, it should be noted, that <code>template</code> parameter has higher priority than <code>templateFile</code> one.
+Therefore, if both of them are set then explicitly defined then HTML template from <code>template</code> parameter is used.</p>
+<p>In addition, HTML templates support parameter substitution using
+<a href="https://mustache.github.io/mustache.5.html">Mustache Template</a> notation, e.g.:
+<code>This {{ parameterName }} has a value of {{ parameterValue }}</code>. List of available parameters that can be used for
+substitution in HTML templates is given in
+<a href="#job-summary-parameters-available-for-templates">Job Summary Parameters Available for Templates</a> chapter below.</p>
+<h3 id="send-check-alerts-to-mattermost">Send Check Alerts to Mattermost</h3>
+<p>In order to check alert to mattermost, it is required to configure check alert target of <code>mattermost</code> type.
+In addition to common check alert target parameters, it is required to configure following ones:</p>
+<ul>
+<li><code>recipients</code> - <em>Required</em>. List of recipients' to which check alert will be sent. Message can be sent either to
+  a channel or to a user's direct messages:</li>
+<li>When sending message to a channel, it is required to specify channel name prefixed with <code>#</code> sign: <code>#someChannel</code>.</li>
+<li>When sending message to a user's direct messages, it is required to specify username with <code>@</code> prefix: <code>@someUser</code>.</li>
+<li><code>template</code> - <em>Optional</em>. Markdown template to build message body.</li>
+<li><code>templateFile</code> - <em>Optional</em>. Location of the file with Markdown template to build message body.</li>
+</ul>
+<p>Markdown template is optional. If Markdown template is not provided then the default check alert body is
+compiled. Moreover, it should be noted, that <code>template</code> parameter has higher priority than <code>templateFile</code> one.
+Therefore, if both of them are set then explicitly defined then Markdown template from <code>template</code> parameter is used.</p>
+<p>In addition, Markdown templates support parameter substitution using
+<a href="https://mustache.github.io/mustache.5.html">Mustache Template</a> notation, e.g.:
+<code>This {{ parameterName }} has a value of {{ parameterValue }}</code>. List of available parameters that can be used for
+substitution in Markdown templates is given in
+<a href="#job-summary-parameters-available-for-templates">Job Summary Parameters Available for Templates</a> chapter below.</p>
+<h2 id="unified-targets-schema">Unified Targets Schema</h2>
+<p>All targets that are saved to five or sent to Kafka are reduced to unified schema. Such approach have some advantages:</p>
+<ul>
+<li>Results of various types can be sent all together as single file or a large Kafka message.</li>
+<li>Saved targets from different Data Quality jobs can be merged into a larger file. This allows to avoid "small files"
+  problem when saving targets in HDFS or S3.</li>
+<li>As all targets sent to Kafka topic conform to unified schema then it is easier to parse message with different type
+  of results.</li>
+</ul>
+<p>Thus, unified schema is following:</p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Column Type</th>
+<th>Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>jobId</td>
+<td>STRING</td>
+<td>ID of Data Quality Job</td>
+</tr>
+<tr>
+<td>referenceDate</td>
+<td>STRING</td>
+<td>Reference datetime for which job is run</td>
+</tr>
+<tr>
+<td>executionDate</td>
+<td>STRING</td>
+<td>Datetime of actual job start</td>
+</tr>
+<tr>
+<td>entityType</td>
+<td>STRING</td>
+<td>Type of result</td>
+</tr>
+<tr>
+<td>data</td>
+<td>STRING</td>
+<td>JSON string. Content varies depending in entityType</td>
+</tr>
+</tbody>
+</table>
+<p>From the schema above it is seen that all data that is specific to a results of each type is stored as JSON string.
+When sending results to Kafka, the schema would be the same but <code>data</code> will become a nested JSON object.</p>
+<h2 id="job-summary-parameters-available-for-templates">Job Summary Parameters Available for Templates</h2>
+<p>It is already noted that HTML or Markdown templates used to build body of notifications support parameter substitution 
+using <a href="https://mustache.github.io/mustache.5.html">Mustache Template</a> notation. List of available parameters that can 
+be used for substitution is shown below.</p>
+<p>For example, Markdown template with check alert notification could look like:</p>
+<div class="language-markdown highlight"><pre><span></span><code><span id="__span-0-1"><span class="gh"># Checkita Data Quality Notification - Failed Check Alert</span>
+</span><span id="__span-0-2">
+</span><span id="__span-0-3">You requested notifications on failed checks in Data Quality Job: <span class="sb">`{{ jobId}}`</span>.
+</span><span id="__span-0-4">
+</span><span id="__span-0-5">Inform you that some watched checks have failed for job started for:
+</span><span id="__span-0-6">
+</span><span id="__span-0-7"><span class="k">*</span><span class="w"> </span>Reference date: <span class="sb">`{{ referenceDate }}`</span>
+</span><span id="__span-0-8"><span class="k">*</span><span class="w"> </span>Execution date: <span class="sb">`{{ executionDate }}`</span>
+</span><span id="__span-0-9">
+</span><span id="__span-0-10">Attached files contain information about failed checks. Please, review them.
+</span></code></pre></div>
+<ul>
+<li><code>jobId</code> - ID of the current Data Quality job.</li>
+<li><code>jobStatus</code> - Job status: <code>Success</code> if all checks are passed, <code>Failure</code> otherwise.</li>
+<li><code>referenceDate</code> - Reference datetime for which job is run.</li>
+<li><code>executionDate</code> - Datetime of actual job start.</li>
+<li><code>numSources</code> - Total number of sources in the job.</li>
+<li><code>numMetrics</code> - Total number of metric in the job.</li>
+<li><code>numChecks</code> - Total number of checks in the job.</li>
+<li><code>numLoadChecks</code> - Total number of load checks in the job.</li>
+<li><code>numMetricsWithErrors</code> - Number of metrics that yielded errors during their computation.</li>
+<li><code>numFailedChecks</code> - Number of failed checks.</li>
+<li><code>numFailedLoadChecks</code> - Number of failed load checks.</li>
+<li><code>listMetricsWithErrors</code> - List of all metrics that yielded errors during their computation.</li>
+<li><code>listFailedChecks</code> - List of failed checks.</li>
+<li><code>listFailedLoadChecks</code> - List of failed load checks.</li>
+</ul>
+<h2 id="targets-configuration-example">Targets Configuration Example</h2>
+<p>As it is shown in the example below, targets are grouped into subsections named after their type.
+These subsections may contain various target configuration depending on the channel where targets are saved or sent.
+Due to multiple check alert configurations are allowed then they are grouped as list of check alerts sent to a specific
+channel (email or mattermost).</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1">jobConfig: {
+</span><span id="__span-1-2">  targets: {
+</span><span id="__span-1-3">    results: {
+</span><span id="__span-1-4">      file: {
+</span><span id="__span-1-5">        resultTypes: [&quot;checks&quot;, &quot;loadChecks&quot;]
+</span><span id="__span-1-6">        save: {
+</span><span id="__span-1-7">          kind: &quot;delimited&quot;
+</span><span id="__span-1-8">          path: &quot;/tmp/dataquality/results&quot;
+</span><span id="__span-1-9">          header: true
+</span><span id="__span-1-10">        }
+</span><span id="__span-1-11">      }
+</span><span id="__span-1-12">      hive: {
+</span><span id="__span-1-13">        resultTypes: [&quot;regularMetrics&quot;, &quot;composedMetrics&quot;, &quot;loadChecks&quot;, &quot;checks&quot;],
+</span><span id="__span-1-14">        schema: &quot;WORKSPACE_CIBAA&quot;,
+</span><span id="__span-1-15">        table: &quot;DQ_TARGETS&quot;
+</span><span id="__span-1-16">      }
+</span><span id="__span-1-17">      kafka: {
+</span><span id="__span-1-18">        resultTypes: [&quot;regularMetrics&quot;, &quot;composedMetrics&quot;, &quot;loadChecks&quot;, &quot;checks&quot;],
+</span><span id="__span-1-19">        connection: &quot;kafka_broker&quot;
+</span><span id="__span-1-20">        topic: &quot;some.topic&quot;
+</span><span id="__span-1-21">      }
+</span><span id="__span-1-22">    }
+</span><span id="__span-1-23">    errorCollection: {
+</span><span id="__span-1-24">      file: {
+</span><span id="__span-1-25">        metrics: [&quot;pct_of_null&quot;, &quot;hive_table_row_cnt&quot;, &quot;hive_table_nulls&quot;]
+</span><span id="__span-1-26">        dumpSize: 50
+</span><span id="__span-1-27">        save: {
+</span><span id="__span-1-28">          kind: &quot;orc&quot;
+</span><span id="__span-1-29">          path: &quot;tmp/DQ/ERRORS&quot;
+</span><span id="__span-1-30">        }
+</span><span id="__span-1-31">      }
+</span><span id="__span-1-32">      kafka: {
+</span><span id="__span-1-33">        metrics: [&quot;hive_table_nulls&quot;, &quot;fixed_file_dist_name&quot;, &quot;table_source1_inn_regex&quot;]
+</span><span id="__span-1-34">        dumpSize: 25
+</span><span id="__span-1-35">        connection: &quot;kafka_broker&quot;
+</span><span id="__span-1-36">        topic: &quot;some.topic&quot;
+</span><span id="__span-1-37">        options: [&quot;addParam=true&quot;]
+</span><span id="__span-1-38">      }
+</span><span id="__span-1-39">    }
+</span><span id="__span-1-40">    summary: {
+</span><span id="__span-1-41">      email: {
+</span><span id="__span-1-42">        attachMetricErrors: true
+</span><span id="__span-1-43">        metrics: [&quot;hive_table_nulls&quot;, &quot;fixed_file_dist_name&quot;, &quot;table_source1_inn_regex&quot;]
+</span><span id="__span-1-44">        dumpSize: 10
+</span><span id="__span-1-45">        recipients: [&quot;some.person@some.domain&quot;]
+</span><span id="__span-1-46">      }
+</span><span id="__span-1-47">      mattermost: {
+</span><span id="__span-1-48">        attachMetricErrors: true
+</span><span id="__span-1-49">        metrics: [&quot;hive_table_nulls&quot;, &quot;fixed_file_dist_name&quot;, &quot;table_source1_inn_regex&quot;]
+</span><span id="__span-1-50">        dumpSize: 10
+</span><span id="__span-1-51">        recipients: [&quot;@someUser&quot;, &quot;#someChannel&quot;]
+</span><span id="__span-1-52">      }
+</span><span id="__span-1-53">      kafka: {
+</span><span id="__span-1-54">        connection: &quot;kafka_broker&quot;
+</span><span id="__span-1-55">        topic: &quot;dev.dq_results.topic&quot;
+</span><span id="__span-1-56">      }
+</span><span id="__span-1-57">    }
+</span><span id="__span-1-58">    checkAlerts: {
+</span><span id="__span-1-59">      email: [
+</span><span id="__span-1-60">        {
+</span><span id="__span-1-61">          id: &quot;alert1&quot;
+</span><span id="__span-1-62">          checks: [&quot;avg_bal_check&quot;, &quot;zero_nulls&quot;]
+</span><span id="__span-1-63">          recipients: [&quot;some.peron@some.domain&quot;]
+</span><span id="__span-1-64">        }
+</span><span id="__span-1-65">        {
+</span><span id="__span-1-66">          id: &quot;alert2&quot;
+</span><span id="__span-1-67">          checks: [&quot;top2_curr_match&quot;, &quot;completeness_check&quot;]
+</span><span id="__span-1-68">          recipients: [&quot;another.peron@some.domain&quot;]
+</span><span id="__span-1-69">        }
+</span><span id="__span-1-70">      ]
+</span><span id="__span-1-71">      mattermost: [
+</span><span id="__span-1-72">        {
+</span><span id="__span-1-73">          id: &quot;alert3&quot;
+</span><span id="__span-1-74">          checks: [&quot;avg_bal_check&quot;, &quot;zero_nulls&quot;]
+</span><span id="__span-1-75">          recipients: [&quot;@someUser&quot;]
+</span><span id="__span-1-76">        }
+</span><span id="__span-1-77">        {
+</span><span id="__span-1-78">          id: &quot;alert4&quot;
+</span><span id="__span-1-79">          checks: [&quot;top2_curr_match&quot;, &quot;completeness_check&quot;]
+</span><span id="__span-1-80">          recipients: [&quot;#someChannel&quot;]
+</span><span id="__span-1-81">        }
+</span><span id="__span-1-82">      ]
+</span><span id="__span-1-83">    }
+</span><span id="__span-1-84">  }
+</span><span id="__span-1-85">}
+</span></code></pre></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+    
+  </body>
+</html>

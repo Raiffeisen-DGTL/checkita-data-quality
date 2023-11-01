@@ -1,0 +1,1383 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../01-Connections/">
+      
+      
+        <link rel="next" href="../03-Sources/">
+      
+      
+      <link rel="icon" href="../../logo/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.7">
+    
+    
+      
+        <title>Schemas Configuration - Checkita Data Quality</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.4b4a2bd9.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="yellow" data-md-color-accent="indigo">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#schemas-configuration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Checkita Data Quality" class="md-header__button md-logo" aria-label="Checkita Data Quality" data-md-component="logo">
+      
+  <img src="../../logo/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Checkita Data Quality
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Schemas Configuration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../ru/03-job-configuration/02-Schemas/" hreflang="ru" class="md-select__link">
+              Русский
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    checkita-data-quality
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../01-application-setup/" class="md-tabs__link">
+          
+  
+    
+  
+  Application Setup
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../02-general-concepts/" class="md-tabs__link">
+          
+  
+    
+  
+  General Concepts
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+    
+  
+  Job Configuration
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../changelog/CHANGELOG/" class="md-tabs__link">
+        
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../contribution/" class="md-tabs__link">
+          
+  
+    
+  
+  Contribution
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../api/" class="md-tabs__link">
+        
+  
+    
+  
+  Scala API Doc
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Checkita Data Quality" class="md-nav__button md-logo" aria-label="Checkita Data Quality" data-md-component="logo">
+      
+  <img src="../../logo/logo.png" alt="logo">
+
+    </a>
+    Checkita Data Quality
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    checkita-data-quality
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../01-application-setup/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Application Setup
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Application Setup
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-application-setup/01-ApplicationSettings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Application Settings
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-application-setup/02-ApplicationSubmit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Submitting Data Quality Application
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-application-setup/03-ResultsStorage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Data Quality Results Storage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../02-general-concepts/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    General Concepts
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            General Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/01-WorkingWithDateTime/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Working with Date and Time
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/02-EnvironmentAndExtraVariables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage of Environment Variables and Extra Variables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/03-StatusModel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Status Model used in Results
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/04-ErrorCollection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metric Error Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Job Configuration
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Job Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-Connections/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Connections Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Schemas Configuration
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Schemas Configuration
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#delimited-schema-configuration" class="md-nav__link">
+    Delimited Schema Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixed-full-schema-configuration" class="md-nav__link">
+    Fixed-Full Schema Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixed-short-schema-configuration" class="md-nav__link">
+    Fixed-Short Schema Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#avro-schema-configuration" class="md-nav__link">
+    Avro Schema Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hive-schema-configuration" class="md-nav__link">
+    Hive Schema Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-type-literals" class="md-nav__link">
+    Supported Type Literals
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schemas-configuration-example" class="md-nav__link">
+    Schemas Configuration Example
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-Sources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sources Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-VirtualSources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Virtual Sources Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-LoadChecks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Load Checks Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-Metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-Checks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Checks Configurations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-Targets/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Targets Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-FileOutputs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    File Output Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-JobConfigExample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Job Configuration Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/CHANGELOG/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../contribution/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Contribution
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Contribution
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribution/code-of-conduct/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Code of Conduct
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribution/contribution/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contribution Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scala API Doc
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="schemas-configuration">Schemas Configuration</h1>
+<p>Schemas are used in Data Quality jobs for two purposes:</p>
+<ul>
+<li>Provide explicit schema when reading sources without embedded schemas such as delimited or fixed width text files.</li>
+<li>Provide reference schema to validate actual source schema. Schemas are used in <code>schemaMatch</code> load checks.
+  See <a href="../05-LoadChecks/#schema-match-check">Schema Match Check</a>.</li>
+</ul>
+<p>Schemas are set in <code>schemas</code> section of job configuration and can be defined in different formats as described below.
+Format in which schema is defined is set in <code>kind</code> field and defines what other fields are need to be provided.</p>
+<h2 id="delimited-schema-configuration">Delimited Schema Configuration</h2>
+<p>This kind of schema definition is primarily used to provide schemas for delimited text files such as CSV or TSV.
+Nevertheless, these schemas can be used for <code>schemaMatch</code> load checks as well. Using this type of configuration, 
+only flat schemas can be defined (nested columns are not allowed).</p>
+<p>Thus, delimited definition contains following parameters:</p>
+<ul>
+<li><code>kind: "delimited"</code> - <em>Required</em>. Sets delimited schema definition format.</li>
+<li><code>id</code> - <em>Required</em>. Schema ID;</li>
+<li><code>schema</code> - <em>Required</em>. List of schema columns where each column is an object with following fields:<ul>
+<li><code>name</code> - <em>Required</em>. Name of the column;</li>
+<li><code>type</code> - <em>Required</em>. Type of the column. See <a href="#supported-type-literals">Supported Type Literals</a> for allowed types.</li>
+</ul>
+</li>
+</ul>
+<h2 id="fixed-full-schema-configuration">Fixed-Full Schema Configuration</h2>
+<p>Fixed-full kind of schema definition is used to provide schemas for read fixed-width text files. The key difference from
+other schema definitions is that columns widths are also provided which is crucial information for parsing fixed-width
+files. This kind of schemas may also be used for reading delimited files and for reference in <code>schemaMatch</code> load checks.
+Using this type of configuration, only flat schemas can be defined (nested columns are not allowed).</p>
+<p>Fixed-fill schema definition contains following parameters:</p>
+<ul>
+<li><code>kind: "fixedFull"</code> - <em>Required</em>. Sets fixed-full schema definition format.</li>
+<li><code>id</code> - <em>Required</em>. Schema ID;</li>
+<li><code>schema</code> - <em>Required</em>. List of schema columns where each column is an object with following fields:<ul>
+<li><code>name</code> - <em>Required</em>. Name of the column;</li>
+<li><code>type</code> - <em>Required</em>. Type of the column. See <a href="#supported-type-literals">Supported Type Literals</a> for allowed types.</li>
+<li><code>width</code> - <em>Required</em>. Integer width of column (number of symbols).</li>
+</ul>
+</li>
+</ul>
+<h2 id="fixed-short-schema-configuration">Fixed-Short Schema Configuration</h2>
+<p>Fixed-short kind of schema definition provides a more compact syntax for defining schemas used for reading fixed-width
+files. The columns are defined by their name and width only. <em>Subsequently, all columns will have StringType.</em>
+This kind of schemas may also be used for reading delimited files and for reference in <code>schemaMatch</code> load checks.
+Using this type of configuration, only flat schemas can be defined (nested columns are not allowed).</p>
+<p>Fixed-short schema definition contains following parameters:</p>
+<ul>
+<li><code>kind: "fixedShort"</code> - <em>Required</em>. Sets fixed-short schema definition format.</li>
+<li><code>id</code> - <em>Required</em>. Schema ID;</li>
+<li><code>schema</code> - <em>Required</em>. List of schema columns where each column is a string in format <code>columnName:columnWidth</code>.
+  <em>Type of columns is always a StringType.</em></li>
+</ul>
+<h2 id="avro-schema-configuration">Avro Schema Configuration</h2>
+<p>Avro kind of schema configuration is used to read schema from file with avro schema <code>.avsc</code>. Thus, schema read from 
+avro schema file can be used to read both, avro files and delimited text files as well as be used as reference 
+in <code>schemaMatch</code> load checks. In addition, avro schema format supports complex schemas with nested columns.</p>
+<p>In order to read schema from avro file it is required to supply following parameters:</p>
+<ul>
+<li><code>kind: "avro"</code> - <em>Required</em>. Sets avro schema definition format.</li>
+<li><code>id</code> - <em>Required</em>. Schema ID;</li>
+<li><code>schema</code> - <em>Required</em>. Path to avro schema file <code>.avsc</code> to read schema from.</li>
+</ul>
+<h2 id="hive-schema-configuration">Hive Schema Configuration</h2>
+<p>Hive catalogue can be used as a source of schemas. Hive kind of schema definition is intended to retrieve schemas from
+hive tables. These schemas can be used to read both, avro files and delimited text files as well as be used as reference
+in <code>schemaMatch</code> load checks.</p>
+<p>To retrieve schema from hive table it is required to set up following parameters:</p>
+<ul>
+<li><code>kind: "hive"</code> - <em>Required</em>. Sets hive schema definition format.</li>
+<li><code>id</code> - <em>Required</em>. Schema ID;</li>
+<li><code>schema</code> - <em>Required</em>. Hive schema to search for a table.</li>
+<li><code>table</code> - <em>Required</em>. Hive table to retrieve schema from.</li>
+<li><code>excludeColumns</code> - <em>Optional</em>. List of column names to exclude from schema. Sometimes it is required, e.g.
+  to exclude partition columns from schema.</li>
+</ul>
+<h2 id="supported-type-literals">Supported Type Literals</h2>
+<p>The following type literals are supported when defining schema columns in job configuration file:</p>
+<ul>
+<li><code>string</code></li>
+<li><code>boolean</code></li>
+<li><code>date</code></li>
+<li><code>timestamp</code></li>
+<li><code>integer (32-bit integer)</code></li>
+<li><code>long (64-bit integer)</code></li>
+<li><code>short (16-bit integer)</code></li>
+<li><code>byte (signed integer in a single byte)</code></li>
+<li><code>double</code></li>
+<li><code>float</code></li>
+<li><code>decimal(precision, scale)</code> <em>(precision &lt;= 38; scale &lt;= precision)</em></li>
+</ul>
+<h2 id="schemas-configuration-example">Schemas Configuration Example</h2>
+<p>As it is shown in the example below, <code>schemas</code> section represent a list of schema definitions of various kinds.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1">jobConfig: {
+</span><span id="__span-0-2">  schemas: [
+</span><span id="__span-0-3">    {
+</span><span id="__span-0-4">      id: &quot;schema1&quot;
+</span><span id="__span-0-5">      kind: &quot;delimited&quot;
+</span><span id="__span-0-6">      schema: [
+</span><span id="__span-0-7">        {name: &quot;colA&quot;, type: &quot;string&quot;},
+</span><span id="__span-0-8">        {name: &quot;colB&quot;, type: &quot;timestamp&quot;},
+</span><span id="__span-0-9">        {name: &quot;colC&quot;, type: &quot;decimal(10, 3)&quot;}
+</span><span id="__span-0-10">      ]
+</span><span id="__span-0-11">    }
+</span><span id="__span-0-12">    {
+</span><span id="__span-0-13">      id: &quot;schema2&quot;
+</span><span id="__span-0-14">      kind: &quot;fixedFull&quot;,
+</span><span id="__span-0-15">      schema: [
+</span><span id="__span-0-16">        {name: &quot;col1&quot;, type: &quot;integer&quot;, width: 5},
+</span><span id="__span-0-17">        {name: &quot;col2&quot;, type: &quot;double&quot;, width: 6},
+</span><span id="__span-0-18">        {name: &quot;col3&quot;, type: &quot;boolean&quot;, width: 4}
+</span><span id="__span-0-19">      ]
+</span><span id="__span-0-20">    }
+</span><span id="__span-0-21">    {id: &quot;schema3&quot;, kind: &quot;fixedShort&quot;, schema: [&quot;colOne:5&quot;, &quot;colTwo:7&quot;, &quot;colThree:9&quot;]}
+</span><span id="__span-0-22">    {id: &quot;hive_schema&quot;, kind: &quot;hive&quot;, schema: &quot;some_schema&quot;, table: &quot;some_table&quot;}
+</span><span id="__span-0-23">    {id: &quot;avro_schema&quot;, kind: &quot;avro&quot;, schema: &quot;path/to/avro_schema.avsc&quot;}
+</span><span id="__span-0-24">  ]
+</span><span id="__span-0-25">}
+</span></code></pre></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+    
+  </body>
+</html>

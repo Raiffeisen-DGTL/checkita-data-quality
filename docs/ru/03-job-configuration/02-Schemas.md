@@ -1,3 +1,0 @@
-# Schemas Configuration
-
-tbd
