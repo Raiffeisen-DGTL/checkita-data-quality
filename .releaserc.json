@@ -1,0 +1,35 @@
+{
+    "branches": [
+        "main"
+    ],
+    "plugins": [pre
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
+        [
+            "@semantic-release/exec",
+            {
+                "verifyReleaseCmd": "./.prepare_release.sh ${nextRelease.version}"
+            }
+        ],
+        [
+            "@semantic-release/changelog",
+            {
+                "changelogFile": "docs/changelog/CHANGELOG.md"
+            }
+        ],
+        [
+            "@semantic-release/git",
+            {
+                "assets": [
+                    "docs/changelog/CHANGELOG.md",
+                    "docs/en/index.md",
+                    "docs/ru/index.md",
+                    "project/Version.scala",
+                    "README.md"
+                ],
+                "message": "chore (release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+            }
+        ],
+        "@semantic-release/github"
+    ]
+}

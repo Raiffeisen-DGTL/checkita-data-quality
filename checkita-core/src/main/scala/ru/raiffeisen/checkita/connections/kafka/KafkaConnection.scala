@@ -7,7 +7,7 @@ import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.{col, from_json, udf}
 import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.json4s.Xml.toJson
+import org.json.XML
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.Enums.KafkaTopicFormat
 import ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig
@@ -18,7 +18,6 @@ import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.util.Properties
 import scala.util.Try
-import scala.xml.XML
 
 case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection {
   type SourceType = KafkaSourceConfig
@@ -28,7 +27,7 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection {
     "bootstrap.servers" -> config.servers.value.map(_.value).mkString(",")
   ) ++ paramsSeqToMap(sparkParams)
   
-  private val xmlToJson: UserDefinedFunction = udf((xmlStr: String) => toJson(XML.loadString(xmlStr)))
+  private val xmlToJson: UserDefinedFunction = udf((xmlStr: String) => XML.toJSONObject(xmlStr).toString)
   
   /**
    * Gets proper subscribe option for given source configuration.
