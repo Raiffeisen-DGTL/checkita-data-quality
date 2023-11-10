@@ -7,6 +7,7 @@ object Utils {
   def getSparkDependencies(sparkVersion: String, assyMode: AssyMode.Value): Map[String, ModuleID] = {
 
     lazy val jpountz = ExclusionRule(organization = "net.jpountz.lz4", name = "lz4")
+    lazy val hadoop = ExclusionRule(organization = "org.apache.hadoop", name = "hadoop-client-runtime")
 
     val sparkDeps: Map[String, ModuleID] = Map(
       "sparkCore" -> "org.apache.spark" %% "spark-core" % sparkVersion,
@@ -19,7 +20,7 @@ object Utils {
     val sparkKafkaDeps: Map[String, ModuleID] = Map(
       "sparkKafkaStreaming" -> "org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkVersion,
       "sparkKafkaSql" -> "org.apache.spark" %% "spark-sql-kafka-0-10" % sparkVersion
-    ).mapValues(m => m excludeAll jpountz)
+    ).mapValues(_.excludeAll(jpountz, hadoop))
 
     sparkDeps ++ sparkKafkaDeps + ("sparkAvro" -> "org.apache.spark" %% "spark-avro" % sparkVersion)
   }

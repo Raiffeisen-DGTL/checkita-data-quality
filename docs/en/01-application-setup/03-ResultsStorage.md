@@ -72,11 +72,11 @@ only one set of results per Data Quality job and given reference date.
 | metric_id         | STRING      | NOT NULL   |
 | metric_name       | STRING      | NOT NULL   |
 | description       | STRING      |            |
- | source_id         | STRING      | NOT NULL   |
+| source_id         | STRING      | NOT NULL   |
 | column_names      | STRING      |            |
 | params            | STRING      |            |
 | result            | DOUBLE      | NOT NULL   |
- | additional_result | STRING      |            |
+| additional_result | STRING      |            |
 | reference_date    | TIMESTAMP   | NOT NULL   |
 | execution_date    | TIMESTAMP   | NOT NULL   |
 

@@ -34,15 +34,21 @@ lazy val `checkita-core` = (project in file("checkita-core")).settings(
 
   version := Utils.getVersionString((ThisBuild / version).value, packageType.value),
 
-  assembly / assemblyJarName := s"${name.value}-${scalaVersion.value}-${version.value}.jar",
-  assembly / test := {},
-  assembly / assemblyMergeStrategy := {
+  assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}-uber.jar",
+  assemblyPackageDependency / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}-deps.jar",
+
+  assemblyPackageDependency / assemblyOption ~= {
+    _.withIncludeScala(false)
+  },
+  assemblyMergeStrategy := {
     case x if Assembly.isConfigFile(x) => MergeStrategy.concat
-    case PathList(ps @ _*) if Assembly.isReadme(ps.last) || Assembly.isLicenseFile(ps.last) =>
+    case PathList(ps@_*) if Assembly.isReadme(ps.last) || Assembly.isLicenseFile(ps.last) =>
       MergeStrategy.rename
-    case PathList("META-INF", xs @ _*) => xs map {_.toLowerCase} match {
+    case PathList("META-INF", xs@_*) => xs map {
+      _.toLowerCase
+    } match {
       case "manifest.mf" :: Nil | "index.list" :: Nil | "dependencies" :: Nil => MergeStrategy.discard
-      case ps @ x :: xs if ps.last.endsWith(".sf") || ps.last.endsWith(".dsa") => MergeStrategy.discard
+      case ps@x :: xs if ps.last.endsWith(".sf") || ps.last.endsWith(".dsa") => MergeStrategy.discard
       case "plexus" :: xs => MergeStrategy.discard
       case "services" :: xs => MergeStrategy.filterDistinctLines
       case "spring.schemas" :: Nil | "spring.handlers" :: Nil => MergeStrategy.filterDistinctLines

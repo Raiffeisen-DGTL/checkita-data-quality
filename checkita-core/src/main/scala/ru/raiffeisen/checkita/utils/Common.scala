@@ -6,8 +6,8 @@ import org.apache.commons.io.IOUtils.toInputStream
 import ru.raiffeisen.checkita.config.RefinedTypes.DateFormat
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
-import scala.reflect.runtime.universe.{MethodSymbol, TypeTag, typeOf}
 import java.io.{File, InputStreamReader, SequenceInputStream, Serializable}
+import scala.reflect.runtime.universe.{MethodSymbol, TypeTag, typeOf}
 import scala.util.Try
 
 object Common {

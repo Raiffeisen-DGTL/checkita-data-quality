@@ -30,7 +30,8 @@ via environment variables or via extra variables argument. For more details see
 [Usage of Environment Variables and Extra Variables](../02-general-concepts/02-EnvironmentAndExtraVariables.md).
 
 ```bash
-export DQ_APPLICATION="<local or remote (HDFS, S3) path to uber-jar application>"
+export DQ_APPLICATION="<local or remote (HDFS, S3) path to application jar>"
+export DQ_DEPENDENCIES="<local or remote (HDFS, S3) path to uber-jar with framework dependencies>"
 export DQ_APP_CONFIG="<local or remote (HDFS, S3) path to application configuration file>"
 export DQ_JOB_CONFIGS="<local or remote (HDFS, S3) paths to job configuration files separated by commas>"
 
@@ -52,6 +53,7 @@ spark-submit\
    --executor-memory 2g \
    --executor-cores 4 \
    --driver-memory 2g \
+   --jars $DQ_DEPENDENCIES \
    --files "$DQ_APP_CONFIG,$DQ_DQ_JOB_CONFIGS" \
    --conf "spark.executor.memoryOverhead=2g" \
    --conf "spark.driver.memoryOverhead=2g" \

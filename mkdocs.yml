@@ -1,4 +1,5 @@
 site_name: Checkita Data Quality
+site_url: https://raiffeisen-dgtl.github.io/checkita-data-quality/
 
 # Repository
 repo_name: checkita-data-quality
@@ -88,6 +89,8 @@ plugins:
                 - ru/02-general-concepts/index.md
                 - ru/02-general-concepts/01-WorkingWithDateTime.md
                 - ru/02-general-concepts/02-EnvironmentAndExtraVariables.md
+                - ru/02-general-concepts/03-StatusModel.md
+                - ru/02-general-concepts/04-ErrorCollection.md
             - Job Configuration:
                 - ru/03-job-configuration/index.md
                 - ru/03-job-configuration/01-Connections.md
