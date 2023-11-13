@@ -8,6 +8,8 @@
       
       
       
+        <link rel="canonical" href="https://raiffeisen-dgtl.github.io/checkita-data-quality/ru/03-job-configuration/01-Connections/">
+      
       
         <link rel="prev" href="../">
       
@@ -16,11 +18,11 @@
       
       
       <link rel="icon" href="../../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.7">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.8">
     
     
       
-        <title>Connections Configuration - Checkita Data Quality</title>
+        <title>Конфигурация подключений (Connections) - Checkita Data Quality</title>
       
     
     
@@ -71,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#connections-configuration" class="md-skip">
+        <a href="#connections" class="md-skip">
           Перейти к содержанию
         </a>
       
@@ -106,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Connections Configuration
+              Конфигурация подключений (Connections)
             
           </span>
         </div>
@@ -549,6 +551,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -623,6 +629,46 @@
   
   <span class="md-ellipsis">
     Использование Переменных Окружения и Дополнительных Переменных
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/03-StatusModel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Статусная Модель Результатов
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/04-ErrorCollection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Сбор Ошибок Вычисления Метрик
   </span>
   
 
@@ -727,15 +773,80 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Конфигурация подключений (Connections)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
-    Connections Configuration
+    Конфигурация подключений (Connections)
   </span>
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sqlite" class="md-nav__link">
+    Конфигурация подключения к SQLite
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#postgresql" class="md-nav__link">
+    Конфигурация подключения к PostgreSQL
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#oracle" class="md-nav__link">
+    Конфигурация подключения к Oracle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka" class="md-nav__link">
+    Конфигурация подключения к Kafka
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    Пример Описания Подключений
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -752,7 +863,7 @@
         
   
   <span class="md-ellipsis">
-    Schemas Configuration
+    Описание Схем Данных (Schemas)
   </span>
   
 
@@ -1051,8 +1162,123 @@
   
 
 
-<h1 id="connections-configuration">Connections Configuration</h1>
-<p>tbd</p>
+<h1 id="connections">Конфигурация подключений (Connections)</h1>
+<p>Фреймворк Checkita позволяет создавать читать данные из внешних систем, таких как реляционные СУБД или брокеры
+сообщений (Kafka). Для того чтобы читать данные из внешних систем, нужно настроить подключение к ним.</p>
+<p>Так, конфигурации подключений к внешним системам описываются в разделе <code>connections</code> файла с настройками Data Quality
+пайплайна. На текущий момент поддерживаются подключения к следующим системам:</p>
+<ul>
+<li>Подключения к СУБД посредством JDBC драйвера:<ul>
+<li>PostgreSQL (также этот тип подключения может быть использован для чтения данных из GreenPlum);</li>
+<li>Oracle</li>
+<li>SQLite</li>
+</ul>
+</li>
+<li>Подключения к брокерам сообщений:<ul>
+<li>Kafka</li>
+</ul>
+</li>
+</ul>
+<p>Все подключения должны иметь уникальный идентификатор <code>id</code>, а также могут иметь опциональный список Spark-параметров.
+Эти параметры указываются в поле <code>parameters</code> и используются для предоставления дополнительных параметров подключения
+которые используются Spark'ом, чтобы читать данные из данной системы.</p>
+<p>Пример заполненного раздела <code>connections</code> представлен ниже в главе <a href="#_1">Пример Описания Подключений</a>.</p>
+<h2 id="sqlite">Конфигурация подключения к SQLite</h2>
+<p>Настройка подключения к БД SQLite достаточно проста. Достаточно указать только два параметра:</p>
+<ul>
+<li><code>id</code> - <em>Обязательно</em>. ID подключения;</li>
+<li><code>url</code> - <em>Обязательно</em>. Путь до файла с базой SQLite.</li>
+<li><code>parameters</code> - <em>Опционально</em>. Список Spark-параметров (если требуется), где каждый параметр - это строка в формате:
+  <code>spark.param.name=spark.param.value</code>.</li>
+</ul>
+<h2 id="postgresql">Конфигурация подключения к PostgreSQL</h2>
+<p>Настройка подключения к PostgreSQL может быть описана с помощью следующих параметров:</p>
+<ul>
+<li><code>id</code> - <em>Обязательно</em>. ID подключения;</li>
+<li><code>url</code> - <em>Обязательно</em>. URL для подключения к серверу PostgreSQL. URL должен содержать адрес сервера, порт и имя БД
+  для подключения. Дополнительные параметры также могут быть указаны в URL, если требуется, в соответствии с 
+  документацией PostgreSQL. <em>URL не должен содержать протокол подключения.</em></li>
+<li><code>username</code> - <em>Опционально</em>. Имя пользователя для подключения к базе данных (если требуется).</li>
+<li><code>password</code> - <em>Опционально</em>. Пароль для подключения к базе данных (если требуется).</li>
+<li><code>parameters</code> - <em>Опционально</em>. Список Spark-параметров (если требуется), где каждый параметр - это строка в формате:
+  <code>spark.param.name=spark.param.value</code>.</li>
+</ul>
+<h2 id="oracle">Конфигурация подключения к Oracle</h2>
+<p>Настройка подключения к Oracle описывается так же как и для PostgreSQL, с помощью следующих параметров:</p>
+<ul>
+<li><code>id</code> - <em>Обязательно</em>. ID подключения;</li>
+<li><code>url</code> - <em>Обязательно</em>. URL для подключения к серверу Oracle. URL должен содержать адрес сервера, порт и имя БД
+  для подключения. Дополнительные параметры также могут быть указаны в URL, если требуется, в соответствии с
+  документацией Oracle. <em>URL не должен содержать протокол подключения.</em></li>
+<li><code>username</code> - <em>Опционально</em>. Имя пользователя для подключения к базе данных (если требуется).</li>
+<li><code>password</code> - <em>Опционально</em>. Пароль для подключения к базе данных (если требуется).</li>
+<li><code>parameters</code> - <em>Опционально</em>. Список Spark-параметров (если требуется), где каждый параметр - это строка в формате:
+  <code>spark.param.name=spark.param.value</code>.</li>
+</ul>
+<h2 id="kafka">Конфигурация подключения к Kafka</h2>
+<p>Для того чтобы настроить подключение к кластеру Kafka, необходимо указать следующие параметры:</p>
+<ul>
+<li><code>id</code> - <em>Обязательно</em>. ID подключения;</li>
+<li><code>servers</code> - <em>Обязательно</em>. Список серверов (брокеров сообщений) для подключения.</li>
+<li><code>parameters</code> - <em>Optional</em>. Список Spark-параметров (если требуется), где каждый параметр - это строка в формате:
+  <code>spark.param.name=spark.param.value</code>. Обычно, настройки авторизации в Kafka предоставляются как список
+  Spark-параметров.</li>
+</ul>
+<p>Если подключение к кластеру Kafka требует предоставления конфигурационного файла JAAS, то его расположение должно быть
+указано в переменных окружения Java. Важно заметить, что эти переменные должны быть установлены до того, как JVM
+будет запущена. Поэтому они должны быть определены в команде <code>spark-submit</code> как указано ниже:</p>
+<ul>
+<li>Если приложение запускается в <code>cluster</code> режиме:
+  <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1">--deploy-mode<span class="w"> </span>cluster<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-2">--conf<span class="w"> </span><span class="s1">&#39;spark.driver.extraJavaOptions=&quot;-Djava.security.auth.login.config=./jaas.conf&quot;&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-3">--conf<span class="w"> </span><span class="s1">&#39;spark.executor.extraJavaOptions=&quot;-Djava.security.auth.login.config=./jaas.conf&quot;&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-4">--files<span class="w"> </span>/path/to/your/jaas.conf,&lt;other<span class="w"> </span>files<span class="w"> </span>required<span class="w"> </span><span class="k">for</span><span class="w"> </span>DQ&gt;
+</span></code></pre></div></li>
+<li>Если приложение запускается в <code>client</code> режиме, то JVM на клиенте (драйвер) стартует до того, как считываются
+  конфигурации Spark-приложения. Поэтому, переменные окружения Java для драйвера должны быть заданы посредством
+  аргумента <code>--driver-java-options</code>:
+  <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1">--deploy-mode<span class="w"> </span>client<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2">--driver-java-options<span class="w"> </span><span class="s2">&quot;-Djava.security.auth.login.config=.jaas.conf&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3">--conf<span class="w"> </span><span class="s1">&#39;spark.executor.extraJavaOptions=&quot;-Djava.security.auth.login.config=./jaas.conf&quot;&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-4">--files<span class="w"> </span>file.keytab,jaas.conf,&lt;other<span class="w"> </span>files<span class="w"> </span>required<span class="w"> </span><span class="k">for</span><span class="w"> </span>DQ&gt;
+</span></code></pre></div></li>
+</ul>
+<h2 id="_1">Пример Описания Подключений</h2>
+<p>Как показано в примере ниже, подключения одного типа сгруппированы в подразделы, которые именуются в соответствии с
+типом подключения. Эти разделы содержат список подключений только данного типа.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1">jobConfig: {
+</span><span id="__span-2-2">  connections: {
+</span><span id="__span-2-3">    postgresql: [
+</span><span id="__span-2-4">      {id: &quot;postgre_db1&quot;, url: &quot;postgre1.db.com:5432/public&quot;, user: &quot;dq-user&quot;, password: &quot;dq-password&quot;}
+</span><span id="__span-2-5">      {
+</span><span id="__span-2-6">        id: &quot;postgre_db2&quot;,
+</span><span id="__span-2-7">        url: &quot;postgre2.db.com:5432/public&quot;,
+</span><span id="__span-2-8">        user: &quot;dq-user&quot;,
+</span><span id="__span-2-9">        password: &quot;dq-password&quot;,
+</span><span id="__span-2-10">        schema: &quot;dataquality&quot;
+</span><span id="__span-2-11">      }
+</span><span id="__span-2-12">    ]
+</span><span id="__span-2-13">    oracle: [
+</span><span id="__span-2-14">      {id: &quot;oracle_db1&quot;, url: &quot;oracle.db.com:1521/public&quot;, username: &quot;db-user&quot;, password: &quot;dq-password&quot;}
+</span><span id="__span-2-15">    ]
+</span><span id="__span-2-16">    sqlite: [
+</span><span id="__span-2-17">      {id: &quot;sqlite_db&quot;, url: &quot;some/path/to/db.sqlite&quot;}
+</span><span id="__span-2-18">    ],
+</span><span id="__span-2-19">    kafka: [
+</span><span id="__span-2-20">      {id: &quot;kafka_cluster_1&quot;, servers: [&quot;server1:9092&quot;, &quot;server2:9092&quot;]}
+</span><span id="__span-2-21">      {
+</span><span id="__span-2-22">        id: &quot;kafka_cluster_2&quot;,
+</span><span id="__span-2-23">        servers: [&quot;kafka-broker1:9092&quot;, &quot;kafka-broker2:9092&quot;, &quot;kafka-broker3:9092&quot;]
+</span><span id="__span-2-24">        parameters: [
+</span><span id="__span-2-25">          &quot;security.protocol=SASL_PLAINTEXT&quot;,
+</span><span id="__span-2-26">          &quot;sasl.mechanism=GSSAPI&quot;,
+</span><span id="__span-2-27">          &quot;sasl.kerberos.service.name=kafka-service&quot;
+</span><span id="__span-2-28">        ]
+</span><span id="__span-2-29">      }
+</span><span id="__span-2-30">    ]
+</span><span id="__span-2-31">  }
+</span><span id="__span-2-32">}
+</span></code></pre></div>
 
 
 
@@ -1094,7 +1320,7 @@
     <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.81fa17fe.min.js"></script>
       
     
   </body>

@@ -8,6 +8,8 @@
       
       
       
+        <link rel="canonical" href="https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/03-Sources/">
+      
       
         <link rel="prev" href="../02-Schemas/">
       
@@ -16,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.7">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.8">
     
     
       
@@ -921,6 +923,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#custom-sources-configuration" class="md-nav__link">
+    Custom Sources Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sources-configuration-example" class="md-nav__link">
     Sources Configuration Example
   </a>
@@ -1407,49 +1416,67 @@ parameters:</p>
 <p><em>TIP</em>: In order to define JSON strings, they must be enclosed in triple quotes:
 <code>"""{"name1": {"name2": "value2", "name3": "value3""}}"""</code>.</p>
 </blockquote>
+<h2 id="custom-sources-configuration">Custom Sources Configuration</h2>
+<p>Custom sources can be used in cases when it is required to read data from the source type that is not explicitly
+supported (by one of the configuration described above). In order to configure a custom source, it is required to
+provide following parameters:</p>
+<ul>
+<li><code>id</code> - <em>Required</em>. Source ID;</li>
+<li><code>format</code> - <em>Required</em>. Spark DataFrame reader format that is used to read from the given source.</li>
+<li><code>path</code> - <em>Optional</em>. Path to read data from (if required).</li>
+<li><code>schema</code> - <em>Optional</em>. Explicit schema to be applied to data from the given source (if required).</li>
+<li><code>options</code> - <em>Optional</em>. Additional Spark parameters used to read data from the given source.</li>
+<li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
+  Key fields are primarily used in error collection reports. For more details on error collection, see
+  <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+</ul>
+<p>After parameters above are defined then spark DataFrame reader is set up to read data from the source as follows:</p>
+<div class="language-scala highlight"><pre><span></span><code><span id="__span-1-1"><span class="kd">val</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spark</span><span class="p">.</span><span class="n">read</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="n">format</span><span class="p">).</span><span class="n">schema</span><span class="p">(</span><span class="n">schema</span><span class="p">).</span><span class="n">options</span><span class="p">(</span><span class="n">options</span><span class="p">).</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span></code></pre></div>
+<p>If any of the optional parameters is missing than corresponding Spark reader configuration is not set.</p>
 <h2 id="sources-configuration-example">Sources Configuration Example</h2>
 <p>As it is shown in the example below, sources of the same type are grouped within subsections named after the type
 of the source. These subsections should contain a list of source configurations of the corresponding type.</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1">  sources: {
-</span><span id="__span-1-2">    file: [
-</span><span id="__span-1-3">      {id: &quot;hdfs_fixed_file&quot;, kind: &quot;fixed&quot;, path: &quot;path/to/fixed/file.txt&quot;, schema: &quot;schema2&quot;}
-</span><span id="__span-1-4">      {
-</span><span id="__span-1-5">        id: &quot;hdfs_delimited_source&quot;,
-</span><span id="__span-1-6">        kind: &quot;delimited&quot;,
-</span><span id="__span-1-7">        path: &quot;path/to/csv/file.csv&quot;
-</span><span id="__span-1-8">        schema: &quot;schema1&quot;
-</span><span id="__span-1-9">      }
-</span><span id="__span-1-10">      {id: &quot;hdfs_avro_source&quot;, kind: &quot;avro&quot;, path: &quot;path/to/avro/file.avro&quot;, schema: &quot;avro_schema&quot;}
-</span><span id="__span-1-11">      {id: &quot;hdfs_orc_source&quot;, kind: &quot;orc&quot;, path: &quot;path/to/orc/file.orc&quot;}
-</span><span id="__span-1-12">    ]
-</span><span id="__span-1-13">    hive: [
-</span><span id="__span-1-14">      {
-</span><span id="__span-1-15">        id: &quot;hive_source_1&quot;, schema: &quot;some_schema&quot;, table: &quot;some_table&quot;,
-</span><span id="__span-1-16">        partitions: [{name: &quot;load_date&quot;, values: [&quot;2023-06-30&quot;, &quot;2023-07-01&quot;]}],
-</span><span id="__span-1-17">        keyFields: [&quot;id&quot;, &quot;name&quot;]
-</span><span id="__span-1-18">      }
-</span><span id="__span-1-19">    ]
-</span><span id="__span-1-20">    table: [
-</span><span id="__span-1-21">      {id: &quot;table_source_1&quot;, connection: &quot;oracle_db1&quot;, table: &quot;some_table&quot;, keyFields: [&quot;id&quot;, &quot;name&quot;]}
-</span><span id="__span-1-22">      {id: &quot;table_source_2&quot;, connection: &quot;sqlite_db&quot;, table: &quot;other_table&quot;}
-</span><span id="__span-1-23">    ]
-</span><span id="__span-1-24">    kafka: [
-</span><span id="__span-1-25">      {
-</span><span id="__span-1-26">        id: &quot;kafka_source_1&quot;,
-</span><span id="__span-1-27">        connection: &quot;kafka_broker&quot;,
-</span><span id="__span-1-28">        topics: [&quot;topic1.pub&quot;, &quot;topic2.pub&quot;]
-</span><span id="__span-1-29">        format: &quot;json&quot;
-</span><span id="__span-1-30">      }
-</span><span id="__span-1-31">      {
-</span><span id="__span-1-32">        id: &quot;kafka_source_2&quot;,
-</span><span id="__span-1-33">        brokerId: &quot;kafka_broker&quot;,
-</span><span id="__span-1-34">        topics: [&quot;topic3.pub@[1,3]&quot;]
-</span><span id="__span-1-35">        startingOffsets: &quot;&quot;&quot;{&quot;topic3.pub&quot;:{&quot;1&quot;:1234,&quot;3&quot;:2314}}&quot;&quot;&quot;
-</span><span id="__span-1-36">        options: [&quot;kafkaConsumer.pollTimeoutMs=300000&quot;]
-</span><span id="__span-1-37">        format: &quot;json&quot;
-</span><span id="__span-1-38">      }
-</span><span id="__span-1-39">    ]
-</span><span id="__span-1-40">  }
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1">  sources: {
+</span><span id="__span-2-2">    file: [
+</span><span id="__span-2-3">      {id: &quot;hdfs_fixed_file&quot;, kind: &quot;fixed&quot;, path: &quot;path/to/fixed/file.txt&quot;, schema: &quot;schema2&quot;}
+</span><span id="__span-2-4">      {
+</span><span id="__span-2-5">        id: &quot;hdfs_delimited_source&quot;,
+</span><span id="__span-2-6">        kind: &quot;delimited&quot;,
+</span><span id="__span-2-7">        path: &quot;path/to/csv/file.csv&quot;
+</span><span id="__span-2-8">        schema: &quot;schema1&quot;
+</span><span id="__span-2-9">      }
+</span><span id="__span-2-10">      {id: &quot;hdfs_avro_source&quot;, kind: &quot;avro&quot;, path: &quot;path/to/avro/file.avro&quot;, schema: &quot;avro_schema&quot;}
+</span><span id="__span-2-11">      {id: &quot;hdfs_orc_source&quot;, kind: &quot;orc&quot;, path: &quot;path/to/orc/file.orc&quot;}
+</span><span id="__span-2-12">    ]
+</span><span id="__span-2-13">    hive: [
+</span><span id="__span-2-14">      {
+</span><span id="__span-2-15">        id: &quot;hive_source_1&quot;, schema: &quot;some_schema&quot;, table: &quot;some_table&quot;,
+</span><span id="__span-2-16">        partitions: [{name: &quot;load_date&quot;, values: [&quot;2023-06-30&quot;, &quot;2023-07-01&quot;]}],
+</span><span id="__span-2-17">        keyFields: [&quot;id&quot;, &quot;name&quot;]
+</span><span id="__span-2-18">      }
+</span><span id="__span-2-19">    ]
+</span><span id="__span-2-20">    table: [
+</span><span id="__span-2-21">      {id: &quot;table_source_1&quot;, connection: &quot;oracle_db1&quot;, table: &quot;some_table&quot;, keyFields: [&quot;id&quot;, &quot;name&quot;]}
+</span><span id="__span-2-22">      {id: &quot;table_source_2&quot;, connection: &quot;sqlite_db&quot;, table: &quot;other_table&quot;}
+</span><span id="__span-2-23">    ]
+</span><span id="__span-2-24">    kafka: [
+</span><span id="__span-2-25">      {
+</span><span id="__span-2-26">        id: &quot;kafka_source_1&quot;,
+</span><span id="__span-2-27">        connection: &quot;kafka_broker&quot;,
+</span><span id="__span-2-28">        topics: [&quot;topic1.pub&quot;, &quot;topic2.pub&quot;]
+</span><span id="__span-2-29">        format: &quot;json&quot;
+</span><span id="__span-2-30">      }
+</span><span id="__span-2-31">      {
+</span><span id="__span-2-32">        id: &quot;kafka_source_2&quot;,
+</span><span id="__span-2-33">        brokerId: &quot;kafka_broker&quot;,
+</span><span id="__span-2-34">        topics: [&quot;topic3.pub@[1,3]&quot;]
+</span><span id="__span-2-35">        startingOffsets: &quot;&quot;&quot;{&quot;topic3.pub&quot;:{&quot;1&quot;:1234,&quot;3&quot;:2314}}&quot;&quot;&quot;
+</span><span id="__span-2-36">        options: [&quot;kafkaConsumer.pollTimeoutMs=300000&quot;]
+</span><span id="__span-2-37">        format: &quot;json&quot;
+</span><span id="__span-2-38">      }
+</span><span id="__span-2-39">    ]
+</span><span id="__span-2-40">  }
 </span></code></pre></div>
 
 
@@ -1492,7 +1519,7 @@ of the source. These subsections should contain a list of source configurations 
     <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../../assets/javascripts/bundle.81fa17fe.min.js"></script>
       
     
   </body>

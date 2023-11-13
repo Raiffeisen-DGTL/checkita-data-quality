@@ -8,6 +8,8 @@
       
       
       
+        <link rel="canonical" href="https://raiffeisen-dgtl.github.io/checkita-data-quality/01-application-setup/02-ApplicationSubmit/">
+      
       
         <link rel="prev" href="../01-ApplicationSettings/">
       
@@ -16,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.7">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.8">
     
     
       
@@ -1166,37 +1168,39 @@ And as any Spark application, Checkita applications can be run both locally and 
 Framework storage database connection parameters are specified in <code>application.conf</code> and secrets may be passed either
 via environment variables or via extra variables argument. For more details see 
 <a href="../../02-general-concepts/02-EnvironmentAndExtraVariables/">Usage of Environment Variables and Extra Variables</a>.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><span class="nb">export</span><span class="w"> </span><span class="nv">DQ_APPLICATION</span><span class="o">=</span><span class="s2">&quot;&lt;local or remote (HDFS, S3) path to uber-jar application&gt;&quot;</span>
-</span><span id="__span-0-2"><span class="nb">export</span><span class="w"> </span><span class="nv">DQ_APP_CONFIG</span><span class="o">=</span><span class="s2">&quot;&lt;local or remote (HDFS, S3) path to application configuration file&gt;&quot;</span>
-</span><span id="__span-0-3"><span class="nb">export</span><span class="w"> </span><span class="nv">DQ_JOB_CONFIGS</span><span class="o">=</span><span class="s2">&quot;&lt;local or remote (HDFS, S3) paths to job configuration files separated by commas&gt;&quot;</span>
-</span><span id="__span-0-4">
-</span><span id="__span-0-5"><span class="c1"># As configuration files are uploaded to driver and executors they will be located in working directories.</span>
-</span><span id="__span-0-6"><span class="c1"># Therefore, in application arguments it is required to list just their file names:</span>
-</span><span id="__span-0-7"><span class="nb">export</span><span class="w"> </span><span class="nv">DQ_APP_CONFIG_FILE</span><span class="o">=</span><span class="k">$(</span>basename<span class="w"> </span><span class="nv">$DQ_APP_CONFIG</span><span class="k">)</span>
-</span><span id="__span-0-8"><span class="nb">export</span><span class="w"> </span><span class="nv">DQ_JOB_CONFIG_FILES</span><span class="o">=</span><span class="s2">&quot;&lt;job configuration files separated by commas (only file names)&gt;&quot;</span>
-</span><span id="__span-0-9"><span class="nb">export</span><span class="w"> </span><span class="nv">REFERENCE_DATE</span><span class="o">=</span><span class="s2">&quot;2023-08-01&quot;</span>
-</span><span id="__span-0-10">
-</span><span id="__span-0-11"><span class="c1"># application entry point (executable class): ru.raiffeisen.checkita.apps.batch.DataQualityBatchApp</span>
-</span><span id="__span-0-12"><span class="c1"># --name spark-submit argument has a higher priority over application name set in `application.conf`</span>
-</span><span id="__span-0-13">
-</span><span id="__span-0-14">spark-submit<span class="se">\</span>
-</span><span id="__span-0-15"><span class="w">   </span>--class<span class="w"> </span>ru.raiffeisen.checkita.apps.batch.DataQualityBatchApp<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-16"><span class="w">   </span>--name<span class="w"> </span><span class="s2">&quot;Checkita Data Quality&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-17"><span class="w">   </span>--master<span class="w"> </span>yarn<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-18"><span class="w">   </span>--deploy-mode<span class="w"> </span>cluster<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-19"><span class="w">   </span>--num-executors<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-20"><span class="w">   </span>--executor-memory<span class="w"> </span>2g<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-21"><span class="w">   </span>--executor-cores<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-22"><span class="w">   </span>--driver-memory<span class="w"> </span>2g<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-23"><span class="w">   </span>--files<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DQ_APP_CONFIG</span><span class="s2">,</span><span class="nv">$DQ_DQ_JOB_CONFIGS</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-24"><span class="w">   </span>--conf<span class="w"> </span><span class="s2">&quot;spark.executor.memoryOverhead=2g&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-25"><span class="w">   </span>--conf<span class="w"> </span><span class="s2">&quot;spark.driver.memoryOverhead=2g&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-26"><span class="w">   </span>--conf<span class="w"> </span><span class="s2">&quot;spark.driver.maxResultSize=4g&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-27"><span class="w">   </span><span class="nv">$DQ_APPLICATION</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-28"><span class="w">   </span>-a<span class="w"> </span><span class="nv">$DQ_APP_CONFIG_FILE</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-29"><span class="w">   </span>-j<span class="w"> </span><span class="nv">$DQ_JOB_CONFIG_FILES</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-30"><span class="w">   </span>-d<span class="w"> </span><span class="nv">$REFERENCE_DATE</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-31"><span class="w">   </span>-e<span class="w"> </span><span class="s2">&quot;storage_db_user=some_db_user,storage_db_password=some_db_password&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><span class="nb">export</span><span class="w"> </span><span class="nv">DQ_APPLICATION</span><span class="o">=</span><span class="s2">&quot;&lt;local or remote (HDFS, S3) path to application jar&gt;&quot;</span>
+</span><span id="__span-0-2"><span class="nb">export</span><span class="w"> </span><span class="nv">DQ_DEPENDENCIES</span><span class="o">=</span><span class="s2">&quot;&lt;local or remote (HDFS, S3) path to uber-jar with framework dependencies&gt;&quot;</span>
+</span><span id="__span-0-3"><span class="nb">export</span><span class="w"> </span><span class="nv">DQ_APP_CONFIG</span><span class="o">=</span><span class="s2">&quot;&lt;local or remote (HDFS, S3) path to application configuration file&gt;&quot;</span>
+</span><span id="__span-0-4"><span class="nb">export</span><span class="w"> </span><span class="nv">DQ_JOB_CONFIGS</span><span class="o">=</span><span class="s2">&quot;&lt;local or remote (HDFS, S3) paths to job configuration files separated by commas&gt;&quot;</span>
+</span><span id="__span-0-5">
+</span><span id="__span-0-6"><span class="c1"># As configuration files are uploaded to driver and executors they will be located in working directories.</span>
+</span><span id="__span-0-7"><span class="c1"># Therefore, in application arguments it is required to list just their file names:</span>
+</span><span id="__span-0-8"><span class="nb">export</span><span class="w"> </span><span class="nv">DQ_APP_CONFIG_FILE</span><span class="o">=</span><span class="k">$(</span>basename<span class="w"> </span><span class="nv">$DQ_APP_CONFIG</span><span class="k">)</span>
+</span><span id="__span-0-9"><span class="nb">export</span><span class="w"> </span><span class="nv">DQ_JOB_CONFIG_FILES</span><span class="o">=</span><span class="s2">&quot;&lt;job configuration files separated by commas (only file names)&gt;&quot;</span>
+</span><span id="__span-0-10"><span class="nb">export</span><span class="w"> </span><span class="nv">REFERENCE_DATE</span><span class="o">=</span><span class="s2">&quot;2023-08-01&quot;</span>
+</span><span id="__span-0-11">
+</span><span id="__span-0-12"><span class="c1"># application entry point (executable class): ru.raiffeisen.checkita.apps.batch.DataQualityBatchApp</span>
+</span><span id="__span-0-13"><span class="c1"># --name spark-submit argument has a higher priority over application name set in `application.conf`</span>
+</span><span id="__span-0-14">
+</span><span id="__span-0-15">spark-submit<span class="se">\</span>
+</span><span id="__span-0-16"><span class="w">   </span>--class<span class="w"> </span>ru.raiffeisen.checkita.apps.batch.DataQualityBatchApp<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-17"><span class="w">   </span>--name<span class="w"> </span><span class="s2">&quot;Checkita Data Quality&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-18"><span class="w">   </span>--master<span class="w"> </span>yarn<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-19"><span class="w">   </span>--deploy-mode<span class="w"> </span>cluster<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-20"><span class="w">   </span>--num-executors<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-21"><span class="w">   </span>--executor-memory<span class="w"> </span>2g<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-22"><span class="w">   </span>--executor-cores<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-23"><span class="w">   </span>--driver-memory<span class="w"> </span>2g<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-24"><span class="w">   </span>--jars<span class="w"> </span><span class="nv">$DQ_DEPENDENCIES</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-25"><span class="w">   </span>--files<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DQ_APP_CONFIG</span><span class="s2">,</span><span class="nv">$DQ_DQ_JOB_CONFIGS</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-26"><span class="w">   </span>--conf<span class="w"> </span><span class="s2">&quot;spark.executor.memoryOverhead=2g&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-27"><span class="w">   </span>--conf<span class="w"> </span><span class="s2">&quot;spark.driver.memoryOverhead=2g&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-28"><span class="w">   </span>--conf<span class="w"> </span><span class="s2">&quot;spark.driver.maxResultSize=4g&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-29"><span class="w">   </span><span class="nv">$DQ_APPLICATION</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-30"><span class="w">   </span>-a<span class="w"> </span><span class="nv">$DQ_APP_CONFIG_FILE</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-31"><span class="w">   </span>-j<span class="w"> </span><span class="nv">$DQ_JOB_CONFIG_FILES</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-32"><span class="w">   </span>-d<span class="w"> </span><span class="nv">$REFERENCE_DATE</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-33"><span class="w">   </span>-e<span class="w"> </span><span class="s2">&quot;storage_db_user=some_db_user,storage_db_password=some_db_password&quot;</span>
 </span></code></pre></div>
 
 
@@ -1239,7 +1243,7 @@ via environment variables or via extra variables argument. For more details see
     <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../../assets/javascripts/bundle.81fa17fe.min.js"></script>
       
     
   </body>

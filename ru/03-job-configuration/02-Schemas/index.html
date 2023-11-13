@@ -8,6 +8,8 @@
       
       
       
+        <link rel="canonical" href="https://raiffeisen-dgtl.github.io/checkita-data-quality/ru/03-job-configuration/02-Schemas/">
+      
       
         <link rel="prev" href="../01-Connections/">
       
@@ -16,11 +18,11 @@
       
       
       <link rel="icon" href="../../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.7">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.8">
     
     
       
-        <title>Schemas Configuration - Checkita Data Quality</title>
+        <title>Описание Схем Данных (Schemas) - Checkita Data Quality</title>
       
     
     
@@ -71,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#schemas-configuration" class="md-skip">
+        <a href="#schemas" class="md-skip">
           Перейти к содержанию
         </a>
       
@@ -106,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Schemas Configuration
+              Описание Схем Данных (Schemas)
             
           </span>
         </div>
@@ -549,6 +551,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -623,6 +629,46 @@
   
   <span class="md-ellipsis">
     Использование Переменных Окружения и Дополнительных Переменных
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/03-StatusModel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Статусная Модель Результатов
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/04-ErrorCollection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Сбор Ошибок Вычисления Метрик
   </span>
   
 
@@ -722,7 +768,7 @@
         
   
   <span class="md-ellipsis">
-    Connections Configuration
+    Конфигурация подключений (Connections)
   </span>
   
 
@@ -747,15 +793,94 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Описание Схем Данных (Schemas)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
-    Schemas Configuration
+    Описание Схем Данных (Schemas)
   </span>
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#delimited-schema" class="md-nav__link">
+    Описание схемы текстовых файлов с разделителем (Delimited Schema)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixed-full-schema" class="md-nav__link">
+    Описание схемы файлов с фиксированной шириной колонки (Fixed-Full Schema)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixed-short-schema" class="md-nav__link">
+    Упрощенное описание схемы файлов с фиксированной шириной колонки (Fixed-Short Schema)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#avro" class="md-nav__link">
+    Описание Avro Схемы
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hive" class="md-nav__link">
+    Описание Hive Схемы
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    Поддерживаемые Наименования Типов
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    Пример Описания Схем Данных
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1051,8 +1176,131 @@
   
 
 
-<h1 id="schemas-configuration">Schemas Configuration</h1>
-<p>tbd</p>
+<h1 id="schemas">Описание Схем Данных (Schemas)</h1>
+<p>Схемы данных используются в Data Quality пайплайнах для следующих целей:</p>
+<ul>
+<li>Предоставить явную схему данных для чтения из источников, которые не содержат в себе схему данных, например, тестовые
+  файлы (как с разделителем, так и с фиксированной шириной колонки).</li>
+<li>Предоставить мастер-схему для валидации фактической схемы из источника. Так, схемы используются в загрузочной
+  проверке <code>schemaMatch</code> (см. главу <a href="???">Schema Match Check</a>)</li>
+</ul>
+<p>Схема данных описываются в разделе <code>schemas</code> файла с конфигурацией Data Quality пайплайна. Схемы могут быть описаны в
+различных форматах. Формат, в котором описывается схема, указывается в поле <code>kind</code>, и определяет другие поля, которые
+должны быть заполнены.</p>
+<h2 id="delimited-schema">Описание схемы текстовых файлов с разделителем (Delimited Schema)</h2>
+<p>Данный тип схем в основном предназначен для чтения текстовых файлов с разделителем, таких CSV или TSV.
+Тем не менее эти схемы также могут быть использованы в загрузочных проверках <code>schemaMatch</code>. Данных тип конфигурации
+схемы позволяет описывать только плоские структуры (вложенные колонки не допускаются).</p>
+<p>Итак, описание схемы текстовых файлов с разделителем производится с помощью следующих полей:</p>
+<ul>
+<li><code>kind: "delimited"</code> - <em>Обязательно</em>. Устанавливает формат схемы для текстовых файлов с разделителем;</li>
+<li><code>id</code> - <em>Обязательно</em>. ID схемы;</li>
+<li><code>schema</code> - <em>Обязательно</em>. Список колонок, где каждая колонка - это объект со следующим полями:<ul>
+<li><code>name</code> - <em>Обязательно</em>. Имя колонки;</li>
+<li><code>type</code> - <em>Обязательно</em>. Тип колонки. Список поддерживаемых типов дан в главе <a href="#_1">Поддерживаемые Наименования Типов</a>.</li>
+</ul>
+</li>
+</ul>
+<h2 id="fixed-full-schema">Описание схемы файлов с фиксированной шириной колонки (Fixed-Full Schema)</h2>
+<p>Данный тип схем используется для того, чтобы читать текстовые файлы без разделителя: с фиксированной шириной колонки.
+Основное отличие от схем других типов - это указание ширины каждой колонки (число символов), которое критично для того,
+чтобы правильно считывать содержимое таких файлов. Несмотря на специфику, этот тип схем также может быть использован 
+для чтения файлов с разделителем и для указания в загрузочных проверках <code>schemaMatch</code>. Данных тип конфигурации
+схемы позволяет описывать только плоские структуры (вложенные колонки не допускаются).</p>
+<p>Итак, описание схемы файлов с фиксированной шириной колонки производится с помощью следующих полей:</p>
+<ul>
+<li><code>kind: "fixedFull"</code> - <em>Обязательно</em>. Устанавливает формат схемы для тестовых файлов без разделителя.</li>
+<li><code>id</code> - <em>Обязательно</em>. ID схемы;</li>
+<li><code>schema</code> - <em>Обязательно</em>. Список колонок, где каждая колонка - это объект со следующим полями:<ul>
+<li><code>name</code> - <em>Обязательно</em>. Имя колонки;</li>
+<li><code>type</code> - <em>Обязательно</em>. Тип колонки. Список поддерживаемых типов дан в главе <a href="#_1">Поддерживаемые Наименования Типов</a>.</li>
+<li><code>width</code> - <em>Обязательно</em>. Ширина колонки (целое число символов).</li>
+</ul>
+</li>
+</ul>
+<h2 id="fixed-short-schema">Упрощенное описание схемы файлов с фиксированной шириной колонки (Fixed-Short Schema)</h2>
+<p>Данные тип конфигурации предоставляет более простой способ описывать схемы для файлов без разделителя. В данном случае
+колонки описываются с указанием только лишь их имени и ширины. <em>Соответственно, все колонки будут иметь текстовый тип 
+данных.</em> Данный тип схем также может быть использован для чтения файлов с разделителем и для указания в загрузочных 
+проверках <code>schemaMatch</code>. Данных тип конфигурации схемы позволяет описывать только плоские структуры 
+(вложенные колонки не допускаются).</p>
+<p>Итак, упрощенное описание схемы файлов без разделителя производится с помощью следующих полей:</p>
+<ul>
+<li><code>kind: "fixedShort"</code> - <em>Обязательно</em>. Устанавливает упрощенный формат схемы для тестовых файлов без разделителя.</li>
+<li><code>id</code> - <em>Обязательно</em>. ID схемы;</li>
+<li><code>schema</code> - <em>Обязательно</em>. Список колонок, где каждая колонка это строка в формате: <code>columnName:columnWidth</code>.
+  <em>Колонки всегда имеют текстовый тип.</em></li>
+</ul>
+<h2 id="avro">Описание Avro Схемы</h2>
+<p>Данный тип конфигурации используется для того, чтобы читать Avro схемы из файлов, расширением <code>.avcs</code>. Так, схема, 
+считанная из такого файла, может быть использована как для чтения Avro-файлов, так и для чтения текстовых файлов с 
+разделителем. Также, эти схемы могут быть использованы в загрузочных проверках <code>schemaMatch</code>. В дополнение стоит
+отметить, что Avro схемы поддерживают сложные структуры со вложенными колонками.</p>
+<p>Для того чтобы прочитать Avro схему из файла, необходимо указать следующие параметры:</p>
+<ul>
+<li><code>kind: "avro"</code> - <em>Обязательно</em>. Устанавливает формат конфигурации Avro схемы.</li>
+<li><code>id</code> - <em>Обязательно</em>. ID схемы;</li>
+<li><code>schema</code> - <em>Required</em>. Путь до <code>.avsc</code> файла из которого будет считана Avro-схема.</li>
+</ul>
+<h2 id="hive">Описание Hive Схемы</h2>
+<p>Каталог Hive также может быть использован как источник схем данных. Так, Hive формат описания схем предназначен для
+того, чтобы получать схемы данных, которые соответствуют определенным Hive таблицам. Эти схемы могут быть использованы
+как для чтения Avro-файлов, так и для чтения текстовых файлов с разделителем. Также, эти схемы могут быть использованы 
+в загрузочных проверках <code>schemaMatch</code>. В дополнение стоит отметить, что Avro схемы поддерживают сложные структуры 
+со вложенными колонками.</p>
+<p>Для того чтобы получить схему из Hive каталога, необходимо указать следующие параметры:</p>
+<ul>
+<li><code>kind: "hive"</code> - <em>Обязательно</em>. Устанавливает Hive формат описания схемы.</li>
+<li><code>id</code> - <em>Обязательно</em>. ID схемы;</li>
+<li><code>schema</code> - <em>Обязательно</em>. Hive схема, в которой находится целевая Hive таблица.</li>
+<li><code>table</code> - <em>Обязательно</em>. Hive таблица из которой считывается схема.</li>
+<li><code>excludeColumns</code> - <em>Опционально</em>. Список колонок, которые будут исключены из схемы. Например, в некоторых ситуациях
+  необходимо исключить колонки партиционирования из схемы.</li>
+</ul>
+<h2 id="_1">Поддерживаемые Наименования Типов</h2>
+<p>Следующие наименования типов могут быть использованы при описании схем данных:</p>
+<ul>
+<li><code>string</code></li>
+<li><code>boolean</code></li>
+<li><code>date</code></li>
+<li><code>timestamp</code></li>
+<li><code>integer (32-bit integer)</code></li>
+<li><code>long (64-bit integer)</code></li>
+<li><code>short (16-bit integer)</code></li>
+<li><code>byte (signed integer in a single byte)</code></li>
+<li><code>double</code></li>
+<li><code>float</code></li>
+<li><code>decimal(precision, scale)</code> <em>(precision &lt;= 38; scale &lt;= precision)</em></li>
+</ul>
+<h2 id="_2">Пример Описания Схем Данных</h2>
+<p>Как показано в примере ниже, раздел <code>schema</code> представляет собой список конфигураций схем с указанием типов этих 
+конфигураций.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1">jobConfig: {
+</span><span id="__span-0-2">  schemas: [
+</span><span id="__span-0-3">    {
+</span><span id="__span-0-4">      id: &quot;schema1&quot;
+</span><span id="__span-0-5">      kind: &quot;delimited&quot;
+</span><span id="__span-0-6">      schema: [
+</span><span id="__span-0-7">        {name: &quot;colA&quot;, type: &quot;string&quot;},
+</span><span id="__span-0-8">        {name: &quot;colB&quot;, type: &quot;timestamp&quot;},
+</span><span id="__span-0-9">        {name: &quot;colC&quot;, type: &quot;decimal(10, 3)&quot;}
+</span><span id="__span-0-10">      ]
+</span><span id="__span-0-11">    }
+</span><span id="__span-0-12">    {
+</span><span id="__span-0-13">      id: &quot;schema2&quot;
+</span><span id="__span-0-14">      kind: &quot;fixedFull&quot;,
+</span><span id="__span-0-15">      schema: [
+</span><span id="__span-0-16">        {name: &quot;col1&quot;, type: &quot;integer&quot;, width: 5},
+</span><span id="__span-0-17">        {name: &quot;col2&quot;, type: &quot;double&quot;, width: 6},
+</span><span id="__span-0-18">        {name: &quot;col3&quot;, type: &quot;boolean&quot;, width: 4}
+</span><span id="__span-0-19">      ]
+</span><span id="__span-0-20">    }
+</span><span id="__span-0-21">    {id: &quot;schema3&quot;, kind: &quot;fixedShort&quot;, schema: [&quot;colOne:5&quot;, &quot;colTwo:7&quot;, &quot;colThree:9&quot;]}
+</span><span id="__span-0-22">    {id: &quot;hive_schema&quot;, kind: &quot;hive&quot;, schema: &quot;some_schema&quot;, table: &quot;some_table&quot;}
+</span><span id="__span-0-23">    {id: &quot;avro_schema&quot;, kind: &quot;avro&quot;, schema: &quot;path/to/avro_schema.avsc&quot;}
+</span><span id="__span-0-24">  ]
+</span><span id="__span-0-25">}
+</span></code></pre></div>
 
 
 
@@ -1094,7 +1342,7 @@
     <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.81fa17fe.min.js"></script>
       
     
   </body>

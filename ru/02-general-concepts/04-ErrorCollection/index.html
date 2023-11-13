@@ -8,15 +8,21 @@
       
       
       
+        <link rel="canonical" href="https://raiffeisen-dgtl.github.io/checkita-data-quality/ru/02-general-concepts/04-ErrorCollection/">
       
+      
+        <link rel="prev" href="../03-StatusModel/">
+      
+      
+        <link rel="next" href="../../03-job-configuration/">
       
       
       <link rel="icon" href="../../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.7">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.8">
     
     
       
-        <title>Metric Error Collection - Checkita Data Quality</title>
+        <title>Сбор Ошибок Вычисления Метрик - Checkita Data Quality</title>
       
     
     
@@ -67,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#metric-error-collection" class="md-skip">
+        <a href="#_1" class="md-skip">
           Перейти к содержанию
         </a>
       
@@ -102,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Metric Error Collection
+              Сбор Ошибок Вычисления Метрик
             
           </span>
         </div>
@@ -237,10 +243,12 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../" class="md-tabs__link">
           
   
@@ -531,6 +539,8 @@
       
   
   
+    
+  
   
     
     
@@ -543,6 +553,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -550,12 +564,12 @@
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           
@@ -577,7 +591,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             General Concepts
@@ -621,6 +635,56 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-StatusModel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Статусная Модель Результатов
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Сбор Ошибок Вычисления Метрик
+  </span>
+  
+
+      </a>
+      
     </li>
   
 
@@ -714,7 +778,7 @@
         
   
   <span class="md-ellipsis">
-    Connections Configuration
+    Конфигурация подключений (Connections)
   </span>
   
 
@@ -734,7 +798,7 @@
         
   
   <span class="md-ellipsis">
-    Schemas Configuration
+    Описание Схем Данных (Schemas)
   </span>
   
 
@@ -1033,28 +1097,33 @@
   
 
 
-<h1 id="metric-error-collection">Metric Error Collection</h1>
-<p>Metric calculation involves reading data row by row and incrementing metric value for each row. During increment step
-there could be something wrong: either due to problems with data or due to some unexpected runtime errors. In addition,
-some metrics have logical condition that needs to be met in order to increment the metric value. Failing to satisfy
-this condition is also considered as failure.</p>
-<p>Thus, in the situations, described above, there will be error collection mechanism triggered and following data 
-error or failure data collected:</p>
+<h1 id="_1">Сбор Ошибок Вычисления Метрик</h1>
+<p>Вычисление метрик включает в себя процесс чтения данных источника строка за строкой и приращение значения метрики
+для каждой строки (в случае, если условие метрики выполнено). Так, во время вычисления значения приращения метрики для
+текущей строки что-то может пойти не так: могут быть какие-либо проблемы с данными или ошибки исполнения. В дополнение,
+многие метрики имеют логическое условие которое должно быть выполнено, чтобы значение метрики было изменено. Если это
+условие не выполняется, то вычисление приращения для текущей строки также рассматривается как не выполненное.</p>
+<p>Таким образом, в вышеописанных ситуациях будет задействован механизм сборка ошибок вычисления метрик и следующая
+информация об ошибке будет записана:</p>
 <ul>
-<li>Metric information: metric id and list of columns;</li>
-<li>Source information over which metric is calculated: source id and list of key fields.</li>
-<li>Error information: status (either <code>Failure</code> or <code>Success</code>) and message.</li>
-<li>Excerpt from row data: only values from metric columns and key fields are collected.</li>
+<li>Информация о самой метрике: ее ID и список колонок, по которым вычисляется метрика.</li>
+<li>Информация об источнике, над которым выполняется расчет метрики: его ID и список колонок-ключей.</li>
+<li>Информация об ошибке: статус (либо <code>Failure</code>, либо <code>Error</code>) и сообщение с описанием ошибки.</li>
+<li>Выборка данных из строки источника, где случилась ошибка: записываются только значения из колонок-ключей источника и 
+  колонок, по которым считается метрика.</li>
 </ul>
-<p>Since the processed source can be extremely large and, subsequently, can yield large amount of metric errors then
-out-of-memory errors are likely to happen. In order to prevent that, the number of errors collected per each metric
-is limited. Thus, maximum number of errors collected per metric cannot be more than <code>10000</code>. This number can be
-additionally limited in the application settings by setting <code>errorDumpSize</code> parameter to a lower number.
-See <a href="../../01-application-setup/01-ApplicationSettings/#enablers">Enablers</a> chapter for more details.</p>
-<p>Collected metric errors could be used to identify and debug problems in the data. In order to save or send metric error
-reports, <a href="../../03-job-configuration/08-Targets/#error-collection-targets">Error Collection Targets</a> can be configured in
-<code>targets</code> section of job configuration. Note that error collection reports will contain excerpts from data and,
-therefore, should be communicated with caution. For the same reason they are never saved in Data Quality storage.</p>
+<p>Поскольку источники данных, над которыми выполняются расчеты, могут быть очень большим, и, как следствие, могут
+производить значительное число ошибок во время вычисления метрик, то существует риск переполнения памяти во время
+записи информации об этих ошибках. Для того чтобы это предотвратить, количество ошибок, которое может быть собрано для
+каждой метрики, ограничено на уровне 10000 ошибок. В случае необходимости это число можно уменьшить, установив
+соответсвующее ограничение в файле с настройками приложения в поле <code>errorDumpSize</code>. 
+См. главу <a href="../../01-application-setup/01-ApplicationSettings/#_3">Активаторы</a>.</p>
+<p>Собранные ошибки по вычислению метрик могут быть использованы, чтобы находить и исправлять проблемы в данных. Для того
+чтобы получить эти ошибки, необходимо настроить сохранение соответствующих отчетов по завершении работы пайплайна. 
+Запрос на сбор отчетов об ошибках выполняется разделе <code>targets</code> файла с конфигурациями Data Quality пайплайна, как это
+описано в главе <a href="???">Отчеты об ошибках</a>. Стоит также заметить, что отчеты будут содержать выборки данных из источников, 
+поэтому следует внимательно относиться к тому, кто будет иметь доступ к этим отчетам. По этим же соображениям, отчеты об
+ошибках не сохраняются в хранилище результатов фреймворка.</p>
 
 
 
@@ -1096,7 +1165,7 @@ therefore, should be communicated with caution. For the same reason they are nev
     <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.81fa17fe.min.js"></script>
       
     
   </body>

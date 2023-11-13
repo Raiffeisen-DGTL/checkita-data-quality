@@ -8,6 +8,8 @@
       
       
       
+        <link rel="canonical" href="https://raiffeisen-dgtl.github.io/checkita-data-quality/ru/01-application-setup/03-ResultsStorage/">
+      
       
         <link rel="prev" href="../02-ApplicationSubmit/">
       
@@ -16,7 +18,7 @@
       
       
       <link rel="icon" href="../../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.7">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.8">
     
     
       
@@ -639,6 +641,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -713,6 +719,46 @@
   
   <span class="md-ellipsis">
     Использование Переменных Окружения и Дополнительных Переменных
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/03-StatusModel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Статусная Модель Результатов
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-general-concepts/04-ErrorCollection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Сбор Ошибок Вычисления Метрик
   </span>
   
 
@@ -810,7 +856,7 @@
         
   
   <span class="md-ellipsis">
-    Connections Configuration
+    Конфигурация подключений (Connections)
   </span>
   
 
@@ -830,7 +876,7 @@
         
   
   <span class="md-ellipsis">
-    Schemas Configuration
+    Описание Схем Данных (Schemas)
   </span>
   
 
@@ -1130,7 +1176,7 @@
 
 
 <h1 id="_1">Хранилище Результатов</h1>
-<p>Для того, чтобы использовать все возможности фреймворка, необходимо создать и настроить хранилище результатов.
+<p>Для того чтобы использовать все возможности фреймворка, необходимо создать и настроить хранилище результатов.
 Checkita фреймворк может работать с различными RDBMS для хранения результатов. Помимо этого, Hive может 
 быть использован как хранилище результатов, так же как и обычное файловое хранилище.</p>
 <p>Полный список различных типов хранилища результатов дан ниже:</p>
@@ -1154,7 +1200,7 @@ RDBMS, то возможно провести настройку его схем
 пользователю необходимо убедиться, что в базе/схеме нет конфликтующих имен таблиц.</p>
 </blockquote>
 <p>Если выбран <code>File</code> тип хранилища результатов, то достаточно предоставить путь до директории/бакета, где будут храниться
-результаты. Результаты сохраняются как <code>.parquet</code> файлы с такой же схемой как и в случае хранения их в RDBMS.
+результаты. Результаты сохраняются как <code>.parquet</code> файлы с такой же схемой, как и в случае хранения их в RDBMS.
 Для файлового хранилища результатов не предусмотрены механизмы эволюции схемы. Поэтому, если структура результатов
 изменится в будущем, то пользователю будет необходимо самостоятельно обновить схемы в существующих результатах.</p>
 <blockquote>
@@ -1596,7 +1642,7 @@ RDBMS, то возможно провести настройку его схем
     <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.81fa17fe.min.js"></script>
       
     
   </body>

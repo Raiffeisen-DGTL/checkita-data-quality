@@ -175,8 +175,8 @@
                         <a href="Sources$$AvroFileSourceConfig.html" title="Avro file source configuration">AvroFileSourceConfig</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
-                        <a class="class" href="Sources$$CustomSource.html" title="Custom source configuration: used to read from source types that are not supported explicitly."></a>
-                        <a href="Sources$$CustomSource.html" title="Custom source configuration: used to read from source types that are not supported explicitly.">CustomSource</a>
+                        <a class="class" href="" title="Custom source configuration: used to read from source types that are not supported explicitly."></a>
+                        <a href="" title="Custom source configuration: used to read from source types that are not supported explicitly.">CustomSource</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
                         <a class="class" href="Sources$$DelimitedFileSourceConfig.html" title="Delimited file source configuration"></a>
@@ -191,8 +191,8 @@
                         <a href="Sources$$FilterVirtualSourceConfig.html" title="Filter virtual source configuration">FilterVirtualSourceConfig</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
-                        <a class="class" href="" title="Fixed-width file source configuration"></a>
-                        <a href="" title="Fixed-width file source configuration">FixedFileSourceConfig</a>
+                        <a class="class" href="Sources$$FixedFileSourceConfig.html" title="Fixed-width file source configuration"></a>
+                        <a href="Sources$$FixedFileSourceConfig.html" title="Fixed-width file source configuration">FixedFileSourceConfig</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
                         <a class="class" href="Sources$$HivePartition.html" title="Configuration for Hive Table partition values to read."></a>
@@ -250,8 +250,8 @@
       <div id="definition">
         <div class="big-circle class">c</div>
         <p id="owner"><a href="../../../../index.html" class="extype" name="ru">ru</a>.<a href="../../../index.html" class="extype" name="ru.raiffeisen">raiffeisen</a>.<a href="../../index.html" class="extype" name="ru.raiffeisen.checkita">checkita</a>.<a href="../index.html" class="extype" name="ru.raiffeisen.checkita.config">config</a>.<a href="index.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf">jobconf</a>.<a href="Sources$.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources">Sources</a></p>
-        <h1>FixedFileSourceConfig<span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html" title="Permalink">
+        <h1>CustomSource<span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
@@ -264,17 +264,17 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">FixedFileSourceConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="path">path: <a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a></span>, <span name="schema">schema: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Sources$$FileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.FileSourceConfig">FileSourceConfig</a> with <a href="Files$$FixedFileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.FixedFileConfig">FixedFileConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">CustomSource</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="format">format: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="path">path: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a>]</span>, <span name="schema">schema: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a>]</span>, <span name="options">options: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=\\S+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Fixed-width file source configuration
-</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">path</dt><dd class="cmt"><p>Path to file</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema ID (must be either fixedFull or fixedShort schema)</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Sequence of key fields (columns that identify data row)</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Custom source configuration:
+used to read from source types that are not supported explicitly.</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">format</dt><dd class="cmt"><p>Source format to set in spark reader.</p></dd><dt class="param">path</dt><dd class="cmt"><p>Path to load the source from (if required)</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Explicit schema applied to source data (if required)</p></dd><dt class="param">options</dt><dd class="cmt"><p>List of additional spark options required to read the source (if any)</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Sequence of key fields (columns that identify data row)</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Files$$FixedFileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.FixedFileConfig">FixedFileConfig</a>, <a href="Files$$FileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.FileConfig">FileConfig</a>, <a href="Sources$$FileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.FileSourceConfig">FileSourceConfig</a>, <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -300,7 +300,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Sources.FixedFileSourceConfig"><span>FixedFileSourceConfig</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Files.FixedFileConfig"><span>FixedFileConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Files.FileConfig"><span>FileConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Sources.FileSourceConfig"><span>FileSourceConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig"><span>SourceConfig</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Sources.CustomSource"><span>CustomSource</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig"><span>SourceConfig</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -320,10 +320,10 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="ru.raiffeisen.checkita.config.jobconf.Sources.FixedFileSourceConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,path:ru.raiffeisen.checkita.config.RefinedTypes.URI,schema:eu.timepit.refined.types.string.NonEmptyString,keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.FixedFileSourceConfig"></a><a id="&lt;init&gt;:FixedFileSourceConfig"></a>
+              <ol><li name="ru.raiffeisen.checkita.config.jobconf.Sources.CustomSource#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,format:eu.timepit.refined.types.string.NonEmptyString,path:Option[ru.raiffeisen.checkita.config.RefinedTypes.URI],schema:Option[ru.raiffeisen.checkita.config.RefinedTypes.ID],options:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam],keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.CustomSource"></a><a id="&lt;init&gt;:CustomSource"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,path:ru.raiffeisen.checkita.config.RefinedTypes.URI,schema:eu.timepit.refined.types.string.NonEmptyString,keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.FixedFileSourceConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,format:eu.timepit.refined.types.string.NonEmptyString,path:Option[ru.raiffeisen.checkita.config.RefinedTypes.URI],schema:Option[ru.raiffeisen.checkita.config.RefinedTypes.ID],options:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam],keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.CustomSource" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -332,10 +332,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">FixedFileSourceConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="path">path: <a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a></span>, <span name="schema">schema: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
+        <span class="name">CustomSource</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="format">format: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="path">path: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a>]</span>, <span name="schema">schema: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a>]</span>, <span name="options">options: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=\\S+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">path</dt><dd class="cmt"><p>Path to file</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema ID (must be either fixedFull or fixedShort schema)</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Sequence of key fields (columns that identify data row)</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">format</dt><dd class="cmt"><p>Source format to set in spark reader.</p></dd><dt class="param">path</dt><dd class="cmt"><p>Path to load the source from (if required)</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Explicit schema applied to source data (if required)</p></dd><dt class="param">options</dt><dd class="cmt"><p>List of additional spark options required to read the source (if any)</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Sequence of key fields (columns that identify data row)</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -349,7 +349,7 @@
                 <li name="scala.AnyRef#!=" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a><a id="!=(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#!=(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#!=(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -365,7 +365,7 @@
     </li><li name="scala.AnyRef###" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html###():Int" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html###():Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -381,7 +381,7 @@
     </li><li name="scala.AnyRef#==" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a><a id="==(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#==(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#==(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -397,7 +397,7 @@
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#asInstanceOf[T0]:T0" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#asInstanceOf[T0]:T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -413,7 +413,7 @@
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#clone():Object" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#clone():Object" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -437,7 +437,7 @@
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#eq(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#eq(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -453,7 +453,7 @@
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#finalize():Unit" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#finalize():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -472,10 +472,26 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.CustomSource#format" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="format:eu.timepit.refined.types.string.NonEmptyString"></a><a id="format:NonEmptyString"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#format:eu.timepit.refined.types.string.NonEmptyString" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">format</span><span class="result">: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#getClass():Class[_]" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#getClass():Class[_]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -491,10 +507,10 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.FixedFileSourceConfig#id" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.CustomSource#id" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="id:ru.raiffeisen.checkita.config.RefinedTypes.ID"></a><a id="id:ID"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#id:ru.raiffeisen.checkita.config.RefinedTypes.ID" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#id:ru.raiffeisen.checkita.config.RefinedTypes.ID" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -506,11 +522,11 @@
         <span class="name">id</span><span class="result">: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.FixedFileSourceConfig">FixedFileSourceConfig</a> → <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.CustomSource">CustomSource</a> → <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#isInstanceOf[T0]:Boolean" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#isInstanceOf[T0]:Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -523,10 +539,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.FixedFileSourceConfig#keyFields" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.CustomSource#keyFields" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]"></a><a id="keyFields:Seq[NonEmptyString]"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -538,11 +554,11 @@
         <span class="name">keyFields</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.FixedFileSourceConfig">FixedFileSourceConfig</a> → <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.CustomSource">CustomSource</a> → <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#ne(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#ne(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -558,7 +574,7 @@
     </li><li name="scala.AnyRef#notify" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#notify():Unit" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#notify():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -577,7 +593,7 @@
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#notifyAll():Unit" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#notifyAll():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -593,10 +609,10 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.FixedFileSourceConfig#path" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="path:ru.raiffeisen.checkita.config.RefinedTypes.URI"></a><a id="path:URI"></a>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.CustomSource#options" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="options:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]"></a><a id="options:Seq[SparkParam]"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#path:ru.raiffeisen.checkita.config.RefinedTypes.URI" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#options:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -605,14 +621,14 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">path</span><span class="result">: <a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a></span>
+        <span class="name">options</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=\\S+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>]</span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.FixedFileSourceConfig">FixedFileSourceConfig</a> → <a href="Files$$FileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.FileConfig">FileConfig</a></dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.FixedFileSourceConfig#schema" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="schema:eu.timepit.refined.types.string.NonEmptyString"></a><a id="schema:NonEmptyString"></a>
+      
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.CustomSource#path" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="path:Option[ru.raiffeisen.checkita.config.RefinedTypes.URI]"></a><a id="path:Option[URI]"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#schema:eu.timepit.refined.types.string.NonEmptyString" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#path:Option[ru.raiffeisen.checkita.config.RefinedTypes.URI]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -621,14 +637,30 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">schema</span><span class="result">: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>
+        <span class="name">path</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a>]</span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.FixedFileSourceConfig">FixedFileSourceConfig</a> → <a href="Files$$FixedFileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.FixedFileConfig">FixedFileConfig</a></dd></dl></div>
+      
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.CustomSource#schema" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="schema:Option[ru.raiffeisen.checkita.config.RefinedTypes.ID]"></a><a id="schema:Option[ID]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#schema:Option[ru.raiffeisen.checkita.config.RefinedTypes.ID]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">schema</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a>]</span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -644,7 +676,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#wait():Unit" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#wait():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -666,7 +698,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long,x$2:Int):Unit"></a><a id="wait(Long,Int):Unit"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -688,7 +720,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long):Unit"></a><a id="wait(Long):Unit"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$FixedFileSourceConfig.html#wait(x$1:Long):Unit" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$CustomSource.html#wait(x$1:Long):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -727,12 +759,6 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.Files.FixedFileConfig">
-              <h3>Inherited from <a href="Files$$FixedFileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.FixedFileConfig">FixedFileConfig</a></h3>
-            </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.Files.FileConfig">
-              <h3>Inherited from <a href="Files$$FileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.FileConfig">FileConfig</a></h3>
-            </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.Sources.FileSourceConfig">
-              <h3>Inherited from <a href="Sources$$FileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.FileSourceConfig">FileSourceConfig</a></h3>
             </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">
               <h3>Inherited from <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a></h3>
             </div><div class="parent" name="scala.AnyRef">
