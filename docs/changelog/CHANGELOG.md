@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.0.0...v1.0.1) (2023-11-13)
+
+
+### Bug Fixes
+
+* sbt assembly fixes and custom source restoring ([#12](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/12)) ([b6855ea](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/b6855ea89adcfb5af0a0b742ce4a0d8a42f343ac))
+
 ## 1.0.0 (2023-11-01)
 
 
