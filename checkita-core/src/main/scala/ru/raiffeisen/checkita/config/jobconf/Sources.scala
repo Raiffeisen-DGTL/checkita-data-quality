@@ -178,6 +178,24 @@ object Sources {
                                             keyFields: Seq[NonEmptyString] = Seq.empty
                                           ) extends FileSourceConfig with ParquetFileConfig
 
+  /**
+   * Custom source configuration:
+   * used to read from source types that are not supported explicitly.
+   * @param id Source ID
+   * @param format Source format to set in spark reader.
+   * @param path Path to load the source from (if required)
+   * @param schema Explicit schema applied to source data (if required)
+   * @param options List of additional spark options required to read the source (if any)
+   * @param keyFields Sequence of key fields (columns that identify data row)
+   */
+  final case class CustomSource(
+                                id: ID,
+                                format: NonEmptyString,
+                                path: Option[URI],
+                                schema: Option[ID],
+                                options: Seq[SparkParam] = Seq.empty,
+                                keyFields: Seq[NonEmptyString] = Seq.empty
+                               ) extends SourceConfig
 
   /**
    * Base class for all virtual source configurations.
@@ -314,12 +332,14 @@ object Sources {
    * @param hive  Sequence of Hive table sources
    * @param kafka Sequence of sources based on Kafka topics
    * @param file  Sequence of file sources
+   * @param custom Sequence of custom sources
    */
   final case class SourcesConfig(
                                   table: Seq[TableSourceConfig] = Seq.empty,
                                   hive: Seq[HiveSourceConfig] = Seq.empty,
                                   kafka: Seq[KafkaSourceConfig] = Seq.empty,
-                                  file: Seq[FileSourceConfig] = Seq.empty
+                                  file: Seq[FileSourceConfig] = Seq.empty,
+                                  custom: Seq[CustomSource] = Seq.empty
                                 ) {
     def getAllSources: Seq[SourceConfig] =
       this.productIterator.toSeq.flatMap(_.asInstanceOf[Seq[Any]]).map(_.asInstanceOf[SourceConfig])

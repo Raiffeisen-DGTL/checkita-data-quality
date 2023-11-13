@@ -9,7 +9,7 @@ systems are supported:
 * Connection to databases via JDBC:
     * PostgreSQL (also can be used for connection to GreenPlum);
     * Oracle
-    * SQl
+    * SQLite
 * Connection to message queues:
     * Kafka
 

@@ -11,6 +11,7 @@ import ru.raiffeisen.checkita.connections.jdbc.JdbcConnection
 import ru.raiffeisen.checkita.connections.kafka.KafkaConnection
 import ru.raiffeisen.checkita.core.Source
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
+import ru.raiffeisen.checkita.utils.Common.paramsSeqToMap
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.io.FileNotFoundException
@@ -362,6 +363,42 @@ object SourceReaders {
       else throw new FileNotFoundException(s"ORC file not found: ${config.path.value}")
   }
 
+  implicit object CustomSourceReader extends SourceReader[CustomSource] {
+    /**
+     * Tries to read source given the source configuration.
+     *
+     * @param config      Source configuration
+     * @param settings    Implicit application settings object
+     * @param spark       Implicit spark session object
+     * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
+     * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @return Source
+     */
+    def tryToRead(config: CustomSource)(implicit settings: AppSettings,
+                                        spark: SparkSession,
+                                        fs: FileSystem,
+                                        schemas: Map[String, SourceSchema],
+                                        connections: Map[String, DQConnection]): Source = {
+      val readOptions = paramsSeqToMap(config.options.map(_.value))
+      val sparkReaderInit = spark.read.format(config.format.value).options(readOptions)
+      // if schema is provided use it explicitly in DataFrame reader:
+      val sparkReader = config.schema.map(_.value) match {
+        case Some(schema) =>
+          val sourceSchema = schemas.getOrElse(schema, throw new NoSuchElementException(
+            s"Schema with id = '$schema' not found."
+          ))
+          sparkReaderInit.schema(sourceSchema.schema)
+        case None => sparkReaderInit
+      }
+      // if path to load from is provided then load source from that path:
+      val df = config.path.map(_.value) match {
+        case Some(path) => sparkReader.load(path)
+        case None => sparkReader.load()
+      }
+      toSource(config, df)
+    }
+  }
+
   /**
    * Generic regular source reader that calls specific reader depending on the source configuration type.
    */
@@ -389,6 +426,7 @@ object SourceReaders {
       case avro: AvroFileSourceConfig => AvroFileSourceReader.tryToRead(avro)
       case parquet: ParquetFileSourceConfig => ParquetFileSourceReader.tryToRead(parquet)
       case orc: OrcFileSourceConfig => OrcFileSourceReader.tryToRead(orc)
+      case custom: CustomSource => CustomSourceReader.tryToRead(custom)
       case other => throw new IllegalArgumentException(s"Unsupported source type: '${other.getClass.getTypeName}'")
     }
   }

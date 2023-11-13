@@ -172,6 +172,29 @@ parameters:
 > *TIP*: In order to define JSON strings, they must be enclosed in triple quotes:
 > `"""{"name1": {"name2": "value2", "name3": "value3""}}"""`.
 
+## Custom Sources Configuration
+
+Custom sources can be used in cases when it is required to read data from the source type that is not explicitly
+supported (by one of the configuration described above). In order to configure a custom source, it is required to
+provide following parameters:
+
+* `id` - *Required*. Source ID;
+* `format` - *Required*. Spark DataFrame reader format that is used to read from the given source.
+* `path` - *Optional*. Path to read data from (if required).
+* `schema` - *Optional*. Explicit schema to be applied to data from the given source (if required).
+* `options` - *Optional*. Additional Spark parameters used to read data from the given source.
+* `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
+  Key fields are primarily used in error collection reports. For more details on error collection, see
+  [Metric Error Collection](../02-general-concepts/04-ErrorCollection.md) chapter.
+
+After parameters above are defined then spark DataFrame reader is set up to read data from the source as follows:
+
+```scala
+val df = spark.read.format(format).schema(schema).options(options).load(path)
+```
+
+If any of the optional parameters is missing than corresponding Spark reader configuration is not set.
+
 ## Sources Configuration Example
 
 As it is shown in the example below, sources of the same type are grouped within subsections named after the type
