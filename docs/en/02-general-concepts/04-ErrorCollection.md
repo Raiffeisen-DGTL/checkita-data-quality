@@ -5,12 +5,12 @@ there could be something wrong: either due to problems with data or due to some 
 some metrics have logical condition that needs to be met in order to increment the metric value. Failing to satisfy
 this condition is also considered as failure.
 
-Thus, in the situations, described above, there will be error collection mechanism triggered and following data 
-error or failure data collected:
+Thus, in the situations, described above, there will be error collection mechanism triggered and following error data 
+or failure data collected:
 
 * Metric information: metric id and list of columns;
 * Source information over which metric is calculated: source id and list of key fields.
-* Error information: status (either `Failure` or `Success`) and message.
+* Error information: status (either `Failure` or `Error`) and message.
 * Excerpt from row data: only values from metric columns and key fields are collected.
 
 Since the processed source can be extremely large and, subsequently, can yield large amount of metric errors then

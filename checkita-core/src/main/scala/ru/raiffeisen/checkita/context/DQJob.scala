@@ -146,7 +146,7 @@ case class DQJob(sources: Seq[Source],
           }).mapLeft(_.map(e => s"$metricStage $e")) // update error messages with running stage
         case None => 
           log.info(s"$metricStage There are no regular metrics found for source '${src.id}'.")
-          Right(Seq.empty[MetricResults]).asInstanceOf[Result[MetricResults]]
+          Right(Map.empty).asInstanceOf[Result[MetricResults]]
       }
     } match {
       case results if results.nonEmpty => results.reduce((r1, r2) => r1.combine(r2)(_ ++ _))
