@@ -57,4 +57,7 @@ object RefinedTypes {
    * @param formatter - datetime formatter for pattern
    */
   case class DateFormat(pattern: String, @transient formatter: DateTimeFormatter)
+  object DateFormat {
+    def fromString(s: String): DateFormat = DateFormat(s, DateTimeFormatter.ofPattern(s))
+  }
 }

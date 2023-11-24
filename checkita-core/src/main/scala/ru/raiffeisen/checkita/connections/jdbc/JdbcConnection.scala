@@ -5,6 +5,7 @@ import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.jobconf.Connections.JdbcConnectionConfig
 import ru.raiffeisen.checkita.config.jobconf.Sources.TableSourceConfig
 import ru.raiffeisen.checkita.connections.DQConnection
+import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.utils.Common.paramsSeqToMap
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
@@ -51,14 +52,17 @@ abstract class JdbcConnection[T <: JdbcConnectionConfig] extends DQConnection {
 
   /**
    * Loads external data into dataframe given a source configuration
+   *
    * @param sourceConfig Source configuration
-   * @param settings Implicit application settings object
-   * @param spark Implicit spark session object
+   * @param settings     Implicit application settings object
+   * @param spark        Implicit spark session object
+   * @param schemas      Implicit Map of all explicitly defined schemas (schemaId -> SourceSchema)
    * @return Spark DataFrame
    */
-  def loadDataframe(sourceConfig: SourceType)
+  def loadDataFrame(sourceConfig: SourceType)
                    (implicit settings: AppSettings,
-                    spark: SparkSession): DataFrame = {
+                    spark: SparkSession,
+                    schemas: Map[String, SourceSchema]): DataFrame = {
     
     val props = getProperties
     paramsSeqToMap(sparkParams).foreach{ case (k, v) => props.put(k, v) }

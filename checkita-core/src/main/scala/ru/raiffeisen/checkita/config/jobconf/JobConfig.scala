@@ -1,12 +1,12 @@
 package ru.raiffeisen.checkita.config.jobconf
 
-import ru.raiffeisen.checkita.config.RefinedTypes.{ID, SparkParam}
+import ru.raiffeisen.checkita.config.RefinedTypes.ID
 import ru.raiffeisen.checkita.config.jobconf.Checks.ChecksConfig
 import ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionsConfig
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadChecksConfig
 import ru.raiffeisen.checkita.config.jobconf.Metrics.MetricsConfig
 import ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig
-import ru.raiffeisen.checkita.config.jobconf.Sources.{SourcesConfig, VirtualSourceConfig}
+import ru.raiffeisen.checkita.config.jobconf.Sources.{SourcesConfig, StreamSourcesConfig, VirtualSourceConfig}
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetsConfig
 
 /**
@@ -14,7 +14,8 @@ import ru.raiffeisen.checkita.config.jobconf.Targets.TargetsConfig
  * @param jobId Job ID
  * @param connections Connections to external data systems (RDBMS, Message Brokers, etc.)
  * @param schemas Various schema definitions
- * @param sources Data sources processed within current job.
+ * @param sources Data sources processed within current job (only applicable to batch jobs).
+ * @param streams Stream sources processed within current job (only applicable to streaming jobs).
  * @param virtualSources Virtual sources to be created from basic sources
  * @param loadChecks Load checks to be performed on data sources before reading data itself
  * @param metrics Metrics to be calculated for data sources
@@ -26,6 +27,7 @@ final case class JobConfig(
                             connections: Option[ConnectionsConfig],
                             schemas: Seq[SchemaConfig] = Seq.empty,
                             sources: Option[SourcesConfig],
+                            streams: Option[StreamSourcesConfig],
                             virtualSources: Seq[VirtualSourceConfig] = Seq.empty,
                             loadChecks: Option[LoadChecksConfig],
                             metrics: Option[MetricsConfig],

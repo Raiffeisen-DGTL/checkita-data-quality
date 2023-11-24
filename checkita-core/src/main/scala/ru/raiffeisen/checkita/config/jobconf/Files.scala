@@ -1,7 +1,7 @@
 package ru.raiffeisen.checkita.config.jobconf
 
 import eu.timepit.refined.types.string.NonEmptyString
-import ru.raiffeisen.checkita.config.RefinedTypes.URI
+import ru.raiffeisen.checkita.config.RefinedTypes.{ID, URI}
 
 /**
  * @note General note on working with files in Checkita Framework:
@@ -19,9 +19,11 @@ object Files {
   /**
    * Base trait for all types of configurations that refer to a file.
    * All such configurations must contain a path to a file.
+   * In addition, optional schemaId can be provided to point to a schema used for data reading.
    */
   trait FileConfig {
     val path: URI
+    val schema: Option[ID]
   }
 
   /**
@@ -37,9 +39,13 @@ object Files {
   /**
    * Base trait for Avro files. Configuration for avro files may contain reference to avro schema ID.
    */
-  trait AvroFileConfig extends FileConfig {
-    val schema: Option[NonEmptyString]
-  }
+  trait AvroFileConfig extends FileConfig
+
+  /**
+   * Base trait for fixed-width text files.
+   * For such files configuration must contain reference explicit fixed (full or short) schema ID
+   */
+  trait FixedFileConfig extends FileConfig
 
   /**
    * Base trait for delimited text files such as CSV or TSV.
@@ -55,14 +61,6 @@ object Files {
     val quote: NonEmptyString
     val escape: NonEmptyString
     val header: Boolean
-    val schema: Option[NonEmptyString]
   }
 
-  /**
-   * Base trait for fixed-width text files.
-   * For such files configuration must contain reference explicit fixed (full or short) schema ID
-   */
-  trait FixedFileConfig extends FileConfig {
-    val schema: NonEmptyString
-  }
 }

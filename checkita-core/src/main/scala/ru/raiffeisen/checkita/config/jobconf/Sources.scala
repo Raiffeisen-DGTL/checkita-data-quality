@@ -6,7 +6,7 @@ import eu.timepit.refined.collection.NonEmpty
 import eu.timepit.refined.types.string.NonEmptyString
 import org.apache.spark.sql.Column
 import org.apache.spark.storage.StorageLevel
-import ru.raiffeisen.checkita.config.Enums.{KafkaTopicFormat, SparkJoinType}
+import ru.raiffeisen.checkita.config.Enums.{KafkaTopicFormat, KafkaWindowing, ProcessingTime, SparkJoinType}
 import ru.raiffeisen.checkita.config.RefinedTypes._
 import ru.raiffeisen.checkita.config.jobconf.Files._
 import ru.raiffeisen.checkita.config.jobconf.Outputs._
@@ -21,6 +21,7 @@ object Sources {
   sealed abstract class SourceConfig {
     val id: ID
     val keyFields: Seq[NonEmptyString]
+    val streamable: Boolean
   }
 
   /**
@@ -33,11 +34,13 @@ object Sources {
    */
   final case class TableSourceConfig(
                                       id: ID,
-                                      connection: NonEmptyString,
+                                      connection: ID,
                                       table: Option[NonEmptyString],
                                       query: Option[NonEmptyString],
                                       keyFields: Seq[NonEmptyString] = Seq.empty
-                                    ) extends SourceConfig
+                                    ) extends SourceConfig {
+    val streamable: Boolean = false
+  }
 
   /**
    * Configuration for Hive Table partition values to read.
@@ -67,7 +70,9 @@ object Sources {
                                      table: NonEmptyString,
                                      partitions: Seq[HivePartition] = Seq.empty,
                                      keyFields: Seq[NonEmptyString] = Seq.empty
-                                   ) extends SourceConfig
+                                   ) extends SourceConfig {
+    val streamable: Boolean = false
+  }
 
   /**
    * Kafka source configuration
@@ -76,23 +81,44 @@ object Sources {
    * @param connection      Connection ID (must be a Kafka Connection)
    * @param topics          Sequence of topics to read
    * @param topicPattern    Pattern that defined topics to read
-   * @param format          Topic message format
-   * @param startingOffsets Json-string defining starting offsets (default: "earliest")
-   * @param endingOffsets   Json-string defining ending offsets (default: "latest")
+   * @param startingOffsets Json-string defining starting offsets.
+   *                        If none is set, then "earliest" is used in batch jobs and "latest is used in streaming jobs.
+   * @param endingOffsets   Json-string defining ending offset. Applicable only to batch jobs.
+   *                        If none is set then "latest" is used.
+   * @param windowBy        Source of timestamp used to build windows. Applicable only for streaming jobs!
+   *                        Default: processingTime - uses current timestamp at the moment when Spark processes row.
+   *                        Other options are:
+   *                          - eventTime - uses Kafka message creation timestamp.
+   *                          - customTime(columnName) - uses arbitrary user-defined column from kafka message
+   *                            (column must be of TimestampType)
+   * @param keyFormat       Message key format. Default: string.
+   * @param valueFormat     Message value format. Default: string.
+   * @param keySchema       Schema ID. Used to parse message key. Ignored when keyFormat is string.
+   *                        Mandatory for other formats.
+   * @param valueSchema     Schema ID. Used to parse message value. Ignored when valueFormat is string.
+   *                        Mandatory for other formats.
+   *                        Used to parse kafka message value.
    * @param options         Sequence of additional Kafka options
    * @param keyFields       Sequence of key fields (columns that identify data row)
    */
   final case class KafkaSourceConfig(
                                       id: ID,
-                                      connection: NonEmptyString,
+                                      connection: ID,
                                       topics: Seq[NonEmptyString] = Seq.empty,
                                       topicPattern: Option[NonEmptyString],
                                       format: KafkaTopicFormat,
-                                      startingOffsets: NonEmptyString = "earliest",
-                                      endingOffsets: NonEmptyString = "latest",
+                                      startingOffsets: Option[NonEmptyString], // earliest for batch, latest for stream
+                                      endingOffsets: Option[NonEmptyString], // latest for batch, ignored for stream.
+                                      windowBy: KafkaWindowing = ProcessingTime,
+                                      keyFormat: KafkaTopicFormat = KafkaTopicFormat.String,
+                                      valueFormat: KafkaTopicFormat = KafkaTopicFormat.String,
+                                      keySchema: Option[ID] = None,
+                                      valueSchema: Option[ID] = None,
                                       options: Seq[SparkParam] = Seq.empty,
                                       keyFields: Seq[NonEmptyString] = Seq.empty
-                                    ) extends SourceConfig
+                                    ) extends SourceConfig {
+    val streamable: Boolean = true
+  }
 
   /**
    * Base class for file source configurations.
@@ -110,9 +136,11 @@ object Sources {
   final case class FixedFileSourceConfig(
                                           id: ID,
                                           path: URI,
-                                          schema: NonEmptyString,
+                                          schema: Option[ID],
                                           keyFields: Seq[NonEmptyString] = Seq.empty
-                                        ) extends FileSourceConfig with FixedFileConfig
+                                        ) extends FileSourceConfig with FixedFileConfig {
+    val streamable: Boolean = true
+  }
 
   /**
    * Delimited file source configuration
@@ -129,54 +157,66 @@ object Sources {
   final case class DelimitedFileSourceConfig(
                                               id: ID,
                                               path: URI,
-                                              schema: Option[NonEmptyString],
+                                              schema: Option[ID],
                                               delimiter: NonEmptyString = ",",
                                               quote: NonEmptyString = "\"",
                                               escape: NonEmptyString = "\\",
                                               header: Boolean = false,
                                               keyFields: Seq[NonEmptyString] = Seq.empty
-                                            ) extends FileSourceConfig with DelimitedFileConfig
+                                            ) extends FileSourceConfig with DelimitedFileConfig {
+    val streamable: Boolean = true
+  }
 
   /**
    * Avro file source configuration
    *
    * @param id        Source ID
    * @param path      Path to file
-   * @param schema    Schema ID (must be and Avro Schema)
+   * @param schema    Schema ID
    * @param keyFields Sequence of key fields (columns that identify data row)
    */
   final case class AvroFileSourceConfig(
                                          id: ID,
                                          path: URI,
-                                         schema: Option[NonEmptyString],
+                                         schema: Option[ID],
                                          keyFields: Seq[NonEmptyString] = Seq.empty
-                                       ) extends FileSourceConfig with AvroFileConfig
+                                       ) extends FileSourceConfig with AvroFileConfig {
+    val streamable: Boolean = true
+  }
 
   /**
    * Orc file source configuration
    *
    * @param id        Source ID
    * @param path      Path to file
+   * @param schema    Schema ID
    * @param keyFields Sequence of key fields (columns that identify data row)
    */
   final case class OrcFileSourceConfig(
                                         id: ID,
                                         path: URI,
+                                        schema: Option[ID],
                                         keyFields: Seq[NonEmptyString] = Seq.empty
-                                      ) extends FileSourceConfig with OrcFileConfig
+                                      ) extends FileSourceConfig with OrcFileConfig {
+    val streamable: Boolean = true
+  }
 
   /**
    * Parquet file source configuration
    *
    * @param id        Source ID
    * @param path      Path to file
+   * @param schema    Schema ID
    * @param keyFields Sequence of key fields (columns that identify data row)
    */
   final case class ParquetFileSourceConfig(
                                             id: ID,
                                             path: URI,
+                                            schema: Option[ID],
                                             keyFields: Seq[NonEmptyString] = Seq.empty
-                                          ) extends FileSourceConfig with ParquetFileConfig
+                                          ) extends FileSourceConfig with ParquetFileConfig {
+    val streamable: Boolean = true
+  }
 
   /**
    * Custom source configuration:
@@ -195,7 +235,9 @@ object Sources {
                                 schema: Option[ID],
                                 options: Seq[SparkParam] = Seq.empty,
                                 keyFields: Seq[NonEmptyString] = Seq.empty
-                               ) extends SourceConfig
+                               ) extends SourceConfig {
+    val streamable: Boolean = false
+  }
 
   /**
    * Base class for all virtual source configurations.
@@ -210,6 +252,7 @@ object Sources {
     val parents: Seq[String]
     // additional validation will be imposed on the required number
     // of parent sources depending on virtual source type.
+    val streamable: Boolean = true
   }
 
   /**
@@ -344,5 +387,16 @@ object Sources {
     def getAllSources: Seq[SourceConfig] =
       this.productIterator.toSeq.flatMap(_.asInstanceOf[Seq[Any]]).map(_.asInstanceOf[SourceConfig])
   }
-  
+
+  /**
+   * Data Quality job configuration section describing streams
+   *
+   * @param kafka Sequence of streams based on Kafka topics
+   */
+  final case class StreamSourcesConfig(
+                                        kafka: Seq[KafkaSourceConfig] = Seq.empty,
+                                      ) {
+    def getAllSources: Seq[SourceConfig] =
+      this.productIterator.toSeq.flatMap(_.asInstanceOf[Seq[Any]]).map(_.asInstanceOf[SourceConfig])
+  }
 }

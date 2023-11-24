@@ -4,7 +4,8 @@ import org.apache.spark.sql.DataFrame
 
 /**
  * Data Quality Source definition
- *
+ * @note Source can hold both static and streaming dataframes and, therefore, both batch source readers
+ *       and stream source readers return same source definition.
  * @param id        Source ID
  * @param df        Spark dataframe with source data
  * @param keyFields Key field (columns) of this source: uniquely define data row
@@ -15,4 +16,6 @@ case class Source(
                    df: DataFrame,
                    keyFields: Seq[String] = Seq.empty,
                    parents: Seq[String] = Seq.empty
-                 )
+                 ) {
+  val isStreaming: Boolean = df.isStreaming
+}

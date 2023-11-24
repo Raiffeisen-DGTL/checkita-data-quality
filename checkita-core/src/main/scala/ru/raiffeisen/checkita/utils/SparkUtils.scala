@@ -2,11 +2,14 @@ package ru.raiffeisen.checkita.utils
 
 import org.apache.hadoop.fs.FileSystem
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
 import org.apache.spark.sql.types._
 import org.apache.spark.storage.StorageLevel
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
+import scala.reflect.runtime.universe.{runtimeMirror, typeOf, TermName}
+import scala.concurrent.duration._
 import scala.util.Try
 import scala.util.matching.Regex
 
@@ -93,4 +96,53 @@ object SparkUtils {
     fs.setWriteChecksum(false) // Suppress .crc files creation:
     fs
   }.toResult(preMsg = "Failed to create FileSystem object due to following error:")
+
+  /**
+   * Implicit class conversion for scala duration object, to enhance it with
+   * following methods:
+   *   - convert duration into spark interval string
+   *   - convert duration into string with short notation of time unit (e.g. '10s' or '3h')
+   * Conversion is always made in terms of seconds.
+   * @param d Scala Duration object
+   */
+  implicit class DurationOps(d: Duration) {
+    private val timeUnits: Map[TimeUnit, String] = Map(
+      DAYS -> "d",
+      HOURS -> "h",
+      MINUTES -> "m",
+      SECONDS -> "s",
+      MILLISECONDS -> "ms",
+      MICROSECONDS -> "micro", // avoid special using character 'µ'
+      NANOSECONDS -> "ns"
+    )
+    def toSparkInterval: String = s"${d.toSeconds} seconds"
+    def toShortString: String = d match {
+      case Duration(l, tu) => s"$l${timeUnits(tu)}"
+    }
+  }
+
+  /**
+   * Gets row encoder for provided schema.
+   * Purpose of this method is to provide ability to create
+   * row encoder for different versions of Spark.
+   * Thus, Encoders API has changes in version 3.5.0.
+   * Scala reflection API is used to invoke proper
+   * row encoder constructor thus supporting different Encoders APIs.
+   * @param schema Dataframe schema to construct encoder for.
+   * @param spark Implicit spark session object.
+   * @return Row encoder (expression encoder for row).
+   */
+  def getRowEncoder(schema: StructType)
+                   (implicit spark: SparkSession): ExpressionEncoder[Row] = {
+    val rm = runtimeMirror(getClass.getClassLoader)
+    val (encoderMirror, encoderType) =
+      if (spark.version < "3.5.0") (rm.reflect(RowEncoder), typeOf[RowEncoder.type])
+      else (rm.reflect(ExpressionEncoder), typeOf[ExpressionEncoder.type])
+    val applyMethodSymbol = encoderType.decl(TermName("apply")).asTerm.alternatives.find(s =>
+      s.asMethod.paramLists.map(_.map(_.typeSignature)) == List(List(typeOf[StructType]))
+    ).get.asMethod
+    val applyMethod = encoderMirror.reflectMethod(applyMethodSymbol)
+    applyMethod(schema).asInstanceOf[ExpressionEncoder[Row]]
+  }
+
 }
