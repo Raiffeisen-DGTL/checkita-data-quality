@@ -1,44 +1,27 @@
 package ru.raiffeisen.checkita.config
 
 import org.apache.spark.sql.Column
-import org.apache.spark.sql.execution.SparkSqlParser
 import org.apache.spark.sql.functions.expr
-import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.types.DataType
 import org.apache.spark.storage.StorageLevel
 import pureconfig.generic.{FieldCoproductHint, ProductHint}
 import pureconfig.{CamelCase, ConfigConvert, ConfigFieldMapping}
 import ru.raiffeisen.checkita.config.Enums._
+import ru.raiffeisen.checkita.config.Parsers.idParser
 import ru.raiffeisen.checkita.config.RefinedTypes.{DateFormat, ID}
 import ru.raiffeisen.checkita.config.jobconf.Outputs.FileOutputConfig
 import ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig
 import ru.raiffeisen.checkita.config.jobconf.Sources.{FileSourceConfig, VirtualSourceConfig}
-import ru.raiffeisen.checkita.utils.SparkUtils.{toDataType, toStorageLvlString}
+import ru.raiffeisen.checkita.utils.SparkUtils.{DurationOps, toDataType, toStorageLvlString}
 
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.TimeZone
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.duration.Duration
 
 /**
  * Implicit pureconfig hints and converters for specific types used in Job Configuration.
  */
 object Implicits {
-  
-  /** SparkSqlParser used to validate IDs 
-   * @note SparkSqlParser has evolved in Spark 3.1 to use active SQLConf.
-   *       Thus, its constructor became parameterless.
-   *       Therefore, in order to instantiate SparkSqlParser it is required
-   *       to get constructor specific to current Spark version.
-   */
-  private val idParser = {
-    val parserCls = classOf[SparkSqlParser]
-    (Try(parserCls.getConstructor()), Try(parserCls.getConstructor(classOf[SQLConf]))) match {
-      case (Success(constructor), Failure(_)) => constructor.newInstance()
-      case (Failure(_), Success(constructor)) => constructor.newInstance(new SQLConf)
-      case _ => throw new NoSuchMethodException("Unable to construct Spark SQL Parser")
-    }
-  }
   
   implicit def hint[A]: ProductHint[A] = ProductHint[A](
     ConfigFieldMapping(CamelCase, CamelCase),
@@ -55,10 +38,7 @@ object Implicits {
     )
     
   implicit val dateFormatConverter: ConfigConvert[DateFormat] =
-    ConfigConvert[String].xmap[DateFormat](
-      pattern => DateFormat(pattern, DateTimeFormatter.ofPattern(pattern)),
-      dateFormat => dateFormat.pattern
-    )
+    ConfigConvert[String].xmap[DateFormat](DateFormat.fromString, _.pattern)
 
   implicit val timeZoneConverter: ConfigConvert[ZoneId] =
     ConfigConvert[String].xmap[ZoneId](
@@ -69,11 +49,17 @@ object Implicits {
   implicit val dqStorageTypeConverter: ConfigConvert[DQStorageType] =
     ConfigConvert[String].xmap[DQStorageType](DQStorageType.withNameInsensitive, _.toString.toLowerCase)
     
-  implicit val dqDataTypeReader: ConfigConvert[DataType] =
+  implicit val dqDataTypeConverter: ConfigConvert[DataType] =
     ConfigConvert[String].xmap[DataType](
       toDataType,
       t => t.toString.toLowerCase.replace("type", "")
     )
+
+  implicit val durationTypeConverter: ConfigConvert[Duration] =
+    ConfigConvert[String].xmap[Duration](Duration(_), _.toShortString)
+
+  implicit val kafkaWindowingConverter: ConfigConvert[KafkaWindowing] =
+    ConfigConvert[String].xmap[KafkaWindowing](KafkaWindowing(_), _.windowBy)
 
   private val dropRight: String => String => String =
     dropText => s => s.dropRight(dropText.length).zipWithIndex.map(t => if (t._2 == 0) t._1.toLower else t._1).mkString

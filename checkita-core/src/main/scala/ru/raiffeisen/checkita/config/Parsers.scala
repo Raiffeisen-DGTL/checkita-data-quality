@@ -1,11 +1,30 @@
 package ru.raiffeisen.checkita.config
 
 import com.typesafe.config.{Config, ConfigFactory}
+import org.apache.spark.sql.execution.SparkSqlParser
+import org.apache.spark.sql.internal.SQLConf
 import pureconfig.error.{ConfigReaderFailure, ConvertFailure}
 
 import java.io.{File, FileNotFoundException, InputStreamReader}
+import scala.util.{Failure, Success, Try}
 
 object Parsers {
+
+  /** SparkSqlParser used to validate IDs
+   *
+   * @note SparkSqlParser has evolved in Spark 3.1 to use active SQLConf.
+   *       Thus, its constructor became parameterless.
+   *       Therefore, in order to instantiate SparkSqlParser it is required
+   *       to get constructor specific to current Spark version.
+   */
+  val idParser: SparkSqlParser = {
+    val parserCls = classOf[SparkSqlParser]
+    (Try(parserCls.getConstructor()), Try(parserCls.getConstructor(classOf[SQLConf]))) match {
+      case (Success(constructor), Failure(_)) => constructor.newInstance()
+      case (Failure(_), Success(constructor)) => constructor.newInstance(new SQLConf)
+      case _ => throw new NoSuchMethodException("Unable to construct Spark SQL Parser")
+    }
+  }
 
   /**
    * Type class for Config parsers

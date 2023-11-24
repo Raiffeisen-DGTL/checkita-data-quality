@@ -1,6 +1,7 @@
 package ru.raiffeisen.checkita.config
 
 import enumeratum.{Enum, EnumEntry}
+import ru.raiffeisen.checkita.config.Parsers.idParser
 
 import scala.collection.immutable
 
@@ -27,12 +28,38 @@ object Enums {
    */
   sealed trait KafkaTopicFormat extends EnumEntry
   object KafkaTopicFormat extends Enum[KafkaTopicFormat] {
+    case object String extends KafkaTopicFormat
     case object Xml extends KafkaTopicFormat
     case object Json extends KafkaTopicFormat
     case object Avro extends KafkaTopicFormat
 
     override val values: immutable.IndexedSeq[KafkaTopicFormat] = findValues
   }
+
+  /**
+   * Supported Kafka windowing types, that control how windows are build:
+   *   - based on processing time: current timestamp when rows is processed;
+   *   - based on event time: kafka message creation timestamp;
+   *   - custom time: arbitrary timestamp column from kafka message defined by user.
+   * @note this is not an enumeration since custom time type requires user-defined column name.
+   */
+  sealed trait KafkaWindowing { val windowBy: String }
+  case object ProcessingTime extends KafkaWindowing { val windowBy: String = "processingTime" }
+  case object EventTime extends KafkaWindowing { val windowBy: String = "eventTime" }
+  case class CustomTime(column: String) extends KafkaWindowing { val windowBy: String = s"custom($column)" }
+  object KafkaWindowing {
+    private val customPattern = """^custom\((.+)\)$""".r
+    def apply(s: String): KafkaWindowing = s match {
+      case "processingTime" => ProcessingTime
+      case "eventTime" => EventTime
+      case custom if customPattern.pattern.matcher(custom).matches() =>
+        val customPattern(columnName) = custom
+        val _ = idParser.parseTableIdentifier(columnName) // verify if columnName is a valid Spark SQL identifier
+        CustomTime(columnName)
+      case other => throw new IllegalArgumentException(s"Wrong Kafka windowing type: $other")
+    }
+  }
+
 
   /**
    * Supported file types for FileTypeLoadCheck

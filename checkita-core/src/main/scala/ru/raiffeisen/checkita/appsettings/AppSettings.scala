@@ -4,7 +4,7 @@ import org.apache.log4j.Level
 import org.apache.spark.SparkConf
 import ru.raiffeisen.checkita.config.IO.readAppConfig
 import ru.raiffeisen.checkita.config.Parsers._
-import ru.raiffeisen.checkita.config.appconf.{AppConfig, EmailConfig, MattermostConfig, StorageConfig}
+import ru.raiffeisen.checkita.config.appconf.{AppConfig, EmailConfig, MattermostConfig, StorageConfig, StreamConfig}
 import ru.raiffeisen.checkita.utils.Common.{paramsSeqToMap, prepareConfig}
 import ru.raiffeisen.checkita.utils.ResultUtils._
 import ru.raiffeisen.checkita.utils.EnrichedDT
@@ -27,6 +27,7 @@ import scala.util.Try
  * @param storageConfig Configuration of connection to Data Quality Storage
  * @param emailConfig Configuration of connection to SMTP server
  * @param mattermostConfig Configuration of connection to Mattermost API
+ * @param streamConfig Streaming settings (used in streaming applications only)
  * @param sparkConf Spark configuration parameters
  * @param isLocal Boolean flag indicating whether spark application must be run locally.
  * @param isShared Boolean flag indicating whether spark application running within shared spark context.
@@ -47,6 +48,7 @@ final case class AppSettings(
                               storageConfig: Option[StorageConfig],
                               emailConfig: Option[EmailConfig],
                               mattermostConfig: Option[MattermostConfig],
+                              streamConfig: StreamConfig,
                               sparkConf: SparkConf,
                               isLocal: Boolean,
                               isShared: Boolean,
@@ -124,6 +126,7 @@ object AppSettings {
         appConfig.storage,
         appConfig.email,
         appConfig.mattermost,
+        appConfig.streaming,
         conf,
         isLocal,
         isShared,
@@ -190,6 +193,7 @@ object AppSettings {
       defaultAppConf.storage,
       defaultAppConf.email,
       defaultAppConf.mattermost,
+      defaultAppConf.streaming,
       new SparkConf(),
       isLocal = false,
       isShared = false,

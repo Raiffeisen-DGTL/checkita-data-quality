@@ -13,12 +13,6 @@ import ru.raiffeisen.checkita.config.RefinedTypes.DateFormat
  */
 case class DateTimeConfig(
                            timeZone: ZoneId = ZoneId.of("UTC"),
-                           referenceDateFormat: DateFormat = DateFormat(
-                             pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS",
-                             formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-                           ),
-                           executionDateFormat: DateFormat = DateFormat(
-                             pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS",
-                             formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-                           )
+                           referenceDateFormat: DateFormat = DateFormat.fromString("yyyy-MM-dd'T'HH:mm:ss.SSS"),
+                           executionDateFormat: DateFormat = DateFormat.fromString("yyyy-MM-dd'T'HH:mm:ss.SSS")
                          )

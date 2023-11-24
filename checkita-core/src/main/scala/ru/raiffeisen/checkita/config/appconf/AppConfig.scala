@@ -18,6 +18,7 @@ final case class AppConfig(
                             storage: Option[StorageConfig],
                             email: Option[EmailConfig],
                             mattermost: Option[MattermostConfig],
+                            streaming: StreamConfig = StreamConfig(),
                             dateTimeOptions: DateTimeConfig = DateTimeConfig(),
                             enablers: Enablers = Enablers(),
                             defaultSparkOptions: Seq[SparkParam] = Seq.empty,

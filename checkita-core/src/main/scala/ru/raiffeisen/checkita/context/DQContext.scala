@@ -44,7 +44,7 @@ import scala.util.Try
  */
 class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) extends Logging {
 
-  implicit private val sparkSess: SparkSession = spark
+  implicit private val sparkSes: SparkSession = spark
   implicit private val fileSystem: FileSystem = fs
   implicit private val appSettings: AppSettings = settings
   

@@ -3,11 +3,10 @@ package ru.raiffeisen.checkita.config.validation
 import pureconfig.generic.semiauto.{deriveReader, deriveWriter}
 import pureconfig.{ConfigReader, ConfigWriter}
 import ru.raiffeisen.checkita.config.Enums.TrendCheckRule
+import ru.raiffeisen.checkita.config.appconf.StreamConfig
 import ru.raiffeisen.checkita.config.jobconf.Checks._
 import ru.raiffeisen.checkita.config.jobconf.MetricParams.LevenshteinDistanceParams
-import ru.raiffeisen.checkita.config.jobconf.Sources.{
-  DelimitedFileSourceConfig, KafkaSourceConfig, TableSourceConfig
-}
+import ru.raiffeisen.checkita.config.jobconf.Sources.{DelimitedFileSourceConfig, FixedFileSourceConfig, KafkaSourceConfig, TableSourceConfig}
 
 import javax.validation.ValidationException
 import scala.concurrent.duration.Duration
@@ -22,6 +21,47 @@ import ru.raiffeisen.checkita.config.Implicits._
  * On read validations (on write validations will be added later)
  */
 object PreValidation {
+
+  /**
+   * Implicit StreamConfig reader validation
+   */
+  implicit val validateStreamConfigReader: ConfigReader[StreamConfig] =
+    deriveReader[StreamConfig].ensure(
+      s => s.trigger < s.window,
+      _ => "For proper streaming processing, micro-batch trigger interval must be less than window interval."
+    )
+
+  /**
+   * Implicit StreamConfig writer validation
+   */
+  implicit val validateStreamConfigWriter: ConfigWriter[StreamConfig] =
+    deriveWriter[StreamConfig].contramap[StreamConfig] { x =>
+      if (x.trigger < x.window) x
+      else throw new ValidationException(
+        s"Error during writing ${x.toString}: " +
+          "for proper streaming processing, micro-batch trigger interval must be less than window interval."
+      )
+    }
+
+  /**
+   * Implicit FixedFileSource reader validation
+   */
+  implicit val validateFixedFileSourceReader: ConfigReader[FixedFileSourceConfig] =
+    deriveReader[FixedFileSourceConfig].ensure(
+      _.schema.nonEmpty,
+      _ => "For fixed-width files schema must always be specified."
+    )
+
+  /**
+   * Implicit FixedFileSource writer validation
+   */
+  implicit val validateFixedFileSourceWriter: ConfigWriter[FixedFileSourceConfig] =
+    deriveWriter[FixedFileSourceConfig].contramap[FixedFileSourceConfig] { x =>
+      if (x.schema.nonEmpty) x
+      else throw new ValidationException(
+        s"Error during writing ${x.toString}: for fixed-width files schema must always be specified."
+      )
+    }
 
   /**
    * Ensure that schema for delimited files is either read from header or from explicit schema.

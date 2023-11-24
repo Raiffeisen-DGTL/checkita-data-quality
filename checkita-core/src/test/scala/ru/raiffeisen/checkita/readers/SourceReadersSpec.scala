@@ -87,10 +87,10 @@ class SourceReadersSpec extends AnyWordSpec with Matchers {
     
     "correctly read fixed-width text file" in {
       val fixedFullSourceConfig = FixedFileSourceConfig(
-        ID("fixedFullSource"), Refined.unsafeApply(filePath), "fixedFull"
+        ID("fixedFullSource"), Refined.unsafeApply(filePath), Some(ID("fixedFull"))
       )
       val fixedShortSourceConfig = FixedFileSourceConfig(
-        ID("fixedShortSource"), Refined.unsafeApply(filePath), "fixedShort"
+        ID("fixedShortSource"), Refined.unsafeApply(filePath), Some(ID("fixedShort"))
       )
       
       val fixedFullSource = FixedFileSourceReader.read(fixedFullSourceConfig)
@@ -110,12 +110,12 @@ class SourceReadersSpec extends AnyWordSpec with Matchers {
     }
     
     "return error when file not found" in {
-      val sourceConfig = FixedFileSourceConfig(ID("fixedFullSource"), "some_file.txt", "fixedFull")
+      val sourceConfig = FixedFileSourceConfig(ID("fixedFullSource"), "some_file.txt", Some(ID("fixedFull")))
       FixedFileSourceReader.read(sourceConfig).isLeft shouldEqual true
     }
 
     "return error when schema not found" in {
-      val sourceConfig = FixedFileSourceConfig(ID("fixedFullSource"), Refined.unsafeApply(filePath), "some_schema")
+      val sourceConfig = FixedFileSourceConfig(ID("fixedFullSource"), Refined.unsafeApply(filePath), Some(ID("some_schema")))
       FixedFileSourceReader.read(sourceConfig).isLeft shouldEqual true
     }
   }
@@ -129,7 +129,7 @@ class SourceReadersSpec extends AnyWordSpec with Matchers {
         ID("sourceHeader"), Refined.unsafeApply(fileWithHeader), header = true, schema = None
       )
       val sourceConfigHeadless = DelimitedFileSourceConfig(
-        ID("sourceHeadless"), Refined.unsafeApply(fileWithoutHeader), schema = Some("delimited")
+        ID("sourceHeadless"), Refined.unsafeApply(fileWithoutHeader), schema = Some(ID("delimited"))
       )
       
       val sourceHeader = DelimitedFileSourceReader.read(sourceConfigHeader)
@@ -155,14 +155,14 @@ class SourceReadersSpec extends AnyWordSpec with Matchers {
 
     "return error when schema not found" in {
       val sourceConfig = DelimitedFileSourceConfig(
-        ID("sourceHeadless"), Refined.unsafeApply(fileWithoutHeader), schema = Some("some_schema")
+        ID("sourceHeadless"), Refined.unsafeApply(fileWithoutHeader), schema = Some(ID("some_schema"))
       )
       DelimitedFileSourceReader.read(sourceConfig).isLeft shouldEqual true
     }
     
     "return error when both header and schema are provided in source configuration or none of them is provided" in {
       val sourceConfig1 = DelimitedFileSourceConfig(
-        ID("sourceConfig1"), Refined.unsafeApply(fileWithHeader), header = true, schema = Some("some_schema")
+        ID("sourceConfig1"), Refined.unsafeApply(fileWithHeader), header = true, schema = Some(ID("some_schema"))
       )
       val sourceConfig2 = DelimitedFileSourceConfig(
         ID("sourceConfig2"), Refined.unsafeApply(fileWithHeader), schema = None
@@ -192,7 +192,7 @@ class SourceReadersSpec extends AnyWordSpec with Matchers {
 
     "correctly read avro file with schema" in {
       val sourceConfig = AvroFileSourceConfig(
-        ID("avroSource"), Refined.unsafeApply(avroFilePath), schema = Some("avro")
+        ID("avroSource"), Refined.unsafeApply(avroFilePath), schema = Some(ID("avro"))
       )
 
       val source = AvroFileSourceReader.read(sourceConfig)
@@ -212,7 +212,7 @@ class SourceReadersSpec extends AnyWordSpec with Matchers {
 
     "return error when schema provided but not found" in {
       val sourceConfig = AvroFileSourceConfig(
-        ID("avroSource"), Refined.unsafeApply(avroFilePath), schema = Some("some_schema")
+        ID("avroSource"), Refined.unsafeApply(avroFilePath), schema = Some(ID("some_schema"))
       )
       AvroFileSourceReader.read(sourceConfig).isLeft shouldEqual true
     }
@@ -222,7 +222,7 @@ class SourceReadersSpec extends AnyWordSpec with Matchers {
     val parquetFilePath = getClass.getResource("/data/companies/inc_500_companies_2019.parquet").getPath
 
     "correctly read parquet file" in {
-      val sourceConfig = ParquetFileSourceConfig(ID("parquetSource"), Refined.unsafeApply(parquetFilePath))
+      val sourceConfig = ParquetFileSourceConfig(ID("parquetSource"), Refined.unsafeApply(parquetFilePath), None)
 
       val source = ParquetFileSourceReader.read(sourceConfig)
 
@@ -235,7 +235,7 @@ class SourceReadersSpec extends AnyWordSpec with Matchers {
     }
 
     "return error when file not found" in {
-      val sourceConfig = ParquetFileSourceConfig(ID("parquetSource"), "some_file.txt")
+      val sourceConfig = ParquetFileSourceConfig(ID("parquetSource"), "some_file.txt", None)
       ParquetFileSourceReader.read(sourceConfig).isLeft shouldEqual true
     }
   }
@@ -244,7 +244,7 @@ class SourceReadersSpec extends AnyWordSpec with Matchers {
     val orcFilePath = getClass.getResource("/data/companies/inc_500_companies_2019.orc").getPath
 
     "correctly read orc file" in {
-      val sourceConfig = OrcFileSourceConfig(ID("orcSource"), Refined.unsafeApply(orcFilePath))
+      val sourceConfig = OrcFileSourceConfig(ID("orcSource"), Refined.unsafeApply(orcFilePath), None)
 
       val source = OrcFileSourceReader.read(sourceConfig)
 
@@ -257,7 +257,7 @@ class SourceReadersSpec extends AnyWordSpec with Matchers {
     }
 
     "return error when file not found" in {
-      val sourceConfig = OrcFileSourceConfig(ID("orcSource"), "some_file.txt")
+      val sourceConfig = OrcFileSourceConfig(ID("orcSource"), "some_file.txt", None)
       OrcFileSourceReader.read(sourceConfig).isLeft shouldEqual true
     }
   }

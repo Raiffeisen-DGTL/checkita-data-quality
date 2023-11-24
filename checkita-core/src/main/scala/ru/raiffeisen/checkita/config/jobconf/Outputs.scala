@@ -5,7 +5,7 @@ import eu.timepit.refined.api.Refined
 import eu.timepit.refined.collection.NonEmpty
 import eu.timepit.refined.types.string.NonEmptyString
 import ru.raiffeisen.checkita.config.Enums.TemplateFormat
-import ru.raiffeisen.checkita.config.RefinedTypes.{Email, MMRecipient, SparkParam, URI}
+import ru.raiffeisen.checkita.config.RefinedTypes.{Email, ID, MMRecipient, SparkParam, URI}
 import ru.raiffeisen.checkita.config.jobconf.Files._
 
 
@@ -45,7 +45,7 @@ object Outputs {
                                               header: Boolean = false
                                             ) extends FileOutputConfig with DelimitedFileConfig {
     // Schema is not required as input parameter as it is enforced on write.
-    val schema: Option[NonEmptyString] = None
+    val schema: Option[ID] = None
   }
 
   /**
@@ -56,7 +56,7 @@ object Outputs {
   final case class AvroFileOutputConfig(
                                          path: URI
                                        ) extends FileOutputConfig with AvroFileConfig {
-    val schema: Option[NonEmptyString] = None
+    val schema: Option[ID] = None
   }
 
   /**
@@ -66,7 +66,9 @@ object Outputs {
    */
   final case class OrcFileOutputConfig(
                                         path: URI
-                                      ) extends FileOutputConfig with OrcFileConfig
+                                      ) extends FileOutputConfig with OrcFileConfig {
+    val schema: Option[ID] = None
+  }
 
   /**
    * Parquet file output configuration
@@ -75,7 +77,9 @@ object Outputs {
    */
   final case class ParquetFileOutputConfig(
                                             path: URI
-                                          ) extends FileOutputConfig with ParquetFileConfig
+                                          ) extends FileOutputConfig with ParquetFileConfig {
+    val schema: Option[ID] = None
+  }
 
 
   /**
