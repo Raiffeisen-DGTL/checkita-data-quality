@@ -31,7 +31,7 @@ abstract class JdbcConnection[T <: JdbcConnectionConfig] extends DQConnection {
    * Gets basic JDBC connection properties
    * @return Connection properties
    */
-  private def getProperties: Properties = {
+  protected def getProperties: Properties = {
     val props = new Properties()
     props.put("driver", jdbcDriver)
     config.username.map(_.value).foreach(props.put("user", _))

@@ -79,6 +79,62 @@ object Connections {
                                            schema: Option[NonEmptyString],
                                            parameters: Seq[SparkParam] = Seq.empty
                                          ) extends JdbcConnectionConfig
+
+  /**
+   * Connection configuration for MySQL database
+   *
+   * @param id         Connection Id
+   * @param url        Url for connection to database
+   * @param username   Username used for connection
+   * @param password   Password used for connection
+   * @param schema     Optional schema to lookup tables from. If omitted, default schema is used.
+   * @param parameters Sequence of additional connection parameters
+   */
+  final case class MySQLConnectionConfig(
+                                          id: ID,
+                                          url: URI,
+                                          username: Option[NonEmptyString],
+                                          password: Option[NonEmptyString],
+                                          schema: Option[NonEmptyString],
+                                          parameters: Seq[SparkParam] = Seq.empty
+                                        ) extends JdbcConnectionConfig
+
+  /**
+   * Connection configuration for MS SQL database
+   *
+   * @param id         Connection Id
+   * @param url        Url for connection to database
+   * @param username   Username used for connection
+   * @param password   Password used for connection
+   * @param schema     Optional schema to lookup tables from. If omitted, default schema is used.
+   * @param parameters Sequence of additional connection parameters
+   */
+  final case class MSSQLConnectionConfig(
+                                          id: ID,
+                                          url: URI,
+                                          username: Option[NonEmptyString],
+                                          password: Option[NonEmptyString],
+                                          schema: Option[NonEmptyString],
+                                          parameters: Seq[SparkParam] = Seq.empty
+                                        ) extends JdbcConnectionConfig
+
+  /**
+   * Connection configuration for H2 database
+   *
+   * @param id         Connection Id
+   * @param url        Url for connection to database
+   * @param parameters Sequence of additional connection parameters
+   */
+  final case class H2ConnectionConfig(
+                                       id: ID,
+                                       url: URI,
+                                       parameters: Seq[SparkParam] = Seq.empty
+                                     ) extends JdbcConnectionConfig {
+    // No need to provide user password for H2
+    val username: Option[NonEmptyString] = None
+    val password: Option[NonEmptyString] = None
+  }
+
   /**
    * Connection configuration for Kafka
    * @param id Connection Id
@@ -97,12 +153,18 @@ object Connections {
    * @param postgres Sequence of PostgresSQL connections
    * @param oracle Sequence of Oracle connection
    * @param sqlite Sequence of SQLite connections
+   * @param mysql Sequence of MySQL connections
+   * @param mssql Sequence of MS SQL connections
+   * @param h2 Sequence of H2 connections
    */
   final case class ConnectionsConfig(
                                       kafka: Seq[KafkaConnectionConfig] = Seq.empty,
                                       postgres: Seq[PostgresConnectionConfig] = Seq.empty,
                                       oracle: Seq[OracleConnectionConfig] = Seq.empty,
-                                      sqlite: Seq[SQLiteConnectionConfig] = Seq.empty
+                                      sqlite: Seq[SQLiteConnectionConfig] = Seq.empty,
+                                      mysql: Seq[MySQLConnectionConfig] = Seq.empty,
+                                      mssql: Seq[MSSQLConnectionConfig] = Seq.empty,
+                                      h2: Seq[H2ConnectionConfig] = Seq.empty
                                     ) {
     def getAllConnections: Seq[ConnectionConfig] = 
       this.productIterator.toSeq.flatMap(_.asInstanceOf[Seq[Any]]).map(_.asInstanceOf[ConnectionConfig])
