@@ -10,6 +10,9 @@ systems are supported:
     * PostgreSQL (also can be used for connection to GreenPlum);
     * Oracle
     * SQLite
+    * MySQL
+    * MS SQL
+    * H2
 * Connection to message queues:
     * Kafka
 
@@ -50,8 +53,45 @@ Configuration to Oracle can be set up in the same way as to PostgreSQL, using fo
 * `url` - *Required*. Connection URL. Should contain host, port and name of database.
   In addition, extra parameters can be supplied in connection URL if required.
   *Connection protocol must not be specified.*
-* `username` - *Optional*. Username used to connect to PostgreSQL database if required.
-* `password` - *Optional*. Password used to connect to PostgreSQL database if required.
+* `username` - *Optional*. Username used to connect to Oracle database if required.
+* `password` - *Optional*. Password used to connect to Oracle database if required.
+* `parameters` - *Optional*. List of Spark parameters if required where each parameter is a string in format:
+  `spark.param.name=spark.param.value`.
+
+## MySQL Connection Configuration
+
+Configuration to MySQL can be set up in the same way as to PostgreSQL and Oracle, using following parameters:
+
+* `id` - *Required*. Connection ID;
+* `url` - *Required*. Connection URL. Should contain host, port and name of database.
+  In addition, extra parameters can be supplied in connection URL if required.
+  *Connection protocol must not be specified.*
+* `username` - *Optional*. Username used to connect to MySQL database if required.
+* `password` - *Optional*. Password used to connect to MySQL database if required.
+* `parameters` - *Optional*. List of Spark parameters if required where each parameter is a string in format:
+  `spark.param.name=spark.param.value`.
+
+## MS SQL Connection Configuration
+
+Configuration to MS SQL can be set up similarly to the 3 previous, using following parameters:
+
+* `id` - *Required*. Connection ID;
+* `url` - *Required*. Connection URL. Should contain host, port and name of database.
+  In addition, extra parameters can be supplied in connection URL if required.
+  *Connection protocol must not be specified.*
+* `username` - *Optional*. Username used to connect to MS SQL database if required.
+* `password` - *Optional*. Password used to connect to MS SQL database if required.
+* `parameters` - *Optional*. List of Spark parameters if required where each parameter is a string in format:
+  `spark.param.name=spark.param.value`.
+
+## H2 Connection Configuration
+
+Configuring connection to H2 database has similarly to SQLite. It is required supplying only two parameters:
+
+* `id` - *Required*. Connection ID;
+* `url` - *Required*. Connection URL. Should contain host, port and name of database.
+  In addition, extra parameters can be supplied in connection URL if required.
+  *Connection protocol must not be specified.*
 * `parameters` - *Optional*. List of Spark parameters if required where each parameter is a string in format:
   `spark.param.name=spark.param.value`.
 
