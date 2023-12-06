@@ -64,6 +64,28 @@ object ConnectionReaders {
   }
 
   /**
+   * MySQL connection reader: establishes connection to MySQL database file.
+   */
+  implicit object MySQLConnectionReader extends ConnectionReader[MySQLConnectionConfig] {
+    val constructor: MySQLConnectionConfig => DQConnection = MySQLConnection
+  }
+
+  /**
+   * MS SQL connection reader: establishes connection to MS SQL database file.
+   */
+  implicit object MSSQLConnectionReader extends ConnectionReader[MSSQLConnectionConfig] {
+    val constructor: MSSQLConnectionConfig => DQConnection = MSSQLConnection
+  }
+
+  /**
+   * H2 connection reader: establishes connection to H2 database file.
+   */
+  implicit object H2ConnectionReader extends ConnectionReader[H2ConnectionConfig] {
+    val constructor: H2ConnectionConfig => DQConnection = H2Connection
+  }
+
+
+  /**
    * General connection reader: invokes connection reader that matches provided connection configuration
    */
   implicit object AnyConnectionReader extends ConnectionReader[ConnectionConfig] {
@@ -72,6 +94,9 @@ object ConnectionReaders {
       case sqlite: SQLiteConnectionConfig => SQLiteConnection(sqlite)
       case postgres: PostgresConnectionConfig => PostgresConnection(postgres)
       case oracle: OracleConnectionConfig => OracleConnection(oracle)
+      case mysql: MySQLConnectionConfig => MySQLConnection(mysql)
+      case mssql: MSSQLConnectionConfig => MSSQLConnection(mssql)
+      case h2: H2ConnectionConfig => H2Connection(h2)
     }
   }
 
