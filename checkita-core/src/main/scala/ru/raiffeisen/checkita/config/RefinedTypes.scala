@@ -16,7 +16,6 @@ object RefinedTypes {
   type Port = Int Refined Interval.Closed[W.`0`.T, W.`9999`.T]
   type Email = String Refined MatchesRegex[W.`"""^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"""`.T]
   type MMRecipient = String Refined MatchesRegex[W.`"""^(@|#)[a-zA-Z][a-zA-Z0-9.\\-_]+$"""`.T]
-  type ConfigVersion = String Refined MatchesRegex[W.`"""^\\d.\\d$"""`.T]
   type SparkParam = String Refined MatchesRegex[W.`"""^\\S+?\\=\\S+$"""`.T]
   type PositiveInt = Int Refined Positive
   type FixedShortColumn = String Refined MatchesRegex[W.`"""^[^\\n\\r\\t:]+:\\d+$"""`.T]

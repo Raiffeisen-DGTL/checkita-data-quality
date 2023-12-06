@@ -5,18 +5,18 @@ import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.{LongType, StringType, TimestampType}
+import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 import org.json.XML
 import ru.raiffeisen.checkita.appsettings.AppSettings
-import ru.raiffeisen.checkita.config.Enums.{CustomTime, EventTime, KafkaTopicFormat, ProcessingTime}
+import ru.raiffeisen.checkita.config.Enums.KafkaTopicFormat
 import ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig
 import ru.raiffeisen.checkita.config.jobconf.Sources.KafkaSourceConfig
 import ru.raiffeisen.checkita.connections.{DQConnection, DQStreamingConnection}
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.utils.Common.paramsSeqToMap
 import ru.raiffeisen.checkita.utils.ResultUtils._
-import ru.raiffeisen.checkita.utils.SparkUtils.DurationOps
+import ru.raiffeisen.checkita.utils.SparkUtils.DataFrameOps
 
 import java.util.Properties
 import scala.util.Try
@@ -26,18 +26,33 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
   val id: String = config.id.value
   protected val sparkParams: Seq[String] = config.parameters.map(_.value)
   private val kafkaParams: Map[String, String] = Map(
-    "bootstrap.servers" -> config.servers.value.map(_.value).mkString(",")
+    "kafka.bootstrap.servers" -> config.servers.value.map(_.value).mkString(",")
   ) ++ paramsSeqToMap(sparkParams)
-  
+
+  /**
+   * When kafka connection parameters are used to directly build Kafka Producer or Consumer,
+   * then 'kafka.' prefix from their names must be removed. Such prefix is used insude Spark
+   * to distinguish configurations related to Kafka.
+   * @param params Spark Kafka connection parameters
+   * @return Pure Kafka connection parameters
+   */
+  private def alterParams(params: Map[String, String]): Map[String, String] =
+    params.map {
+      case (k, v) => if (k.startsWith("kafka.")) k.drop("kafka.".length) -> v else k -> v
+    }
+
   private val xmlToJson: UserDefinedFunction = udf((xmlStr: String) => XML.toJSONObject(xmlStr).toString)
   
   /**
    * Gets proper subscribe option for given source configuration.
+   * @param srcId Source ID
    * @param topics List of Kafka topics (can be empty)
    * @param topicPattern Topic pattern (optional)
    * @return Topic(s) subscribe option
    */
-  private def getSubscribeOption(topics: Seq[String], topicPattern: Option[String]): (String, String) =
+  private def getSubscribeOption(srcId: String,
+                                 topics: Seq[String],
+                                 topicPattern: Option[String]): (String, String) =
     (topics, topicPattern) match {
       case (ts@_ :: _, None) => if (ts.forall(_.contains("@"))) {
         "assign" -> ts.map(_.split("@")).collect {
@@ -46,12 +61,12 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
       } else if (ts.forall(!_.contains("@"))) {
         "subscribe" -> ts.mkString(",")
       } else throw new IllegalArgumentException(
-        s"Kafka source '$id' configuration error: mixed topic notation - " +
+        s"Kafka source '$srcId' configuration error: mixed topic notation - " +
           "all topics must be defined either with partitions to read or without them (read all topic partitions)."
       )
       case (Nil, Some(tp)) => "subscribePattern" -> tp
       case _ => throw new IllegalArgumentException(
-        s"Kafka source '$id' configuration error: " +
+        s"Kafka source '$srcId' configuration error: " +
           "topics must be defined either explicitly as a sequence of topic names or as a topic pattern."
       )
     }
@@ -97,7 +112,7 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
    */
   def checkConnection: Result[Unit] = Try {
     val props = new Properties()
-    kafkaParams.foreach{ case (k, v) => props.put(k, v) }
+    alterParams(kafkaParams).foreach{ case (k, v) => props.put(k, v) }
     val consumer = new KafkaConsumer[String, String](props, new StringDeserializer, new StringDeserializer)
     consumer.listTopics()
     consumer.close()
@@ -119,8 +134,9 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
     
     val allOptions = kafkaParams ++ 
       paramsSeqToMap(sourceConfig.options.map(_.value)) + 
-      getSubscribeOption(sourceConfig.topics.map(_.value), sourceConfig.topicPattern.map(_.value)) +
-      ("startingOffsets" -> sourceConfig.startingOffsets.map(_.value).getOrElse("earliest")) +
+      getSubscribeOption(
+        sourceConfig.id.value, sourceConfig.topics.map(_.value).toList, sourceConfig.topicPattern.map(_.value)
+      ) + ("startingOffsets" -> sourceConfig.startingOffsets.map(_.value).getOrElse("earliest")) +
       ("endingOffsets" -> sourceConfig.endingOffsets.map(_.value).getOrElse("latest"))
 
     val rawDF = spark.read.format("kafka").options(allOptions).load()
@@ -146,32 +162,16 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
                      schemas: Map[String, SourceSchema]): DataFrame = {
     val allOptions = kafkaParams ++
       paramsSeqToMap(sourceConfig.options.map(_.value)) +
-      getSubscribeOption(sourceConfig.topics.map(_.value), sourceConfig.topicPattern.map(_.value)) +
-      ("startingOffsets" -> sourceConfig.startingOffsets.map(_.value).getOrElse("latest"))
-
-    val windowTsCol = settings.streamConfig.windowTsCol
-    val eventTsCol = settings.streamConfig.eventTsCol
-    val windowDuration = settings.streamConfig.window.toSparkInterval
+      getSubscribeOption(
+        sourceConfig.id.value, sourceConfig.topics.map(_.value).toList, sourceConfig.topicPattern.map(_.value)
+      ) + ("startingOffsets" -> sourceConfig.startingOffsets.map(_.value).getOrElse("latest"))
 
     val rawStream = spark.readStream.format("kafka").options(allOptions).load()
 
     val keyColumn = decodeColumn("key", sourceConfig.keyFormat, sourceConfig.keySchema.map(_.value))
     val valueColumn = decodeColumn("value", sourceConfig.valueFormat, sourceConfig.valueSchema.map(_.value))
-    val eventColumn = sourceConfig.windowBy match {
-      case ProcessingTime => current_timestamp().cast(LongType)
-      case EventTime => col("timestamp")
-      case CustomTime(colName) => col(colName).cast(LongType)
-    }
 
-    rawStream.select(keyColumn, valueColumn, col("timestamp"))
-      .withColumn(eventTsCol, eventColumn)
-      .withColumn(s"${windowTsCol}_pre", window(col(eventTsCol).cast(TimestampType), windowDuration))
-      .select(
-        col(eventTsCol),
-        col(s"${windowTsCol}_pre").getField("start").cast(LongType).as(windowTsCol),
-        col("key"),
-        col("value")
-      )
+    rawStream.select(keyColumn, valueColumn, col("timestamp")).prepareStream(sourceConfig.windowBy)
   }
 
   /**
@@ -187,7 +187,9 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
       "linger.ms" -> "0",
       "acks" -> "all"
     ) // default options related to producer
-    allOptions.foreach{ case (k, v) => props.put(k, v) }
+
+    // here we use direct Kafka Producer, therefore, Kafka parameters must be used without 'kafka.' prefix as in Spark
+    alterParams(allOptions).foreach{ case (k, v) => props.put(k, v) }
     
     val producer = new KafkaProducer[String, String](props, new StringSerializer, new StringSerializer)
     val cb = new ProducerCallback

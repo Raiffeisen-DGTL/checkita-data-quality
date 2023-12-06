@@ -6,7 +6,7 @@ import eu.timepit.refined.collection.NonEmpty
 import eu.timepit.refined.types.string.NonEmptyString
 import org.apache.spark.sql.Column
 import org.apache.spark.storage.StorageLevel
-import ru.raiffeisen.checkita.config.Enums.{KafkaTopicFormat, KafkaWindowing, ProcessingTime, SparkJoinType}
+import ru.raiffeisen.checkita.config.Enums.{KafkaTopicFormat, ProcessingTime, SparkJoinType, StreamWindowing}
 import ru.raiffeisen.checkita.config.RefinedTypes._
 import ru.raiffeisen.checkita.config.jobconf.Files._
 import ru.raiffeisen.checkita.config.jobconf.Outputs._
@@ -17,6 +17,7 @@ object Sources {
    * Base class for all source configurations.
    * All sources must have an ID and optional sequence of keyFields
    * which will uniquely identify data row in error collection reports.
+   * In addition, it should be indicated whether this source is streamable
    */
   sealed abstract class SourceConfig {
     val id: ID
@@ -30,7 +31,9 @@ object Sources {
    * @param id         Source ID
    * @param connection Connection ID (must be JDBC connection)
    * @param table      Table to read
+   * @param query      Query to execute
    * @param keyFields  Sequence of key fields (columns that identify data row)
+   * @note Either table to read or query to execute must be defined but not both.
    */
   final case class TableSourceConfig(
                                       id: ID,
@@ -106,10 +109,9 @@ object Sources {
                                       connection: ID,
                                       topics: Seq[NonEmptyString] = Seq.empty,
                                       topicPattern: Option[NonEmptyString],
-                                      format: KafkaTopicFormat,
                                       startingOffsets: Option[NonEmptyString], // earliest for batch, latest for stream
                                       endingOffsets: Option[NonEmptyString], // latest for batch, ignored for stream.
-                                      windowBy: KafkaWindowing = ProcessingTime,
+                                      windowBy: StreamWindowing = ProcessingTime,
                                       keyFormat: KafkaTopicFormat = KafkaTopicFormat.String,
                                       valueFormat: KafkaTopicFormat = KafkaTopicFormat.String,
                                       keySchema: Option[ID] = None,
@@ -122,8 +124,12 @@ object Sources {
 
   /**
    * Base class for file source configurations.
+   * All file sources are streamable and therefore must contain windowBy parameter which
+   * defined source of timestamp used to build stream windows.
    */
-  sealed abstract class FileSourceConfig extends SourceConfig
+  sealed abstract class FileSourceConfig extends SourceConfig {
+    val windowBy: StreamWindowing
+  }
 
   /**
    * Fixed-width file source configuration
@@ -131,12 +137,19 @@ object Sources {
    * @param id        Source ID
    * @param path      Path to file
    * @param schema    Schema ID (must be either fixedFull or fixedShort schema)
+   * @param windowBy  Source of timestamp used to build windows. Applicable only for streaming jobs!
+   *                  Default: processingTime - uses current timestamp at the moment when Spark processes row.
+   *                  Other options are:
+   *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
+   *                    - customTime(columnName) - uses arbitrary user-defined column
+   *                      (column must be of TimestampType)
    * @param keyFields Sequence of key fields (columns that identify data row)
    */
   final case class FixedFileSourceConfig(
                                           id: ID,
                                           path: URI,
                                           schema: Option[ID],
+                                          windowBy: StreamWindowing = ProcessingTime,
                                           keyFields: Seq[NonEmptyString] = Seq.empty
                                         ) extends FileSourceConfig with FixedFileConfig {
     val streamable: Boolean = true
@@ -152,6 +165,12 @@ object Sources {
    * @param escape    Escape symbol (default: \)
    * @param header    Boolean flag indicating whether schema should be read from file header (default: false)
    * @param schema    Schema ID (only if header = false)
+   * @param windowBy  Source of timestamp used to build windows. Applicable only for streaming jobs!
+   *                  Default: processingTime - uses current timestamp at the moment when Spark processes row.
+   *                  Other options are:
+   *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
+   *                    - customTime(columnName) - uses arbitrary user-defined column
+   *                      (column must be of TimestampType)
    * @param keyFields Sequence of key fields (columns that identify data row)
    */
   final case class DelimitedFileSourceConfig(
@@ -162,6 +181,7 @@ object Sources {
                                               quote: NonEmptyString = "\"",
                                               escape: NonEmptyString = "\\",
                                               header: Boolean = false,
+                                              windowBy: StreamWindowing = ProcessingTime,
                                               keyFields: Seq[NonEmptyString] = Seq.empty
                                             ) extends FileSourceConfig with DelimitedFileConfig {
     val streamable: Boolean = true
@@ -173,12 +193,19 @@ object Sources {
    * @param id        Source ID
    * @param path      Path to file
    * @param schema    Schema ID
+   * @param windowBy  Source of timestamp used to build windows. Applicable only for streaming jobs!
+   *                  Default: processingTime - uses current timestamp at the moment when Spark processes row.
+   *                  Other options are:
+   *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
+   *                    - customTime(columnName) - uses arbitrary user-defined column
+   *                      (column must be of TimestampType)
    * @param keyFields Sequence of key fields (columns that identify data row)
    */
   final case class AvroFileSourceConfig(
                                          id: ID,
                                          path: URI,
                                          schema: Option[ID],
+                                         windowBy: StreamWindowing = ProcessingTime,
                                          keyFields: Seq[NonEmptyString] = Seq.empty
                                        ) extends FileSourceConfig with AvroFileConfig {
     val streamable: Boolean = true
@@ -190,12 +217,19 @@ object Sources {
    * @param id        Source ID
    * @param path      Path to file
    * @param schema    Schema ID
+   * @param windowBy  Source of timestamp used to build windows. Applicable only for streaming jobs!
+   *                  Default: processingTime - uses current timestamp at the moment when Spark processes row.
+   *                  Other options are:
+   *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
+   *                    - customTime(columnName) - uses arbitrary user-defined column
+   *                      (column must be of TimestampType)
    * @param keyFields Sequence of key fields (columns that identify data row)
    */
   final case class OrcFileSourceConfig(
                                         id: ID,
                                         path: URI,
                                         schema: Option[ID],
+                                        windowBy: StreamWindowing = ProcessingTime,
                                         keyFields: Seq[NonEmptyString] = Seq.empty
                                       ) extends FileSourceConfig with OrcFileConfig {
     val streamable: Boolean = true
@@ -207,12 +241,19 @@ object Sources {
    * @param id        Source ID
    * @param path      Path to file
    * @param schema    Schema ID
+   * @param windowBy  Source of timestamp used to build windows. Applicable only for streaming jobs!
+   *                  Default: processingTime - uses current timestamp at the moment when Spark processes row.
+   *                  Other options are:
+   *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
+   *                    - customTime(columnName) - uses arbitrary user-defined column
+   *                      (column must be of TimestampType)
    * @param keyFields Sequence of key fields (columns that identify data row)
    */
   final case class ParquetFileSourceConfig(
                                             id: ID,
                                             path: URI,
                                             schema: Option[ID],
+                                            windowBy: StreamWindowing = ProcessingTime,
                                             keyFields: Seq[NonEmptyString] = Seq.empty
                                           ) extends FileSourceConfig with ParquetFileConfig {
     val streamable: Boolean = true
@@ -236,7 +277,7 @@ object Sources {
                                 options: Seq[SparkParam] = Seq.empty,
                                 keyFields: Seq[NonEmptyString] = Seq.empty
                                ) extends SourceConfig {
-    val streamable: Boolean = false
+    val streamable: Boolean = false // todo: make custom source streamable
   }
 
   /**
@@ -252,7 +293,6 @@ object Sources {
     val parents: Seq[String]
     // additional validation will be imposed on the required number
     // of parent sources depending on virtual source type.
-    val streamable: Boolean = true
   }
 
   /**
@@ -274,6 +314,7 @@ object Sources {
                                            keyFields: Seq[NonEmptyString] = Seq.empty
                                          ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
+    val streamable: Boolean = false
   }
 
   /**
@@ -297,6 +338,7 @@ object Sources {
                                             keyFields: Seq[NonEmptyString] = Seq.empty
                                           ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
+    val streamable: Boolean = false
   }
 
   /**
@@ -320,6 +362,7 @@ object Sources {
                                               keyFields: Seq[NonEmptyString] = Seq.empty
                                             ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
+    val streamable: Boolean = true
   }
 
   /**
@@ -342,6 +385,7 @@ object Sources {
                                               keyFields: Seq[NonEmptyString] = Seq.empty
                                             ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
+    val streamable: Boolean = true
   }
 
   /**
@@ -366,6 +410,7 @@ object Sources {
                                                  keyFields: Seq[NonEmptyString] = Seq.empty
                                                ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
+    val streamable: Boolean = false
   }
 
   /**
@@ -392,9 +437,11 @@ object Sources {
    * Data Quality job configuration section describing streams
    *
    * @param kafka Sequence of streams based on Kafka topics
+   * @param file Sequence of streams based on file sources
    */
   final case class StreamSourcesConfig(
                                         kafka: Seq[KafkaSourceConfig] = Seq.empty,
+                                        file: Seq[FileSourceConfig] = Seq.empty,
                                       ) {
     def getAllSources: Seq[SourceConfig] =
       this.productIterator.toSeq.flatMap(_.asInstanceOf[Seq[Any]]).map(_.asInstanceOf[SourceConfig])

@@ -36,7 +36,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         Seq("batchId")
       )
 
-      val sqlVirtualSource = SqlVirtualSourceReader.read(sqlConfig, parentSources)
+      val sqlVirtualSource = SqlVirtualSourceReader.read(sqlConfig, parentSources, ReadMode.Batch)
 
       sqlVirtualSource.isRight shouldEqual true
 
@@ -62,7 +62,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         Seq("batchId")
       )
 
-      val sqlVirtualSource = SqlVirtualSourceReader.read(sqlConfig, parentSources)
+      val sqlVirtualSource = SqlVirtualSourceReader.read(sqlConfig, parentSources, ReadMode.Batch)
 
       sqlVirtualSource.isLeft shouldEqual true
     }
@@ -88,7 +88,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         Seq("batchId")
       )
 
-      val joinVirtualSource = JoinVirtualSourceReader.read(joinConfig, parentSources)
+      val joinVirtualSource = JoinVirtualSourceReader.read(joinConfig, parentSources, ReadMode.Batch)
 
       joinVirtualSource.isRight shouldEqual true
 
@@ -115,7 +115,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         Seq("batchId")
       )
 
-      val joinVirtualSource = JoinVirtualSourceReader.read(joinConfig, parentSources)
+      val joinVirtualSource = JoinVirtualSourceReader.read(joinConfig, parentSources, ReadMode.Batch)
 
       joinVirtualSource.isLeft shouldEqual true
     }
@@ -136,7 +136,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         Seq("batchId", "dttm")
       )
 
-      val filterVirtualSource = FilterVirtualSourceReader.read(filterConfig, parentSources)
+      val filterVirtualSource = FilterVirtualSourceReader.read(filterConfig, parentSources, ReadMode.Batch)
 
       filterVirtualSource.isRight shouldEqual true
 
@@ -163,7 +163,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         Seq("batchId", "dttm")
       )
 
-      val filterVirtualSource = FilterVirtualSourceReader.read(filterConfig, parentSources)
+      val filterVirtualSource = FilterVirtualSourceReader.read(filterConfig, parentSources, ReadMode.Batch)
 
       filterVirtualSource.isLeft shouldEqual true
     }
@@ -183,7 +183,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         None
       )
 
-      val selectVirtualSource = SelectVirtualSourceReader.read(selectConfig, parentSources)
+      val selectVirtualSource = SelectVirtualSourceReader.read(selectConfig, parentSources, ReadMode.Batch)
 
       selectVirtualSource.isRight shouldEqual true
 
@@ -210,7 +210,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         None
       )
 
-      val selectVirtualSource = SelectVirtualSourceReader.read(selectConfig, parentSources)
+      val selectVirtualSource = SelectVirtualSourceReader.read(selectConfig, parentSources, ReadMode.Batch)
 
       selectVirtualSource.isLeft shouldEqual true
     }
@@ -232,7 +232,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         Seq("col1", "avg_col2", "sum_col3")
       )
 
-      val aggregateVirtualSource = AggregateVirtualSourceReader.read(selectConfig, parentSources)
+      val aggregateVirtualSource = AggregateVirtualSourceReader.read(selectConfig, parentSources, ReadMode.Batch)
 
       aggregateVirtualSource.isRight shouldEqual true
 
@@ -261,7 +261,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         Seq("col1", "avg_col2", "sum_col3")
       )
 
-      val aggregateVirtualSource = AggregateVirtualSourceReader.read(selectConfig, parentSources)
+      val aggregateVirtualSource = AggregateVirtualSourceReader.read(selectConfig, parentSources, ReadMode.Batch)
 
       aggregateVirtualSource.isLeft shouldEqual true
     }

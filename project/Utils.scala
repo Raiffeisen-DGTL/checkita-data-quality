@@ -22,7 +22,11 @@ object Utils {
       "sparkKafkaSql" -> "org.apache.spark" %% "spark-sql-kafka-0-10" % sparkVersion
     ).mapValues(_.excludeAll(jpountz, hadoop))
 
-    sparkDeps ++ sparkKafkaDeps + ("sparkAvro" -> "org.apache.spark" %% "spark-avro" % sparkVersion)
+    val extraDeps: Map[String, ModuleID] = Map(
+      "sparkAvro" -> "org.apache.spark" %% "spark-avro" % sparkVersion,
+      "sparkCloud" -> "org.apache.spark" %% "spark-hadoop-cloud" % sparkVersion
+    )
+    sparkDeps ++ sparkKafkaDeps ++ extraDeps
   }
   
   def overrideFasterXml(sparkVersion: String): Seq[ModuleID] = {

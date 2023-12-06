@@ -26,6 +26,7 @@ object Common {
     case Right(spark) => spark
     case Left(e) => throw new RuntimeException(e.mkString("\n"))
   }
+  spark.sparkContext.setLogLevel("WARN")
   implicit val fs: FileSystem = makeFileSystem(spark) match {
     case Right(fs) => fs
     case Left(e) => throw new RuntimeException(e.mkString("\n"))

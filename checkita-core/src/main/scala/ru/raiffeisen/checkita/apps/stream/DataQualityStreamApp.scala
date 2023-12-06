@@ -1,38 +1,38 @@
-package ru.raiffeisen.checkita.apps.batch
+package ru.raiffeisen.checkita.apps.stream
 
 import ru.raiffeisen.checkita.apps.cli.CommandLineOptions
-import ru.raiffeisen.checkita.context.{DQContext, DQBatchJob}
-import ru.raiffeisen.checkita.storage.Models.ResultSet
+import ru.raiffeisen.checkita.context.{DQContext, DQStreamJob}
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils.Result
 
 /**
- * Checkita Data Quality Batch Application.
+ * Checkita Data Quality Streaming Application.
  */
-object DataQualityBatchApp extends App with Logging {
-  
+object DataQualityStreamApp extends App with Logging {
+
   CommandLineOptions.parser().parse(args, CommandLineOptions("", Seq.empty)) match {
-    case Some(opts) => 
+    case Some(opts) =>
       // create DQ Context
       val dqContext: Result[DQContext] = DQContext.build(
         opts.appConf, opts.refDate, opts.local, opts.shared, opts.migrate, opts.extraVars, opts.logLevel
       )
       // Build DQ Job
-      val dqJob: Result[DQBatchJob] = dqContext.flatMap(_.buildBatchJob(opts.jobConf))
+      val dqJob: Result[DQStreamJob] = dqContext.flatMap(_.buildStreamJob(opts.jobConf))
       // Run DQ Job
-      val results: Result[ResultSet] = dqJob.flatMap(_.run)
+      val results: Result[Unit] = dqJob.flatMap(_.run())
       // Stop Spark Session in case if DQContext was successfully created.
       val _ = dqContext.flatMap(_.stop())
       // Log success or error message:
       results match {
         case Right(_) =>
-          log.info("Checkita Data Quality batch application completed successfully.")
+          log.info("Checkita Data Quality streaming application stopped.")
         case Left(errs) =>
-          log.error("Checkita Data Quality batch application finished with following errors:")
+          log.error("Checkita Data Quality streaming application stopped with errors:")
           errs.foreach(log.error)
           sys.exit(1)
       }
     case None =>
       throw new IllegalArgumentException("Wrong application command line arguments provided.")
   }
+
 }

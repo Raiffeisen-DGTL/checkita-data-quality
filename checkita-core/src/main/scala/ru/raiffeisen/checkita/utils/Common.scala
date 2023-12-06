@@ -7,6 +7,7 @@ import ru.raiffeisen.checkita.config.RefinedTypes.DateFormat
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.io.{File, InputStreamReader, SequenceInputStream, Serializable}
+import java.nio.charset.StandardCharsets
 import scala.reflect.runtime.universe.{MethodSymbol, TypeTag, typeOf}
 import scala.util.Try
 
@@ -68,7 +69,7 @@ object Common {
   def prepareConfig(configs: Seq[String], prependVars: String, confName: String): Result[InputStreamReader] = 
     Try {
       val vars = if (prependVars.isEmpty) "// no extra variables are provided.\n" else prependVars
-      new InputStreamReader(configs.foldLeft(toInputStream(vars)){ (stream, config) =>
+      new InputStreamReader(configs.foldLeft(toInputStream(vars, StandardCharsets.UTF_8)){ (stream, config) =>
         new SequenceInputStream(stream, openInputStream(new File(config)))
       })
     }.toResult(preMsg = s"Unable to prepare $confName configuration for reading with following error:")
