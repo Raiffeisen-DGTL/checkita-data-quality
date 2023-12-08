@@ -1,10 +1,10 @@
 # File Output Configuration
 
 Checkita framework has mechanism designed to save some it results to a file either in a local or remote (HDFS, S3, etc.)
-file system. Thus, it is possible to save [virtual sources](04-VirtualSources.md) that are build during Data Quality
+file system. Thus, it is possible to save [virtual sources](05-VirtualSources.md) that are build during Data Quality
 job execution. Saved virtual sources can later be used for various purposes such as for investigating data quality
 problems. Apart from that, Checkita supports saving various Data Quality job results as files. In order to do that,
-it is required to configure targets of the desired type. See [Targets Configuration](08-Targets.md) for more information.
+it is required to configure targets of the desired type. See [Targets Configuration](10-Targets.md) for more information.
 
 Thus, Checkita framework support saving file outputs of the following formats:
 

@@ -86,7 +86,7 @@ Trend checks are configured using following set of parameters:
 
 ### Top N Rank Check
 
-This is a special check designed specifically for [Top N Metric](06-Metrics.md#top-n-metric) and working only with it.
+This is a special check designed specifically for [Top N Metric](08-Metrics.md#top-n-metric) and working only with it.
 Top N rank check calculates the Jacquard distance between the current and previous sets of top N metric and checks if
 it does not exceed the threshold value.
 

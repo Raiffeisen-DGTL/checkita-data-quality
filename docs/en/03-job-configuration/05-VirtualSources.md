@@ -34,7 +34,7 @@ Thus, virtual sources are defined in `virtualSources` section of job configurati
       `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
       `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
 * `save` - *Optional*. File output configuration used to save virtual source. By default, virtual sources are not saved.
-  For more information on configuring file outputs, see [File Output Configuration](09-FileOutputs.md) chapter.
+  For more information on configuring file outputs, see [File Output Configuration](11-FileOutputs.md) chapter.
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-concepts/04-ErrorCollection.md) chapter.

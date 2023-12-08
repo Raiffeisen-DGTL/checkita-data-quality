@@ -40,7 +40,7 @@ In order to save results to file, it is required to configure result target of `
 saved results, it is required to configure file output.
 
 * `save` - *Required*. File output configuration used to save results.
-  For more information on configuring file outputs, see [File Output Configuration](09-FileOutputs.md) chapter.
+  For more information on configuring file outputs, see [File Output Configuration](11-FileOutputs.md) chapter.
 
 File with results will have [Unified Targets Schema](#unified-targets-schema).
 
@@ -101,7 +101,7 @@ In order to save metric errors to file, it is required to configure error collec
 In addition to common error collection target parameters, it is required to configure file output:
 
 * `save` - *Required*. File output configuration used to save results.
-  For more information on configuring file outputs, see [File Output Configuration](09-FileOutputs.md) chapter.
+  For more information on configuring file outputs, see [File Output Configuration](11-FileOutputs.md) chapter.
 
 File with metric errors will have [Unified Targets Schema](#unified-targets-schema).
 
