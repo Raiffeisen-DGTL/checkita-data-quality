@@ -1,3 +1,12 @@
+# [1.1.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.0.1...v1.1.0) (2023-12-08)
+
+
+### Features
+
+* added new type connections ([#17](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/17)) ([205cbc8](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/205cbc8c989a2ce4a40de03c04a944651aec023f))
+* adding functionality to run quality checks over streaming sources ([#19](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/19)) ([0895fed](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/0895fed14972a9311a53454146765ace522936b0))
+* adding streaming sources and stream readers ([#16](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/16)) ([b5398fa](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/b5398fa2c8b22fac191e5853aed6f29d5d4f3821))
+
 ## [1.0.1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.0.0...v1.0.1) (2023-11-13)
 
 
