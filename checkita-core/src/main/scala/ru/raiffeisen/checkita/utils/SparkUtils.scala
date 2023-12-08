@@ -2,13 +2,16 @@ package ru.raiffeisen.checkita.utils
 
 import org.apache.hadoop.fs.FileSystem
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
+import org.apache.spark.sql.functions.{col, current_timestamp, window}
 import org.apache.spark.sql.types._
 import org.apache.spark.storage.StorageLevel
+import ru.raiffeisen.checkita.appsettings.AppSettings
+import ru.raiffeisen.checkita.config.Enums.{CustomTime, EventTime, ProcessingTime, StreamWindowing}
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
-import scala.reflect.runtime.universe.{runtimeMirror, typeOf, TermName}
+import scala.reflect.runtime.universe.{TermName, runtimeMirror, typeOf}
 import scala.concurrent.duration._
 import scala.util.Try
 import scala.util.matching.Regex
@@ -118,6 +121,42 @@ object SparkUtils {
     def toSparkInterval: String = s"${d.toSeconds} seconds"
     def toShortString: String = d match {
       case Duration(l, tu) => s"$l${timeUnits(tu)}"
+    }
+  }
+
+  /**
+   * Implicit class conversion for Spark DataFrame, to enhance it with
+   * prepareStream method which will process streaming dataframe
+   * by adding windowing provided with windowing column.
+   * @param df Spark streaming DataFrame to prepare for DQ job
+   * @param settings Implicit application settings object
+   */
+  implicit class DataFrameOps (df: DataFrame)(implicit settings: AppSettings) {
+    /**
+     * Prepares Spark streaming dataframe by adding windowing to it.
+     * @param windowBy Stream windowing type
+     * @return Transformed Spark streaming DataFrame.
+     */
+    def prepareStream(windowBy: StreamWindowing): DataFrame = {
+
+      val windowTsCol = settings.streamConfig.windowTsCol
+      val eventTsCol = settings.streamConfig.eventTsCol
+      val windowDuration = settings.streamConfig.window.toSparkInterval
+
+      val eventColumn = windowBy match {
+        case ProcessingTime => current_timestamp().cast(LongType)
+        case EventTime => col("timestamp").cast(LongType)
+        case CustomTime(colName) => col(colName).cast(LongType)
+      }
+
+      val dfColumns = df.columns.map(c => col(c)).toSeq ++ Seq(
+        col(eventTsCol),
+        col(s"${windowTsCol}_pre").getField("start").cast(LongType).as(windowTsCol),
+      )
+
+      df.withColumn(eventTsCol, eventColumn)
+        .withColumn(s"${windowTsCol}_pre", window(col(eventTsCol).cast(TimestampType), windowDuration))
+        .select(dfColumns:_*)
     }
   }
 

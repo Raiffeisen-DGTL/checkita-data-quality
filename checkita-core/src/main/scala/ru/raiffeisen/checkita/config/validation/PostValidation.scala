@@ -1,12 +1,10 @@
 package ru.raiffeisen.checkita.config.validation
 
-import com.typesafe.config.{Config, ConfigFactory, ConfigList, ConfigMergeable, ConfigObject, ConfigOrigin, ConfigRenderOptions, ConfigValue, ConfigValueType}
+import com.typesafe.config._
 import pureconfig.error.{ConfigReaderFailure, ConvertFailure, UserValidationFailed}
 import ru.raiffeisen.checkita.utils.FormulaParser
 import ru.raiffeisen.checkita.utils.Templating.{getTokens, renderTemplate}
 
-import java.util
-import java.util.Map
 import scala.annotation.tailrec
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 import scala.util.{Random, Try}
@@ -159,6 +157,33 @@ object PostValidation {
       }.toVector
 
   /**
+   * Validation to check if DQ job configuration contains both
+   * batch and streaming sources defined.
+   */
+  val validateBatchOrStream: ConfigObject => Vector[ConfigReaderFailure] = root => {
+    val sources = getObjOrEmpty(root, "jobConfig.sources")
+    val streams = getObjOrEmpty(root, "jobConfig.streams")
+    val virtualSources = Try(
+      root.toConfig.getObjectList("jobConfig.virtualSources").asScala.toList
+    ).getOrElse(List.empty)
+    val virtualStreams = Try(
+      root.toConfig.getObjectList("jobConfig.virtualStreams").asScala.toList
+    ).getOrElse(List.empty)
+
+    val isValid = (sources.isEmpty && virtualSources.isEmpty) || (streams.isEmpty && virtualStreams.isEmpty)
+
+    if (isValid) Vector.empty
+    else Vector(ConvertFailure(
+      UserValidationFailed(
+        s"Job configuration must be written either for batch or streaming application i.e. " +
+          "it should contain either sources and virtualSources or streams and virtualStreams defined " +
+          "but not both batch and streaming sources."
+      ),
+      None, "jobConfig"
+    ))
+  }
+
+  /**
    * Validation to check if DQ job configuration contains missing references
    * from table sources to jdbc connections
    */
@@ -181,14 +206,13 @@ object PostValidation {
    */
   val validateKafkaSourceRefs: ConfigObject => Vector[ConfigReaderFailure] = root =>
     validateCrossReferences(
-      getObjOrEmpty(root, "jobConfig.sources"),
+      getObjOrEmpty(root, "jobConfig"),
       getObjOrEmpty(root, "jobConfig.connections"),
       "connection",
       "id",
       "Kafka topic source refers to undefined Kafka connection '%s'",
-      checkPathPrefix = "jobConfig.sources",
       refPathPrefix = "jobConfig.connections",
-      checkPathFilter = (s: String) => s.contains(".kafka."),
+      checkPathFilter = (s: String) => s.contains(".sources.kafka.") || s.contains(".streams.kafka."),
       refPathFilter = (s: String) => s.contains(".kafka.")
     )
 
@@ -198,13 +222,12 @@ object PostValidation {
    */
   val validateSourceSchemaRefs: ConfigObject => Vector[ConfigReaderFailure] = root =>
     validateCrossReferences(
-      getObjOrEmpty(root, "jobConfig.sources"),
+      getObjOrEmpty(root, "jobConfig"),
       getObjOrEmpty(root, "jobConfig"),
       "schema",
       "id",
       "Source refers to undefined schema '%s'",
-      checkPathPrefix = "jobConfig.sources",
-      checkPathFilter = (s: String) => !s.contains(".hive."),
+      checkPathFilter = (s: String) => (s.contains(".sources.") || s.contains(".streams.")) && !s.contains(".hive."),
       refPathFilter = (s: String) => s.startsWith("jobConfig.schemas.")
     )
 
@@ -212,15 +235,19 @@ object PostValidation {
    * Validation to check if DQ job configuration contains missing references
    * from virtual sources to already defined sources.
    * Check is recursive: virtual sources can also refer to other virtual sources defined above.
+   * @note batch and streaming sources are checked separately.
    */
   val validateVirtualSourceRefs: ConfigObject => Vector[ConfigReaderFailure] = root => {
     
-    val sPathPrefix = "jobConfig.sources"
-    val vsPathPrefix = "jobConfig.virtualSources"
+    val sourcePathPrefix = "jobConfig.sources"
+    val virtualSourcePathPrefix = "jobConfig.virtualSources"
+    val streamPathPrefix = "jobConfig.streams"
+    val virtualStreamPathPrefix = "jobConfig.virtualStreams"
     val refKey = "parentSources"
     
     @tailrec
-    def loop(vs: Seq[(ConfigObject, Int)],
+    def loop(vsPathPrefix: String,
+             vs: Seq[(ConfigObject, Int)],
              sIds: Set[String],
              acc: Vector[ConfigReaderFailure] = Vector.empty): Vector[ConfigReaderFailure] = vs match {
       case Nil => acc
@@ -236,28 +263,59 @@ object PostValidation {
               s"$vsPathPrefix.${head._2}.$refKey.${ps._2}"
             )
           }
-        loop(tail, sIds + vsId, acc ++ errors)
+        loop(vsPathPrefix, tail, sIds + vsId, acc ++ errors)
     }
     
     val sourceIds = getAllValues(
-      getObjOrEmpty(root, sPathPrefix), "id", "jobConfig"
+      getObjOrEmpty(root, sourcePathPrefix), "id", "jobConfig"
+    ).map(_.value.toString).toSet
+    val streamIds = getAllValues(
+      getObjOrEmpty(root, streamPathPrefix), "id", "jobConfig"
     ).map(_.value.toString).toSet
     val virtualSources = Try(
-      root.toConfig.getObjectList(vsPathPrefix).asScala.toList.zipWithIndex
+      root.toConfig.getObjectList(virtualSourcePathPrefix).asScala.toList.zipWithIndex
+    ).getOrElse(List.empty)
+    val virtualStreams = Try(
+      root.toConfig.getObjectList(virtualStreamPathPrefix).asScala.toList.zipWithIndex
     ).getOrElse(List.empty)
       
-    loop(virtualSources, sourceIds)
+    loop(virtualSourcePathPrefix, virtualSources, sourceIds) ++
+      loop(virtualStreamPathPrefix, virtualStreams, streamIds)
   }
-  
+
+  /**
+   * Validation to check if DQ job configuration contains non-streamable kinds of
+   * virtual sources defined in virtualStreams list.
+   */
+  val validateVirtualStreams: ConfigObject => Vector[ConfigReaderFailure] = root => {
+    val virtualStreamKinds = Try(
+      root.toConfig.getObjectList("jobConfig.virtualStreams").asScala.zipWithIndex
+    ).getOrElse(List.empty).flatMap{
+      case (obj, idx) => getAllValues(obj, "kind", s"jobConfig.virtualStreams.$idx")
+    }
+    val streamableKinds = Set("filter", "select")
+
+    virtualStreamKinds
+      .filter(f => !streamableKinds.contains(f.value.toString))
+      .map(f => ConvertFailure(
+        UserValidationFailed(s"Virtual source of kind '${f.value.toString}' is not streamable"),
+        None,
+        f.path
+      )).toVector
+  }
+
   /**
    * Validation to check if DQ job configuration contains missing references
    * from source metrics to sources
    */
   val validateSourceMetricRefs: ConfigObject => Vector[ConfigReaderFailure] = root => {
     val allSourceIds = (
-      getAllValues(getObjOrEmpty(root,"jobConfig.sources"), "id", "jobConfig") ++
+      getAllValues(getObjOrEmpty(root,"jobConfig.sources"), "id", "jobConfig.sources") ++
+      getAllValues(getObjOrEmpty(root,"jobConfig.streams"), "id", "jobConfig.streams") ++
       Try(root.toConfig.getObjectList("jobConfig.virtualSources").asScala).getOrElse(List.empty)
-        .flatMap(getAllValues(_, "id", "jobConfig"))
+        .flatMap(getAllValues(_, "id", "jobConfig.virtualSources")) ++
+      Try(root.toConfig.getObjectList("jobConfig.virtualStreams").asScala).getOrElse(List.empty)
+        .flatMap(getAllValues(_, "id", "jobConfig.virtualStreams"))
     ).map(_.value.toString).toSet
     
     val allMetricSourceRefs = getAllValues(
@@ -314,6 +372,7 @@ object PostValidation {
   /**
    * Validation to check if DQ job configuration contains missing references
    * from load checks to sources
+   * @note Load checks are not applied to streaming sources
    */
   val validateLoadCheckRefs: ConfigObject => Vector[ConfigReaderFailure] = root =>
     validateCrossReferences(
@@ -344,7 +403,7 @@ object PostValidation {
   
   /**
    * Validation to check if DQ job configuration contains missing references
-   * from snapshot checks to sources
+   * from snapshot checks to metrics
    */
   val validateSnapshotCheckRefs: ConfigObject => Vector[ConfigReaderFailure] = root =>
     validateCrossReferences(
@@ -365,7 +424,7 @@ object PostValidation {
 
   /**
    * Validation to check if DQ job configuration contains missing references
-   * from trend checks to sources
+   * from trend checks to metrics
    */
   val validateTrendCheckRefs: ConfigObject => Vector[ConfigReaderFailure] = root =>
     validateCrossReferences(
@@ -424,9 +483,11 @@ object PostValidation {
    */
   val allPostValidations: Seq[ConfigObject => Vector[ConfigReaderFailure]] = Vector(
     validateIds,
+    validateBatchOrStream,
     validateJdbcSourceRefs,
     validateKafkaSourceRefs,
     validateSourceSchemaRefs,
+    validateVirtualStreams,
     validateVirtualSourceRefs,
     validateSourceMetricRefs,
     validateComposedMetrics,

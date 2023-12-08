@@ -26,32 +26,38 @@ object VirtualSourceReaders {
       config.parents.map( sId => parentSources.getOrElse(
         sId, throw new NoSuchElementException(s"Parent source with id = '$sId' not found.")
       ))
-    
+
     /**
      * Builds virtual source dataframe given the virtual source configuration.
-     * @param config Virtual source configuration
-     * @param settings Implicit application settings object
-     * @param spark    Implicit spark session object
+     *
+     * @param config        Virtual source configuration
+     * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
+     * @param settings      Implicit application settings object
+     * @param spark         Implicit spark session object
      * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
      */
-    def getDataFrame(config: T)(implicit settings: AppSettings,
-                                spark: SparkSession,
-                                parentSources: Map[String, Source]): DataFrame
+    def getDataFrame(config: T, readMode: ReadMode)(implicit settings: AppSettings,
+                                                    spark: SparkSession,
+                                                    parentSources: Map[String, Source]): DataFrame
 
     /**
      * Safely reads virtual source given source configuration.
-     * @param config Virtual source configuration
+     *
+     * @param config        Virtual source configuration
+     * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
      * @param parentSources Map of already defined sources (sourceId -> Source)
-     * @param settings Implicit application settings object
-     * @param spark    Implicit spark session object
+     * @param settings      Implicit application settings object
+     * @param spark         Implicit spark session object
      * @return Either a valid Source or a list of source reading errors.
      */
-    def read(config: T, parentSources: Map[String, Source])(implicit settings: AppSettings,
-                                                            spark: SparkSession): Result[Source] =
+    def read(config: T,
+             parentSources: Map[String, Source],
+             readMode: ReadMode)(implicit settings: AppSettings,
+                                 spark: SparkSession): Result[Source] =
       Try{
         implicit val parents: Map[String, Source] = parentSources
-        val df = getDataFrame(config)
+        val df = getDataFrame(config, readMode)
         // persist if necessary:
         if (config.persist.nonEmpty) df.persist(config.persist.get)
         Source(config.id.value, df, config.keyFields.map(_.value), config.parents)
@@ -65,15 +71,20 @@ object VirtualSourceReaders {
 
     /**
      * Builds virtual source dataframe given the virtual source configuration.
-     * @param config Virtual source configuration
-     * @param settings Implicit application settings object
-     * @param spark    Implicit spark session object
+     *
+     * @param config        Virtual source configuration
+     * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
+     * @param settings      Implicit application settings object
+     * @param spark         Implicit spark session object
      * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
+     * @note SqlVirtualSource is not streamable, therefore, 'readMode' argument is ignored
+     *       and source is always read as static DataFrame.
      */
-    def getDataFrame(config: SqlVirtualSourceConfig)(implicit settings: AppSettings,
-                                                     spark: SparkSession,
-                                                     parentSources: Map[String, Source]): DataFrame =
+    def getDataFrame(config: SqlVirtualSourceConfig,
+                     readMode: ReadMode)(implicit settings: AppSettings,
+                                         spark: SparkSession,
+                                         parentSources: Map[String, Source]): DataFrame =
       if (settings.allowSqlQueries) {
         val parents = getParents(config)
         // register tempViews:
@@ -92,14 +103,18 @@ object VirtualSourceReaders {
      * Builds virtual source dataframe given the virtual source configuration.
      *
      * @param config        Virtual source configuration
+     * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
      * @param settings      Implicit application settings object
      * @param spark         Implicit spark session object
      * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
+     * @note JoinVirtualSource is not streamable, therefore, 'readMode' argument is ignored
+     *       and source is always read as static DataFrame.
      */
-    def getDataFrame(config: JoinVirtualSourceConfig)(implicit settings: AppSettings,
-                                                      spark: SparkSession,
-                                                      parentSources: Map[String, Source]): DataFrame = {
+    def getDataFrame(config: JoinVirtualSourceConfig,
+                     readMode: ReadMode)(implicit settings: AppSettings,
+                                         spark: SparkSession,
+                                         parentSources: Map[String, Source]): DataFrame = {
       val parents = getParents(config)
       require(parents.size == 2,
         s"Join virtual source must have two parent sources defined. Got following: " +
@@ -119,14 +134,18 @@ object VirtualSourceReaders {
      * Builds virtual source dataframe given the virtual source configuration.
      *
      * @param config        Virtual source configuration
+     * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
      * @param settings      Implicit application settings object
      * @param spark         Implicit spark session object
      * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
+     * @note There is no difference in filter API for static and streaming sources, therefore,
+     *       'readMode' argument is ignored.
      */
-    def getDataFrame(config: FilterVirtualSourceConfig)(implicit settings: AppSettings,
-                                                        spark: SparkSession,
-                                                        parentSources: Map[String, Source]): DataFrame = {
+    def getDataFrame(config: FilterVirtualSourceConfig,
+                     readMode: ReadMode)(implicit settings: AppSettings,
+                                         spark: SparkSession,
+                                         parentSources: Map[String, Source]): DataFrame = {
       val parents = getParents(config)
       require(parents.size == 1,
         s"Filter virtual source must have exactly one parent source. Got following: " +
@@ -145,12 +164,14 @@ object VirtualSourceReaders {
      * Builds virtual source dataframe given the virtual source configuration.
      *
      * @param config        Virtual source configuration
+     * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
      * @param settings      Implicit application settings object
      * @param spark         Implicit spark session object
      * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
      */
-    def getDataFrame(config: SelectVirtualSourceConfig)(implicit settings: AppSettings,
+    def getDataFrame(config: SelectVirtualSourceConfig,
+                     readMode: ReadMode)(implicit settings: AppSettings,
                                                         spark: SparkSession,
                                                         parentSources: Map[String, Source]): DataFrame = {
       val parents = getParents(config)
@@ -160,7 +181,15 @@ object VirtualSourceReaders {
       )
       val parentDf = parents.head.df
 
-      parentDf.select(config.expr.value :_*)
+      readMode match {
+        case ReadMode.Batch => parentDf.select(config.expr.value :_*)
+        case ReadMode.Stream =>
+          val allColumns = config.expr.value ++ Seq(
+            settings.streamConfig.windowTsCol,
+            settings.streamConfig.eventTsCol
+          ).map(col)
+          parentDf.select(allColumns :_*)
+      }
     }
   }
 
@@ -171,12 +200,16 @@ object VirtualSourceReaders {
      * Builds virtual source dataframe given the virtual source configuration.
      *
      * @param config        Virtual source configuration
+     * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
      * @param settings      Implicit application settings object
      * @param spark         Implicit spark session object
      * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
+     * @note AggregateVirtualSource is not streamable, therefore, 'readMode' argument is ignored
+     *       and source is always read as static DataFrame.
      */
-    def getDataFrame(config: AggregateVirtualSourceConfig)(implicit settings: AppSettings,
+    def getDataFrame(config: AggregateVirtualSourceConfig,
+                     readMode: ReadMode)(implicit settings: AppSettings,
                                                            spark: SparkSession,
                                                            parentSources: Map[String, Source]): DataFrame = {
       val parents = getParents(config)
@@ -205,15 +238,16 @@ object VirtualSourceReaders {
      * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
      */
-    def getDataFrame(config: VirtualSourceConfig)(implicit settings: AppSettings, 
-                                                  spark: SparkSession, 
-                                                  parentSources: Map[String, Source]): DataFrame = 
+    def getDataFrame(config: VirtualSourceConfig,
+                     readMode: ReadMode)(implicit settings: AppSettings,
+                                         spark: SparkSession,
+                                         parentSources: Map[String, Source]): DataFrame =
     config match {
-      case sql: SqlVirtualSourceConfig => SqlVirtualSourceReader.getDataFrame(sql)
-      case join: JoinVirtualSourceConfig => JoinVirtualSourceReader.getDataFrame(join)
-      case filter: FilterVirtualSourceConfig => FilterVirtualSourceReader.getDataFrame(filter)
-      case select: SelectVirtualSourceConfig => SelectVirtualSourceReader.getDataFrame(select)
-      case aggregate: AggregateVirtualSourceConfig => AggregateVirtualSourceReader.getDataFrame(aggregate)
+      case sql: SqlVirtualSourceConfig => SqlVirtualSourceReader.getDataFrame(sql, readMode)
+      case join: JoinVirtualSourceConfig => JoinVirtualSourceReader.getDataFrame(join, readMode)
+      case filter: FilterVirtualSourceConfig => FilterVirtualSourceReader.getDataFrame(filter, readMode)
+      case select: SelectVirtualSourceConfig => SelectVirtualSourceReader.getDataFrame(select, readMode)
+      case aggregate: AggregateVirtualSourceConfig => AggregateVirtualSourceReader.getDataFrame(aggregate, readMode)
       case other => throw new IllegalArgumentException(
         s"Unsupported virtual source type: '${other.getClass.getTypeName}"
       )
@@ -221,17 +255,25 @@ object VirtualSourceReaders {
   }
 
   /**
-   * Implicit conversion for virtual source configurations to enable read method for them.
-   * @param config Virtual source configuration
-   * @param reader Implicit reader for given virtual source configuration
+   * Implicit conversion for virtual source configurations to enable read and readStream methods for them.
+   *
+   * @param config   Virtual source configuration
+   * @param reader   Implicit reader for given virtual source configuration
    * @param settings Implicit application settings object
-   * @param spark Implicit spark session object
+   * @param spark    Implicit spark session object
    * @tparam T Type of virtual source configuration
    */
   implicit class VirtualSourceReaderOps[T <: VirtualSourceConfig](config: T)
                                                                  (implicit reader: VirtualSourceReader[T],
                                                                   settings: AppSettings,
                                                                   spark: SparkSession) {
-    def read(parents: Map[String, Source]): Result[Source] = reader.read(config, parents)
+    def read(parents: Map[String, Source]): Result[Source] = reader.read(config, parents, ReadMode.Batch)
+    def readStream(parents: Map[String, Source]): Result[Source] =
+      Try(if (!config.streamable) throw new UnsupportedOperationException(
+        s"Virtual source '${config.id.value}' of kind '" +
+          config.getClass.getSimpleName.dropRight("VirtualSourceConfig".length).toLowerCase +
+          s"' is not streamable and, therefore, cannot be read as a stream."
+      )).toResult(preMsg = s"Unable to read virtual source as a stream")
+        .flatMap(_ => reader.read(config, parents, ReadMode.Stream))
   }
 }

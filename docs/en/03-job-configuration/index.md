@@ -26,12 +26,18 @@ chapters of this documentation:
 
 * [Connections](01-Connections.md) - describes configuration of connections to various external systems.
 * [Schemas](02-Schemas.md) - describes configuration of user-defined schemas.
-* [Sources](03-Sources.md) - describes configuration of sources to read data from.
-* [Virtual Sources](04-VirtualSources.md) - describes configuration of virtual sources.
-* [Load Checks](05-LoadChecks.md) - describes configuration of load checks.
-* [Metrics](06-Metrics.md) - describes configuration of metrics.
-* [Checks](07-Checks.md) - describes configuration of checks.
-* [Targets](08-Targets.md) - describes configuration of targets.
+* [Sources](03-Sources.md) - describes configuration of sources to read data from. 
+  (applicable to batch applications only).
+* [Streams](04-Streams.md) - describes configuration of streaming sources to process 
+  (applicable to streaming applications only).
+* [Virtual Sources](05-VirtualSources.md) - describes configuration of virtual sources.
+  (applicable to batch applications only).
+* [Virtual Streams](06-VirtualStreams.md) - describe configuration of virtual streaming sources.
+  (applicable to batch applications only).
+* [Load Checks](07-LoadChecks.md) - describes configuration of load checks.
+* [Metrics](08-Metrics.md) - describes configuration of metrics.
+* [Checks](09-Checks.md) - describes configuration of checks.
+* [Targets](10-Targets.md) - describes configuration of targets.
 
-Example of fully filled job configuration can be found in [Job Configuration Example](10-JobConfigExample.md) 
+Example of fully filled job configuration can be found in [Job Configuration Example](12-JobConfigExample.md) 
 chapter of this documentation.

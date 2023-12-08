@@ -45,7 +45,7 @@ object Dependencies {
 
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.15" % Test
   
-  val checkita_core = Seq(
+  val checkita_core: Seq[ModuleID] = Seq(
     pureConfig,
     enumeratum,
     isarn,

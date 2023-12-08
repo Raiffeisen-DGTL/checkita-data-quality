@@ -3,7 +3,7 @@ package ru.raiffeisen.checkita.utils
 import ru.raiffeisen.checkita.config.RefinedTypes.DateFormat
 
 import java.sql.Timestamp
-import java.time.{LocalDate, LocalDateTime, LocalTime, ZoneId, ZonedDateTime}
+import java.time.{Instant, LocalDate, LocalDateTime, LocalTime, ZoneId, ZonedDateTime}
 import scala.concurrent.duration.Duration
 import scala.language.postfixOps
 import scala.util.Try
@@ -71,4 +71,22 @@ case class EnrichedDT(dateFormat: DateFormat, timeZone: ZoneId, dateString: Opti
   def getUtcTsWithOffset(offset: Duration): Timestamp = Timestamp.valueOf(
     zonedDT.minusSeconds(offset.toSeconds).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime
   )
+}
+object EnrichedDT {
+  /**
+   * Builds EnrichedDT instance from Unix epoch (in seconds)
+   * @param epoch Unix epoch
+   * @param dateFormat Date format
+   * @param timeZone Time zone
+   * @return EnrichedDT instance
+   */
+  def fromEpoch(epoch: Long,
+                dateFormat: DateFormat = DateFormat.fromString("yyyy-MM-dd HH:mm:ss"),
+                timeZone: ZoneId = ZoneId.systemDefault()
+               ): EnrichedDT = {
+    val zoneOffset = timeZone.getRules.getOffset(Instant.now())
+    val localDt = LocalDateTime.ofEpochSecond(epoch, 0, zoneOffset)
+    val localDtString = localDt.format(dateFormat.formatter)
+    EnrichedDT(dateFormat, timeZone, Some(localDtString))
+  }
 }

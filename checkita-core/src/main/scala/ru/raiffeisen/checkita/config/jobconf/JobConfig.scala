@@ -16,7 +16,8 @@ import ru.raiffeisen.checkita.config.jobconf.Targets.TargetsConfig
  * @param schemas Various schema definitions
  * @param sources Data sources processed within current job (only applicable to batch jobs).
  * @param streams Stream sources processed within current job (only applicable to streaming jobs).
- * @param virtualSources Virtual sources to be created from basic sources
+ * @param virtualSources Virtual sources to be created from regular sources.
+ * @param virtualStreams Virtual stream to be created from regular streams.
  * @param loadChecks Load checks to be performed on data sources before reading data itself
  * @param metrics Metrics to be calculated for data sources
  * @param checks Checks to be performed over metrics
@@ -29,6 +30,7 @@ final case class JobConfig(
                             sources: Option[SourcesConfig],
                             streams: Option[StreamSourcesConfig],
                             virtualSources: Seq[VirtualSourceConfig] = Seq.empty,
+                            virtualStreams: Seq[VirtualSourceConfig] = Seq.empty,
                             loadChecks: Option[LoadChecksConfig],
                             metrics: Option[MetricsConfig],
                             checks: Option[ChecksConfig],

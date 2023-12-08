@@ -1,12 +1,12 @@
 package ru.raiffeisen.checkita.readers
 
-import enumeratum.{Enum, EnumEntry}
 import org.apache.hadoop.fs.{FileSystem, Path}
-import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import ru.raiffeisen.checkita.appsettings.AppSettings
+import ru.raiffeisen.checkita.config.Enums.StreamWindowing
 import ru.raiffeisen.checkita.config.jobconf.Sources._
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.connections.jdbc.JdbcConnection
@@ -15,24 +15,13 @@ import ru.raiffeisen.checkita.core.Source
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.utils.Common.paramsSeqToMap
 import ru.raiffeisen.checkita.utils.ResultUtils._
-import ru.raiffeisen.checkita.utils.SparkUtils.getRowEncoder
+import ru.raiffeisen.checkita.utils.SparkUtils.{DataFrameOps, getRowEncoder}
 
 import java.io.FileNotFoundException
 import scala.annotation.tailrec
-import scala.collection.immutable
 import scala.util.Try
 
 object SourceReaders {
-
-  /**
-   * Sources can be read in two modes: as a static dataframe and as a stream one.
-   */
-  sealed private trait ReadMode extends EnumEntry
-  private object ReadMode extends Enum[ReadMode] {
-    case object Batch extends ReadMode
-    case object Stream extends ReadMode
-    override val values: immutable.IndexedSeq[ReadMode] = findValues
-  }
 
   /**
    * Base source reader trait
@@ -130,8 +119,10 @@ object SourceReaders {
     protected def fileReader(readMode: ReadMode,
                              path: String,
                              format: String,
-                             schemaId: Option[String])
-                            (implicit spark: SparkSession,
+                             schemaId: Option[String],
+                             windowBy: StreamWindowing)
+                            (implicit settings: AppSettings,
+                             spark: SparkSession,
                              fs: FileSystem,
                              schemas: Map[String, SourceSchema]): DataFrame = {
 
@@ -146,7 +137,7 @@ object SourceReaders {
           val sch = schema.getOrElse(throw new IllegalArgumentException(
             s"Schema is missing but it must be provided to read $format files as a stream."
           ))
-          spark.readStream.format(format.toLowerCase).schema(sch.schema).load(path)
+          spark.readStream.format(format.toLowerCase).schema(sch.schema).load(path).prepareStream(windowBy)
       }
 
       if (fs.exists(new Path(path))) {
@@ -340,7 +331,7 @@ object SourceReaders {
       val df = rawDf.map(c => getRow(c.getString(0), sourceSchema.columnWidths)).select(
         sourceSchema.schema.map(f => col(f.name).cast(f.dataType)): _*
       )
-      toSource(config, df)
+      toSource(config, if (readMode == ReadMode.Batch) df else df.prepareStream(config.windowBy))
     }
   }
 
@@ -401,7 +392,7 @@ object SourceReaders {
         }
       } else throw new FileNotFoundException(s"Delimited text file or directory not found: ${config.path.value}")
       
-      toSource(config, df)
+      toSource(config, if (readMode == ReadMode.Batch) df else df.prepareStream(config.windowBy))
     }
   }
 
@@ -429,7 +420,7 @@ object SourceReaders {
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
                                       connections: Map[String, DQConnection]): Source =
-      toSource(config, fileReader(readMode, config.path.value, "Avro", config.schema.map(_.value)))
+      toSource(config, fileReader(readMode, config.path.value, "Avro", config.schema.map(_.value), config.windowBy))
   }
 
   /**
@@ -455,7 +446,7 @@ object SourceReaders {
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
                                       connections: Map[String, DQConnection]): Source =
-      toSource(config, fileReader(readMode, config.path.value, "Parquet", config.schema.map(_.value)))
+      toSource(config, fileReader(readMode, config.path.value, "Parquet", config.schema.map(_.value), config.windowBy))
   }
 
   /**
@@ -480,7 +471,7 @@ object SourceReaders {
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
                                       connections: Map[String, DQConnection]): Source =
-      toSource(config, fileReader(readMode, config.path.value, "ORC", config.schema.map(_.value)))
+      toSource(config, fileReader(readMode, config.path.value, "ORC", config.schema.map(_.value), config.windowBy))
   }
 
   implicit object CustomSourceReader extends SourceReader[CustomSource] {
@@ -577,6 +568,9 @@ object SourceReaders {
                                                     schemas: Map[String, SourceSchema],
                                                     connections: Map[String, DQConnection]) {
     def read: Result[Source] = reader.read(config)
-    def readStream: Result[Source] = reader.readStream(config)
+    def readStream: Result[Source] = Try(if (!config.streamable) throw new UnsupportedOperationException(
+      s"Source '${config.id.value}' is not streamable and, therefore, cannot be read as a stream."
+    )).toResult(preMsg = s"Unable to read source as a stream")
+      .flatMap(_ => reader.readStream(config))
   }
 }

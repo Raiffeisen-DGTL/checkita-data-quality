@@ -28,6 +28,8 @@ lazy val `checkita-core` = (project in file("checkita-core")).settings(
       Utils.getSparkDependencies(sparkVersion.value, assyMode.value).values
   },
 
+  excludeDependencies ++= Utils.getExcludeDependencies(sparkVersion.value),
+
   Compile / doc / target := baseDirectory.value / ".." / "docs/api",
 
   dependencyOverrides ++= Utils.overrideFasterXml(sparkVersion.value),

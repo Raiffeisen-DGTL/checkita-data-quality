@@ -48,7 +48,7 @@ case class ComposedMetricCalculator(primitiveMetrics: Iterable[MetricCalculatorR
    * @return numeric result
    */
   private def calculateFormula(formula: String): Double = {
-    val parsed = parseAll(expr, replaceMetricsInFormula(formula)).get
+    val parsed = parseAll(expr, formula).get
     eval(parsed)
   }
   

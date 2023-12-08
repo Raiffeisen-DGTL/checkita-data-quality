@@ -1,9 +1,7 @@
 package ru.raiffeisen.checkita.core.metrics
 
-import org.apache.spark.util.AccumulatorV2
 import ru.raiffeisen.checkita.core.CalculatorStatus
 
-import scala.collection.mutable
 
 object ErrorCollection {
 
@@ -47,27 +45,4 @@ object ErrorCollection {
                                 metricStatues: Seq[MetricStatus],
                                 rowData: Seq[String]
                               )
-
-  /**
-   * Spark accumulator to collect metric errors
-   *
-   * @param out Metric errors buffer
-   */
-  final case class ErrorAccumulator(out: mutable.ArrayBuffer[AccumulatedErrors])
-    extends AccumulatorV2[AccumulatedErrors, mutable.ArrayBuffer[AccumulatedErrors]] {
-
-    override def isZero: Boolean = value.isEmpty
-
-    override def copy(): AccumulatorV2[AccumulatedErrors, mutable.ArrayBuffer[AccumulatedErrors]] =
-      ErrorAccumulator(value)
-
-    override def reset(): Unit = value.clear()
-
-    override def add(v: AccumulatedErrors): Unit = ErrorAccumulator(value += v)
-
-    override def merge(other: AccumulatorV2[AccumulatedErrors, mutable.ArrayBuffer[AccumulatedErrors]]): Unit =
-      ErrorAccumulator(this.value ++= other.value)
-
-    override def value: mutable.ArrayBuffer[AccumulatedErrors] = out
-  }
 }

@@ -58,8 +58,8 @@ object Implicits {
   implicit val durationTypeConverter: ConfigConvert[Duration] =
     ConfigConvert[String].xmap[Duration](Duration(_), _.toShortString)
 
-  implicit val kafkaWindowingConverter: ConfigConvert[KafkaWindowing] =
-    ConfigConvert[String].xmap[KafkaWindowing](KafkaWindowing(_), _.windowBy)
+  implicit val kafkaWindowingConverter: ConfigConvert[StreamWindowing] =
+    ConfigConvert[String].xmap[StreamWindowing](StreamWindowing(_), _.windowBy)
 
   private val dropRight: String => String => String =
     dropText => s => s.dropRight(dropText.length).zipWithIndex.map(t => if (t._2 == 0) t._1.toLower else t._1).mkString

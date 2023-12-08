@@ -1,6 +1,6 @@
 package ru.raiffeisen.checkita.apps.cli
 
-import org.apache.log4j.Level
+import org.apache.logging.log4j.Level
 import scopt.OptionParser
 
 /**

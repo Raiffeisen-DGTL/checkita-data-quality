@@ -1,7 +1,7 @@
 package ru.raiffeisen.checkita.context
 
 import org.apache.hadoop.fs.FileSystem
-import org.apache.log4j.Level
+import org.apache.logging.log4j.Level
 import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.IO.readJobConfig
@@ -60,7 +60,6 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    */
   private val _: Unit = {
     initLogger(settings.loggingLevel)
-    
     val logGeneral = Seq(
       "General Checkita Data Quality configuration:", 
       s"* Logging level: ${settings.loggingLevel.toString}"
@@ -80,6 +79,13 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       s"  - Reference date value:  ${settings.referenceDateTime.render}",
       s"  - Execution date format: ${settings.executionDateTime.dateFormat.pattern}",
       s"  - Execution date value:  ${settings.executionDateTime.render}",
+    )
+    val logStreamingPref = Seq(
+      "* Streaming settings:",
+      s"  - Window duration:     ${settings.streamConfig.window.toString}",
+      s"  - Trigger interval:    ${settings.streamConfig.trigger.toString}",
+      s"  - Watermark interval:  ${settings.streamConfig.watermark.toString}",
+      s"  - Allow empty windows: ${settings.streamConfig.allowEmptyWindows}"
     )
     val logEnablers = Seq(
       "* Enablers settings:",
@@ -143,7 +149,8 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     (
       logGeneral ++ 
       logSparkConf ++ 
-      logTimePref ++ 
+      logTimePref ++
+      logStreamingPref ++
       logEnablers ++ 
       logStorageConf ++ 
       logEmailConfig ++ 
@@ -232,17 +239,20 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    * @param sources Sequence of sources configurations
    * @param schemas Map of source schemas (schemaId -> SourceSchema)
    * @param connections Map of connections (connectionId -> DQConnection)
+   * @param readAsStream Boolean flag indicating that sources should be read as a streams
    * @return Either a map of regular sources (sourceId -> Source) or a list of reading errors.
    */
   private def readSources(sources: Seq[SourceConfig],
                           schemas: Map[String, SourceSchema],
-                          connections: Map[String, DQConnection]): Result[Map[String, Source]] = {
+                          connections: Map[String, DQConnection],
+                          readAsStream: Boolean = false): Result[Map[String, Source]] = {
     implicit val sc: Map[String, SourceSchema] = schemas
     implicit val c: Map[String, DQConnection] = connections
     
     reduceToMap(sources.map{ srcConf =>
       log.info(s"$sourceStage Reading source '${srcConf.id.value}'...")
-      srcConf.read.mapValue(s => Seq(s.id -> s))
+      val source = if (readAsStream) srcConf.readStream else srcConf.read
+      source.mapValue(s => Seq(s.id -> s))
         .tap(_ => log.info(s"$sourceStage Success!")) // immediate logging of success state
         .mapLeft(_.map(e => s"$sourceStage $e")) // update error messages with running stage
     })
@@ -253,16 +263,18 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    * @note Also executes logging side effects.
    * @param virtualSources Sequence of virtual sources configurations (defined in order they need to be processed)
    * @param parentSources Map of parent source (wrapped into Result in order to chain reading attempts)
+   * @param readAsStream Boolean flag indicating that virtual sources should be read as a streams
    * @return Either a map of all (regular + virtual) sources (sourceId -> Source) or a list of reading errors.
    */
   @tailrec
   private def readVirtualSources(virtualSources: Seq[VirtualSourceConfig],
-                                 parentSources: Result[Map[String, Source]]): Result[Map[String, Source]] =
+                                 parentSources: Result[Map[String, Source]],
+                                 readAsStream: Boolean = false): Result[Map[String, Source]] =
     if (virtualSources.isEmpty) parentSources else {
       val newSource = parentSources.flatMap{ parents =>
         val curVsConfig = virtualSources.head
         log.info(s"$virtualSourceStage Reading virtual source '${curVsConfig.id.value}'...")
-        val newSrc = curVsConfig.read(parents)
+        val newSrc = (if (readAsStream) curVsConfig.readStream(parents) else curVsConfig.read(parents))
           .tap(_ => log.info(s"$virtualSourceStage Success!")) // immediate logging of success state
           .mapLeft(_.map(e => s"$virtualSourceStage $e")) // update error messages with running stage
         // if persist is required and newSrc reading was successful, then DO persist dataframe:
@@ -274,12 +286,13 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       }
       readVirtualSources(
         virtualSources.tail, 
-        parentSources.combine(newSource)((curSrc, newSrc) => curSrc + (newSrc.id -> newSrc))
+        parentSources.combine(newSource)((curSrc, newSrc) => curSrc + (newSrc.id -> newSrc)),
+        readAsStream
       )
     }
 
   /**
-   * Fundamental Data Quality Job Builder: builds job provided with all job components.
+   * Fundamental Data Quality batch job builder: builds batch job provided with all job components.
    * @param jobId Job ID
    * @param sources Sequence of sources to check
    * @param metrics Sequence of regular metrics to calculate
@@ -290,9 +303,9 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    * @param targets Sequence of targets to be send/saved (alternative channels to communicate DQ Job results).
    * @param connections Sequence of user-defined connections to external data systems (RDBMS, Kafka, etc..).
    *                    Connections are used primarily to send targets.
-   * @return Data Quality Job instances wrapped into Result[_].
+   * @return Data Quality batch job instances wrapped into Result[_].
    */
-  def buildJob(
+  def buildBatchJob(
                 jobId: String,
                 sources: Seq[Source],
                 metrics: Seq[RegularMetricConfig] = Seq.empty,
@@ -302,18 +315,72 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
                 targets: Seq[TargetConfig] = Seq.empty,
                 schemas: Map[String, SourceSchema] = Map.empty,
                 connections: Map[String, DQConnection] = Map.empty
-              ): Result[DQJob] = {
+              ): Result[DQBatchJob] = {
     implicit val j: String = jobId
     
     logJobBuildStart
     
     getStorageManager.map(storageManager =>
-      DQJob(sources, metrics, composedMetrics, checks, loadChecks, targets, schemas, connections, storageManager)
+      DQBatchJob(sources, metrics, composedMetrics, checks, loadChecks, targets, schemas, connections, storageManager)
     )
   }
 
   /**
-   * Builds Data Quality job provided with job configuration.
+   * Fundamental Data Quality stream job builder: builds stream job provided with all job components.
+   *
+   * @param jobId           Job ID
+   * @param sources         Sequence of sources to check (streamable sources)
+   * @param metrics         Sequence of regular metrics to calculate
+   * @param composedMetrics Sequence of composed metrics to calculate on top of regular metrics results.
+   * @param checks          Sequence of checks to preform based in metrics results.
+   * @param schemas         Sequence of user-defined schemas used primarily to perform loadChecks (i.e. source schema validation).
+   * @param targets         Sequence of targets to be send/saved (alternative channels to communicate DQ Job results).
+   * @param connections     Sequence of user-defined connections to external data systems (RDBMS, Kafka, etc..).
+   *                        Connections are used primarily to send targets.
+   * @return Data Quality stream job instances wrapped into Result[_].
+   */
+  def buildStreamJob(
+                     jobId: String,
+                     sources: Seq[Source],
+                     metrics: Seq[RegularMetricConfig] = Seq.empty,
+                     composedMetrics: Seq[ComposedMetricConfig] = Seq.empty,
+                     checks: Seq[CheckConfig] = Seq.empty,
+                     targets: Seq[TargetConfig] = Seq.empty,
+                     schemas: Map[String, SourceSchema] = Map.empty,
+                     connections: Map[String, DQConnection] = Map.empty
+                   ): Result[DQStreamJob] = {
+    implicit val j: String = jobId
+    val sourceChecker = (source: Source) => Try {
+      if (!source.isStreaming) throw new IllegalArgumentException(
+        s"Source '${source.id}' is not streaming and cannot be used in streaming job."
+      )
+      val requiredColumns = Seq(settings.streamConfig.eventTsCol, settings.streamConfig.windowTsCol)
+      if (!requiredColumns.forall(source.df.columns.contains)) throw new IllegalArgumentException(
+        s"source '${source.id}' does not contain all required columns: " +
+          "either event timestamp or window timestamp column (or both) is missing."
+      )
+    }.toResult("Streaming source validation failed:")
+
+    logJobBuildStart
+
+    sources.foldLeft(liftToResult(()))((r, src) => r.flatMap(_ => sourceChecker(src)))
+      .flatMap(_ => getStorageManager)
+      .map(storageManager =>
+        DQStreamJob(
+          sources,
+          metrics,
+          composedMetrics,
+          Seq.empty[LoadCheckConfig], // no load checks are run in streaming jobs
+          checks,
+          targets,
+          Map.empty[String, SourceSchema], // as no need to run load checks then schemas are not needed as well
+          connections,
+          storageManager
+      ))
+  }
+
+  /**
+   * Builds Data Quality batch job provided with job configuration.
    * @param jobConfig Job configuration
    * @return Data Quality job instance or a list of building errors.
    * @note Data Quality job creation out of job configuration assumes following steps:
@@ -322,7 +389,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    *       - all sources (both regular and virtual ones) defined in job configuration are read;
    *       - storage manager is initialized (if configured).
    */
-  def buildJob(jobConfig: JobConfig): Result[DQJob] = {
+  def buildBatchJob(jobConfig: JobConfig): Result[DQBatchJob] = {
     implicit val jobId: String = jobConfig.jobId.value
     
     logJobBuildStart
@@ -341,7 +408,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     val targets: Seq[TargetConfig] = jobConfig.targets.toSeq.flatMap(_.getAllTargets)
     
     allSources.combineT3(connections, schemas, getStorageManager)(
-      (sources, conn, sch, manager) => DQJob(
+      (sources, conn, sch, manager) => DQBatchJob(
         sources.values.toSeq,
         regularMetrics,
         composedMetrics,
@@ -356,7 +423,53 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
   }
 
   /**
-   * Build Data Quality job provided with sequence if paths to job configuration HOCON files.
+   * Builds Data Quality stream job provided with job configuration.
+   *
+   * @param jobConfig Job configuration
+   * @return Data Quality job instance or a list of building errors.
+   * @note Data Quality job creation out of job configuration assumes following steps:
+   *       - all configured connections are established;
+   *       - all schemas defined in job configuration are read;
+   *       - all sources (both regular and virtual ones) defined in job configuration are read;
+   *       - storage manager is initialized (if configured).
+   */
+  def buildStreamJob(jobConfig: JobConfig): Result[DQStreamJob] = {
+    implicit val jobId: String = jobConfig.jobId.value
+
+    logJobBuildStart
+
+    val connections = establishConnections(jobConfig.connections.map(_.getAllConnections).getOrElse(Seq.empty))
+    val schemas = readSchemas(jobConfig.schemas)
+    val regularSources = connections.combine(schemas)((c, s) => (c, s)).flatMap {
+      case (conn, sch) => readSources(
+        jobConfig.streams.map(_.getAllSources).getOrElse(Seq.empty), sch, conn, readAsStream = true
+      )
+    }
+
+    val allSources = readVirtualSources(jobConfig.virtualStreams, regularSources, readAsStream = true)
+
+    val regularMetrics: Seq[RegularMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.regular).flatMap(_.getAllRegularMetrics)
+    val composedMetrics: Seq[ComposedMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.composed)
+    val checks: Seq[CheckConfig] = jobConfig.checks.toSeq.flatMap(_.getAllChecks)
+    val targets: Seq[TargetConfig] = jobConfig.targets.toSeq.flatMap(_.getAllTargets)
+
+    allSources.combineT3(connections, schemas, getStorageManager)(
+      (sources, conn, _, manager) => DQStreamJob(
+        sources.values.toSeq,
+        regularMetrics,
+        composedMetrics,
+        Seq.empty[LoadCheckConfig], // no load checks are run in streaming jobs
+        checks,
+        targets,
+        Map.empty[String, SourceSchema], // as no need to run load checks then schemas are not needed as well
+        conn,
+        manager
+      )
+    ).mapLeft(_.distinct) // there is some error message duplication that needs to be eliminated.
+  }
+
+  /**
+   * Build Data Quality batch job provided with sequence of paths to job configuration HOCON files.
    * @param jobConfigs Path to a job-level configuration file (HOCON)
    * @return Data Quality job instance or a list of building errors.
    * @note HOCON format support configuration merging. Thus, it is also allowed to define different parts of
@@ -364,10 +477,23 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    *       not to duplicate sections with common connections configurations or other sections
    *       that are common among several jobs.
    */
-  def buildJob(jobConfigs: Seq[String]): Result[DQJob] =
+  def buildBatchJob(jobConfigs: Seq[String]): Result[DQBatchJob] =
     prepareConfig(jobConfigs, settings.prependVars, "job")
-      .flatMap(readJobConfig[InputStreamReader]).flatMap(buildJob)
-  
+      .flatMap(readJobConfig[InputStreamReader]).flatMap(buildBatchJob)
+
+  /**
+   * Build Data Quality stream job provided with sequence of paths to job configuration HOCON files.
+   *
+   * @param jobConfigs Path to a job-level configuration file (HOCON)
+   * @return Data Quality job instance or a list of building errors.
+   * @note HOCON format support configuration merging. Thus, it is also allowed to define different parts of
+   *       job configuration in different files and merge them prior parsing. This will allow, for example,
+   *       not to duplicate sections with common connections configurations or other sections
+   *       that are common among several jobs.
+   */
+  def buildStreamJob(jobConfigs: Seq[String]): Result[DQStreamJob] =
+    prepareConfig(jobConfigs, settings.prependVars, "job")
+      .flatMap(readJobConfig[InputStreamReader]).flatMap(buildStreamJob)
 }
 
 object DQContext {

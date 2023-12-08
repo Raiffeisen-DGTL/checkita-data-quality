@@ -19,5 +19,6 @@ object RunStage extends Enum[RunStage] {
   case object PerformChecks extends RunStage("[PERFORMING CHECKS]")
   case object SaveResults extends RunStage("[RESULTS SAVING]")
   case object ProcessTargets extends RunStage("[SENDING TARGETS]")
+  case object CheckProcessorBuffer extends RunStage("[CHECKING PROCESSOR BUFFER]")
   override val values: immutable.IndexedSeq[RunStage] = findValues
 }

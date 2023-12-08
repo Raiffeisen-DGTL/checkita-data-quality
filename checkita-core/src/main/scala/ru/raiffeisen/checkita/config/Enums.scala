@@ -37,26 +37,31 @@ object Enums {
   }
 
   /**
-   * Supported Kafka windowing types, that control how windows are build:
+   * Supported stream windowing types, that control how windows are build:
    *   - based on processing time: current timestamp when rows is processed;
-   *   - based on event time: kafka message creation timestamp;
-   *   - custom time: arbitrary timestamp column from kafka message defined by user.
+   *   - based on event time: message creation timestamp.
+   *     Following Kafka message structure, it always must be column with name 'timestamp'.
+   *     Column should have LongType or TimestampType or other type with contents that can be converted
+   *     to a LongType containing unix epoch (in seconds).
+   *   - custom time: arbitrary timestamp column from message defined by user.
+   * @note When event time or custom time columns are selected for windowing then it is up to user to ensure
+   *       timestamp correctness in the selected column.
    * @note this is not an enumeration since custom time type requires user-defined column name.
    */
-  sealed trait KafkaWindowing { val windowBy: String }
-  case object ProcessingTime extends KafkaWindowing { val windowBy: String = "processingTime" }
-  case object EventTime extends KafkaWindowing { val windowBy: String = "eventTime" }
-  case class CustomTime(column: String) extends KafkaWindowing { val windowBy: String = s"custom($column)" }
-  object KafkaWindowing {
+  sealed trait StreamWindowing { val windowBy: String }
+  case object ProcessingTime extends StreamWindowing { val windowBy: String = "processingTime" }
+  case object EventTime extends StreamWindowing { val windowBy: String = "eventTime" }
+  case class CustomTime(column: String) extends StreamWindowing { val windowBy: String = s"custom($column)" }
+  object StreamWindowing {
     private val customPattern = """^custom\((.+)\)$""".r
-    def apply(s: String): KafkaWindowing = s match {
+    def apply(s: String): StreamWindowing = s match {
       case "processingTime" => ProcessingTime
       case "eventTime" => EventTime
       case custom if customPattern.pattern.matcher(custom).matches() =>
         val customPattern(columnName) = custom
         val _ = idParser.parseTableIdentifier(columnName) // verify if columnName is a valid Spark SQL identifier
         CustomTime(columnName)
-      case other => throw new IllegalArgumentException(s"Wrong Kafka windowing type: $other")
+      case other => throw new IllegalArgumentException(s"Wrong stream windowing type: $other")
     }
   }
 

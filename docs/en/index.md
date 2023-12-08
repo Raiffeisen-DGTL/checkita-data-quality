@@ -40,6 +40,10 @@ Checkita is designed with focus on integration into ETL pipelines and data catal
 * Built-in support for notification (Email, Mattermost) to inform about any issues with quality of data.
 * Alternative output channels such as Kafka can be used for integration with other services.
 
+Another key feature of Checkita data quality framework is that it can process both static (batch) and
+streaming data sources. Thus, either a batch or streaming application can be started depending on the type of sources
+that needs to be checked. ***Streaming mode is currently in experimental phase and is subjected to changes.***
+
 The framework is written in Scala 2.12 and uses Spark 2.4+ as the computation core.
 The project is configured with a parameterized SBT build that allows building the framework for
 a specific version of Spark, publish the project to a given repository, and also build Uber-jar,

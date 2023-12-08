@@ -1,7 +1,6 @@
 package ru.raiffeisen.checkita.config
 
 import com.typesafe.config.Config
-import org.apache.log4j.Level
 import pureconfig.generic.auto.{exportReader, exportWriter}
 import pureconfig.{ConfigReader, ConfigSource, ConfigWriter}
 import ru.raiffeisen.checkita.config.Parsers._

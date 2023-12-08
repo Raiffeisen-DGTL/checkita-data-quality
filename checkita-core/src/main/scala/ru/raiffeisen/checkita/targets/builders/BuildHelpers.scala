@@ -17,9 +17,12 @@ trait BuildHelpers {
   def filterErrors(errors: Seq[ResultMetricErrors],
                    requested: Seq[String],
                    dumpSize: Int): Seq[ResultMetricErrors] =
-    errors.filter(r => if (requested.isEmpty) true else requested.contains(r.metricId)) // retain only requested metrics
-      .groupBy(_.metricId).toSeq.zipWithIndex.filter(t => t._2 < dumpSize) // retain no more than 'dumpSize' errors per metric
-      .flatMap(_._1._2)
+    errors
+      .filter(r => if (requested.isEmpty) true else requested.contains(r.metricId))
+      .groupBy(_.metricId)
+      .mapValues(errs => errs.zipWithIndex.filter(t => t._2 < dumpSize).map(_._1))
+      .toSeq.flatMap(_._2)
+
 
   /**
    * Safely reads template from file

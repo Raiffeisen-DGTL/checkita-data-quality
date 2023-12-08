@@ -156,11 +156,14 @@ parameters:
     * List of topics with indication of partitions to read: `["topic1@[0, 1]", "topic2@[2, 4]"]`
     * *All topics must be defined using the same format.*
 * `topicPattern` - *Optional*. Topic pattern name: read all topics that match pattern.
-* `format` - Topic format. Currently, only `xml` and `json` formats are supported.
 * `startingOffsets` - *Optional, default is `earliest`*. Json string setting starting offsets to read from topic.
   By default, all topic is read.
 * `endingOffsets` - *Optional, default is `latest`*. Json string setting ending offset until which to read from topic.
   By default, read topic till the end.
+* `keyFormat` - *Optional, default is `string`*. Format used to decode message key.
+* `valueFormat` - *Optional, default is `string`*. Format used to decode message value.
+* `keySchema` - Schema ID used to parse message key. If key format other than `string` then schema must be provided.
+* `valueSchema` - Schema ID used to parse message value. If value format other than `string` then schema must be provided.
 * `options` - *Optional*. Additional Spark parameters related to reading messages from Kafka topics such as:
   `failOnDataLoss, kafkaConsumer.pollTimeoutMs, fetchOffset.numRetries, fetchOffset.retryIntervalMs, maxOffsetsPerTrigger`.
   Parameters are provided as a strings in format of `parameterName=parameterValue`.
@@ -168,6 +171,8 @@ parameters:
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-concepts/04-ErrorCollection.md) chapter.
+
+Currently, `string`, `xml` and `json` formats are supported to decode message key and value.
 
 > *TIP*: In order to define JSON strings, they must be enclosed in triple quotes:
 > `"""{"name1": {"name2": "value2", "name3": "value3""}}"""`.

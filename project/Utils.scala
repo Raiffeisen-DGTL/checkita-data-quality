@@ -1,8 +1,8 @@
-import scala.util.matching.Regex
-
 import sbt._
 import src.main.scala.BuildAssyModePlugin.autoImport.AssyMode
 import src.main.scala.BuildPackageTypePlugin.autoImport.PackageType
+
+import scala.util.matching.Regex
 
 object Utils {
   
@@ -10,7 +10,6 @@ object Utils {
 
     lazy val jpountz = ExclusionRule(organization = "net.jpountz.lz4", name = "lz4")
     lazy val hadoop = ExclusionRule(organization = "org.apache.hadoop", name = "hadoop-client-runtime")
-
 
     val hadoopSparkMatching: Map[Regex, String] = Map(
       "2\\.4\\.[0-8]".r -> "2.6.5",
@@ -30,19 +29,34 @@ object Utils {
       "sparkCatalyst" -> "org.apache.spark" %% "spark-catalyst" % sparkVersion
     ).mapValues(m => if (assyMode == AssyMode.WithSpark) m else m % "provided")
 
-    val hadoopDeps: Map[String, ModuleID] = Map(
-      "hadoopAws" -> "org.apache.hadoop" % "hadoop-aws" % hadoopSparkMatching.collectFirst {
-        case (key, value) if key.findFirstMatchIn(sparkVersion).isDefined => value
-      }.get
-    )
     val sparkKafkaDeps: Map[String, ModuleID] = Map(
       "sparkKafkaStreaming" -> "org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkVersion,
       "sparkKafkaSql" -> "org.apache.spark" %% "spark-sql-kafka-0-10" % sparkVersion
     ).mapValues(_.excludeAll(jpountz, hadoop))
 
-    sparkDeps ++ hadoopDeps ++ sparkKafkaDeps + ("sparkAvro" -> "org.apache.spark" %% "spark-avro" % sparkVersion)
+    // we use log4j2 for logging. For newer versions of spark it comes as a transitive dependency.
+    // But for older versions of spark this dependency needs to be explicit.
+    val log4j2 = if (sparkVersion < "3.3.0") Map(
+      "log4j-core" -> "org.apache.logging.log4j" % "log4j-core" % "2.19.0",
+      "log4j-api" -> "org.apache.logging.log4j" % "log4j-api" % "2.19.0",
+      "log4j-slf4j" -> "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.19.0"
+    ) else Map.empty[String, ModuleID]
+
+    val extraDeps: Map[String, ModuleID] = Map(
+      "sparkAvro" -> "org.apache.spark" %% "spark-avro" % sparkVersion,
+      "hadoopAws" -> "org.apache.hadoop" % "hadoop-aws" % hadoopSparkMatching.collectFirst {
+        case (key, value) if key.findFirstMatchIn(sparkVersion).isDefined => value
+      }.get
+    )
+
+    sparkDeps ++ sparkKafkaDeps ++ extraDeps ++ log4j2
   }
-  
+
+  def getExcludeDependencies(sparkVersion: String): Seq[ExclusionRule] =
+    if (sparkVersion < "3.3.0") Seq(
+      ExclusionRule(organization = "org.slf4j", name = "slf4j-log4j12")
+    ) else Seq.empty[ExclusionRule]
+
   def overrideFasterXml(sparkVersion: String): Seq[ModuleID] = {
     val fasterXmlVersion = sparkVersion match {
       case v2 if v2.startsWith("2.") => Some("2.6.7")
