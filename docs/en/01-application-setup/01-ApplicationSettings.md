@@ -26,6 +26,25 @@ DateTime settings include following:
  
 If `dateTimeOptions` section is missing then default values are used for all parameters above.
 
+## Streaming Settings
+
+These settings are only applicable to streaming applications and define various aspects of running data quality checks
+for streaming sources. Please, see [Data Quality Checks over Streaming Sources](../02-general-concepts/05-StreamingMode.md)
+section for more details on runnig data quality checks over streaming sources.
+
+* `trigger` - Trigger interval: defines time interval for which micro-batches are collected. *Optional, default is `10s`*.
+* `window` - Window interval: defines tabbing window size used to accumulate metrics. 
+  All metrics results and checks are evaluated per each window once it finalised. *Optional, default is `10m`*.
+* `watermark` - Watermark level: defines time interval after which late records are no longer processed.
+  *Optional, default is `5m`*.
+* `allowEmptyWindows` - Boolean flag indicating whether empty windows are allowed. Thus, in situation when window is 
+  below watermark and for some of the processed streams there are no results then all related checks will be skipped 
+  if this flag is set to `true`. Otherwise, checks will be processed and will return error status with 
+  `... metric results were not found ...` type of message. *Optional, default is `false`*.
+
+> **IMPORTANT** All intervals must be defined as a duration string which should conform to 
+> [Scala Duration](https://www.scala-lang.org/api/2.12.4/scala/concurrent/duration/Duration.html) format.
+
 ## Enablers
 
 Section `enablers` of application configuration file defines various boolean switchers is single-value parameters

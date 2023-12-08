@@ -13,7 +13,7 @@ However, Checkita applications require some command line arguments to be passed 
   job configuration in separate files and reuse some common configuration sections.
 * `-d` - *Optional*. Datetime for which the Data Quality job is being run. Date string must conform to format specified 
   in `referenceDateFormat` parameter of the application settings. If date is not provided on startup, then it will be 
-  set to application start date.
+  set to application start date. *This parameter is ignored when running streaming application*.
 * `-l` - *Optional*. Flag indicating that application should be run in local mode.
 * `-s` - *Optional*. Flag indicating that application will be run using Shared Spark Context. In this case application
   will get existing context instead of creating a new one. It is also quite important not to stop it upon job completion.
@@ -22,6 +22,11 @@ However, Checkita applications require some command line arguments to be passed 
   used in configuration files, e.g. to pass secrets. Variables are provided in key-value format:
   `"k1=v1,k2=v2,k3=v3,...""`.
 * `-v` - *Optional*. Application log verbosity. By default, log level is set to `INFO`.
+
+There are two available applications to start:
+
+* Batch application: main class path is `ru.raiffeisen.checkita.apps.batch.DataQualityBatchApp`
+* Streaming application: main class path is `ru.raiffeisen.checkita.apps.stream.DataQualityStreamApp`
 
 
 The following is an example of running an application in YARN in `cluster` mode.

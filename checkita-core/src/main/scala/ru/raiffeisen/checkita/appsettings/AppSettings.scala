@@ -1,6 +1,6 @@
 package ru.raiffeisen.checkita.appsettings
 
-import org.apache.log4j.Level
+import org.apache.logging.log4j.Level
 import org.apache.spark.SparkConf
 import ru.raiffeisen.checkita.config.IO.readAppConfig
 import ru.raiffeisen.checkita.config.Parsers._

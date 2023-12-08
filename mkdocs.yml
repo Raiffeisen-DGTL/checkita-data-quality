@@ -57,18 +57,21 @@ plugins:
                 - en/02-general-concepts/02-EnvironmentAndExtraVariables.md
                 - en/02-general-concepts/03-StatusModel.md
                 - en/02-general-concepts/04-ErrorCollection.md
+                - en/02-general-concepts/05-StreamingMode.md
             - Job Configuration:
                 - en/03-job-configuration/index.md
                 - en/03-job-configuration/01-Connections.md
                 - en/03-job-configuration/02-Schemas.md
                 - en/03-job-configuration/03-Sources.md
-                - en/03-job-configuration/04-VirtualSources.md
-                - en/03-job-configuration/05-LoadChecks.md
-                - en/03-job-configuration/06-Metrics.md
-                - en/03-job-configuration/07-Checks.md
-                - en/03-job-configuration/08-Targets.md
-                - en/03-job-configuration/09-FileOutputs.md
-                - en/03-job-configuration/10-JobConfigExample.md
+                - en/03-job-configuration/04-Streams.md
+                - en/03-job-configuration/05-VirtualSources.md
+                - en/03-job-configuration/06-VirtualStreams.md
+                - en/03-job-configuration/07-LoadChecks.md
+                - en/03-job-configuration/08-Metrics.md
+                - en/03-job-configuration/09-Checks.md
+                - en/03-job-configuration/10-Targets.md
+                - en/03-job-configuration/11-FileOutputs.md
+                - en/03-job-configuration/12-JobConfigExample.md
             - Changelog: changelog/CHANGELOG.md
             - Contribution:
                 - contribution/index.md
@@ -91,16 +94,21 @@ plugins:
                 - ru/02-general-concepts/02-EnvironmentAndExtraVariables.md
                 - ru/02-general-concepts/03-StatusModel.md
                 - ru/02-general-concepts/04-ErrorCollection.md
+                - ru/02-general-concepts/05-StreamingMode.md
             - Job Configuration:
                 - ru/03-job-configuration/index.md
                 - ru/03-job-configuration/01-Connections.md
                 - ru/03-job-configuration/02-Schemas.md
                 - ru/03-job-configuration/03-Sources.md
-                - ru/03-job-configuration/04-VirtualSources.md
-                - ru/03-job-configuration/05-LoadChecks.md
-                - ru/03-job-configuration/06-Metrics.md
-                - ru/03-job-configuration/07-Checks.md
-                - ru/03-job-configuration/08-Targets.md
+                - ru/03-job-configuration/04-Streams.md
+                - ru/03-job-configuration/05-VirtualSources.md
+                - ru/03-job-configuration/06-VirtualStreams.md
+                - ru/03-job-configuration/07-LoadChecks.md
+                - ru/03-job-configuration/08-Metrics.md
+                - ru/03-job-configuration/09-Checks.md
+                - ru/03-job-configuration/10-Targets.md
+                - ru/03-job-configuration/11-FileOutputs.md
+                - ru/03-job-configuration/12-JobConfigExample.md
             - Changelog: changelog/CHANGELOG.md
             - Contribution:
                 - contribution/index.md

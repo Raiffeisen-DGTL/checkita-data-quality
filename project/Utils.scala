@@ -22,13 +22,26 @@ object Utils {
       "sparkKafkaSql" -> "org.apache.spark" %% "spark-sql-kafka-0-10" % sparkVersion
     ).mapValues(_.excludeAll(jpountz, hadoop))
 
+    // we use log4j2 for logging. For newer versions of spark it comes as a transitive dependency.
+    // But for older versions of spark this dependency needs to be explicit.
+    val log4j2 = if (sparkVersion < "3.3.0") Map(
+      "log4j-core" -> "org.apache.logging.log4j" % "log4j-core" % "2.19.0",
+      "log4j-api" -> "org.apache.logging.log4j" % "log4j-api" % "2.19.0",
+      "log4j-slf4j" -> "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.19.0"
+    ) else Map.empty[String, ModuleID]
+
     val extraDeps: Map[String, ModuleID] = Map(
-      "sparkAvro" -> "org.apache.spark" %% "spark-avro" % sparkVersion,
-      "sparkCloud" -> "org.apache.spark" %% "spark-hadoop-cloud" % sparkVersion
+      "sparkAvro" -> "org.apache.spark" %% "spark-avro" % sparkVersion
     )
-    sparkDeps ++ sparkKafkaDeps ++ extraDeps
+
+    sparkDeps ++ sparkKafkaDeps ++ extraDeps ++ log4j2
   }
-  
+
+  def getExcludeDependencies(sparkVersion: String): Seq[ExclusionRule] =
+    if (sparkVersion < "3.3.0") Seq(
+      ExclusionRule(organization = "org.slf4j", name = "slf4j-log4j12")
+    ) else Seq.empty[ExclusionRule]
+
   def overrideFasterXml(sparkVersion: String): Seq[ModuleID] = {
     val fasterXmlVersion = sparkVersion match {
       case v2 if v2.startsWith("2.") => Some("2.6.7")

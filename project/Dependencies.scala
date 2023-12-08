@@ -43,9 +43,6 @@ object Dependencies {
   val flywayOracle = "org.flywaydb" % "flyway-database-oracle" % flywayVersion
   val flywayMSSQL = "org.flywaydb" % "flyway-sqlserver" % flywayVersion
 
-  // S3
-  val hadoopAws = "org.apache.hadoop" % "hadoop-aws" % "3.3.2"
-
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.15" % Test
   
   val checkita_core: Seq[ModuleID] = Seq(
@@ -73,7 +70,6 @@ object Dependencies {
     flywayMySQL,
     flywayOracle,
     flywayMSSQL,
-    hadoopAws,
     scalaTest
   )
 

@@ -1,7 +1,7 @@
 package ru.raiffeisen.checkita
 
 import org.apache.hadoop.fs.FileSystem
-import org.apache.log4j.Level
+import org.apache.logging.log4j.Level
 import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.storage.Connections.DqStorageConnection

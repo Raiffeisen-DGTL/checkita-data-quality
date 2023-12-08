@@ -25,6 +25,8 @@ this mode of operation. A typical architecture for working with Checkita Data Qu
   (not included in the functionality of this framework).
 
 Also, the Data Quality Framework can be used for streaming data processing,
-however, this functionality is under development.
+however, this functionality is currently in experimental state and is subject to change. For more detailed
+information on running quality checks over streaming sources, please see 
+[Data Quality Checks over Streaming Sources](../02-general-concepts/05-StreamingMode.md) chapter. 
 
 ![image](../../diagrams/Architecture.png)
