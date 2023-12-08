@@ -1,3 +1,5 @@
+import scala.util.matching.Regex
+
 import sbt._
 import src.main.scala.BuildAssyModePlugin.autoImport.AssyMode
 import src.main.scala.BuildPackageTypePlugin.autoImport.PackageType
@@ -9,6 +11,17 @@ object Utils {
     lazy val jpountz = ExclusionRule(organization = "net.jpountz.lz4", name = "lz4")
     lazy val hadoop = ExclusionRule(organization = "org.apache.hadoop", name = "hadoop-client-runtime")
 
+
+    val hadoopSparkMatching: Map[Regex, String] = Map(
+      "2\\.4\\.[0-8]".r -> "2.6.5",
+      "3\\.0\\.[0-3]".r -> "2.7.4",
+      "3\\.1\\.[0-3]".r -> "3.2.0",
+      "3\\.2\\.[0-4]".r -> "3.3.1",
+      "3\\.3\\.[0-3]".r -> "3.3.2",
+      "3\\.4\\.[0-2]".r -> "3.3.4",
+      "3.5.0".r -> "3.3.4"
+    )
+
     val sparkDeps: Map[String, ModuleID] = Map(
       "sparkCore" -> "org.apache.spark" %% "spark-core" % sparkVersion,
       "sparkSql" -> "org.apache.spark" %% "spark-sql" % sparkVersion,
@@ -17,6 +30,11 @@ object Utils {
       "sparkCatalyst" -> "org.apache.spark" %% "spark-catalyst" % sparkVersion
     ).mapValues(m => if (assyMode == AssyMode.WithSpark) m else m % "provided")
 
+    val hadoopDeps: Map[String, ModuleID] = Map(
+      "hadoopAws" -> "org.apache.hadoop" % "hadoop-aws" % hadoopSparkMatching.collectFirst {
+        case (key, value) if key.findFirstMatchIn(sparkVersion).isDefined => value
+      }.get
+    )
     val sparkKafkaDeps: Map[String, ModuleID] = Map(
       "sparkKafkaStreaming" -> "org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkVersion,
       "sparkKafkaSql" -> "org.apache.spark" %% "spark-sql-kafka-0-10" % sparkVersion
