@@ -151,8 +151,20 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="ru.raiffeisen.checkita.connections">connections</a></dd></dl></div>
     </li><li class="current-entities indented5">
                         <span class="separator"></span>
+                        <a class="class" href="H2Connection.html" title="Connection to H2 database"></a>
+                        <a href="H2Connection.html" title="Connection to H2 database">H2Connection</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
                         <a class="class" href="JdbcConnection.html" title="Generic JDBC Connection to load Table sources"></a>
                         <a href="JdbcConnection.html" title="Generic JDBC Connection to load Table sources">JdbcConnection</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
+                        <a class="class" href="MSSQLConnection.html" title="Connection to MS SQL database"></a>
+                        <a href="MSSQLConnection.html" title="Connection to MS SQL database">MSSQLConnection</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
+                        <a class="class" href="MySQLConnection.html" title="Connection to MySQL database"></a>
+                        <a href="MySQLConnection.html" title="Connection to MySQL database">MySQLConnection</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
                         <a class="class" href="" title="Connection to Oracle database"></a>
@@ -498,6 +510,22 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.connections.jdbc.JdbcConnection#getProperties" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getProperties:java.util.Properties"></a><a id="getProperties:Properties"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/connections/jdbc/OracleConnection.html#getProperties:java.util.Properties" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getProperties</span><span class="result">: <span class="extype" name="java.util.Properties">Properties</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Gets basic JDBC connection properties</p><div class="fullcomment"><div class="comment cmt"><p>Gets basic JDBC connection properties</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Connection properties</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="JdbcConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.JdbcConnection">JdbcConnection</a></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.connections.jdbc.OracleConnection#id" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="id:String"></a>
       <span class="permalink">
@@ -546,10 +574,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.OracleConnection">OracleConnection</a> → <a href="JdbcConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.JdbcConnection">JdbcConnection</a></dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.connections.jdbc.JdbcConnection#loadDataframe" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="loadDataframe(sourceConfig:JdbcConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession):org.apache.spark.sql.DataFrame"></a><a id="loadDataframe(SourceType)(AppSettings,SparkSession):DataFrame"></a>
+    </li><li name="ru.raiffeisen.checkita.connections.jdbc.JdbcConnection#loadDataFrame" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="loadDataFrame(sourceConfig:JdbcConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame"></a><a id="loadDataFrame(SourceType)(AppSettings,SparkSession,Map[String,SourceSchema]):DataFrame"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/connections/jdbc/OracleConnection.html#loadDataframe(sourceConfig:JdbcConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession):org.apache.spark.sql.DataFrame" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/connections/jdbc/OracleConnection.html#loadDataFrame(sourceConfig:JdbcConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -558,10 +586,12 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">loadDataframe</span><span class="params">(<span name="sourceConfig">sourceConfig: <a href="#SourceType=ru.raiffeisen.checkita.config.jobconf.Sources.TableSourceConfig" class="extmbr" name="ru.raiffeisen.checkita.connections.jdbc.OracleConnection.SourceType">SourceType</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
+        <span class="name">loadDataFrame</span><span class="params">(<span name="sourceConfig">sourceConfig: <a href="#SourceType=ru.raiffeisen.checkita.config.jobconf.Sources.TableSourceConfig" class="extmbr" name="ru.raiffeisen.checkita.connections.jdbc.OracleConnection.SourceType">SourceType</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="schemas">schemas: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../../readers/SchemaReaders$$SourceSchema.html" class="extype" name="ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema">SourceSchema</a>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
       </span>
       
-      <p class="shortcomment cmt">Loads external data into dataframe given a source configuration</p><div class="fullcomment"><div class="comment cmt"><p>Loads external data into dataframe given a source configuration</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Source configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt>returns</dt><dd class="cmt"><p>Spark DataFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="JdbcConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.JdbcConnection">JdbcConnection</a> → <a href="../DQConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQConnection">DQConnection</a></dd></dl></div>
+      <p class="shortcomment cmt">Loads external data into dataframe given a source configuration
+</p><div class="fullcomment"><div class="comment cmt"><p>Loads external data into dataframe given a source configuration
+</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Source configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Implicit Map of all explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt>returns</dt><dd class="cmt"><p>Spark DataFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="JdbcConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.JdbcConnection">JdbcConnection</a> → <a href="../DQConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQConnection">DQConnection</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">

@@ -209,8 +209,8 @@
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Data Quality Source definition
-</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">df</dt><dd class="cmt"><p>Spark dataframe with source data</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Key field (columns) of this source: uniquely define data row</p></dd><dt class="param">parents</dt><dd class="cmt"><p>Sequence of parent sources IDs from which this source is build (applies to virtual sources)</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Data Quality Source definition</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">df</dt><dd class="cmt"><p>Spark dataframe with source data</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Key field (columns) of this source: uniquely define data row</p></dd><dt class="param">parents</dt><dd class="cmt"><p>Sequence of parent sources IDs from which this source is build (applies to virtual sources)</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Source can hold both static and streaming dataframes and, therefore, both batch source readers
+      and stream source readers return same source definition.</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -479,6 +479,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.core.Source#isStreaming" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="isStreaming:Boolean"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/core/Source.html#isStreaming:Boolean" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isStreaming</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      
+      
     </li><li name="ru.raiffeisen.checkita.core.Source#keyFields" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="keyFields:Seq[String]"></a>
       <span class="permalink">

@@ -298,6 +298,22 @@
       
       <p class="shortcomment cmt">Compare rules for metric parameters
 </p>
+    </li><li name="ru.raiffeisen.checkita.config.Enums.CustomTime" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CustomTimeextendsEnums.StreamWindowingwithProductwithSerializable"></a><a id="CustomTime:CustomTime"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/Enums$$CustomTime.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Enums$$CustomTime.html"><span class="name">CustomTime</span></a><span class="params">(<span name="column">column: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="Enums$$StreamWindowing.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.StreamWindowing">StreamWindowing</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
     </li><li name="ru.raiffeisen.checkita.config.Enums.DQStorageType" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="DQStorageTypeextendsEnumEntry"></a><a id="DQStorageType:DQStorageType"></a>
       <span class="permalink">
@@ -416,6 +432,26 @@
       </span>
       
       
+    </li><li name="ru.raiffeisen.checkita.config.Enums.StreamWindowing" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="StreamWindowingextendsAnyRef"></a><a id="StreamWindowing:StreamWindowing"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/Enums$$StreamWindowing.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="Supported stream windowing types, that control how windows are build:" href="Enums$$StreamWindowing.html"><span class="name">StreamWindowing</span></a><span class="result"> extends <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Supported stream windowing types, that control how windows are build:</p><div class="fullcomment"><div class="comment cmt"><p>Supported stream windowing types, that control how windows are build:</p><ul><li>based on processing time: current timestamp when rows is processed;</li><li>based on event time: message creation timestamp.
+    Following Kafka message structure, it always must be column with name 'timestamp'.
+    Column should have LongType or TimestampType or other type with contents that can be converted
+    to a LongType containing unix epoch (in seconds).</li><li>custom time: arbitrary timestamp column from message defined by user.</li></ul></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>When event time or custom time columns are selected for windowing then it is up to user to ensure
+      timestamp correctness in the selected column.</p></span>, <span class="cmt"><p>this is not an enumeration since custom time type requires user-defined column name.</p></span></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.Enums.TemplateFormat" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="TemplateFormatextendsEnumEntry"></a><a id="TemplateFormat:TemplateFormat"></a>
       <span class="permalink">
@@ -839,6 +875,22 @@
       </span>
       
       
+    </li><li name="ru.raiffeisen.checkita.config.Enums.EventTime" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="EventTime"></a><a id="EventTime:EventTime"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/Enums$$EventTime$.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Enums$$EventTime$.html"><span class="name">EventTime</span></a><span class="result"> extends <a href="Enums$$StreamWindowing.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.StreamWindowing">StreamWindowing</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
     </li><li name="ru.raiffeisen.checkita.config.Enums.FileEncoding" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="FileEncoding"></a><a id="FileEncoding:FileEncoding"></a>
       <span class="permalink">
@@ -903,6 +955,22 @@
       </span>
       
       
+    </li><li name="ru.raiffeisen.checkita.config.Enums.ProcessingTime" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ProcessingTime"></a><a id="ProcessingTime:ProcessingTime"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/Enums$$ProcessingTime$.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Enums$$ProcessingTime$.html"><span class="name">ProcessingTime</span></a><span class="result"> extends <a href="Enums$$StreamWindowing.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.StreamWindowing">StreamWindowing</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
     </li><li name="ru.raiffeisen.checkita.config.Enums.ResultTargetType" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ResultTargetType"></a><a id="ResultTargetType:ResultTargetType"></a>
       <span class="permalink">
@@ -932,6 +1000,22 @@
       </span>
       <span class="symbol">
         <a title="" href="Enums$$SparkJoinType$.html"><span class="name">SparkJoinType</span></a><span class="result"> extends <span class="extype" name="enumeratum.Enum">Enum</span>[<a href="Enums$$SparkJoinType.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.SparkJoinType">SparkJoinType</a>]</span>
+      </span>
+      
+      
+    </li><li name="ru.raiffeisen.checkita.config.Enums.StreamWindowing" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="StreamWindowing"></a><a id="StreamWindowing:StreamWindowing"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/Enums$$StreamWindowing$.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Enums$$StreamWindowing$.html"><span class="name">StreamWindowing</span></a>
       </span>
       
       

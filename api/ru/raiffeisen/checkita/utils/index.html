@@ -282,7 +282,7 @@
                         <a class="object" href="Common$.html" title=""></a>
                         <a href="Common$.html" title="">Common</a>
                       </li><li class="current-entities indented4">
-                        <span class="separator"></span>
+                        <a class="object" href="EnrichedDT$.html" title=""></a>
                         <a class="class" href="EnrichedDT.html" title="Wrapper over datetime string with predefined format and time zone."></a>
                         <a href="EnrichedDT.html" title="Wrapper over datetime string with predefined format and time zone.">EnrichedDT</a>
                       </li><li class="current-entities indented4">
@@ -291,8 +291,8 @@
                         <a href="FormulaParser.html" title="Recursively creates a tree of operations and executes it">FormulaParser</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="trait" href="Logging.html" title=""></a>
-                        <a href="Logging.html" title="">Logging</a>
+                        <a class="trait" href="Logging.html" title="Logging trait that is mixed to the classes that do logging."></a>
+                        <a href="Logging.html" title="Logging trait that is mixed to the classes that do logging.">Logging</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="object" href="ResultUtils$.html" title=""></a>
@@ -418,7 +418,7 @@ Used to yield various datetime objects and operate with them.</p></div><dl class
       
       <p class="shortcomment cmt">Recursively creates a tree of operations and executes it
 </p>
-    </li><li name="ru.raiffeisen.checkita.utils.Logging" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+    </li><li name="ru.raiffeisen.checkita.utils.Logging" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="LoggingextendsAnyRef"></a><a id="Logging:Logging"></a>
       <span class="permalink">
       <a href="../../../../ru/raiffeisen/checkita/utils/Logging.html" title="Permalink">
@@ -430,10 +430,16 @@ Used to yield various datetime objects and operate with them.</p></div><dl class
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="" href="Logging.html"><span class="name">Logging</span></a><span class="result"> extends <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+        <a title="Logging trait that is mixed to the classes that do logging." href="Logging.html"><span class="name">Logging</span></a><span class="result"> extends <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
       </span>
       
-      
+      <p class="shortcomment cmt">Logging trait that is mixed to the classes that do logging.</p><div class="fullcomment"><div class="comment cmt"><p>Logging trait that is mixed to the classes that do logging.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Since Checkita framework works with multiple versions of Spark (2.4 and newer) then
+      it has to support two major versions of Log4J library for logging. Log4J API has been
+      significantly changed between version 1 and 2. Checkita framework uses Log4J2 for logging and
+      also provide bridge to slf4j implementation from Log4J2 in order to get logs from Spark.</p></span>, <span class="cmt"><p>Checkita always looks for log4j2.properties file (which is common name convention for Log4j2)
+      in either resources directory or working directory. Other locations of log properties file
+      are not supported: default logging settings will be used.</p></span></dd></dl></div>
     </li></ol>
             </div>
 
@@ -455,6 +461,22 @@ Used to yield various datetime objects and operate with them.</p></div><dl class
       </span>
       <span class="symbol">
         <a title="" href="Common$.html"><span class="name">Common</span></a>
+      </span>
+      
+      
+    </li><li name="ru.raiffeisen.checkita.utils.EnrichedDT" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="EnrichedDT"></a><a id="EnrichedDT:EnrichedDT"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/EnrichedDT$.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="EnrichedDT$.html"><span class="name">EnrichedDT</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       

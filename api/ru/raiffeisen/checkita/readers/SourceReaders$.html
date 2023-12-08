@@ -138,6 +138,10 @@
                         <a class="object" href="ConnectionReaders$.html" title=""></a>
                         <a href="ConnectionReaders$.html" title="">ConnectionReaders</a>
                       </li><li class="current-entities indented4">
+                        <a class="object" href="ReadMode$.html" title=""></a>
+                        <a class="trait" href="ReadMode.html" title="Sources can be read in two modes: as a static dataframe and as a stream one."></a>
+                        <a href="ReadMode.html" title="Sources can be read in two modes: as a static dataframe and as a stream one.">ReadMode</a>
+                      </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="object" href="SchemaReaders$.html" title=""></a>
                         <a href="SchemaReaders$.html" title="">SchemaReaders</a>
@@ -229,7 +233,23 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+              <ol><li name="ru.raiffeisen.checkita.readers.SourceReaders.SimpleFileReader" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SimpleFileReaderextendsAnyRef"></a><a id="SimpleFileReader:SimpleFileReader"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/readers/SourceReaders$$SimpleFileReader.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SourceReaders$$SimpleFileReader.html"><span class="name">SimpleFileReader</span></a><span class="result"> extends <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      
+      
+    </li><li name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="SourceReader[T&lt;:ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig]extendsAnyRef"></a><a id="SourceReader[T&lt;:SourceConfig]:SourceReader[T]"></a>
       <span class="permalink">
       <a href="../../../../ru/raiffeisen/checkita/readers/SourceReaders$$SourceReader.html" title="Permalink">
@@ -257,10 +277,10 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a title="Implicit conversion for source configurations to enable read method for them." href="SourceReaders$$SourceReaderOps.html"><span class="name">SourceReaderOps</span></a><span class="tparams">[<span name="T">T &lt;: <a href="../config/jobconf/Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a></span>]</span><span class="result"> extends <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+        <a title="Implicit conversion for source configurations to enable read and readStream methods for them." href="SourceReaders$$SourceReaderOps.html"><span class="name">SourceReaderOps</span></a><span class="tparams">[<span name="T">T &lt;: <a href="../config/jobconf/Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a></span>]</span><span class="result"> extends <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
       </span>
       
-      <p class="shortcomment cmt">Implicit conversion for source configurations to enable read method for them.</p><div class="fullcomment"><div class="comment cmt"><p>Implicit conversion for source configurations to enable read method for them.</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>Type of source configuration</p></dd></dl></div>
+      <p class="shortcomment cmt">Implicit conversion for source configurations to enable read and readStream methods for them.</p><div class="fullcomment"><div class="comment cmt"><p>Implicit conversion for source configurations to enable read and readStream methods for them.</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>Type of source configuration</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -647,7 +667,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="Avro file source reader: reads avro file with optional explicit schema." href="SourceReaders$$AvroFileSourceReader$.html"><span class="name">AvroFileSourceReader</span></a><span class="result"> extends <a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a>[<a href="../config/jobconf/Sources$$AvroFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.AvroFileSourceConfig">AvroFileSourceConfig</a>]</span>
+        <a title="Avro file source reader: reads avro file with optional explicit schema." href="SourceReaders$$AvroFileSourceReader$.html"><span class="name">AvroFileSourceReader</span></a><span class="result"> extends <a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a>[<a href="../config/jobconf/Sources$$AvroFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.AvroFileSourceConfig">AvroFileSourceConfig</a>] with <a href="SourceReaders$$SimpleFileReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SimpleFileReader">SimpleFileReader</a></span>
       </span>
       
       <p class="shortcomment cmt">Avro file source reader: reads avro file with optional explicit schema.</p><div class="fullcomment"><div class="comment cmt"><p>Avro file source reader: reads avro file with optional explicit schema.</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>In order to read avro file source it is required to provide map of source schemas.</p></span></dd></dl></div>
@@ -747,7 +767,7 @@ Can also read only required partitions from table given the list partition colum
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="Orc file source reader: reads orc files." href="SourceReaders$$OrcFileSourceReader$.html"><span class="name">OrcFileSourceReader</span></a><span class="result"> extends <a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a>[<a href="../config/jobconf/Sources$$OrcFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.OrcFileSourceConfig">OrcFileSourceConfig</a>]</span>
+        <a title="Orc file source reader: reads orc files." href="SourceReaders$$OrcFileSourceReader$.html"><span class="name">OrcFileSourceReader</span></a><span class="result"> extends <a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a>[<a href="../config/jobconf/Sources$$OrcFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.OrcFileSourceConfig">OrcFileSourceConfig</a>] with <a href="SourceReaders$$SimpleFileReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SimpleFileReader">SimpleFileReader</a></span>
       </span>
       
       <p class="shortcomment cmt">Orc file source reader: reads orc files.</p>
@@ -763,7 +783,7 @@ Can also read only required partitions from table given the list partition colum
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="Parquet file source reader: reads parquet files." href="SourceReaders$$ParquetFileSourceReader$.html"><span class="name">ParquetFileSourceReader</span></a><span class="result"> extends <a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a>[<a href="../config/jobconf/Sources$$ParquetFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig">ParquetFileSourceConfig</a>]</span>
+        <a title="Parquet file source reader: reads parquet files." href="SourceReaders$$ParquetFileSourceReader$.html"><span class="name">ParquetFileSourceReader</span></a><span class="result"> extends <a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a>[<a href="../config/jobconf/Sources$$ParquetFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig">ParquetFileSourceConfig</a>] with <a href="SourceReaders$$SimpleFileReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SimpleFileReader">SimpleFileReader</a></span>
       </span>
       
       <p class="shortcomment cmt">Parquet file source reader: reads parquet files.</p>

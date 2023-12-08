@@ -205,6 +205,10 @@
                         <span class="separator"></span>
                         <a class="class" href="" title="Connection to external data sources."></a>
                         <a href="" title="Connection to external data sources.">DQConnection</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
+                        <a class="trait" href="DQStreamingConnection.html" title="Trait to be mix in connections that can read streams."></a>
+                        <a href="DQStreamingConnection.html" title="Trait to be mix in connections that can read streams.">DQStreamingConnection</a>
                       </li>
               </ul>
             </div>
@@ -245,7 +249,7 @@ an appropriate source configuration
             <span class="toggle">
               Known Subclasses
             </span>
-            <div class="subClasses hiddenContent"><a href="jdbc/JdbcConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.JdbcConnection">JdbcConnection</a>, <a href="jdbc/OracleConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.OracleConnection">OracleConnection</a>, <a href="jdbc/PostgresConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.PostgresConnection">PostgresConnection</a>, <a href="jdbc/SQLiteConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.SQLiteConnection">SQLiteConnection</a>, <a href="kafka/KafkaConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection">KafkaConnection</a></div>
+            <div class="subClasses hiddenContent"><a href="jdbc/H2Connection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.H2Connection">H2Connection</a>, <a href="jdbc/JdbcConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.JdbcConnection">JdbcConnection</a>, <a href="jdbc/MSSQLConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.MSSQLConnection">MSSQLConnection</a>, <a href="jdbc/MySQLConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.MySQLConnection">MySQLConnection</a>, <a href="jdbc/OracleConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.OracleConnection">OracleConnection</a>, <a href="jdbc/PostgresConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.PostgresConnection">PostgresConnection</a>, <a href="jdbc/SQLiteConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.SQLiteConnection">SQLiteConnection</a>, <a href="kafka/KafkaConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection">KafkaConnection</a></div>
           </div></div>
         
 
@@ -365,10 +369,10 @@ an appropriate source configuration
       </span>
       
       
-    </li><li name="ru.raiffeisen.checkita.connections.DQConnection#loadDataframe" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="loadDataframe(sourceConfig:DQConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession):org.apache.spark.sql.DataFrame"></a><a id="loadDataframe(SourceType)(AppSettings,SparkSession):DataFrame"></a>
+    </li><li name="ru.raiffeisen.checkita.connections.DQConnection#loadDataFrame" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="loadDataFrame(sourceConfig:DQConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame"></a><a id="loadDataFrame(SourceType)(AppSettings,SparkSession,Map[String,SourceSchema]):DataFrame"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/connections/DQConnection.html#loadDataframe(sourceConfig:DQConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession):org.apache.spark.sql.DataFrame" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/connections/DQConnection.html#loadDataFrame(sourceConfig:DQConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -377,10 +381,12 @@ an appropriate source configuration
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">loadDataframe</span><span class="params">(<span name="sourceConfig">sourceConfig: <a href="#SourceType&lt;:ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig" class="extmbr" name="ru.raiffeisen.checkita.connections.DQConnection.SourceType">SourceType</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
+        <span class="name">loadDataFrame</span><span class="params">(<span name="sourceConfig">sourceConfig: <a href="#SourceType&lt;:ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig" class="extmbr" name="ru.raiffeisen.checkita.connections.DQConnection.SourceType">SourceType</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="schemas">schemas: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../readers/SchemaReaders$$SourceSchema.html" class="extype" name="ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema">SourceSchema</a>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
       </span>
       
-      <p class="shortcomment cmt">Loads external data into dataframe given a source configuration</p><div class="fullcomment"><div class="comment cmt"><p>Loads external data into dataframe given a source configuration</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Source configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt>returns</dt><dd class="cmt"><p>Spark DataFrame</p></dd></dl></div>
+      <p class="shortcomment cmt">Loads external data into dataframe given a source configuration
+</p><div class="fullcomment"><div class="comment cmt"><p>Loads external data into dataframe given a source configuration
+</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Source configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Implicit Map of all explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt>returns</dt><dd class="cmt"><p>Spark DataFrame</p></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.connections.DQConnection#sparkParams" visbl="prt" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="sparkParams:Seq[String]"></a>
       <span class="permalink">

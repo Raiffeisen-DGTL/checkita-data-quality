@@ -138,7 +138,7 @@
                         <a class="object" href="Common$.html" title=""></a>
                         <a href="Common$.html" title="">Common</a>
                       </li><li class="current-entities indented4">
-                        <span class="separator"></span>
+                        <a class="object" href="EnrichedDT$.html" title=""></a>
                         <a class="class" href="EnrichedDT.html" title="Wrapper over datetime string with predefined format and time zone."></a>
                         <a href="EnrichedDT.html" title="Wrapper over datetime string with predefined format and time zone.">EnrichedDT</a>
                       </li><li class="current-entities indented4">
@@ -147,8 +147,8 @@
                         <a href="FormulaParser.html" title="Recursively creates a tree of operations and executes it">FormulaParser</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="trait" href="" title=""></a>
-                        <a href="" title="">Logging</a>
+                        <a class="trait" href="" title="Logging trait that is mixed to the classes that do logging."></a>
+                        <a href="" title="Logging trait that is mixed to the classes that do logging.">Logging</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="object" href="ResultUtils$.html" title=""></a>
@@ -189,7 +189,13 @@
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Logging trait that is mixed to the classes that do logging.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Since Checkita framework works with multiple versions of Spark (2.4 and newer) then
+      it has to support two major versions of Log4J library for logging. Log4J API has been
+      significantly changed between version 1 and 2. Checkita framework uses Log4J2 for logging and
+      also provide bridge to slf4j implementation from Log4J2 in order to get logs from Spark.</p></span>, <span class="cmt"><p>Checkita always looks for log4j2.properties file (which is common name convention for Log4j2)
+      in either resources directory or working directory. Other locations of log properties file
+      are not supported: default logging settings will be used.</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -198,7 +204,7 @@
             <span class="toggle">
               Known Subclasses
             </span>
-            <div class="subClasses hiddenContent"><a href="../apps/batch/DataQualityBatchApp$.html" class="extype" name="ru.raiffeisen.checkita.apps.batch.DataQualityBatchApp">DataQualityBatchApp</a>, <a href="../context/DQContext.html" class="extype" name="ru.raiffeisen.checkita.context.DQContext">DQContext</a>, <a href="../context/DQJob.html" class="extype" name="ru.raiffeisen.checkita.context.DQJob">DQJob</a></div>
+            <div class="subClasses hiddenContent"><a href="../apps/batch/DataQualityBatchApp$.html" class="extype" name="ru.raiffeisen.checkita.apps.batch.DataQualityBatchApp">DataQualityBatchApp</a>, <a href="../apps/stream/DataQualityStreamApp$.html" class="extype" name="ru.raiffeisen.checkita.apps.stream.DataQualityStreamApp">DataQualityStreamApp</a>, <a href="../context/DQBatchJob.html" class="extype" name="ru.raiffeisen.checkita.context.DQBatchJob">DQBatchJob</a>, <a href="../context/DQContext.html" class="extype" name="ru.raiffeisen.checkita.context.DQContext">DQContext</a>, <a href="../context/DQJob.html" class="extype" name="ru.raiffeisen.checkita.context.DQJob">DQJob</a>, <a href="../context/DQStreamJob.html" class="extype" name="ru.raiffeisen.checkita.context.DQStreamJob">DQStreamJob</a>, <a href="../context/DQStreamWindowJob.html" class="extype" name="ru.raiffeisen.checkita.context.DQStreamWindowJob">DQStreamWindowJob</a>, <a href="../core/metrics/MetricStreamProcessor$.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricStreamProcessor">MetricStreamProcessor</a></div>
           </div></div>
         
 
@@ -431,10 +437,10 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.utils.Logging#initLogger" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="initLogger(lvl:org.apache.log4j.Level):Unit"></a><a id="initLogger(Level):Unit"></a>
+    </li><li name="ru.raiffeisen.checkita.utils.Logging#initLogger" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="initLogger(lvl:org.apache.logging.log4j.Level):Unit"></a><a id="initLogger(Level):Unit"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/utils/Logging.html#initLogger(lvl:org.apache.log4j.Level):Unit" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/Logging.html#initLogger(lvl:org.apache.logging.log4j.Level):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -443,10 +449,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">initLogger</span><span class="params">(<span name="lvl">lvl: <span class="extype" name="org.apache.log4j.Level">Level</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">initLogger</span><span class="params">(<span name="lvl">lvl: <span class="extype" name="org.apache.logging.log4j.Level">Level</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       
-      
+      <p class="shortcomment cmt">Initialises logger:</p><div class="fullcomment"><div class="comment cmt"><p>Initialises logger:</p><ul><li>gets log4j properties with following priority:
+    resources directory -&gt; working directory -&gt; default settings</li><li>updates root logger level with verbosity level defined at application start</li><li>reconfigures Logger</li></ul></div><dl class="paramcmts block"><dt class="param">lvl</dt><dd class="cmt"><p>Root logger level defined at application start</p></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -464,9 +471,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.utils.Logging#log" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="log:org.apache.log4j.Logger"></a><a id="log:Logger"></a>
+      <a id="log:org.apache.logging.log4j.Logger"></a><a id="log:Logger"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/utils/Logging.html#log:org.apache.log4j.Logger" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/Logging.html#log:org.apache.logging.log4j.Logger" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -475,7 +482,7 @@
         <span class="kind">lazy val</span>
       </span>
       <span class="symbol">
-        <span class="name">log</span><span class="result">: <span class="extype" name="org.apache.log4j.Logger">Logger</span></span>
+        <span class="name">log</span><span class="result">: <span class="extype" name="org.apache.logging.log4j.Logger">Logger</span></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>

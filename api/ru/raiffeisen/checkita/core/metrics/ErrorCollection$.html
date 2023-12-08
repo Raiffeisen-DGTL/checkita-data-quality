@@ -191,6 +191,10 @@
                         <a href="" title="">ErrorCollection</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
+                        <a class="object" href="MetricBatchProcessor$.html" title="Regular metrics processor for Batch Applications"></a>
+                        <a href="MetricBatchProcessor$.html" title="Regular metrics processor for Batch Applications">MetricBatchProcessor</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
                         <a class="class" href="MetricCalculator.html" title="Basic metric calculator"></a>
                         <a href="MetricCalculator.html" title="Basic metric calculator">MetricCalculator</a>
                       </li><li class="current-entities indented5">
@@ -198,9 +202,13 @@
                         <a class="class" href="MetricName.html" title="Enumeration holding all metric calculator names"></a>
                         <a href="MetricName.html" title="Enumeration holding all metric calculator names">MetricName</a>
                       </li><li class="current-entities indented5">
+                        <a class="object" href="MetricProcessor$.html" title=""></a>
+                        <a class="trait" href="MetricProcessor.html" title="Base functionality for regular metric processor."></a>
+                        <a href="MetricProcessor.html" title="Base functionality for regular metric processor.">MetricProcessor</a>
+                      </li><li class="current-entities indented5">
                         <span class="separator"></span>
-                        <a class="object" href="MetricProcessor$.html" title="Methods to process all regular metrics"></a>
-                        <a href="MetricProcessor$.html" title="Methods to process all regular metrics">MetricProcessor</a>
+                        <a class="object" href="MetricStreamProcessor$.html" title=""></a>
+                        <a href="MetricStreamProcessor$.html" title="">MetricStreamProcessor</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
                         <a class="trait" href="RegularMetric.html" title="Base class for source metric."></a>
@@ -304,24 +312,6 @@
 </p><div class="fullcomment"><div class="comment cmt"><p>Defines metric failure (or errors) in a way they are collected during metrics processing:
 </p></div><dl class="paramcmts block"><dt class="param">columnNames</dt><dd class="cmt"><p>Column names for which data is collected: contains metric columns and source key fields.</p></dd><dt class="param">metricStatues</dt><dd class="cmt"><p>Sequence of metric statuses (all metrics that conform to given sequence of columns)</p></dd><dt class="param">rowData</dt><dd class="cmt"><p>Row data for which metrics yielded failures (or errors):
                      contains only excerpt from full dataframe for given columns</p></dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.core.metrics.ErrorCollection.ErrorAccumulator" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="ErrorAccumulatorextendsAccumulatorV2[ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors,scala.collection.mutable.ArrayBuffer[ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors]]withProductwithSerializable"></a><a id="ErrorAccumulator:ErrorAccumulator"></a>
-      <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ErrorCollection$$ErrorAccumulator.html" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a title="Spark accumulator to collect metric errors" href="ErrorCollection$$ErrorAccumulator.html"><span class="name">ErrorAccumulator</span></a><span class="params">(<span name="out">out: <span class="extype" name="scala.collection.mutable.ArrayBuffer">ArrayBuffer</span>[<a href="ErrorCollection$$AccumulatedErrors.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors">AccumulatedErrors</a>]</span>)</span><span class="result"> extends <span class="extype" name="org.apache.spark.util.AccumulatorV2">AccumulatorV2</span>[<a href="ErrorCollection$$AccumulatedErrors.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors">AccumulatedErrors</a>, <span class="extype" name="scala.collection.mutable.ArrayBuffer">ArrayBuffer</span>[<a href="ErrorCollection$$AccumulatedErrors.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors">AccumulatedErrors</a>]] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      
-      <p class="shortcomment cmt">Spark accumulator to collect metric errors
-</p><div class="fullcomment"><div class="comment cmt"><p>Spark accumulator to collect metric errors
-</p></div><dl class="paramcmts block"><dt class="param">out</dt><dd class="cmt"><p>Metric errors buffer</p></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.core.metrics.ErrorCollection.ErrorRow" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ErrorRowextendsProductwithSerializable"></a><a id="ErrorRow:ErrorRow"></a>
       <span class="permalink">

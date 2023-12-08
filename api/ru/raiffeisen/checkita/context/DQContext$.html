@@ -134,13 +134,25 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="ru.raiffeisen.checkita">checkita</a></dd></dl></div>
     </li><li class="current-entities indented4">
+                        <span class="separator"></span>
+                        <a class="class" href="DQBatchJob.html" title="Data Quality Batch Job: provides all required functionality to calculate quality metrics, perform checks, save results and send targets for static data sources."></a>
+                        <a href="DQBatchJob.html" title="Data Quality Batch Job: provides all required functionality to calculate quality metrics, perform checks, save results and send targets for static data sources.">DQBatchJob</a>
+                      </li><li class="current-entities indented4">
                         <a class="object" href="" title=""></a>
                         <a class="class" href="DQContext.html" title="Checkita Data Quality context."></a>
                         <a href="DQContext.html" title="Checkita Data Quality context.">DQContext</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="DQJob.html" title=""></a>
-                        <a href="DQJob.html" title="">DQJob</a>
+                        <a class="trait" href="DQJob.html" title="Base trait defining basic functionality of Data Quality Job"></a>
+                        <a href="DQJob.html" title="Base trait defining basic functionality of Data Quality Job">DQJob</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
+                        <a class="class" href="DQStreamJob.html" title="Data Quality Streaming Job: provides all required functionality to calculate quality metrics, perform checks, save results and send targets for streaming data sources."></a>
+                        <a href="DQStreamJob.html" title="Data Quality Streaming Job: provides all required functionality to calculate quality metrics, perform checks, save results and send targets for streaming data sources.">DQStreamJob</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
+                        <a class="class" href="DQStreamWindowJob.html" title="Data Quality Window Job: provides all required functionality to calculate quality metrics, perform checks, save results and send targets for windows of processed streams: runs in a separate thread and monitors streaming processor buffer for windows that are ready to be processed."></a>
+                        <a href="DQStreamWindowJob.html" title="Data Quality Window Job: provides all required functionality to calculate quality metrics, perform checks, save results and send targets for windows of processed streams: runs in a separate thread and monitors streaming processor buffer for windows that are ready to be processed.">DQStreamWindowJob</a>
                       </li><li class="current-entities indented4">
                         <a class="object" href="RunStage$.html" title=""></a>
                         <a class="class" href="RunStage.html" title="Application execution stages."></a>
@@ -297,9 +309,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.context.DQContext#build" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="build(appConfig:String,referenceDate:Option[String],isLocal:Boolean,isShared:Boolean,doMigration:Boolean,extraVariables:Map[String,String],logLvl:org.apache.log4j.Level):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.context.DQContext]"></a><a id="build(String,Option[String],Boolean,Boolean,Boolean,Map[String,String],Level):Result[DQContext]"></a>
+      <a id="build(appConfig:String,referenceDate:Option[String],isLocal:Boolean,isShared:Boolean,doMigration:Boolean,extraVariables:Map[String,String],logLvl:org.apache.logging.log4j.Level):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.context.DQContext]"></a><a id="build(String,Option[String],Boolean,Boolean,Boolean,Map[String,String],Level):Result[DQContext]"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/context/DQContext$.html#build(appConfig:String,referenceDate:Option[String],isLocal:Boolean,isShared:Boolean,doMigration:Boolean,extraVariables:Map[String,String],logLvl:org.apache.log4j.Level):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.context.DQContext]" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/context/DQContext$.html#build(appConfig:String,referenceDate:Option[String],isLocal:Boolean,isShared:Boolean,doMigration:Boolean,extraVariables:Map[String,String],logLvl:org.apache.logging.log4j.Level):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.context.DQContext]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -308,7 +320,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">build</span><span class="params">(<span name="appConfig">appConfig: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="referenceDate">referenceDate: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="isLocal">isLocal: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="isShared">isShared: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="doMigration">doMigration: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="extraVariables">extraVariables: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">Map.empty</a></span></span></span>, <span name="logLvl">logLvl: <span class="extype" name="org.apache.log4j.Level">Level</span> = <span class="symbol">Level.INFO</span></span>)</span><span class="result">: <a href="../utils/ResultUtils$.html#Result[T]=Either[Vector[String],T]" class="extmbr" name="ru.raiffeisen.checkita.utils.ResultUtils.Result">Result</a>[<a href="DQContext.html" class="extype" name="ru.raiffeisen.checkita.context.DQContext">DQContext</a>]</span>
+        <span class="name">build</span><span class="params">(<span name="appConfig">appConfig: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="referenceDate">referenceDate: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="isLocal">isLocal: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="isShared">isShared: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="doMigration">doMigration: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="extraVariables">extraVariables: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">Map.empty</a></span></span></span>, <span name="logLvl">logLvl: <span class="extype" name="org.apache.logging.log4j.Level">Level</span> = <span class="symbol">Level.INFO</span></span>)</span><span class="result">: <a href="../utils/ResultUtils$.html#Result[T]=Either[Vector[String],T]" class="extmbr" name="ru.raiffeisen.checkita.utils.ResultUtils.Result">Result</a>[<a href="DQContext.html" class="extype" name="ru.raiffeisen.checkita.context.DQContext">DQContext</a>]</span>
       </span>
       
       <p class="shortcomment cmt">Builds Checkita Data Quality context provided with path to an application-level configuration file
@@ -319,9 +331,9 @@ and other required initialization parameters.</p></div><dl class="paramcmts bloc
       These variables are combined with the ones provided in </code>extraVariables<code> argument and further used during
       configuration files parsing.</code></code></p></span></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.context.DQContext#build" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="build(appConfig:ru.raiffeisen.checkita.config.appconf.AppConfig,referenceDate:Option[String],isLocal:Boolean,isShared:Boolean,doMigration:Boolean,prependVariables:String,logLvl:org.apache.log4j.Level):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.context.DQContext]"></a><a id="build(AppConfig,Option[String],Boolean,Boolean,Boolean,String,Level):Result[DQContext]"></a>
+      <a id="build(appConfig:ru.raiffeisen.checkita.config.appconf.AppConfig,referenceDate:Option[String],isLocal:Boolean,isShared:Boolean,doMigration:Boolean,prependVariables:String,logLvl:org.apache.logging.log4j.Level):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.context.DQContext]"></a><a id="build(AppConfig,Option[String],Boolean,Boolean,Boolean,String,Level):Result[DQContext]"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/context/DQContext$.html#build(appConfig:ru.raiffeisen.checkita.config.appconf.AppConfig,referenceDate:Option[String],isLocal:Boolean,isShared:Boolean,doMigration:Boolean,prependVariables:String,logLvl:org.apache.log4j.Level):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.context.DQContext]" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/context/DQContext$.html#build(appConfig:ru.raiffeisen.checkita.config.appconf.AppConfig,referenceDate:Option[String],isLocal:Boolean,isShared:Boolean,doMigration:Boolean,prependVariables:String,logLvl:org.apache.logging.log4j.Level):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.context.DQContext]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -330,7 +342,7 @@ and other required initialization parameters.</p></div><dl class="paramcmts bloc
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">build</span><span class="params">(<span name="appConfig">appConfig: <a href="../config/appconf/AppConfig.html" class="extype" name="ru.raiffeisen.checkita.config.appconf.AppConfig">AppConfig</a></span>, <span name="referenceDate">referenceDate: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="isLocal">isLocal: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="isShared">isShared: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="doMigration">doMigration: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="prependVariables">prependVariables: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="logLvl">logLvl: <span class="extype" name="org.apache.log4j.Level">Level</span></span>)</span><span class="result">: <a href="../utils/ResultUtils$.html#Result[T]=Either[Vector[String],T]" class="extmbr" name="ru.raiffeisen.checkita.utils.ResultUtils.Result">Result</a>[<a href="DQContext.html" class="extype" name="ru.raiffeisen.checkita.context.DQContext">DQContext</a>]</span>
+        <span class="name">build</span><span class="params">(<span name="appConfig">appConfig: <a href="../config/appconf/AppConfig.html" class="extype" name="ru.raiffeisen.checkita.config.appconf.AppConfig">AppConfig</a></span>, <span name="referenceDate">referenceDate: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="isLocal">isLocal: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="isShared">isShared: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="doMigration">doMigration: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="prependVariables">prependVariables: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="logLvl">logLvl: <span class="extype" name="org.apache.logging.log4j.Level">Level</span></span>)</span><span class="result">: <a href="../utils/ResultUtils$.html#Result[T]=Either[Vector[String],T]" class="extmbr" name="ru.raiffeisen.checkita.utils.ResultUtils.Result">Result</a>[<a href="DQContext.html" class="extype" name="ru.raiffeisen.checkita.context.DQContext">DQContext</a>]</span>
       </span>
       
       <p class="shortcomment cmt">Builds Checkita Data Quality context provided with application-level configuration

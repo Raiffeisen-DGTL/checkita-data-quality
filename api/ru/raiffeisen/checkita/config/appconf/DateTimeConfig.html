@@ -173,6 +173,10 @@
                         <span class="separator"></span>
                         <a class="class" href="StorageConfig.html" title="Application-level configuration describing connection to history database."></a>
                         <a href="StorageConfig.html" title="Application-level configuration describing connection to history database.">StorageConfig</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
+                        <a class="class" href="StreamConfig.html" title="Application-level configuration describing streaming settings"></a>
+                        <a href="StreamConfig.html" title="Application-level configuration describing streaming settings">StreamConfig</a>
                       </li>
               </ul>
             </div>
@@ -196,13 +200,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">DateTimeConfig</span><span class="params">(<span name="timeZone">timeZone: <span class="extype" name="java.time.ZoneId">ZoneId</span> = <span class="symbol">ZoneId.of(&quot;UTC&quot;)</span></span>, <span name="referenceDateFormat">referenceDateFormat: <a href="../RefinedTypes$$DateFormat.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat">DateFormat</a> = <span class="defval" name='<span class="name"><a href="../../../../index.html">DateFormat(
-                             pattern = &quot;yyyy-MM-dd'T'HH:mm:ss.SSS&quot;,
-                             formatter = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd'T'HH:mm:ss.SSS&quot;)
-                           )</a></span>'>...</span></span>, <span name="executionDateFormat">executionDateFormat: <a href="../RefinedTypes$$DateFormat.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat">DateFormat</a> = <span class="defval" name='<span class="name"><a href="../../../../index.html">DateFormat(
-                             pattern = &quot;yyyy-MM-dd'T'HH:mm:ss.SSS&quot;,
-                             formatter = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd'T'HH:mm:ss.SSS&quot;)
-                           )</a></span>'>...</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">DateTimeConfig</span><span class="params">(<span name="timeZone">timeZone: <span class="extype" name="java.time.ZoneId">ZoneId</span> = <span class="symbol">ZoneId.of(&quot;UTC&quot;)</span></span>, <span name="referenceDateFormat">referenceDateFormat: <a href="../RefinedTypes$$DateFormat.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat">DateFormat</a> = <span class="defval" name='<span class="name"><a href="../../../../index.html">DateFormat.fromString(&quot;yyyy-MM-dd'T'HH:mm:ss.SSS&quot;)</a></span>'>...</span></span>, <span name="executionDateFormat">executionDateFormat: <a href="../RefinedTypes$$DateFormat.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat">DateFormat</a> = <span class="defval" name='<span class="name"><a href="../../../../index.html">DateFormat.fromString(&quot;yyyy-MM-dd'T'HH:mm:ss.SSS&quot;)</a></span>'>...</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -269,13 +267,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">DateTimeConfig</span><span class="params">(<span name="timeZone">timeZone: <span class="extype" name="java.time.ZoneId">ZoneId</span> = <span class="symbol">ZoneId.of(&quot;UTC&quot;)</span></span>, <span name="referenceDateFormat">referenceDateFormat: <a href="../RefinedTypes$$DateFormat.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat">DateFormat</a> = <span class="defval" name='<span class="name"><a href="../../../../index.html">DateFormat(
-                             pattern = &quot;yyyy-MM-dd'T'HH:mm:ss.SSS&quot;,
-                             formatter = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd'T'HH:mm:ss.SSS&quot;)
-                           )</a></span>'>...</span></span>, <span name="executionDateFormat">executionDateFormat: <a href="../RefinedTypes$$DateFormat.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat">DateFormat</a> = <span class="defval" name='<span class="name"><a href="../../../../index.html">DateFormat(
-                             pattern = &quot;yyyy-MM-dd'T'HH:mm:ss.SSS&quot;,
-                             formatter = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd'T'HH:mm:ss.SSS&quot;)
-                           )</a></span>'>...</span></span>)</span>
+        <span class="name">DateTimeConfig</span><span class="params">(<span name="timeZone">timeZone: <span class="extype" name="java.time.ZoneId">ZoneId</span> = <span class="symbol">ZoneId.of(&quot;UTC&quot;)</span></span>, <span name="referenceDateFormat">referenceDateFormat: <a href="../RefinedTypes$$DateFormat.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat">DateFormat</a> = <span class="defval" name='<span class="name"><a href="../../../../index.html">DateFormat.fromString(&quot;yyyy-MM-dd'T'HH:mm:ss.SSS&quot;)</a></span>'>...</span></span>, <span name="executionDateFormat">executionDateFormat: <a href="../RefinedTypes$$DateFormat.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat">DateFormat</a> = <span class="defval" name='<span class="name"><a href="../../../../index.html">DateFormat.fromString(&quot;yyyy-MM-dd'T'HH:mm:ss.SSS&quot;)</a></span>'>...</span></span>)</span>
       </span>
       
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">timeZone</dt><dd class="cmt"><p>Timezone used to render date and time</p></dd><dt class="param">referenceDateFormat</dt><dd class="cmt"><p>Date format used to represent reference date</p></dd><dt class="param">executionDateFormat</dt><dd class="cmt"><p>Date format used to represent execution date</p></dd></dl></div>

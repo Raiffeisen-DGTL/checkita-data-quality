@@ -187,12 +187,16 @@
                         <a href="" title="Parquet file source reader: reads parquet files.">ParquetFileSourceReader</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
+                        <a class="trait" href="SourceReaders$$SimpleFileReader.html" title=""></a>
+                        <a href="SourceReaders$$SimpleFileReader.html" title="">SimpleFileReader</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
                         <a class="trait" href="SourceReaders$$SourceReader.html" title="Base source reader trait"></a>
                         <a href="SourceReaders$$SourceReader.html" title="Base source reader trait">SourceReader</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
-                        <a class="class" href="SourceReaders$$SourceReaderOps.html" title="Implicit conversion for source configurations to enable read method for them."></a>
-                        <a href="SourceReaders$$SourceReaderOps.html" title="Implicit conversion for source configurations to enable read method for them.">SourceReaderOps</a>
+                        <a class="class" href="SourceReaders$$SourceReaderOps.html" title="Implicit conversion for source configurations to enable read and readStream methods for them."></a>
+                        <a href="SourceReaders$$SourceReaderOps.html" title="Implicit conversion for source configurations to enable read and readStream methods for them.">SourceReaderOps</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
                         <a class="object" href="SourceReaders$$TableSourceReader$.html" title="Table source reader: reads source from JDBC Connection (Postgres, Oracle, etc)"></a>
@@ -220,7 +224,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">ParquetFileSourceReader</span><span class="result"> extends <a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a>[<a href="../config/jobconf/Sources$$ParquetFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig">ParquetFileSourceConfig</a>]</span>
+        <span class="name">ParquetFileSourceReader</span><span class="result"> extends <a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a>[<a href="../config/jobconf/Sources$$ParquetFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig">ParquetFileSourceConfig</a>] with <a href="SourceReaders$$SimpleFileReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SimpleFileReader">SimpleFileReader</a></span>
       </span>
       </h4>
 
@@ -230,7 +234,7 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a>[<a href="../config/jobconf/Sources$$ParquetFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig">ParquetFileSourceConfig</a>], <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="SourceReaders$$SimpleFileReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SimpleFileReader">SimpleFileReader</a>, <a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a>[<a href="../config/jobconf/Sources$$ParquetFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig">ParquetFileSourceConfig</a>], <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -256,7 +260,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.readers.SourceReaders.ParquetFileSourceReader"><span>ParquetFileSourceReader</span></li><li class="in" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader"><span>SourceReader</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.readers.SourceReaders.ParquetFileSourceReader"><span>ParquetFileSourceReader</span></li><li class="in" name="ru.raiffeisen.checkita.readers.SourceReaders.SimpleFileReader"><span>SimpleFileReader</span></li><li class="in" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader"><span>SourceReader</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -403,6 +407,25 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.readers.SourceReaders.SimpleFileReader#fileReader" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fileReader(readMode:ru.raiffeisen.checkita.readers.ReadMode,path:String,format:String,schemaId:Option[String],windowBy:ru.raiffeisen.checkita.config.Enums.StreamWindowing)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitfs:org.apache.hadoop.fs.FileSystem,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame"></a><a id="fileReader(ReadMode,String,String,Option[String],StreamWindowing)(AppSettings,SparkSession,FileSystem,Map[String,SourceSchema]):DataFrame"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/readers/SourceReaders$$ParquetFileSourceReader$.html#fileReader(readMode:ru.raiffeisen.checkita.readers.ReadMode,path:String,format:String,schemaId:Option[String],windowBy:ru.raiffeisen.checkita.config.Enums.StreamWindowing)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitfs:org.apache.hadoop.fs.FileSystem,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">fileReader</span><span class="params">(<span name="readMode">readMode: <a href="ReadMode.html" class="extype" name="ru.raiffeisen.checkita.readers.ReadMode">ReadMode</a></span>, <span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="format">format: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="schemaId">schemaId: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="windowBy">windowBy: <a href="../config/Enums$$StreamWindowing.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.StreamWindowing">StreamWindowing</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="fs">fs: <span class="extype" name="org.apache.hadoop.fs.FileSystem">FileSystem</span></span>, <span name="schemas">schemas: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="SchemaReaders$$SourceSchema.html" class="extype" name="ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema">SourceSchema</a>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Basic file source reader that reads file source either
+as a static dataframe or as a streaming dataframe.</p><div class="fullcomment"><div class="comment cmt"><p>Basic file source reader that reads file source either
+as a static dataframe or as a streaming dataframe.
+</p></div><dl class="paramcmts block"><dt class="param">readMode</dt><dd class="cmt"><p>Mode in which source is read. Either 'batch' or 'stream'</p></dd><dt class="param">path</dt><dd class="cmt"><p>Path to read source from</p></dd><dt class="param">format</dt><dd class="cmt"><p>File format</p></dd><dt class="param">schemaId</dt><dd class="cmt"><p>Schema ID to apply while reading data</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt>returns</dt><dd class="cmt"><p>Spark DataFrame</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="SourceReaders$$SimpleFileReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SimpleFileReader">SimpleFileReader</a></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
@@ -549,6 +572,23 @@
       </span>
       
       <p class="shortcomment cmt">Safely reads source given source configuration.</p><div class="fullcomment"><div class="comment cmt"><p>Safely reads source given source configuration.</p></div><dl class="paramcmts block"><dt class="param">config</dt><dd class="cmt"><p>Source configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Map of explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt class="param">connections</dt><dd class="cmt"><p>Map of existing connection (connectionID -&gt; DQConnection)</p></dd><dt>returns</dt><dd class="cmt"><p>Either a valid Source or a list of source reading errors.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader#readStream" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="readStream(config:T)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitfs:org.apache.hadoop.fs.FileSystem,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema],implicitconnections:Map[String,ru.raiffeisen.checkita.connections.DQConnection]):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.core.Source]"></a><a id="readStream(ParquetFileSourceConfig)(AppSettings,SparkSession,FileSystem,Map[String,SourceSchema],Map[String,DQConnection]):Result[Source]"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/readers/SourceReaders$$ParquetFileSourceReader$.html#readStream(config:T)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitfs:org.apache.hadoop.fs.FileSystem,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema],implicitconnections:Map[String,ru.raiffeisen.checkita.connections.DQConnection]):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.core.Source]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">readStream</span><span class="params">(<span name="config">config: <a href="../config/jobconf/Sources$$ParquetFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig">ParquetFileSourceConfig</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="fs">fs: <span class="extype" name="org.apache.hadoop.fs.FileSystem">FileSystem</span></span>, <span name="schemas">schemas: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="SchemaReaders$$SourceSchema.html" class="extype" name="ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema">SourceSchema</a>]</span>, <span name="connections">connections: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../connections/DQConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQConnection">DQConnection</a>]</span>)</span><span class="result">: <a href="../utils/ResultUtils$.html#Result[T]=Either[Vector[String],T]" class="extmbr" name="ru.raiffeisen.checkita.utils.ResultUtils.Result">Result</a>[<a href="../core/Source.html" class="extype" name="ru.raiffeisen.checkita.core.Source">Source</a>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Safely reads streaming source given source configuration.</p><div class="fullcomment"><div class="comment cmt"><p>Safely reads streaming source given source configuration.
+</p></div><dl class="paramcmts block"><dt class="param">config</dt><dd class="cmt"><p>Source configuration (source must be streamable)</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Map of explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt class="param">connections</dt><dd class="cmt"><p>Map of existing connection (connectionID -&gt; DQConnection)</p></dd><dt>returns</dt><dd class="cmt"><p>Either a valid Source or a list of source reading errors.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
@@ -599,9 +639,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.readers.SourceReaders.ParquetFileSourceReader#tryToRead" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="tryToRead(config:ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitfs:org.apache.hadoop.fs.FileSystem,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema],implicitconnections:Map[String,ru.raiffeisen.checkita.connections.DQConnection]):ru.raiffeisen.checkita.core.Source"></a><a id="tryToRead(ParquetFileSourceConfig)(AppSettings,SparkSession,FileSystem,Map[String,SourceSchema],Map[String,DQConnection]):Source"></a>
+      <a id="tryToRead(config:ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig,readMode:ru.raiffeisen.checkita.readers.ReadMode)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitfs:org.apache.hadoop.fs.FileSystem,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema],implicitconnections:Map[String,ru.raiffeisen.checkita.connections.DQConnection]):ru.raiffeisen.checkita.core.Source"></a><a id="tryToRead(ParquetFileSourceConfig,ReadMode)(AppSettings,SparkSession,FileSystem,Map[String,SourceSchema],Map[String,DQConnection]):Source"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/readers/SourceReaders$$ParquetFileSourceReader$.html#tryToRead(config:ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitfs:org.apache.hadoop.fs.FileSystem,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema],implicitconnections:Map[String,ru.raiffeisen.checkita.connections.DQConnection]):ru.raiffeisen.checkita.core.Source" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/readers/SourceReaders$$ParquetFileSourceReader$.html#tryToRead(config:ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig,readMode:ru.raiffeisen.checkita.readers.ReadMode)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitfs:org.apache.hadoop.fs.FileSystem,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema],implicitconnections:Map[String,ru.raiffeisen.checkita.connections.DQConnection]):ru.raiffeisen.checkita.core.Source" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -610,10 +650,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">tryToRead</span><span class="params">(<span name="config">config: <a href="../config/jobconf/Sources$$ParquetFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig">ParquetFileSourceConfig</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="fs">fs: <span class="extype" name="org.apache.hadoop.fs.FileSystem">FileSystem</span></span>, <span name="schemas">schemas: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="SchemaReaders$$SourceSchema.html" class="extype" name="ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema">SourceSchema</a>]</span>, <span name="connections">connections: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../connections/DQConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQConnection">DQConnection</a>]</span>)</span><span class="result">: <a href="../core/Source.html" class="extype" name="ru.raiffeisen.checkita.core.Source">Source</a></span>
+        <span class="name">tryToRead</span><span class="params">(<span name="config">config: <a href="../config/jobconf/Sources$$ParquetFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig">ParquetFileSourceConfig</a></span>, <span name="readMode">readMode: <a href="ReadMode.html" class="extype" name="ru.raiffeisen.checkita.readers.ReadMode">ReadMode</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="fs">fs: <span class="extype" name="org.apache.hadoop.fs.FileSystem">FileSystem</span></span>, <span name="schemas">schemas: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="SchemaReaders$$SourceSchema.html" class="extype" name="ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema">SourceSchema</a>]</span>, <span name="connections">connections: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../connections/DQConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQConnection">DQConnection</a>]</span>)</span><span class="result">: <a href="../core/Source.html" class="extype" name="ru.raiffeisen.checkita.core.Source">Source</a></span>
       </span>
       
-      <p class="shortcomment cmt">Tries to read parquet file source given the source configuration.</p><div class="fullcomment"><div class="comment cmt"><p>Tries to read parquet file source given the source configuration.</p></div><dl class="paramcmts block"><dt class="param">config</dt><dd class="cmt"><p>Parquet file source configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Map of explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt class="param">connections</dt><dd class="cmt"><p>Map of existing connection (connectionID -&gt; DQConnection)</p></dd><dt>returns</dt><dd class="cmt"><p>Source</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.ParquetFileSourceReader">ParquetFileSourceReader</a> → <a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a></dd></dl></div>
+      <p class="shortcomment cmt">Tries to read parquet file source given the source configuration.</p><div class="fullcomment"><div class="comment cmt"><p>Tries to read parquet file source given the source configuration.
+</p></div><dl class="paramcmts block"><dt class="param">config</dt><dd class="cmt"><p>Parquet file source configuration</p></dd><dt class="param">readMode</dt><dd class="cmt"><p>Mode in which source is read. Either 'batch' or 'stream'</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Map of explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt class="param">connections</dt><dd class="cmt"><p>Map of existing connection (connectionID -&gt; DQConnection)</p></dd><dt>returns</dt><dd class="cmt"><p>Source</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.ParquetFileSourceReader">ParquetFileSourceReader</a> → <a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a></dd><dt>Note</dt><dd><span class="cmt"><p>When read in stream mode, Spark will stream newly added files only.</p></span></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
@@ -692,7 +733,9 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">
+        <div class="parent" name="ru.raiffeisen.checkita.readers.SourceReaders.SimpleFileReader">
+              <h3>Inherited from <a href="SourceReaders$$SimpleFileReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SimpleFileReader">SimpleFileReader</a></h3>
+            </div><div class="parent" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">
               <h3>Inherited from <a href="SourceReaders$$SourceReader.html" class="extype" name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReader">SourceReader</a>[<a href="../config/jobconf/Sources$$ParquetFileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.ParquetFileSourceConfig">ParquetFileSourceConfig</a>]</h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>

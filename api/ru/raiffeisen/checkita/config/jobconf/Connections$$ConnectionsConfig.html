@@ -175,12 +175,24 @@
                         <a href="" title="Data Quality job configuration section describing connections to external systems.">ConnectionsConfig</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
+                        <a class="class" href="Connections$$H2ConnectionConfig.html" title="Connection configuration for H2 database"></a>
+                        <a href="Connections$$H2ConnectionConfig.html" title="Connection configuration for H2 database">H2ConnectionConfig</a>
+                      </li><li class="current-entities indented6">
+                        <span class="separator"></span>
                         <a class="class" href="Connections$$JdbcConnectionConfig.html" title="Base class for jdbc connection configurations."></a>
                         <a href="Connections$$JdbcConnectionConfig.html" title="Base class for jdbc connection configurations.">JdbcConnectionConfig</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
                         <a class="class" href="Connections$$KafkaConnectionConfig.html" title="Connection configuration for Kafka"></a>
                         <a href="Connections$$KafkaConnectionConfig.html" title="Connection configuration for Kafka">KafkaConnectionConfig</a>
+                      </li><li class="current-entities indented6">
+                        <span class="separator"></span>
+                        <a class="class" href="Connections$$MSSQLConnectionConfig.html" title="Connection configuration for MS SQL database"></a>
+                        <a href="Connections$$MSSQLConnectionConfig.html" title="Connection configuration for MS SQL database">MSSQLConnectionConfig</a>
+                      </li><li class="current-entities indented6">
+                        <span class="separator"></span>
+                        <a class="class" href="Connections$$MySQLConnectionConfig.html" title="Connection configuration for MySQL database"></a>
+                        <a href="Connections$$MySQLConnectionConfig.html" title="Connection configuration for MySQL database">MySQLConnectionConfig</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
                         <a class="class" href="Connections$$OracleConnectionConfig.html" title="Connection configuration for Oracle database"></a>
@@ -216,12 +228,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">ConnectionsConfig</span><span class="params">(<span name="kafka">kafka: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$KafkaConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig">KafkaConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="postgres">postgres: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$PostgresConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.PostgresConnectionConfig">PostgresConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="oracle">oracle: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$OracleConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.OracleConnectionConfig">OracleConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="sqlite">sqlite: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$SQLiteConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.SQLiteConnectionConfig">SQLiteConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">ConnectionsConfig</span><span class="params">(<span name="kafka">kafka: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$KafkaConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig">KafkaConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="postgres">postgres: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$PostgresConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.PostgresConnectionConfig">PostgresConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="oracle">oracle: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$OracleConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.OracleConnectionConfig">OracleConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="sqlite">sqlite: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$SQLiteConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.SQLiteConnectionConfig">SQLiteConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="mysql">mysql: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$MySQLConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.MySQLConnectionConfig">MySQLConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="mssql">mssql: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$MSSQLConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.MSSQLConnectionConfig">MSSQLConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="h2">h2: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$H2ConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.H2ConnectionConfig">H2ConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Data Quality job configuration section describing connections to external systems.</p></div><dl class="paramcmts block"><dt class="param">kafka</dt><dd class="cmt"><p>Sequence of Kafka connections</p></dd><dt class="param">postgres</dt><dd class="cmt"><p>Sequence of PostgresSQL connections</p></dd><dt class="param">oracle</dt><dd class="cmt"><p>Sequence of Oracle connection</p></dd><dt class="param">sqlite</dt><dd class="cmt"><p>Sequence of SQLite connections</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Data Quality job configuration section describing connections to external systems.</p></div><dl class="paramcmts block"><dt class="param">kafka</dt><dd class="cmt"><p>Sequence of Kafka connections</p></dd><dt class="param">postgres</dt><dd class="cmt"><p>Sequence of PostgresSQL connections</p></dd><dt class="param">oracle</dt><dd class="cmt"><p>Sequence of Oracle connection</p></dd><dt class="param">sqlite</dt><dd class="cmt"><p>Sequence of SQLite connections</p></dd><dt class="param">mysql</dt><dd class="cmt"><p>Sequence of MySQL connections</p></dd><dt class="param">mssql</dt><dd class="cmt"><p>Sequence of MS SQL connections</p></dd><dt class="param">h2</dt><dd class="cmt"><p>Sequence of H2 connections</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -272,9 +284,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionsConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(kafka:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig],postgres:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.PostgresConnectionConfig],oracle:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.OracleConnectionConfig],sqlite:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.SQLiteConnectionConfig]):ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionsConfig"></a><a id="&lt;init&gt;:ConnectionsConfig"></a>
+      <a id="&lt;init&gt;(kafka:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig],postgres:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.PostgresConnectionConfig],oracle:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.OracleConnectionConfig],sqlite:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.SQLiteConnectionConfig],mysql:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.MySQLConnectionConfig],mssql:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.MSSQLConnectionConfig],h2:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.H2ConnectionConfig]):ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionsConfig"></a><a id="&lt;init&gt;:ConnectionsConfig"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Connections$$ConnectionsConfig.html#&lt;init&gt;(kafka:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig],postgres:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.PostgresConnectionConfig],oracle:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.OracleConnectionConfig],sqlite:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.SQLiteConnectionConfig]):ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionsConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Connections$$ConnectionsConfig.html#&lt;init&gt;(kafka:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig],postgres:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.PostgresConnectionConfig],oracle:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.OracleConnectionConfig],sqlite:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.SQLiteConnectionConfig],mysql:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.MySQLConnectionConfig],mssql:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.MSSQLConnectionConfig],h2:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.H2ConnectionConfig]):ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionsConfig" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -283,10 +295,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">ConnectionsConfig</span><span class="params">(<span name="kafka">kafka: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$KafkaConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig">KafkaConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="postgres">postgres: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$PostgresConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.PostgresConnectionConfig">PostgresConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="oracle">oracle: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$OracleConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.OracleConnectionConfig">OracleConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="sqlite">sqlite: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$SQLiteConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.SQLiteConnectionConfig">SQLiteConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
+        <span class="name">ConnectionsConfig</span><span class="params">(<span name="kafka">kafka: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$KafkaConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig">KafkaConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="postgres">postgres: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$PostgresConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.PostgresConnectionConfig">PostgresConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="oracle">oracle: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$OracleConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.OracleConnectionConfig">OracleConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="sqlite">sqlite: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$SQLiteConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.SQLiteConnectionConfig">SQLiteConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="mysql">mysql: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$MySQLConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.MySQLConnectionConfig">MySQLConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="mssql">mssql: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$MSSQLConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.MSSQLConnectionConfig">MSSQLConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="h2">h2: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$H2ConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.H2ConnectionConfig">H2ConnectionConfig</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">kafka</dt><dd class="cmt"><p>Sequence of Kafka connections</p></dd><dt class="param">postgres</dt><dd class="cmt"><p>Sequence of PostgresSQL connections</p></dd><dt class="param">oracle</dt><dd class="cmt"><p>Sequence of Oracle connection</p></dd><dt class="param">sqlite</dt><dd class="cmt"><p>Sequence of SQLite connections</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">kafka</dt><dd class="cmt"><p>Sequence of Kafka connections</p></dd><dt class="param">postgres</dt><dd class="cmt"><p>Sequence of PostgresSQL connections</p></dd><dt class="param">oracle</dt><dd class="cmt"><p>Sequence of Oracle connection</p></dd><dt class="param">sqlite</dt><dd class="cmt"><p>Sequence of SQLite connections</p></dd><dt class="param">mysql</dt><dd class="cmt"><p>Sequence of MySQL connections</p></dd><dt class="param">mssql</dt><dd class="cmt"><p>Sequence of MS SQL connections</p></dd><dt class="param">h2</dt><dd class="cmt"><p>Sequence of H2 connections</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -458,6 +470,22 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionsConfig#h2" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="h2:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.H2ConnectionConfig]"></a><a id="h2:Seq[H2ConnectionConfig]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Connections$$ConnectionsConfig.html#h2:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.H2ConnectionConfig]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">h2</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$H2ConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.H2ConnectionConfig">H2ConnectionConfig</a>]</span>
+      </span>
+      
+      
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -487,6 +515,38 @@
       </span>
       <span class="symbol">
         <span class="name">kafka</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$KafkaConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig">KafkaConnectionConfig</a>]</span>
+      </span>
+      
+      
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionsConfig#mssql" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="mssql:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.MSSQLConnectionConfig]"></a><a id="mssql:Seq[MSSQLConnectionConfig]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Connections$$ConnectionsConfig.html#mssql:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.MSSQLConnectionConfig]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">mssql</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$MSSQLConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.MSSQLConnectionConfig">MSSQLConnectionConfig</a>]</span>
+      </span>
+      
+      
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionsConfig#mysql" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="mysql:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.MySQLConnectionConfig]"></a><a id="mysql:Seq[MySQLConnectionConfig]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Connections$$ConnectionsConfig.html#mysql:Seq[ru.raiffeisen.checkita.config.jobconf.Connections.MySQLConnectionConfig]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">mysql</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Connections$$MySQLConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.MySQLConnectionConfig">MySQLConnectionConfig</a>]</span>
       </span>
       
       

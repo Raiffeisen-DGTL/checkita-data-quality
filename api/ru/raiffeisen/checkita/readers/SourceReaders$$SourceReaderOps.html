@@ -187,12 +187,16 @@
                         <a href="SourceReaders$$ParquetFileSourceReader$.html" title="Parquet file source reader: reads parquet files.">ParquetFileSourceReader</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
+                        <a class="trait" href="SourceReaders$$SimpleFileReader.html" title=""></a>
+                        <a href="SourceReaders$$SimpleFileReader.html" title="">SimpleFileReader</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
                         <a class="trait" href="SourceReaders$$SourceReader.html" title="Base source reader trait"></a>
                         <a href="SourceReaders$$SourceReader.html" title="Base source reader trait">SourceReader</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
-                        <a class="class" href="" title="Implicit conversion for source configurations to enable read method for them."></a>
-                        <a href="" title="Implicit conversion for source configurations to enable read method for them.">SourceReaderOps</a>
+                        <a class="class" href="" title="Implicit conversion for source configurations to enable read and readStream methods for them."></a>
+                        <a href="" title="Implicit conversion for source configurations to enable read and readStream methods for them.">SourceReaderOps</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
                         <a class="object" href="SourceReaders$$TableSourceReader$.html" title="Table source reader: reads source from JDBC Connection (Postgres, Oracle, etc)"></a>
@@ -225,7 +229,7 @@
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Implicit conversion for source configurations to enable read method for them.</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>Type of source configuration</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Implicit conversion for source configurations to enable read and readStream methods for them.</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>Type of source configuration</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -564,6 +568,22 @@
       </span>
       <span class="symbol">
         <span class="name">read</span><span class="result">: <a href="../utils/ResultUtils$.html#Result[T]=Either[Vector[String],T]" class="extmbr" name="ru.raiffeisen.checkita.utils.ResultUtils.Result">Result</a>[<a href="../core/Source.html" class="extype" name="ru.raiffeisen.checkita.core.Source">Source</a>]</span>
+      </span>
+      
+      
+    </li><li name="ru.raiffeisen.checkita.readers.SourceReaders.SourceReaderOps#readStream" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="readStream:ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.core.Source]"></a><a id="readStream:Result[Source]"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/readers/SourceReaders$$SourceReaderOps.html#readStream:ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.core.Source]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">readStream</span><span class="result">: <a href="../utils/ResultUtils$.html#Result[T]=Either[Vector[String],T]" class="extmbr" name="ru.raiffeisen.checkita.utils.ResultUtils.Result">Result</a>[<a href="../core/Source.html" class="extype" name="ru.raiffeisen.checkita.core.Source">Source</a>]</span>
       </span>
       
       

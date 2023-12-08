@@ -138,7 +138,7 @@
                         <a class="object" href="Common$.html" title=""></a>
                         <a href="Common$.html" title="">Common</a>
                       </li><li class="current-entities indented4">
-                        <span class="separator"></span>
+                        <a class="object" href="EnrichedDT$.html" title=""></a>
                         <a class="class" href="EnrichedDT.html" title="Wrapper over datetime string with predefined format and time zone."></a>
                         <a href="EnrichedDT.html" title="Wrapper over datetime string with predefined format and time zone.">EnrichedDT</a>
                       </li><li class="current-entities indented4">
@@ -147,8 +147,8 @@
                         <a href="FormulaParser.html" title="Recursively creates a tree of operations and executes it">FormulaParser</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="trait" href="Logging.html" title=""></a>
-                        <a href="Logging.html" title="">Logging</a>
+                        <a class="trait" href="Logging.html" title="Logging trait that is mixed to the classes that do logging."></a>
+                        <a href="Logging.html" title="Logging trait that is mixed to the classes that do logging.">Logging</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="object" href="ResultUtils$.html" title=""></a>
@@ -239,7 +239,47 @@
         <div id="allMembers">
         
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="ru.raiffeisen.checkita.utils.SparkUtils.DataFrameOps" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DataFrameOpsextendsAnyRef"></a><a id="DataFrameOps:DataFrameOps"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/SparkUtils$$DataFrameOps.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a title="Implicit class conversion for Spark DataFrame, to enhance it with prepareStream method which will process streaming dataframe by adding windowing provided with windowing column." href="SparkUtils$$DataFrameOps.html"><span class="name">DataFrameOps</span></a><span class="result"> extends <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Implicit class conversion for Spark DataFrame, to enhance it with
+prepareStream method which will process streaming dataframe
+by adding windowing provided with windowing column.</p>
+    </li><li name="ru.raiffeisen.checkita.utils.SparkUtils.DurationOps" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="DurationOpsextendsAnyRef"></a><a id="DurationOps:DurationOps"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/SparkUtils$$DurationOps.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a title="Implicit class conversion for scala duration object, to enhance it with following methods:" href="SparkUtils$$DurationOps.html"><span class="name">DurationOps</span></a><span class="result"> extends <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Implicit class conversion for scala duration object, to enhance it with
+following methods:</p><div class="fullcomment"><div class="comment cmt"><p>Implicit class conversion for scala duration object, to enhance it with
+following methods:</p><ul><li>convert duration into spark interval string</li><li>convert duration into string with short notation of time unit (e.g. '10s' or '3h')
+Conversion is always made in terms of seconds.</li></ul></div></div>
+    </li></ol>
+            </div>
 
         
 
@@ -407,6 +447,27 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.utils.SparkUtils#getRowEncoder" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getRowEncoder(schema:org.apache.spark.sql.types.StructType)(implicitspark:org.apache.spark.sql.SparkSession):org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[org.apache.spark.sql.Row]"></a><a id="getRowEncoder(StructType)(SparkSession):ExpressionEncoder[Row]"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/SparkUtils$.html#getRowEncoder(schema:org.apache.spark.sql.types.StructType)(implicitspark:org.apache.spark.sql.SparkSession):org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[org.apache.spark.sql.Row]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getRowEncoder</span><span class="params">(<span name="schema">schema: <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.catalyst.encoders.ExpressionEncoder">ExpressionEncoder</span>[<span class="extype" name="org.apache.spark.sql.Row">Row</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Gets row encoder for provided schema.</p><div class="fullcomment"><div class="comment cmt"><p>Gets row encoder for provided schema.
+Purpose of this method is to provide ability to create
+row encoder for different versions of Spark.
+Thus, Encoders API has changes in version 3.5.0.
+Scala reflection API is used to invoke proper
+row encoder constructor thus supporting different Encoders APIs.</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Dataframe schema to construct encoder for.</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object.</p></dd><dt>returns</dt><dd class="cmt"><p>Row encoder (expression encoder for row).</p></dd></dl></div>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
       <span class="permalink">

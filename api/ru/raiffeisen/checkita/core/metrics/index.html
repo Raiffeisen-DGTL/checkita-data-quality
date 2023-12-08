@@ -207,6 +207,10 @@
                         <a href="ErrorCollection$.html" title="">ErrorCollection</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
+                        <a class="object" href="MetricBatchProcessor$.html" title="Regular metrics processor for Batch Applications"></a>
+                        <a href="MetricBatchProcessor$.html" title="Regular metrics processor for Batch Applications">MetricBatchProcessor</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
                         <a class="class" href="MetricCalculator.html" title="Basic metric calculator"></a>
                         <a href="MetricCalculator.html" title="Basic metric calculator">MetricCalculator</a>
                       </li><li class="current-entities indented5">
@@ -214,9 +218,13 @@
                         <a class="class" href="MetricName.html" title="Enumeration holding all metric calculator names"></a>
                         <a href="MetricName.html" title="Enumeration holding all metric calculator names">MetricName</a>
                       </li><li class="current-entities indented5">
+                        <a class="object" href="MetricProcessor$.html" title=""></a>
+                        <a class="trait" href="MetricProcessor.html" title="Base functionality for regular metric processor."></a>
+                        <a href="MetricProcessor.html" title="Base functionality for regular metric processor.">MetricProcessor</a>
+                      </li><li class="current-entities indented5">
                         <span class="separator"></span>
-                        <a class="object" href="MetricProcessor$.html" title="Methods to process all regular metrics"></a>
-                        <a href="MetricProcessor$.html" title="Methods to process all regular metrics">MetricProcessor</a>
+                        <a class="object" href="MetricStreamProcessor$.html" title=""></a>
+                        <a href="MetricStreamProcessor$.html" title="">MetricStreamProcessor</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
                         <a class="trait" href="RegularMetric.html" title="Base class for source metric."></a>
@@ -334,6 +342,24 @@
       </span>
       
       <p class="shortcomment cmt">Enumeration holding all metric calculator names</p>
+    </li><li name="ru.raiffeisen.checkita.core.metrics.MetricProcessor" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="MetricProcessorextendsAnyRef"></a><a id="MetricProcessor:MetricProcessor"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/MetricProcessor.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="Base functionality for regular metric processor." href="MetricProcessor.html"><span class="name">MetricProcessor</span></a><span class="result"> extends <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Base functionality for regular metric processor.</p><div class="fullcomment"><div class="comment cmt"><p>Base functionality for regular metric processor.
+The concrete implementation of metric processor differs for batch and streaming applications.
+</p></div></div>
     </li><li name="ru.raiffeisen.checkita.core.metrics.RegularMetric" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="RegularMetricextendsSerializable"></a><a id="RegularMetric:RegularMetric"></a>
       <span class="permalink">
@@ -375,6 +401,22 @@
       </span>
       
       
+    </li><li name="ru.raiffeisen.checkita.core.metrics.MetricBatchProcessor" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MetricBatchProcessor"></a><a id="MetricBatchProcessor:MetricBatchProcessor"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/MetricBatchProcessor$.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="Regular metrics processor for Batch Applications" href="MetricBatchProcessor$.html"><span class="name">MetricBatchProcessor</span></a><span class="result"> extends <a href="MetricProcessor.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricProcessor">MetricProcessor</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Regular metrics processor for Batch Applications</p>
     </li><li name="ru.raiffeisen.checkita.core.metrics.MetricName" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="MetricName"></a><a id="MetricName:MetricName"></a>
       <span class="permalink">
@@ -403,10 +445,26 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="Methods to process all regular metrics" href="MetricProcessor$.html"><span class="name">MetricProcessor</span></a>
+        <a title="" href="MetricProcessor$.html"><span class="name">MetricProcessor</span></a>
       </span>
       
-      <p class="shortcomment cmt">Methods to process all regular metrics</p>
+      
+    </li><li name="ru.raiffeisen.checkita.core.metrics.MetricStreamProcessor" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MetricStreamProcessor"></a><a id="MetricStreamProcessor:MetricStreamProcessor"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/MetricStreamProcessor$.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="MetricStreamProcessor$.html"><span class="name">MetricStreamProcessor</span></a><span class="result"> extends <a href="MetricProcessor.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricProcessor">MetricProcessor</a> with <a href="../../utils/Logging.html" class="extype" name="ru.raiffeisen.checkita.utils.Logging">Logging</a></span>
+      </span>
+      
+      
     </li>
               </ol>
             </div>

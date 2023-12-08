@@ -235,6 +235,10 @@
                         <a href="Sources$$SqlVirtualSourceConfig.html" title="Sql virtual source configuration">SqlVirtualSourceConfig</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
+                        <a class="class" href="Sources$$StreamSourcesConfig.html" title="Data Quality job configuration section describing streams"></a>
+                        <a href="Sources$$StreamSourcesConfig.html" title="Data Quality job configuration section describing streams">StreamSourcesConfig</a>
+                      </li><li class="current-entities indented6">
+                        <span class="separator"></span>
                         <a class="class" href="" title="JDBC Table source configuration"></a>
                         <a href="" title="JDBC Table source configuration">TableSourceConfig</a>
                       </li><li class="current-entities indented6">
@@ -264,13 +268,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">TableSourceConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="connection">connection: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="table">table: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="query">query: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">TableSourceConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="connection">connection: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="table">table: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="query">query: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>JDBC Table source configuration
-</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">connection</dt><dd class="cmt"><p>Connection ID (must be JDBC connection)</p></dd><dt class="param">table</dt><dd class="cmt"><p>Table to read</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Sequence of key fields (columns that identify data row)</p></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">connection</dt><dd class="cmt"><p>Connection ID (must be JDBC connection)</p></dd><dt class="param">table</dt><dd class="cmt"><p>Table to read</p></dd><dt class="param">query</dt><dd class="cmt"><p>Query to execute</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Sequence of key fields (columns that identify data row)</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Either table to read or query to execute must be defined but not both.</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -321,9 +325,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.jobconf.Sources.TableSourceConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,connection:eu.timepit.refined.types.string.NonEmptyString,table:Option[eu.timepit.refined.types.string.NonEmptyString],query:Option[eu.timepit.refined.types.string.NonEmptyString],keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.TableSourceConfig"></a><a id="&lt;init&gt;:TableSourceConfig"></a>
+      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,connection:ru.raiffeisen.checkita.config.RefinedTypes.ID,table:Option[eu.timepit.refined.types.string.NonEmptyString],query:Option[eu.timepit.refined.types.string.NonEmptyString],keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.TableSourceConfig"></a><a id="&lt;init&gt;:TableSourceConfig"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$TableSourceConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,connection:eu.timepit.refined.types.string.NonEmptyString,table:Option[eu.timepit.refined.types.string.NonEmptyString],query:Option[eu.timepit.refined.types.string.NonEmptyString],keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.TableSourceConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$TableSourceConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,connection:ru.raiffeisen.checkita.config.RefinedTypes.ID,table:Option[eu.timepit.refined.types.string.NonEmptyString],query:Option[eu.timepit.refined.types.string.NonEmptyString],keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.TableSourceConfig" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -332,10 +336,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">TableSourceConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="connection">connection: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="table">table: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="query">query: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
+        <span class="name">TableSourceConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="connection">connection: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="table">table: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="query">query: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">connection</dt><dd class="cmt"><p>Connection ID (must be JDBC connection)</p></dd><dt class="param">table</dt><dd class="cmt"><p>Table to read</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Sequence of key fields (columns that identify data row)</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">connection</dt><dd class="cmt"><p>Connection ID (must be JDBC connection)</p></dd><dt class="param">table</dt><dd class="cmt"><p>Table to read</p></dd><dt class="param">query</dt><dd class="cmt"><p>Query to execute</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Sequence of key fields (columns that identify data row)</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -435,9 +439,9 @@
               
         </dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.TableSourceConfig#connection" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="connection:eu.timepit.refined.types.string.NonEmptyString"></a><a id="connection:NonEmptyString"></a>
+      <a id="connection:ru.raiffeisen.checkita.config.RefinedTypes.ID"></a><a id="connection:ID"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$TableSourceConfig.html#connection:eu.timepit.refined.types.string.NonEmptyString" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$TableSourceConfig.html#connection:ru.raiffeisen.checkita.config.RefinedTypes.ID" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -446,7 +450,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">connection</span><span class="result">: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>
+        <span class="name">connection</span><span class="result">: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>
       </span>
       
       
@@ -625,6 +629,22 @@
       </span>
       
       
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.TableSourceConfig#streamable" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="streamable:Boolean"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$TableSourceConfig.html#streamable:Boolean" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">streamable</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.TableSourceConfig">TableSourceConfig</a> → <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">

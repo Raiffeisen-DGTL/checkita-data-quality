@@ -191,6 +191,10 @@
                         <a href="ErrorCollection$.html" title="">ErrorCollection</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
+                        <a class="object" href="MetricBatchProcessor$.html" title="Regular metrics processor for Batch Applications"></a>
+                        <a href="MetricBatchProcessor$.html" title="Regular metrics processor for Batch Applications">MetricBatchProcessor</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
                         <a class="class" href="MetricCalculator.html" title="Basic metric calculator"></a>
                         <a href="MetricCalculator.html" title="Basic metric calculator">MetricCalculator</a>
                       </li><li class="current-entities indented5">
@@ -198,9 +202,13 @@
                         <a class="class" href="MetricName.html" title="Enumeration holding all metric calculator names"></a>
                         <a href="MetricName.html" title="Enumeration holding all metric calculator names">MetricName</a>
                       </li><li class="current-entities indented5">
+                        <a class="object" href="" title=""></a>
+                        <a class="trait" href="MetricProcessor.html" title="Base functionality for regular metric processor."></a>
+                        <a href="MetricProcessor.html" title="Base functionality for regular metric processor.">MetricProcessor</a>
+                      </li><li class="current-entities indented5">
                         <span class="separator"></span>
-                        <a class="object" href="" title="Methods to process all regular metrics"></a>
-                        <a href="" title="Methods to process all regular metrics">MetricProcessor</a>
+                        <a class="object" href="MetricStreamProcessor$.html" title=""></a>
+                        <a href="MetricStreamProcessor$.html" title="">MetricStreamProcessor</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
                         <a class="trait" href="RegularMetric.html" title="Base class for source metric."></a>
@@ -212,14 +220,16 @@
           <div id="content">
             <body class="object value">
       <div id="definition">
-        <div class="big-circle object">o</div>
+        <a href="MetricProcessor.html" title="See companion trait"><div class="big-circle object-companion-trait">o</div></a>
         <p id="owner"><a href="../../../../index.html" class="extype" name="ru">ru</a>.<a href="../../../index.html" class="extype" name="ru.raiffeisen">raiffeisen</a>.<a href="../../index.html" class="extype" name="ru.raiffeisen.checkita">checkita</a>.<a href="../index.html" class="extype" name="ru.raiffeisen.checkita.core">core</a>.<a href="index.html" class="extype" name="ru.raiffeisen.checkita.core.metrics">metrics</a></p>
-        <h1>MetricProcessor<span class="permalink">
+        <h1><a href="MetricProcessor.html" title="See companion trait">MetricProcessor</a><span class="permalink">
       <a href="../../../../../ru/raiffeisen/checkita/core/metrics/MetricProcessor$.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
-        <h3><span class="morelinks"></span></h3>
+        <h3><span class="morelinks"><div>
+            Companion <a href="MetricProcessor.html" title="See companion trait">trait MetricProcessor</a>
+          </div></span></h3>
       </div>
 
       <h4 id="signature" class="signature">
@@ -233,7 +243,7 @@
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Methods to process all regular metrics</p></div><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -615,25 +625,6 @@ maps Seq(columns) to Seq(metric)
       
       <p class="shortcomment cmt">Process all composed metrics given already calculated metrics.</p><div class="fullcomment"><div class="comment cmt"><p>Process all composed metrics given already calculated metrics.
 </p></div><dl class="paramcmts block"><dt class="param">composedMetrics</dt><dd class="cmt"><p>Sequence of composed metrics to process</p></dd><dt class="param">computedMetrics</dt><dd class="cmt"><p>Sequence of computed metric results</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>TopN metric cannot be used in composed metric calculation and will be filtered out.</p></span></dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.core.metrics.MetricProcessor#processRegularMetrics" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="processRegularMetrics(source:ru.raiffeisen.checkita.core.Source,sourceMetrics:Seq[ru.raiffeisen.checkita.core.metrics.RegularMetric])(implicitspark:org.apache.spark.sql.SparkSession,implicitdumpSize:Int,implicitcaseSensitive:Boolean):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.core.metrics.MetricProcessor.MetricResults]"></a><a id="processRegularMetrics(Source,Seq[RegularMetric])(SparkSession,Int,Boolean):Result[MetricResults]"></a>
-      <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/MetricProcessor$.html#processRegularMetrics(source:ru.raiffeisen.checkita.core.Source,sourceMetrics:Seq[ru.raiffeisen.checkita.core.metrics.RegularMetric])(implicitspark:org.apache.spark.sql.SparkSession,implicitdumpSize:Int,implicitcaseSensitive:Boolean):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.core.metrics.MetricProcessor.MetricResults]" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">processRegularMetrics</span><span class="params">(<span name="source">source: <a href="../Source.html" class="extype" name="ru.raiffeisen.checkita.core.Source">Source</a></span>, <span name="sourceMetrics">sourceMetrics: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="RegularMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.RegularMetric">RegularMetric</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="dumpSize">dumpSize: <span class="extype" name="scala.Int">Int</span></span>, <span name="caseSensitive">caseSensitive: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="../../utils/ResultUtils$.html#Result[T]=Either[Vector[String],T]" class="extmbr" name="ru.raiffeisen.checkita.utils.ResultUtils.Result">Result</a>[<a href="#MetricResults=Map[String,Seq[ru.raiffeisen.checkita.core.Results.MetricCalculatorResult]]" class="extmbr" name="ru.raiffeisen.checkita.core.metrics.MetricProcessor.MetricResults">MetricResults</a>]</span>
-      </span>
-      
-      <p class="shortcomment cmt">Process all metrics for a given source
-</p><div class="fullcomment"><div class="comment cmt"><p>Process all metrics for a given source
-</p></div><dl class="paramcmts block"><dt class="param">source</dt><dd class="cmt"><p>Source to process metrics for</p></dd><dt class="param">sourceMetrics</dt><dd class="cmt"><p>Sequence of metrics defined for the given source</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit Spark Session object</p></dd><dt class="param">dumpSize</dt><dd class="cmt"><p>Implicit value of maximum number of metric failure (or errors) to be collected
-                     (per metric and per partition)</p></dd><dt class="param">caseSensitive</dt><dd class="cmt"><p>Implicit flag defining whether column names are case sensitive or not.</p></dd><dt>returns</dt><dd class="cmt"><p>Map of metricId to a sequence of metric results for this metricId (some metrics yield multiple results).</p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">

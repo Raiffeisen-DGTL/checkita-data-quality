@@ -560,6 +560,23 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateBatchOrStream" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="validateBatchOrStream:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateBatchOrStream:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/validation/PostValidation$.html#validateBatchOrStream:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateBatchOrStream</span><span class="result">: (<span class="extype" name="com.typesafe.config.ConfigObject">ConfigObject</span>) ⇒ <a href="../../../../../scala/index.html#Vector[+A]=scala.collection.immutable.Vector[A]" class="extmbr" name="scala.Vector">Vector</a>[<span class="extype" name="pureconfig.error.ConfigReaderFailure">ConfigReaderFailure</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Validation to check if DQ job configuration contains both
+batch and streaming sources defined.</p>
     </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateComposedMetrics" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="validateComposedMetrics:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateComposedMetrics:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
       <span class="permalink">
@@ -629,7 +646,7 @@ from table sources to jdbc connections
       <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
 from kafka topics sources to kafka connections
 </p>
-    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateLoadCheckRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateLoadCheckRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="validateLoadCheckRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateLoadCheckRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
       <span class="permalink">
       <a href="../../../../../ru/raiffeisen/checkita/config/validation/PostValidation$.html#validateLoadCheckRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]" title="Permalink">
@@ -645,8 +662,8 @@ from kafka topics sources to kafka connections
       </span>
       
       <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
-from load checks to sources
-</p>
+from load checks to sources</p><div class="fullcomment"><div class="comment cmt"><p>Validation to check if DQ job configuration contains missing references
+from load checks to sources</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Load checks are not applied to streaming sources</p></span></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateLoadCheckSchemaRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="validateLoadCheckSchemaRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateLoadCheckSchemaRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
       <span class="permalink">
@@ -681,7 +698,7 @@ from schema match load checks to schemas
       </span>
       
       <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
-from snapshot checks to sources
+from snapshot checks to metrics
 </p>
     </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateSourceMetricRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="validateSourceMetricRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateSourceMetricRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
@@ -789,7 +806,7 @@ from targets to metrics
       </span>
       
       <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
-from trend checks to sources
+from trend checks to metrics
 </p>
     </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateVirtualSourceRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="validateVirtualSourceRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateVirtualSourceRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
@@ -809,8 +826,24 @@ from trend checks to sources
       <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
 from virtual sources to already defined sources.</p><div class="fullcomment"><div class="comment cmt"><p>Validation to check if DQ job configuration contains missing references
 from virtual sources to already defined sources.
-Check is recursive: virtual sources can also refer to other virtual sources defined above.
-</p></div></div>
+Check is recursive: virtual sources can also refer to other virtual sources defined above.</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>batch and streaming sources are checked separately.</p></span></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateVirtualStreams" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="validateVirtualStreams:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateVirtualStreams:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/validation/PostValidation$.html#validateVirtualStreams:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateVirtualStreams</span><span class="result">: (<span class="extype" name="com.typesafe.config.ConfigObject">ConfigObject</span>) ⇒ <a href="../../../../../scala/index.html#Vector[+A]=scala.collection.immutable.Vector[A]" class="extmbr" name="scala.Vector">Vector</a>[<span class="extype" name="pureconfig.error.ConfigReaderFailure">ConfigReaderFailure</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Validation to check if DQ job configuration contains non-streamable kinds of
+virtual sources defined in virtualStreams list.</p>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">

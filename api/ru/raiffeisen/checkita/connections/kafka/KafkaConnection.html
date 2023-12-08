@@ -184,7 +184,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">KafkaConnection</span><span class="params">(<span name="config">config: <a href="../../config/jobconf/Connections$$KafkaConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig">KafkaConnectionConfig</a></span>)</span><span class="result"> extends <a href="../DQConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQConnection">DQConnection</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">KafkaConnection</span><span class="params">(<span name="config">config: <a href="../../config/jobconf/Connections$$KafkaConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig">KafkaConnectionConfig</a></span>)</span><span class="result"> extends <a href="../DQConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQConnection">DQConnection</a> with <a href="../DQStreamingConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQStreamingConnection">DQStreamingConnection</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -193,7 +193,7 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../DQConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQConnection">DQConnection</a>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../DQStreamingConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQStreamingConnection">DQStreamingConnection</a>, <a href="../DQConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQConnection">DQConnection</a>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -219,7 +219,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection"><span>KafkaConnection</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.connections.DQConnection"><span>DQConnection</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection"><span>KafkaConnection</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.connections.DQStreamingConnection"><span>DQStreamingConnection</span></li><li class="in" name="ru.raiffeisen.checkita.connections.DQConnection"><span>DQConnection</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -494,10 +494,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection#loadDataframe" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="loadDataframe(sourceConfig:KafkaConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession):org.apache.spark.sql.DataFrame"></a><a id="loadDataframe(SourceType)(AppSettings,SparkSession):DataFrame"></a>
+    </li><li name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection#loadDataFrame" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="loadDataFrame(sourceConfig:KafkaConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame"></a><a id="loadDataFrame(SourceType)(AppSettings,SparkSession,Map[String,SourceSchema]):DataFrame"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/connections/kafka/KafkaConnection.html#loadDataframe(sourceConfig:KafkaConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession):org.apache.spark.sql.DataFrame" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/connections/kafka/KafkaConnection.html#loadDataFrame(sourceConfig:KafkaConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -506,10 +506,30 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">loadDataframe</span><span class="params">(<span name="sourceConfig">sourceConfig: <a href="#SourceType=ru.raiffeisen.checkita.config.jobconf.Sources.KafkaSourceConfig" class="extmbr" name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection.SourceType">SourceType</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
+        <span class="name">loadDataFrame</span><span class="params">(<span name="sourceConfig">sourceConfig: <a href="#SourceType=ru.raiffeisen.checkita.config.jobconf.Sources.KafkaSourceConfig" class="extmbr" name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection.SourceType">SourceType</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="schemas">schemas: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../../readers/SchemaReaders$$SourceSchema.html" class="extype" name="ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema">SourceSchema</a>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
       </span>
       
-      <p class="shortcomment cmt">Loads external data into dataframe given a source configuration</p><div class="fullcomment"><div class="comment cmt"><p>Loads external data into dataframe given a source configuration</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Source configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt>returns</dt><dd class="cmt"><p>Spark DataFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection">KafkaConnection</a> → <a href="../DQConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQConnection">DQConnection</a></dd></dl></div>
+      <p class="shortcomment cmt">Loads external data into dataframe given a source configuration
+</p><div class="fullcomment"><div class="comment cmt"><p>Loads external data into dataframe given a source configuration
+</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Source configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Implicit Map of all explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt>returns</dt><dd class="cmt"><p>Spark DataFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection">KafkaConnection</a> → <a href="../DQConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQConnection">DQConnection</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection#loadDataStream" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="loadDataStream(sourceConfig:KafkaConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame"></a><a id="loadDataStream(SourceType)(AppSettings,SparkSession,Map[String,SourceSchema]):DataFrame"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/connections/kafka/KafkaConnection.html#loadDataStream(sourceConfig:KafkaConnection.this.SourceType)(implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">loadDataStream</span><span class="params">(<span name="sourceConfig">sourceConfig: <a href="#SourceType=ru.raiffeisen.checkita.config.jobconf.Sources.KafkaSourceConfig" class="extmbr" name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection.SourceType">SourceType</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="schemas">schemas: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../../readers/SchemaReaders$$SourceSchema.html" class="extype" name="ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema">SourceSchema</a>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Loads stream into a dataframe given the stream configuration
+</p><div class="fullcomment"><div class="comment cmt"><p>Loads stream into a dataframe given the stream configuration
+</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Source configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Implicit Map of all explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt>returns</dt><dd class="cmt"><p>Spark Streaming DataFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.connections.kafka.KafkaConnection">KafkaConnection</a> → <a href="../DQStreamingConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQStreamingConnection">DQStreamingConnection</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -698,6 +718,8 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="ru.raiffeisen.checkita.connections.DQStreamingConnection">
+              <h3>Inherited from <a href="../DQStreamingConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQStreamingConnection">DQStreamingConnection</a></h3>
             </div><div class="parent" name="ru.raiffeisen.checkita.connections.DQConnection">
               <h3>Inherited from <a href="../DQConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.DQConnection">DQConnection</a></h3>
             </div><div class="parent" name="scala.AnyRef">
