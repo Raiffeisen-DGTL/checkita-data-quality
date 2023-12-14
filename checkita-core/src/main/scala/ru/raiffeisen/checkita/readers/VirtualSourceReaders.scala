@@ -6,6 +6,7 @@ import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.jobconf.Sources._
 import ru.raiffeisen.checkita.core.Source
 import ru.raiffeisen.checkita.utils.ResultUtils._
+import ru.raiffeisen.checkita.utils.SparkUtils.DataFrameOps
 
 import scala.util.Try
 
@@ -139,8 +140,6 @@ object VirtualSourceReaders {
      * @param spark         Implicit spark session object
      * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
-     * @note There is no difference in filter API for static and streaming sources, therefore,
-     *       'readMode' argument is ignored.
      */
     def getDataFrame(config: FilterVirtualSourceConfig,
                      readMode: ReadMode)(implicit settings: AppSettings,
@@ -153,7 +152,15 @@ object VirtualSourceReaders {
       )
       val parentDf = parents.head.df
 
-      parentDf.filter(config.expr.value.reduce(_ && _))
+      readMode match {
+        case ReadMode.Batch => parentDf.filter(config.expr.value.reduce(_ && _))
+        case ReadMode.Stream =>
+          if (config.windowBy.isEmpty) parentDf.filter(config.expr.value.reduce(_ && _))
+          else parentDf
+            .drop(settings.streamConfig.eventTsCol, settings.streamConfig.windowTsCol)
+            .filter(config.expr.value.reduce(_ && _))
+            .prepareStream(config.windowBy.get)
+      }
     }
   }
 
@@ -183,12 +190,13 @@ object VirtualSourceReaders {
 
       readMode match {
         case ReadMode.Batch => parentDf.select(config.expr.value :_*)
-        case ReadMode.Stream =>
+        case ReadMode.Stream => if (config.windowBy.isEmpty) {
           val allColumns = config.expr.value ++ Seq(
             settings.streamConfig.windowTsCol,
             settings.streamConfig.eventTsCol
           ).map(col)
-          parentDf.select(allColumns :_*)
+          parentDf.select(allColumns: _*)
+        } else parentDf.select(config.expr.value :_*).prepareStream(config.windowBy.get)
       }
     }
   }

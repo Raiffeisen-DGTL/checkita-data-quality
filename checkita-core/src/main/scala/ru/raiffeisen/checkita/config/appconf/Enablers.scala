@@ -12,7 +12,7 @@ import eu.timepit.refined.auto._
  *                              (one per each target type, except checkAlerts where
  *                              one message per checkAlert will be sent)
  * @param enableCaseSensitivity Enable columns case sensitivity
- * @param errorDumpSize Maximum number of errors to be collected per single metric.
+ * @param errorDumpSize Maximum number of errors to be collected per single metric per partition.
  * @param outputRepartition Sets the number of partitions when writing outputs. By default writes single file.
  */
 final case class Enablers(

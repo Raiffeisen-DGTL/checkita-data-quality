@@ -291,6 +291,7 @@ object Sources {
     val persist: Option[StorageLevel]
     val save: Option[FileOutputConfig]
     val parents: Seq[String]
+    val windowBy: Option[StreamWindowing]
     // additional validation will be imposed on the required number
     // of parent sources depending on virtual source type.
   }
@@ -315,6 +316,7 @@ object Sources {
                                          ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
     val streamable: Boolean = false
+    val windowBy: Option[StreamWindowing] = None
   }
 
   /**
@@ -339,6 +341,7 @@ object Sources {
                                           ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
     val streamable: Boolean = false
+    val windowBy: Option[StreamWindowing] = None
   }
 
   /**
@@ -359,6 +362,7 @@ object Sources {
                                               expr: Seq[Column] Refined NonEmpty,
                                               persist: Option[StorageLevel],
                                               save: Option[FileOutputConfig],
+                                              windowBy: Option[StreamWindowing],
                                               keyFields: Seq[NonEmptyString] = Seq.empty
                                             ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
@@ -382,6 +386,7 @@ object Sources {
                                               expr: Seq[Column] Refined NonEmpty,
                                               persist: Option[StorageLevel],
                                               save: Option[FileOutputConfig],
+                                              windowBy: Option[StreamWindowing],
                                               keyFields: Seq[NonEmptyString] = Seq.empty
                                             ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
@@ -411,6 +416,7 @@ object Sources {
                                                ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
     val streamable: Boolean = false
+    val windowBy: Option[StreamWindowing] = None
   }
 
   /**

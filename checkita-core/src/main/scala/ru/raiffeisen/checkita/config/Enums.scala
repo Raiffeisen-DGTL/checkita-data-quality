@@ -1,6 +1,9 @@
 package ru.raiffeisen.checkita.config
 
 import enumeratum.{Enum, EnumEntry}
+import org.apache.spark.sql.Column
+import org.apache.spark.sql.functions.expr
+import org.apache.spark.sql.types.TimestampType
 import ru.raiffeisen.checkita.config.Parsers.idParser
 
 import scala.collection.immutable
@@ -43,7 +46,7 @@ object Enums {
    *     Following Kafka message structure, it always must be column with name 'timestamp'.
    *     Column should have LongType or TimestampType or other type with contents that can be converted
    *     to a LongType containing unix epoch (in seconds).
-   *   - custom time: arbitrary timestamp column from message defined by user.
+   *   - custom time: arbitrary timestamp column (or expression that evaluates to column) from message defined by user.
    * @note When event time or custom time columns are selected for windowing then it is up to user to ensure
    *       timestamp correctness in the selected column.
    * @note this is not an enumeration since custom time type requires user-defined column name.
@@ -51,16 +54,17 @@ object Enums {
   sealed trait StreamWindowing { val windowBy: String }
   case object ProcessingTime extends StreamWindowing { val windowBy: String = "processingTime" }
   case object EventTime extends StreamWindowing { val windowBy: String = "eventTime" }
-  case class CustomTime(column: String) extends StreamWindowing { val windowBy: String = s"custom($column)" }
+  case class CustomTime(windowByExpr: Column) extends StreamWindowing {
+    val windowBy: String = s"custom(${windowByExpr.toString()}"
+  }
   object StreamWindowing {
     private val customPattern = """^custom\((.+)\)$""".r
     def apply(s: String): StreamWindowing = s match {
       case "processingTime" => ProcessingTime
       case "eventTime" => EventTime
       case custom if customPattern.pattern.matcher(custom).matches() =>
-        val customPattern(columnName) = custom
-        val _ = idParser.parseTableIdentifier(columnName) // verify if columnName is a valid Spark SQL identifier
-        CustomTime(columnName)
+        val customPattern(exprStr) = custom
+        CustomTime(expr(exprStr))
       case other => throw new IllegalArgumentException(s"Wrong stream windowing type: $other")
     }
   }

@@ -31,7 +31,7 @@ object Targets {
    */
   sealed abstract class ErrorCollTargetConfig extends TargetConfig {
     val metrics: Seq[NonEmptyString]
-    val dumpSize: PositiveInt
+    val dumpSize: Option[PositiveInt]
   }
 
   /**
@@ -45,7 +45,7 @@ object Targets {
     val attachMetricErrors: Boolean
     val attachFailedChecks: Boolean
     val metrics: Seq[NonEmptyString]
-    val dumpSize: PositiveInt
+    val dumpSize: Option[PositiveInt]
   }
 
   /**
@@ -72,7 +72,7 @@ object Targets {
    */
   final case class ErrorCollFileTargetConfig(
                                               metrics: Seq[NonEmptyString] = Seq.empty,
-                                              dumpSize: PositiveInt = 100,
+                                              dumpSize: Option[PositiveInt],
                                               save: FileOutputConfig
                                             ) extends ErrorCollTargetConfig with SaveToFileConfig
 
@@ -108,13 +108,13 @@ object Targets {
    * @param table Hive table to write into
    * @param metrics Sequence of metrics to collect errors for.
    *                Default: empty sequence (collect errors for all metrics)
-   * @param dumpSize Maximum number of errors collected per each metric. Default: 100
+   * @param dumpSize Maximum number of errors collected per each metric.
    */
   final case class ErrorCollHiveTargetConfig(
                                               schema: NonEmptyString,
                                               table: NonEmptyString,
                                               metrics: Seq[NonEmptyString] = Seq.empty,
-                                              dumpSize: PositiveInt = 100
+                                              dumpSize: Option[PositiveInt]
                                             ) extends ErrorCollTargetConfig with HiveOutputConfig
 
   /**
@@ -131,7 +131,7 @@ object Targets {
                                                topic: NonEmptyString,
                                                options: Seq[SparkParam] = Seq.empty,
                                                metrics: Seq[NonEmptyString] = Seq.empty,
-                                               dumpSize: PositiveInt = 100
+                                               dumpSize: Option[PositiveInt]
                                              ) extends ErrorCollTargetConfig with KafkaOutputConfig
 
   /**
@@ -155,7 +155,7 @@ object Targets {
                                              attachMetricErrors: Boolean = false,
                                              attachFailedChecks: Boolean = false,
                                              metrics: Seq[NonEmptyString] = Seq.empty,
-                                             dumpSize: PositiveInt = 100,
+                                             dumpSize: Option[PositiveInt],
                                              subjectTemplate: Option[NonEmptyString],
                                              template: Option[NonEmptyString],
                                              templateFile: Option[URI]
@@ -176,7 +176,7 @@ object Targets {
                                                   attachMetricErrors: Boolean = false,
                                                   attachFailedChecks: Boolean = false,
                                                   metrics: Seq[NonEmptyString] = Seq.empty,
-                                                  dumpSize: PositiveInt = 100,
+                                                  dumpSize: Option[PositiveInt],
                                                   template: Option[NonEmptyString],
                                                   templateFile: Option[URI]
                                                 ) extends SummaryTargetConfig with MattermostOutputConfig
@@ -196,7 +196,7 @@ object Targets {
     val attachMetricErrors: Boolean = false
     val attachFailedChecks: Boolean = false
     val metrics: Seq[NonEmptyString] = Seq.empty
-    val dumpSize: PositiveInt = 1
+    val dumpSize: Option[PositiveInt] = None
   }
                                      
   /**

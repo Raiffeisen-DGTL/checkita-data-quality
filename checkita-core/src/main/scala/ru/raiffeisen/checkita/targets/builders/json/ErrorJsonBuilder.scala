@@ -23,7 +23,11 @@ trait ErrorJsonBuilder[T <: ErrorCollTargetConfig] extends TargetBuilder[T, Seq[
    */
   override def build(target: T, results: ResultSet)
                     (implicit settings: AppSettings, spark: SparkSession): Result[Seq[String]] = Try(
-    filterErrors(results.metricErrors, target.metrics.map(_.value), target.dumpSize.value).map(_.toJson)
+    filterErrors(
+      results.metricErrors,
+      target.metrics.map(_.value),
+      target.dumpSize.map(_.value).getOrElse(settings.errorDumpSize)
+    ).map(_.toJson)
   ).toResult(
     preMsg = s"Unable to prepare json data with result targets due to following error:"
   )
