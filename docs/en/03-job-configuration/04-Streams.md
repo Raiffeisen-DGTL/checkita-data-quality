@@ -25,7 +25,8 @@ The only additional parameter that is required to be defined for all streaming s
     * `eventTime` - Mostly applicable to kafka sources. Uses column with name `timestamp` to retrieve time value from.
       This column must be of *Timestamp* type.
     * `custom(columnName)` - Uses arbitrary user-defined column to retrieve time value from. Specified column
-      must be of *Timestamp* type. For example: `custom(value.createdAt)` - the time value for a record will be retrieved
+      must be of *Timestamp* type. In addition, an SQL expression is are supported. An expression should also evaluate 
+      to value of Timestamp type. For example: `custom(value.createdAt)` - the time value for a record will be retrieved
       from message value's field with name `createdAt`.
 
 
