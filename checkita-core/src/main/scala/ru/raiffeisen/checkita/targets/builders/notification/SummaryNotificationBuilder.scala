@@ -76,7 +76,9 @@ trait SummaryNotificationBuilder[T <: SummaryTargetConfig with NotificationOutpu
 
     val metricsAttachment =
       if (target.attachMetricErrors) buildErrorsAttachment(
-        results.metricErrors, target.metrics.map(_.value), target.dumpSize.value
+        results.metricErrors,
+        target.metrics.map(_.value),
+        target.dumpSize.map(_.value).getOrElse(settings.errorDumpSize)
       ).toSeq else Seq.empty
 
     val checksAttachments =

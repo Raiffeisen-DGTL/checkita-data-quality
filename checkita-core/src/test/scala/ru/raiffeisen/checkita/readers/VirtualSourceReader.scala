@@ -133,6 +133,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         Refined.unsafeApply(Seq(expr("key is not null"))),
         None,
         None,
+        None,
         Seq("batchId", "dttm")
       )
 
@@ -160,6 +161,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         Refined.unsafeApply(Seq(expr("key is not null"))),
         None,
         None,
+        None,
         Seq("batchId", "dttm")
       )
 
@@ -179,6 +181,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         ID("selectVS"),
         Refined.unsafeApply(Seq("table_source_1")),
         Refined.unsafeApply(Seq(expr("count(id) as id_cnt"), expr("count(name) as name_cnt"))),
+        None,
         None,
         None
       )
@@ -206,6 +209,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         ID("selectVS"),
         Refined.unsafeApply(Seq("table_source_1", "table_source_2")),
         Refined.unsafeApply(Seq(expr("count(id) as id_cnt"), expr("count(name) as name_cnt"))),
+        None,
         None,
         None
       )

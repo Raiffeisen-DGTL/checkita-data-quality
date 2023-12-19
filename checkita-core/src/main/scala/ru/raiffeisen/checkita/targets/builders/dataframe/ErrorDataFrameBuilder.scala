@@ -25,7 +25,11 @@ trait ErrorDataFrameBuilder[T <: ErrorCollTargetConfig] extends TargetBuilder[T,
   override def build(target: T, results: ResultSet)
                     (implicit settings: AppSettings, spark: SparkSession): Result[DataFrame] = Try {
     spark.createDataFrame(
-      filterErrors(results.metricErrors, target.metrics.map(_.value), target.dumpSize.value).map(_.toRow).asJava,
+      filterErrors(
+        results.metricErrors,
+        target.metrics.map(_.value),
+        target.dumpSize.map(_.value).getOrElse(settings.errorDumpSize)
+      ).map(_.toRow).asJava,
       schema = ResultsSerializationOps.unifiedSchema
     )
   }.toResult(

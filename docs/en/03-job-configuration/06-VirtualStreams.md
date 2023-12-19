@@ -7,7 +7,9 @@ Structured Streaming API. More details on running data quality checks over strea
 [Data Quality Checks over Streaming Sources](../02-general-concepts/05-StreamingMode.md) chapter.
 
 The configuration of virtual streaming sources is the same as for the static ones. 
-See chapter [Virtual Sources Configuration](05-VirtualSources.md) for more details.
+See chapter [Virtual Sources Configuration](05-VirtualSources.md) for more details. In addition, column used as source 
+of timestamp for windowing can be redefined and derived from the resultant virtual stream scheme. 
+See [Streaming Sources Configurations](04-Streams.md) for more details on how to define column used as source of timestamp.
 
 It is important to note that not all supported virtual sources types can be built from streaming sources. 
 Currently, only [filter](05-VirtualSources.md#filter-virtual-source-configuration) and

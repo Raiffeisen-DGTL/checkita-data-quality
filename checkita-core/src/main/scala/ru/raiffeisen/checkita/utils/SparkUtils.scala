@@ -146,7 +146,7 @@ object SparkUtils {
       val eventColumn = windowBy match {
         case ProcessingTime => current_timestamp().cast(LongType)
         case EventTime => col("timestamp").cast(LongType)
-        case CustomTime(colName) => col(colName).cast(LongType)
+        case CustomTime(column) => column.cast(LongType)
       }
 
       val dfColumns = df.columns.map(c => col(c)).toSeq ++ Seq(
