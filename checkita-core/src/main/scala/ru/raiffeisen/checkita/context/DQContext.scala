@@ -229,6 +229,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       log.info(s"$schemaStage Reading schema '${schema.id.value}'...")
       schema.read.mapValue(s => Seq(s.id -> s))
         .tap(_ => log.info(s"$schemaStage Success!")) // immediate logging of success state
+        .tap(_.foreach(s => log.debug(s._2.schema.treeString))) // debug print schema
         .mapLeft(_.map(e => s"$schemaStage $e")) // update error messages with running stage
     })
 
@@ -254,6 +255,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       val source = if (readAsStream) srcConf.readStream else srcConf.read
       source.mapValue(s => Seq(s.id -> s))
         .tap(_ => log.info(s"$sourceStage Success!")) // immediate logging of success state
+        .tap(_.foreach(s => log.debug(s._2.df.schema.treeString))) // debug source schema
         .mapLeft(_.map(e => s"$sourceStage $e")) // update error messages with running stage
     })
   }
@@ -276,6 +278,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
         log.info(s"$virtualSourceStage Reading virtual source '${curVsConfig.id.value}'...")
         val newSrc = (if (readAsStream) curVsConfig.readStream(parents) else curVsConfig.read(parents))
           .tap(_ => log.info(s"$virtualSourceStage Success!")) // immediate logging of success state
+          .tap(s => log.debug(s.df.schema.treeString)) // debug source schema
           .mapLeft(_.map(e => s"$virtualSourceStage $e")) // update error messages with running stage
         // if persist is required and newSrc reading was successful, then DO persist dataframe:
         curVsConfig.persist.foreach(sLvl => newSrc.foreach{ src =>

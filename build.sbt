@@ -46,6 +46,7 @@ lazy val `checkita-core` = (project in file("checkita-core")).settings(
     case x if Assembly.isConfigFile(x) => MergeStrategy.concat
     case PathList(ps@_*) if Assembly.isReadme(ps.last) || Assembly.isLicenseFile(ps.last) =>
       MergeStrategy.rename
+    case PathList("models", xs@_*) => MergeStrategy.discard // aws-java-sdk-bundle contains lots of json data
     case PathList("META-INF", xs@_*) => xs map {
       _.toLowerCase
     } match {

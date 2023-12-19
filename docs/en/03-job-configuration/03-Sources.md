@@ -172,7 +172,7 @@ parameters:
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-concepts/04-ErrorCollection.md) chapter.
 
-Currently, `string`, `xml` and `json` formats are supported to decode message key and value.
+Currently, `string`, `xml`, `json` and `avro` formats are supported to decode message key and value.
 
 > *TIP*: In order to define JSON strings, they must be enclosed in triple quotes:
 > `"""{"name1": {"name2": "value2", "name3": "value3""}}"""`.

@@ -3,6 +3,7 @@ package ru.raiffeisen.checkita.connections.kafka
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
+import org.apache.spark.sql.avro.from_avro
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.StringType
@@ -83,25 +84,26 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
                           (implicit schemas: Map[String, SourceSchema]): Column = {
 
     val schemaGetter = (formatStr: String) => {
-      val keySchemaId = schemaId.getOrElse(throw new IllegalArgumentException(
+      val colSchemaId = schemaId.getOrElse(throw new IllegalArgumentException(
         s"Schema must be provided in order to parse kafka message '$colName' column of $formatStr format"
       ))
-      schemas.getOrElse(keySchemaId,
-        throw new NoSuchElementException(s"Schema with id = '$keySchemaId' not found.")
+      schemas.getOrElse(colSchemaId,
+        throw new NoSuchElementException(s"Schema with id = '$colSchemaId' not found.")
       )
     }
 
     format match {
       case KafkaTopicFormat.String => col(colName).cast(StringType).as(colName)
       case KafkaTopicFormat.Json =>
-        val keySchema = schemaGetter("JSON")
-        from_json(col(colName).cast(StringType), keySchema.schema).alias(colName)
+        from_json(col(colName).cast(StringType), schemaGetter("JSON").schema).alias(colName)
       case KafkaTopicFormat.Xml =>
-        val keySchema = schemaGetter("XML")
-        from_json(xmlToJson(col(colName).cast(StringType)), keySchema.schema).alias(colName)
+        from_json(xmlToJson(col(colName).cast(StringType)), schemaGetter("XML").schema).alias(colName)
+      case KafkaTopicFormat.Avro =>
+        // intentionally use deprecated method to support compatibility with Spark 2.4.x versions.
+        from_avro(col(colName), schemaGetter("AVRO").toAvroSchema.toString).alias(colName)
       case other => throw new IllegalArgumentException(
         s"Wrong kafka topic message format for column '$colName': ${other.toString}"
-      ) // we do not support avro for now.
+      )
     }
   }
 
