@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.1">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.2">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.45e1311d.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -1243,7 +1243,9 @@ configuration. Thus, transformations defined in this section are applied only to
 Structured Streaming API. More details on running data quality checks over streaming sources are given in
 <a href="../../02-general-concepts/05-StreamingMode/">Data Quality Checks over Streaming Sources</a> chapter.</p>
 <p>The configuration of virtual streaming sources is the same as for the static ones. 
-See chapter <a href="../05-VirtualSources/">Virtual Sources Configuration</a> for more details.</p>
+See chapter <a href="../05-VirtualSources/">Virtual Sources Configuration</a> for more details. In addition, column used as source 
+of timestamp for windowing can be redefined and derived from the resultant virtual stream scheme. 
+See <a href="../04-Streams/">Streaming Sources Configurations</a> for more details on how to define column used as source of timestamp.</p>
 <p>It is important to note that not all supported virtual sources types can be built from streaming sources. 
 Currently, only <a href="../05-VirtualSources/#filter-virtual-source-configuration">filter</a> and
 <a href="../05-VirtualSources/#select-virtual-source-configuration">select</a> types of virtual sources are supported 

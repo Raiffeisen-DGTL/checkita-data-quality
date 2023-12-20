@@ -310,7 +310,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="Enums$$CustomTime.html"><span class="name">CustomTime</span></a><span class="params">(<span name="column">column: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="Enums$$StreamWindowing.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.StreamWindowing">StreamWindowing</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="Enums$$CustomTime.html"><span class="name">CustomTime</span></a><span class="params">(<span name="windowByExpr">windowByExpr: <span class="extype" name="org.apache.spark.sql.Column">Column</span></span>)</span><span class="result"> extends <a href="Enums$$StreamWindowing.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.StreamWindowing">StreamWindowing</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -450,7 +450,7 @@
       <p class="shortcomment cmt">Supported stream windowing types, that control how windows are build:</p><div class="fullcomment"><div class="comment cmt"><p>Supported stream windowing types, that control how windows are build:</p><ul><li>based on processing time: current timestamp when rows is processed;</li><li>based on event time: message creation timestamp.
     Following Kafka message structure, it always must be column with name 'timestamp'.
     Column should have LongType or TimestampType or other type with contents that can be converted
-    to a LongType containing unix epoch (in seconds).</li><li>custom time: arbitrary timestamp column from message defined by user.</li></ul></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>When event time or custom time columns are selected for windowing then it is up to user to ensure
+    to a LongType containing unix epoch (in seconds).</li><li>custom time: arbitrary timestamp column (or expression that evaluates to column) from message defined by user.</li></ul></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>When event time or custom time columns are selected for windowing then it is up to user to ensure
       timestamp correctness in the selected column.</p></span>, <span class="cmt"><p>this is not an enumeration since custom time type requires user-defined column name.</p></span></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.Enums.TemplateFormat" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="TemplateFormatextendsEnumEntry"></a><a id="TemplateFormat:TemplateFormat"></a>

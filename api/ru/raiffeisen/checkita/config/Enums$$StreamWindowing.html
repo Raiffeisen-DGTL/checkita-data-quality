@@ -238,7 +238,7 @@
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Supported stream windowing types, that control how windows are build:</p><ul><li>based on processing time: current timestamp when rows is processed;</li><li>based on event time: message creation timestamp.
     Following Kafka message structure, it always must be column with name 'timestamp'.
     Column should have LongType or TimestampType or other type with contents that can be converted
-    to a LongType containing unix epoch (in seconds).</li><li>custom time: arbitrary timestamp column from message defined by user.</li></ul></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>When event time or custom time columns are selected for windowing then it is up to user to ensure
+    to a LongType containing unix epoch (in seconds).</li><li>custom time: arbitrary timestamp column (or expression that evaluates to column) from message defined by user.</li></ul></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>When event time or custom time columns are selected for windowing then it is up to user to ensure
       timestamp correctness in the selected column.</p></span>, <span class="cmt"><p>this is not an enumeration since custom time type requires user-defined column name.</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes

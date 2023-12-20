@@ -272,7 +272,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">SummaryKafkaTargetConfig</span><span class="params">(<span name="connection">connection: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="topic">topic: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="options">options: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=\\S+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Targets$$SummaryTargetConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Targets.SummaryTargetConfig">SummaryTargetConfig</a> with <a href="Outputs$$KafkaOutputConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Outputs.KafkaOutputConfig">KafkaOutputConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">SummaryKafkaTargetConfig</span><span class="params">(<span name="connection">connection: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="topic">topic: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="options">options: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Targets$$SummaryTargetConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Targets.SummaryTargetConfig">SummaryTargetConfig</a> with <a href="Outputs$$KafkaOutputConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Outputs.KafkaOutputConfig">KafkaOutputConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -339,7 +339,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">SummaryKafkaTargetConfig</span><span class="params">(<span name="connection">connection: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="topic">topic: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="options">options: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=\\S+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
+        <span class="name">SummaryKafkaTargetConfig</span><span class="params">(<span name="connection">connection: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="topic">topic: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="options">options: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
       </span>
       
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">connection</dt><dd class="cmt"><p>reference to Kafka connection ID</p></dd><dt class="param">topic</dt><dd class="cmt"><p>Kafka topic name to write into</p></dd><dt class="param">options</dt><dd class="cmt"><p>Sequence of additional Kafka options</p></dd></dl></div>
@@ -490,9 +490,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Targets.SummaryKafkaTargetConfig">SummaryKafkaTargetConfig</a> → <a href="Outputs$$KafkaOutputConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Outputs.KafkaOutputConfig">KafkaOutputConfig</a></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.jobconf.Targets.SummaryKafkaTargetConfig#dumpSize" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="dumpSize:ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt"></a><a id="dumpSize:PositiveInt"></a>
+      <a id="dumpSize:Option[ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt]"></a><a id="dumpSize:Option[PositiveInt]"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Targets$$SummaryKafkaTargetConfig.html#dumpSize:ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Targets$$SummaryKafkaTargetConfig.html#dumpSize:Option[ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -501,7 +501,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">dumpSize</span><span class="result">: <a href="../RefinedTypes$.html#PositiveInt=eu.timepit.refined.api.Refined[Int,eu.timepit.refined.numeric.Positive]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt">PositiveInt</a></span>
+        <span class="name">dumpSize</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$.html#PositiveInt=eu.timepit.refined.api.Refined[Int,eu.timepit.refined.numeric.Positive]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt">PositiveInt</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Targets.SummaryKafkaTargetConfig">SummaryKafkaTargetConfig</a> → <a href="Targets$$SummaryTargetConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Targets.SummaryTargetConfig">SummaryTargetConfig</a></dd></dl></div>
@@ -660,7 +660,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">options</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=\\S+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>]</span>
+        <span class="name">options</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Targets.SummaryKafkaTargetConfig">SummaryKafkaTargetConfig</a> → <a href="Outputs$$KafkaOutputConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Outputs.KafkaOutputConfig">KafkaOutputConfig</a></dd></dl></div>

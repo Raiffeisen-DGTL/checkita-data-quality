@@ -272,13 +272,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">ErrorCollHiveTargetConfig</span><span class="params">(<span name="schema">schema: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="table">table: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="metrics">metrics: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="dumpSize">dumpSize: <a href="../RefinedTypes$.html#PositiveInt=eu.timepit.refined.api.Refined[Int,eu.timepit.refined.numeric.Positive]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt">PositiveInt</a> = <span class="symbol">100</span></span>)</span><span class="result"> extends <a href="Targets$$ErrorCollTargetConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Targets.ErrorCollTargetConfig">ErrorCollTargetConfig</a> with <a href="Outputs$$HiveOutputConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Outputs.HiveOutputConfig">HiveOutputConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">ErrorCollHiveTargetConfig</span><span class="params">(<span name="schema">schema: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="table">table: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="metrics">metrics: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="dumpSize">dumpSize: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$.html#PositiveInt=eu.timepit.refined.api.Refined[Int,eu.timepit.refined.numeric.Positive]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt">PositiveInt</a>]</span>)</span><span class="result"> extends <a href="Targets$$ErrorCollTargetConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Targets.ErrorCollTargetConfig">ErrorCollTargetConfig</a> with <a href="Outputs$$HiveOutputConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Outputs.HiveOutputConfig">HiveOutputConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Error collection target configuration with output to Hive table.</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Hive schema to write into</p></dd><dt class="param">table</dt><dd class="cmt"><p>Hive table to write into</p></dd><dt class="param">metrics</dt><dd class="cmt"><p>Sequence of metrics to collect errors for.
-               Default: empty sequence (collect errors for all metrics)</p></dd><dt class="param">dumpSize</dt><dd class="cmt"><p>Maximum number of errors collected per each metric. Default: 100</p></dd></dl><div class="toggleContainer block">
+               Default: empty sequence (collect errors for all metrics)</p></dd><dt class="param">dumpSize</dt><dd class="cmt"><p>Maximum number of errors collected per each metric.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -329,9 +329,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.jobconf.Targets.ErrorCollHiveTargetConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(schema:eu.timepit.refined.types.string.NonEmptyString,table:eu.timepit.refined.types.string.NonEmptyString,metrics:Seq[eu.timepit.refined.types.string.NonEmptyString],dumpSize:ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt):ru.raiffeisen.checkita.config.jobconf.Targets.ErrorCollHiveTargetConfig"></a><a id="&lt;init&gt;:ErrorCollHiveTargetConfig"></a>
+      <a id="&lt;init&gt;(schema:eu.timepit.refined.types.string.NonEmptyString,table:eu.timepit.refined.types.string.NonEmptyString,metrics:Seq[eu.timepit.refined.types.string.NonEmptyString],dumpSize:Option[ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt]):ru.raiffeisen.checkita.config.jobconf.Targets.ErrorCollHiveTargetConfig"></a><a id="&lt;init&gt;:ErrorCollHiveTargetConfig"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Targets$$ErrorCollHiveTargetConfig.html#&lt;init&gt;(schema:eu.timepit.refined.types.string.NonEmptyString,table:eu.timepit.refined.types.string.NonEmptyString,metrics:Seq[eu.timepit.refined.types.string.NonEmptyString],dumpSize:ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt):ru.raiffeisen.checkita.config.jobconf.Targets.ErrorCollHiveTargetConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Targets$$ErrorCollHiveTargetConfig.html#&lt;init&gt;(schema:eu.timepit.refined.types.string.NonEmptyString,table:eu.timepit.refined.types.string.NonEmptyString,metrics:Seq[eu.timepit.refined.types.string.NonEmptyString],dumpSize:Option[ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt]):ru.raiffeisen.checkita.config.jobconf.Targets.ErrorCollHiveTargetConfig" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -340,11 +340,11 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">ErrorCollHiveTargetConfig</span><span class="params">(<span name="schema">schema: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="table">table: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="metrics">metrics: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="dumpSize">dumpSize: <a href="../RefinedTypes$.html#PositiveInt=eu.timepit.refined.api.Refined[Int,eu.timepit.refined.numeric.Positive]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt">PositiveInt</a> = <span class="symbol">100</span></span>)</span>
+        <span class="name">ErrorCollHiveTargetConfig</span><span class="params">(<span name="schema">schema: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="table">table: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="metrics">metrics: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="dumpSize">dumpSize: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$.html#PositiveInt=eu.timepit.refined.api.Refined[Int,eu.timepit.refined.numeric.Positive]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt">PositiveInt</a>]</span>)</span>
       </span>
       
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Hive schema to write into</p></dd><dt class="param">table</dt><dd class="cmt"><p>Hive table to write into</p></dd><dt class="param">metrics</dt><dd class="cmt"><p>Sequence of metrics to collect errors for.
-               Default: empty sequence (collect errors for all metrics)</p></dd><dt class="param">dumpSize</dt><dd class="cmt"><p>Maximum number of errors collected per each metric. Default: 100</p></dd></dl></div>
+               Default: empty sequence (collect errors for all metrics)</p></dd><dt class="param">dumpSize</dt><dd class="cmt"><p>Maximum number of errors collected per each metric.</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -444,9 +444,9 @@
               
         </dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.jobconf.Targets.ErrorCollHiveTargetConfig#dumpSize" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="dumpSize:ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt"></a><a id="dumpSize:PositiveInt"></a>
+      <a id="dumpSize:Option[ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt]"></a><a id="dumpSize:Option[PositiveInt]"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Targets$$ErrorCollHiveTargetConfig.html#dumpSize:ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Targets$$ErrorCollHiveTargetConfig.html#dumpSize:Option[ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -455,7 +455,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">dumpSize</span><span class="result">: <a href="../RefinedTypes$.html#PositiveInt=eu.timepit.refined.api.Refined[Int,eu.timepit.refined.numeric.Positive]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt">PositiveInt</a></span>
+        <span class="name">dumpSize</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$.html#PositiveInt=eu.timepit.refined.api.Refined[Int,eu.timepit.refined.numeric.Positive]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt">PositiveInt</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Targets.ErrorCollHiveTargetConfig">ErrorCollHiveTargetConfig</a> → <a href="Targets$$ErrorCollTargetConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Targets.ErrorCollTargetConfig">ErrorCollTargetConfig</a></dd></dl></div>

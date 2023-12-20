@@ -208,7 +208,7 @@
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Application-level configuration for switchers (enablers)
 </p></div><dl class="paramcmts block"><dt class="param">allowSqlQueries</dt><dd class="cmt"><p>Enables arbitrary SQL queries in virtual sources</p></dd><dt class="param">allowNotifications</dt><dd class="cmt"><p>Enables notifications to be sent from DQ application</p></dd><dt class="param">aggregatedKafkaOutput</dt><dd class="cmt"><p>Enables sending aggregates messages for Kafka Targets
                              (one per each target type, except checkAlerts where
-                             one message per checkAlert will be sent)</p></dd><dt class="param">enableCaseSensitivity</dt><dd class="cmt"><p>Enable columns case sensitivity</p></dd><dt class="param">errorDumpSize</dt><dd class="cmt"><p>Maximum number of errors to be collected per single metric.</p></dd><dt class="param">outputRepartition</dt><dd class="cmt"><p>Sets the number of partitions when writing outputs. By default writes single file.</p></dd></dl><div class="toggleContainer block">
+                             one message per checkAlert will be sent)</p></dd><dt class="param">enableCaseSensitivity</dt><dd class="cmt"><p>Enable columns case sensitivity</p></dd><dt class="param">errorDumpSize</dt><dd class="cmt"><p>Maximum number of errors to be collected per single metric per partition.</p></dd><dt class="param">outputRepartition</dt><dd class="cmt"><p>Sets the number of partitions when writing outputs. By default writes single file.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -275,7 +275,7 @@
       
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">allowSqlQueries</dt><dd class="cmt"><p>Enables arbitrary SQL queries in virtual sources</p></dd><dt class="param">allowNotifications</dt><dd class="cmt"><p>Enables notifications to be sent from DQ application</p></dd><dt class="param">aggregatedKafkaOutput</dt><dd class="cmt"><p>Enables sending aggregates messages for Kafka Targets
                              (one per each target type, except checkAlerts where
-                             one message per checkAlert will be sent)</p></dd><dt class="param">enableCaseSensitivity</dt><dd class="cmt"><p>Enable columns case sensitivity</p></dd><dt class="param">errorDumpSize</dt><dd class="cmt"><p>Maximum number of errors to be collected per single metric.</p></dd><dt class="param">outputRepartition</dt><dd class="cmt"><p>Sets the number of partitions when writing outputs. By default writes single file.</p></dd></dl></div>
+                             one message per checkAlert will be sent)</p></dd><dt class="param">enableCaseSensitivity</dt><dd class="cmt"><p>Enable columns case sensitivity</p></dd><dt class="param">errorDumpSize</dt><dd class="cmt"><p>Maximum number of errors to be collected per single metric per partition.</p></dd><dt class="param">outputRepartition</dt><dd class="cmt"><p>Sets the number of partitions when writing outputs. By default writes single file.</p></dd></dl></div>
     </li></ol>
             </div>
 

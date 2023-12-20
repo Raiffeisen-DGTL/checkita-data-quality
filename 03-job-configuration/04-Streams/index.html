@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.1">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.2">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.45e1311d.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -1260,7 +1260,8 @@ can be read as streams:</p>
 <li><code>eventTime</code> - Mostly applicable to kafka sources. Uses column with name <code>timestamp</code> to retrieve time value from.
   This column must be of <em>Timestamp</em> type.</li>
 <li><code>custom(columnName)</code> - Uses arbitrary user-defined column to retrieve time value from. Specified column
-  must be of <em>Timestamp</em> type. For example: <code>custom(value.createdAt)</code> - the time value for a record will be retrieved
+  must be of <em>Timestamp</em> type. In addition, an SQL expression is are supported. An expression should also evaluate 
+  to value of Timestamp type. For example: <code>custom(value.createdAt)</code> - the time value for a record will be retrieved
   from message value's field with name <code>createdAt</code>.</li>
 </ul>
 </li>
