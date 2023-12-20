@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.1.0...v1.1.1) (2023-12-20)
+
+
+### Bug Fixes
+
+* enhance kakfa windowing for streams and enable avro kafka message format ([#20](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/20)) ([a5e9827](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/a5e9827213da36ebc8932195018943204c3db309))
+
 # [1.1.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.0.1...v1.1.0) (2023-12-08)
 
 
