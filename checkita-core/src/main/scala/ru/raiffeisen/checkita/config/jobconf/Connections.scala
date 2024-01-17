@@ -152,8 +152,6 @@ object Connections {
                                              password: Option[NonEmptyString],
                                              schema: Option[NonEmptyString],
                                              parameters: Seq[SparkParam] = Seq.empty,
-                                             dbschema: Option[NonEmptyString],
-                                             dbtable: Option[NonEmptyString]
                                            ) extends ConnectionConfig
 
   /**
