@@ -129,7 +129,6 @@ object Sources {
    * @param connection Connection ID (must be pivotal connection)
    * @param table      Table to read
    * @param keyFields  Sequence of key fields (columns that identify data row)
-   * @note Either table to read or query to execute must be defined but not both.
    */
   final case class GreenplumSourceConfig(
                                       id: ID,

@@ -154,7 +154,7 @@ object Connections {
                                              parameters: Seq[SparkParam] = Seq.empty,
                                              dbschema: Option[NonEmptyString],
                                              dbtable: Option[NonEmptyString]
-                                           ) extends JdbcConnectionConfig
+                                           ) extends ConnectionConfig
 
   /**
    * Connection configuration for Kafka

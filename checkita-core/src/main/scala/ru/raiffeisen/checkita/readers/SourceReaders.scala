@@ -251,10 +251,11 @@ object SourceReaders {
                                       connections: Map[String, DQConnection]): Source = {
 
       val conn = connections.getOrElse(config.connection.value, throw new NoSuchElementException(
-        s"Pivotal connection with id = '${config.connection.value}' not found."
+        s"Pivotal greenplum connection with id = '${config.connection.value}' not found."
       ))
 
-      require(conn.isInstanceOf[PivotalConnection], s"Table source '${config.id.value}' refers to not pivotal connection.")
+      require(conn.isInstanceOf[PivotalConnection],
+        s"Table source '${config.id.value}' refers to not pivotal greenplum connection.")
 
       val df = conn.asInstanceOf[PivotalConnection].loadDataFrame(config)
       toSource(config, df)

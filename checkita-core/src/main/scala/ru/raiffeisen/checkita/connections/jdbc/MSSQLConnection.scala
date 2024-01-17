@@ -25,7 +25,7 @@ case class MSSQLConnection(config: MSSQLConnectionConfig) extends JdbcConnection
    * @param spark Implicit spark session object
    * @return Nothing or error message in case if connection is not ready.
    */
-  override def checkConnection(implicit spark: SparkSession): Result[Unit] = Try {
+  override def checkConnection: Result[Unit] = Try {
     val connection = DriverManager
       .getConnection(connectionUrl, getProperties)
       .prepareStatement("SELECT GETDATE()")

@@ -197,7 +197,7 @@ object PostValidation {
       checkPathPrefix = "jobConfig.sources",
       refPathPrefix = "jobConfig.connections",
       checkPathFilter = (s: String) => s.contains(".table."),
-      refPathFilter = (s: String) => !s.contains(".kafka.")
+      refPathFilter = (s: String) => !s.contains(".kafka.") && !s.contains(".greenplum.")
     )
 
   /**
@@ -226,9 +226,11 @@ object PostValidation {
       getObjOrEmpty(root, "jobConfig.connections"),
       "connection",
       "id",
-      "Greenplum source refers to undefined pivotal connection '%s'",
+      "Greenplum source refers to undefined pivotal greenplum connection '%s'",
       checkPathPrefix = "jobConfig.sources",
-      refPathPrefix = "jobConfig.connections"
+      refPathPrefix = "jobConfig.connections",
+      checkPathFilter = (s: String) => s.contains(".greenplum."),
+      refPathFilter = (s: String) => s.contains(".greenplum.")
     )
 
   /**

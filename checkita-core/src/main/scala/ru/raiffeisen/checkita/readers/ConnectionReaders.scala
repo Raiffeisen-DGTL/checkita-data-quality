@@ -27,10 +27,9 @@ object ConnectionReaders {
     /**
      * Safely reads connection configuration and establishes DQConnection
      * @param config Connection configuration
-     * @param spark Implicit spark session object
      * @return Either a valid DQConnection or a list of connection errors.
      */
-    def read(config: T)(implicit spark: SparkSession): Result[DQConnection] = {
+    def read(config: T): Result[DQConnection] = {
       val conn = Try(constructor(config)).toResult(
         preMsg = s"Unable to setup connection '${config.id.value}' due to following error: "
       )
