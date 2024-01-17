@@ -11,6 +11,7 @@ import ru.raiffeisen.checkita.config.jobconf.Sources._
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.connections.jdbc.JdbcConnection
 import ru.raiffeisen.checkita.connections.kafka.KafkaConnection
+import ru.raiffeisen.checkita.connections.greenplum.PivotalConnection
 import ru.raiffeisen.checkita.core.Source
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.utils.Common.paramsSeqToMap
@@ -220,6 +221,42 @@ object SourceReaders {
         case ReadMode.Batch => conn.asInstanceOf[KafkaConnection].loadDataFrame(config)
         case ReadMode.Stream => conn.asInstanceOf[KafkaConnection].loadDataStream(config)
       }
+      toSource(config, df)
+    }
+  }
+
+  /**
+   * Greenplum source reader: reads source from pivotal Connection
+   *
+   * @note In order to read greenplum source it is required to provided map of valid connections
+   */
+  implicit object GreenplumSourceReader extends SourceReader[GreenplumSourceConfig] {
+
+    /**
+     * Tries to read greenplum source given the source configuration.
+     *
+     * @param config      Greenplum source configuration
+     * @param readMode    Mode in which source is read. Either 'batch' or 'stream'
+     * @param settings    Implicit application settings object
+     * @param spark       Implicit spark session object
+     * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
+     * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @return Source
+     */
+    def tryToRead(config: GreenplumSourceConfig,
+                  readMode: ReadMode)(implicit settings: AppSettings,
+                                      spark: SparkSession,
+                                      fs: FileSystem,
+                                      schemas: Map[String, SourceSchema],
+                                      connections: Map[String, DQConnection]): Source = {
+
+      val conn = connections.getOrElse(config.connection.value, throw new NoSuchElementException(
+        s"Pivotal connection with id = '${config.connection.value}' not found."
+      ))
+
+      require(conn.isInstanceOf[PivotalConnection], s"Table source '${config.id.value}' refers to not pivotal connection.")
+
+      val df = conn.asInstanceOf[PivotalConnection].loadDataFrame(config)
       toSource(config, df)
     }
   }
@@ -538,6 +575,7 @@ object SourceReaders {
     config match {
       case table: TableSourceConfig => TableSourceReader.tryToRead(table, readMode)
       case kafka: KafkaSourceConfig => KafkaSourceReader.tryToRead(kafka, readMode)
+      case greenplum: GreenplumSourceConfig => GreenplumSourceReader.tryToRead(greenplum, readMode)
       case hive: HiveSourceConfig => HiveSourceReader.tryToRead(hive, readMode)
       case fixed: FixedFileSourceConfig => FixedFileSourceReader.tryToRead(fixed, readMode)
       case delimited: DelimitedFileSourceConfig => DelimitedFileSourceReader.tryToRead(delimited, readMode)

@@ -109,10 +109,10 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
 
   /**
    * Checks connection.
-   *
+   * @param spark Implicit spark session object
    * @return Nothing or error message in case if connection is not ready.
    */
-  def checkConnection: Result[Unit] = Try {
+  def checkConnection(implicit spark: SparkSession): Result[Unit] = Try {
     val props = new Properties()
     alterParams(kafkaParams).foreach{ case (k, v) => props.put(k, v) }
     val consumer = new KafkaConsumer[String, String](props, new StringDeserializer, new StringDeserializer)

@@ -19,9 +19,11 @@ abstract class DQConnection {
 
   /**
    * Checks connection.
+   *
+   * @param spark Implicit spark session object
    * @return Nothing or error message in case if connection is not ready.
    */
-  def checkConnection: Result[Unit]
+  def checkConnection(implicit spark: SparkSession): Result[Unit]
 
   /**
    * Loads external data into dataframe given a source configuration

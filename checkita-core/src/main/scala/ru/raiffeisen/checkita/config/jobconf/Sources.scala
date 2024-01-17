@@ -123,6 +123,24 @@ object Sources {
   }
 
   /**
+   * Greenplum Table source configuration
+   *
+   * @param id         Source ID
+   * @param connection Connection ID (must be pivotal connection)
+   * @param table      Table to read
+   * @param keyFields  Sequence of key fields (columns that identify data row)
+   * @note Either table to read or query to execute must be defined but not both.
+   */
+  final case class GreenplumSourceConfig(
+                                      id: ID,
+                                      connection: ID,
+                                      table: Option[NonEmptyString],
+                                      keyFields: Seq[NonEmptyString] = Seq.empty
+                                    ) extends SourceConfig {
+    val streamable: Boolean = false
+  }
+
+  /**
    * Base class for file source configurations.
    * All file sources are streamable and therefore must contain windowBy parameter which
    * defined source of timestamp used to build stream windows.
@@ -425,6 +443,7 @@ object Sources {
    * @param table Sequence of table sources (read from JDBC connections)
    * @param hive  Sequence of Hive table sources
    * @param kafka Sequence of sources based on Kafka topics
+   * @param greenplum Sequence of greenplum sources (read from pivotal connections)
    * @param file  Sequence of file sources
    * @param custom Sequence of custom sources
    */
@@ -432,6 +451,7 @@ object Sources {
                                   table: Seq[TableSourceConfig] = Seq.empty,
                                   hive: Seq[HiveSourceConfig] = Seq.empty,
                                   kafka: Seq[KafkaSourceConfig] = Seq.empty,
+                                  greenplum: Seq[GreenplumSourceConfig] = Seq.empty,
                                   file: Seq[FileSourceConfig] = Seq.empty,
                                   custom: Seq[CustomSource] = Seq.empty
                                 ) {

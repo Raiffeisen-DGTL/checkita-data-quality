@@ -1,14 +1,15 @@
 package ru.raiffeisen.checkita.connections.jdbc
 
+import org.apache.spark.sql.SparkSession
+
 import java.sql.DriverManager
-
 import scala.util.Try
-
 import ru.raiffeisen.checkita.config.jobconf.Connections.MSSQLConnectionConfig
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 /**
   * Connection to MS SQL database
+ *
   * @param config Connection configuration
   */
 case class MSSQLConnection(config: MSSQLConnectionConfig) extends JdbcConnection[MSSQLConnectionConfig] {
@@ -18,7 +19,13 @@ case class MSSQLConnection(config: MSSQLConnectionConfig) extends JdbcConnection
   protected val jdbcDriver: String            = "net.sourceforge.jtds.jdbc.Driver"
   protected val currentSchema: Option[String] = config.schema.map(_.value)
 
-  override def checkConnection: Result[Unit] = Try {
+  /**
+   * Checks connection.
+   *
+   * @param spark Implicit spark session object
+   * @return Nothing or error message in case if connection is not ready.
+   */
+  override def checkConnection(implicit spark: SparkSession): Result[Unit] = Try {
     val connection = DriverManager
       .getConnection(connectionUrl, getProperties)
       .prepareStatement("SELECT GETDATE()")

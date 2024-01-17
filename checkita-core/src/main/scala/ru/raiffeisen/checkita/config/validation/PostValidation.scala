@@ -218,6 +218,21 @@ object PostValidation {
 
   /**
    * Validation to check if DQ job configuration contains missing references
+   * from table sources to pivotal connections
+   */
+  val validateGreenplumSourceRefs: ConfigObject => Vector[ConfigReaderFailure] = root =>
+    validateCrossReferences(
+      getObjOrEmpty(root, "jobConfig.sources"),
+      getObjOrEmpty(root, "jobConfig.connections"),
+      "connection",
+      "id",
+      "Greenplum source refers to undefined pivotal connection '%s'",
+      checkPathPrefix = "jobConfig.sources",
+      refPathPrefix = "jobConfig.connections"
+    )
+
+  /**
+   * Validation to check if DQ job configuration contains missing references
    * from sources to schemas
    */
   val validateSourceSchemaRefs: ConfigObject => Vector[ConfigReaderFailure] = root =>
@@ -486,6 +501,7 @@ object PostValidation {
     validateBatchOrStream,
     validateJdbcSourceRefs,
     validateKafkaSourceRefs,
+    validateGreenplumSourceRefs,
     validateSourceSchemaRefs,
     validateVirtualStreams,
     validateVirtualSourceRefs,

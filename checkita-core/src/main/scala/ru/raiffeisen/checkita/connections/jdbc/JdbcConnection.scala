@@ -39,11 +39,13 @@ abstract class JdbcConnection[T <: JdbcConnectionConfig] extends DQConnection {
     props
   }
   
-  /**
-   * Checks connection.
-   * @return Nothing or error message in case if connection is not ready.
-   */
-  def checkConnection: Result[Unit] = Try {
+    /**
+     * Checks connection.
+     *
+     * @param spark Implicit spark session object
+     * @return Nothing or error message in case if connection is not ready.
+     */
+  def checkConnection(implicit spark: SparkSession): Result[Unit] = Try {
     val connection = DriverManager.getConnection(connectionUrl, getProperties)
     val isValid = connection.isValid(60)
     if (!isValid) throw new RuntimeException("Connection invalid")
