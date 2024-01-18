@@ -197,7 +197,7 @@ object PostValidation {
       checkPathPrefix = "jobConfig.sources",
       refPathPrefix = "jobConfig.connections",
       checkPathFilter = (s: String) => s.contains(".table."),
-      refPathFilter = (s: String) => !s.contains(".kafka.")
+      refPathFilter = (s: String) => !s.contains(".kafka.") && !s.contains(".greenplum.")
     )
 
   /**
@@ -214,6 +214,23 @@ object PostValidation {
       refPathPrefix = "jobConfig.connections",
       checkPathFilter = (s: String) => s.contains(".sources.kafka.") || s.contains(".streams.kafka."),
       refPathFilter = (s: String) => s.contains(".kafka.")
+    )
+
+  /**
+   * Validation to check if DQ job configuration contains missing references
+   * from table sources to pivotal connections
+   */
+  val validateGreenplumSourceRefs: ConfigObject => Vector[ConfigReaderFailure] = root =>
+    validateCrossReferences(
+      getObjOrEmpty(root, "jobConfig.sources"),
+      getObjOrEmpty(root, "jobConfig.connections"),
+      "connection",
+      "id",
+      "Greenplum source refers to undefined pivotal greenplum connection '%s'",
+      checkPathPrefix = "jobConfig.sources",
+      refPathPrefix = "jobConfig.connections",
+      checkPathFilter = (s: String) => s.contains(".greenplum."),
+      refPathFilter = (s: String) => s.contains(".greenplum.")
     )
 
   /**
@@ -486,6 +503,7 @@ object PostValidation {
     validateBatchOrStream,
     validateJdbcSourceRefs,
     validateKafkaSourceRefs,
+    validateGreenplumSourceRefs,
     validateSourceSchemaRefs,
     validateVirtualStreams,
     validateVirtualSourceRefs,

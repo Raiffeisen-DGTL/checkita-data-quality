@@ -1,8 +1,11 @@
 package ru.raiffeisen.checkita.readers
 
+import org.apache.spark.sql.SparkSession
+
 import ru.raiffeisen.checkita.config.jobconf.Connections._
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.connections.jdbc._
+import ru.raiffeisen.checkita.connections.greenplum.PivotalConnection
 import ru.raiffeisen.checkita.connections.kafka.KafkaConnection
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
@@ -84,6 +87,13 @@ object ConnectionReaders {
     val constructor: H2ConnectionConfig => DQConnection = H2Connection
   }
 
+  /**
+   * Greenplum connection reader: establishes connection to greenplum database.
+   */
+  implicit object GreenplumConnectionReader extends ConnectionReader[GreenplumConnectionConfig] {
+    val constructor: GreenplumConnectionConfig => DQConnection = PivotalConnection
+  }
+
 
   /**
    * General connection reader: invokes connection reader that matches provided connection configuration
@@ -97,6 +107,7 @@ object ConnectionReaders {
       case mysql: MySQLConnectionConfig => MySQLConnection(mysql)
       case mssql: MSSQLConnectionConfig => MSSQLConnection(mssql)
       case h2: H2ConnectionConfig => H2Connection(h2)
+      case greenplum: GreenplumConnectionConfig => PivotalConnection(greenplum)
     }
   }
 

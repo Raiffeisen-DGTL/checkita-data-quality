@@ -136,6 +136,25 @@ object Connections {
   }
 
   /**
+   * Connection configuration for Greenplum database
+   *
+   * @param id         Connection Id
+   * @param url        Url for connection to database
+   * @param username   Username used for connection
+   * @param password   Password used for connection
+   * @param schema     Optional schema to lookup tables from. If omitted, default schema is used.
+   * @param parameters Sequence of additional connection parameters
+   */
+  final case class GreenplumConnectionConfig(
+                                             id: ID,
+                                             url: URI,
+                                             username: Option[NonEmptyString],
+                                             password: Option[NonEmptyString],
+                                             schema: Option[NonEmptyString],
+                                             parameters: Seq[SparkParam] = Seq.empty,
+                                           ) extends ConnectionConfig
+
+  /**
    * Connection configuration for Kafka
    * @param id Connection Id
    * @param servers Kafka brokers
@@ -156,6 +175,7 @@ object Connections {
    * @param mysql Sequence of MySQL connections
    * @param mssql Sequence of MS SQL connections
    * @param h2 Sequence of H2 connections
+   * @param greenplum Sequence of Greenplum connections
    */
   final case class ConnectionsConfig(
                                       kafka: Seq[KafkaConnectionConfig] = Seq.empty,
@@ -164,7 +184,8 @@ object Connections {
                                       sqlite: Seq[SQLiteConnectionConfig] = Seq.empty,
                                       mysql: Seq[MySQLConnectionConfig] = Seq.empty,
                                       mssql: Seq[MSSQLConnectionConfig] = Seq.empty,
-                                      h2: Seq[H2ConnectionConfig] = Seq.empty
+                                      h2: Seq[H2ConnectionConfig] = Seq.empty,
+                                      greenplum: Seq[GreenplumConnectionConfig] = Seq.empty
                                     ) {
     def getAllConnections: Seq[ConnectionConfig] = 
       this.productIterator.toSeq.flatMap(_.asInstanceOf[Seq[Any]]).map(_.asInstanceOf[ConnectionConfig])

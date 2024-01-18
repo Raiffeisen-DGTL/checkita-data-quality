@@ -19,6 +19,7 @@ abstract class DQConnection {
 
   /**
    * Checks connection.
+   *
    * @return Nothing or error message in case if connection is not ready.
    */
   def checkConnection: Result[Unit]

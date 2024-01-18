@@ -39,10 +39,11 @@ abstract class JdbcConnection[T <: JdbcConnectionConfig] extends DQConnection {
     props
   }
   
-  /**
-   * Checks connection.
-   * @return Nothing or error message in case if connection is not ready.
-   */
+    /**
+     * Checks connection.
+     *
+     * @return Nothing or error message in case if connection is not ready.
+     */
   def checkConnection: Result[Unit] = Try {
     val connection = DriverManager.getConnection(connectionUrl, getProperties)
     val isValid = connection.isValid(60)
