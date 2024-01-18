@@ -22,7 +22,6 @@ case class MSSQLConnection(config: MSSQLConnectionConfig) extends JdbcConnection
   /**
    * Checks connection.
    *
-   * @param spark Implicit spark session object
    * @return Nothing or error message in case if connection is not ready.
    */
   override def checkConnection: Result[Unit] = Try {

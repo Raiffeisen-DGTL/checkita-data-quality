@@ -118,8 +118,7 @@ object ConnectionReaders {
    * @tparam T Type of connection configuration
    */
   implicit class ConnectionReaderOps[T <: ConnectionConfig](config: T)
-                                                           (implicit reader: ConnectionReader[T],
-                                                            spark: SparkSession) {
+                                                           (implicit reader: ConnectionReader[T]) {
     def read: Result[DQConnection] = reader.read(config)
   }
   
