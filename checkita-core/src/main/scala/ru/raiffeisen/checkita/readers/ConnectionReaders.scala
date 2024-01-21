@@ -94,6 +94,13 @@ object ConnectionReaders {
     val constructor: GreenplumConnectionConfig => DQConnection = PivotalConnection
   }
 
+  /**
+   * Greenplum connection reader: establishes connection to greenplum database.
+   */
+  implicit object ClickHouseConnectionReader extends ConnectionReader[ClickHouseConnectionConfig] {
+    val constructor: ClickHouseConnectionConfig => DQConnection = ClickHouseConnection
+  }
+
 
   /**
    * General connection reader: invokes connection reader that matches provided connection configuration
@@ -108,6 +115,7 @@ object ConnectionReaders {
       case mssql: MSSQLConnectionConfig => MSSQLConnection(mssql)
       case h2: H2ConnectionConfig => H2Connection(h2)
       case greenplum: GreenplumConnectionConfig => PivotalConnection(greenplum)
+      case clickhouse: ClickHouseConnectionConfig => ClickHouseConnection(clickhouse)
     }
   }
 
