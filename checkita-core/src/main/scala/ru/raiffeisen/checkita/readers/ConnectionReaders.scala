@@ -95,7 +95,7 @@ object ConnectionReaders {
   }
 
   /**
-   * Greenplum connection reader: establishes connection to greenplum database.
+   * ClickHouse connection reader: establishes connection to ClickHouse database.
    */
   implicit object ClickHouseConnectionReader extends ConnectionReader[ClickHouseConnectionConfig] {
     val constructor: ClickHouseConnectionConfig => DQConnection = ClickHouseConnection

@@ -166,6 +166,16 @@ object Connections {
                                           parameters: Seq[SparkParam] = Seq.empty
                                         ) extends ConnectionConfig
 
+  /**
+   * Connection configuration for ClickHouse
+   *
+   * @param id         Connection Id
+   * @param url        Url for connection to database
+   * @param username   Username used for connection
+   * @param password   Password used for connection
+   * @param schema     Optional schema to lookup tables from. If omitted, default schema is used.
+   * @param parameters Sequence of additional connection parameters
+   */
   final case class ClickHouseConnectionConfig(
                                           id: ID,
                                           url: URI,
@@ -185,6 +195,7 @@ object Connections {
    * @param mssql Sequence of MS SQL connections
    * @param h2 Sequence of H2 connections
    * @param greenplum Sequence of Greenplum connections
+   * @param clickhouse Sequence of ClickHouse connections
    */
   final case class ConnectionsConfig(
                                       kafka: Seq[KafkaConnectionConfig] = Seq.empty,
