@@ -153,9 +153,9 @@ Configuring connection to Greenplum, you must specify the following parameters:
 * `parameters` - *Optional*. List of Spark parameters if required where each parameter is a string in format:
   `spark.param.name=spark.param.value`.
 
-Also, in addition to this, you will need to download the [pivotal](https://network.pivotal.io/products/vmware-greenplum#/releases/1427678/file_groups/17497) connector. Then put it in the root of the 
-project and pass path to the file in appconf defaultSparkOptions like:
-`spark.jars=path/to/jar`.
+Pivotal connector is not published in public repositories such as Maven Central. Therefore, this dependency is 
+unmanaged and should be manually added to Spark application during submit (using spark.jars configuration parameter). 
+Connector jar-file can be downloaded from official [Pivotal releases](https://network.pivotal.io/products/vmware-greenplum#/releases/1427678/file_groups/17497).
 
 ## Connections Configuration Example
 
