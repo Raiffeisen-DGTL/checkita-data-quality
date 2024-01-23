@@ -1,7 +1,5 @@
 package ru.raiffeisen.checkita.readers
 
-import org.apache.spark.sql.SparkSession
-
 import ru.raiffeisen.checkita.config.jobconf.Connections._
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.connections.jdbc._

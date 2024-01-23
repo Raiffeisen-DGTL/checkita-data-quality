@@ -30,6 +30,7 @@ object Dependencies {
   val mssql = "com.microsoft.sqlserver" % "mssql-jdbc" % "12.2.0.jre8"
   val mssqlJTDS = "net.sourceforge.jtds" % "jtds" % "1.3.1"
   val h2db = "com.h2database" % "h2" % "1.4.196"
+  val clickhouse = "com.clickhouse" % "clickhouse-jdbc" % "0.4.6"
 
   // Slick
   val slickVersion = "3.4.1"
@@ -64,6 +65,7 @@ object Dependencies {
     mssql,
     mssqlJTDS,
     h2db,
+    clickhouse,
     slick,
     slickHCP,
     flyway,

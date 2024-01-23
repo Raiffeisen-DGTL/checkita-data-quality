@@ -18,7 +18,7 @@ import scala.util.Try
 
 
 /**
- * Connection to greenplum database
+ * Connection to Greenplum database
  *
  * @param config Connection configuration
  */
@@ -28,12 +28,12 @@ case class PivotalConnection(config: GreenplumConnectionConfig) extends DQConnec
 
   val id: String = config.id.value
   protected val sparkParams: Seq[String] = config.parameters.map(_.value)
-  protected val connectionUrl: String =  config.url.value
+  protected val connectionUrl: String = "jdbc:postgresql://" + config.url.value
   protected val currentSchema: Option[String] = config.schema.map(_.value)
   protected val jdbcDriver: String = "org.postgresql.Driver"
 
   /**
-   * Gets basic greenplum connection properties
+   * Gets basic Greenplum connection properties
    *
    * @return Connection properties
    */

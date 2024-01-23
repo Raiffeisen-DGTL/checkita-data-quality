@@ -13,8 +13,10 @@ systems are supported:
     * MySQL
     * MS SQL
     * H2
+    * ClickHouse
 * Connection to message queues:
     * Kafka
+* Connection to Greenoplum via pivotal connector
 
 All connections must have and `id` to uniquely identify its configuration and also may have an optional list of
 additional  Spark parameters can be specified in field `parameters` to provide some extra configuration required
@@ -95,6 +97,19 @@ Configuring connection to H2 database has similarly to SQLite. It is required su
 * `parameters` - *Optional*. List of Spark parameters if required where each parameter is a string in format:
   `spark.param.name=spark.param.value`.
 
+## ClickHouse Connection Configuration
+
+Configuration to ClickHouse can be set up in the same way as to MS SQL, using following parameters:
+
+* `id` - *Required*. Connection ID;
+* `url` - *Required*. Connection URL. Should contain host, port and name of database.
+  In addition, extra parameters can be supplied in connection URL if required.
+  *Connection protocol must not be specified.*
+* `username` - *Optional*. Username used to connect to ClickHouse database if required.
+* `password` - *Optional*. Password used to connect to ClickHouse database if required.
+* `parameters` - *Optional*. List of Spark parameters if required where each parameter is a string in format:
+  `spark.param.name=spark.param.value`.
+
 ## Kafka Connection Configuration
 
 In order to connect to set up connection to Kafka brokers, it is required to supply following parameters:
@@ -124,6 +139,24 @@ command as follows:
   --files file.keytab,jaas.conf,<other files required for DQ>
   ```
 
+## Greenplum Connection Configuration (via pivotal)
+
+Configuring connection to Greenplum, you must specify the following parameters:
+
+* `id` - *Required*. Connection ID;
+* `url` - *Required*. Connection URL. Should contain host, port and name of database.
+  In addition, extra parameters can be supplied in connection URL if required.
+  *Connection protocol must not be specified.*
+* `username` - *Optional*. Username used to connect to Greenplum database if required.
+* `password` - *Optional*. Password used to connect to Greenplum database if required.
+* `schema` - *Optional*. schema to lookup tables from. If omitted, default schema is used.
+* `parameters` - *Optional*. List of Spark parameters if required where each parameter is a string in format:
+  `spark.param.name=spark.param.value`.
+
+Also, in addition to this, you will need to download the [pivotal](https://network.pivotal.io/products/vmware-greenplum#/releases/1427678/file_groups/17497) connector. Then put it in the root of the 
+project and pass path to the file in appconf defaultSparkOptions like:
+`spark.jars=path/to/jar`.
+
 ## Connections Configuration Example
 
 As it is shown in the example below, connections of the same type are grouped within subsections named after the type
@@ -148,6 +181,18 @@ jobConfig: {
     sqlite: [
       {id: "sqlite_db", url: "some/path/to/db.sqlite"}
     ],
+    mysql: [
+      {id: "mysql_db1", url: "mysql.db.com:8306/public", username: "user", password: "pass"}
+    ],
+    mssql: [
+      {id: "mssql_db1", url: "mssql.db.com:8433", username: "user", password: "pass"}
+    ],
+    h2: [
+      {id: "h2_db1", url: "h2.db.com:9092/default", username: "user", password: "pass"}
+    ],
+    clickhouse: [
+      {id: "clickhouse_db1", url: "clickhouse.db.com:8123", username: "user", password: "pass"}
+    ],
     kafka: [
       {id: "kafka_cluster_1", servers: ["server1:9092", "server2:9092"]}
       {
@@ -158,6 +203,15 @@ jobConfig: {
           "sasl.mechanism=GSSAPI",
           "sasl.kerberos.service.name=kafka-service"
         ]
+      }
+    ],
+    greenplum: [
+      {
+        id: "greenplum_db1", 
+        url: "greenplum.db.com:5432/postgres", 
+        username: "user", 
+        password: "pass",
+        schema: "public"
       }
     ]
   }
