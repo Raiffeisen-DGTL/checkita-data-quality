@@ -17,6 +17,7 @@ Thus, currently Checkita supports four general types of sources:
 * Hive sources: read hive table from Hive catalogue;
 * Table sources: read tables from RDBMS via JDBC connection.
 * Kafka sources: read topics from Kafka.
+* 
 
 All sources must be defined in `sources` section of job configuration. 
 More details on how to configure sources of each of these types are shown below. Example of `sources` section of 
@@ -177,6 +178,18 @@ Currently, `string`, `xml`, `json` and `avro` formats are supported to decode me
 > *TIP*: In order to define JSON strings, they must be enclosed in triple quotes:
 > `"""{"name1": {"name2": "value2", "name3": "value3""}}"""`.
 
+## Greenplum Sources Configuration
+
+In order to read data from Greenplum table using pivotal connector it is required to provide following:
+
+* `id` - *Required*. Source ID;
+* `connection` - *Required*. Connection ID to use for table source. Connection ID must refer to Greenplum pivotal
+  connection. See [Connections Configuration](01-Connections.md) chapter for more information.
+* `table` - *Optional*. Table to read.
+* `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
+  Key fields are primarily used in error collection reports. For more details on error collection, see
+  [Metric Error Collection](../02-general-concepts/04-ErrorCollection.md) chapter.
+
 ## Custom Sources Configuration
 
 Custom sources can be used in cases when it is required to read data from the source type that is not explicitly
@@ -244,6 +257,9 @@ of the source. These subsections should contain a list of source configurations 
         options: ["kafkaConsumer.pollTimeoutMs=300000"]
         format: "json"
       }
+    ]
+    greenplum: [
+      {id: "greenplum_source_1", connection: "greenplum_db", table: "some_table"}
     ]
   }
 ```
