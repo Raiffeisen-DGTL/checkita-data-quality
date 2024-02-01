@@ -349,7 +349,7 @@ trait DQJob extends Logging {
    * @param resultSet Final results set
    * @return Either a status string or a list of saving errors.
    */
-  protected def saveResults(stage: String, resultSet: Result[ResultSet]): Result[String] = //add here
+  protected def saveResults(stage: String, resultSet: Result[ResultSet]): Result[String] =
     resultSet.flatMap { results =>
       storageManager match {
         case Some(mgr) =>
