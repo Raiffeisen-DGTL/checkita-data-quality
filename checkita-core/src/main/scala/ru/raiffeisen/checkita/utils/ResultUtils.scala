@@ -168,5 +168,12 @@ object ResultUtils {
       val g2: (T, (R1, R2, R3, R4)) => S = (v, t) => f(v, t._1, t._2, t._3, t._4)
       value.combine(r1.combineT3(r2, r3, r4)(g1))(g2)
     }
+
+    def combineT5[R1, R2, R3, R4, R5, S](r1: Result[R1], r2: Result[R2], r3: Result[R3], r4: Result[R4], r5: Result[R5])
+                                        (f: (T, R1, R2, R3, R4, R5) => S): Result[S] = {
+      val g1 = (v1: R1, v2: R2, v3: R3, v4: R4, v5: R5) => (v1, v2, v3, v4, v5)
+      val g2: (T, (R1, R2, R3, R4, R5)) => S = (v, t) => f(v, t._1, t._2, t._3, t._4, t._5)
+      value.combine(r1.combineT4(r2, r3, r4, r5)(g1))(g2)
+    }
   }
 }

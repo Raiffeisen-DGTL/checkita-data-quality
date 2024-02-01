@@ -12,6 +12,7 @@ import java.sql.Timestamp
 object Models {
 
   type UniqueResult = String :: String :: Timestamp :: HNil
+  type JobUniqueResult = String :: Timestamp :: HNil
 
   sealed abstract class DQEntity extends Product {
     val jobId: String // mandatory for all entities
@@ -46,6 +47,16 @@ object Models {
     val executionDate: Timestamp
 
     val uniqueFields: UniqueResult = jobId :: checkId :: referenceDate :: HNil
+    val uniqueFieldNames: Seq[String] = Seq("jobId", "checkId", "referenceDate").map(camelToSnakeCase)
+  }
+
+  sealed abstract class JobResult extends DQEntity {
+    val jobId: String
+    val config: String
+    val referenceDate: Timestamp
+    val executionDate: Timestamp
+
+    val uniqueFields: JobUniqueResult = jobId :: referenceDate :: HNil
     val uniqueFieldNames: Seq[String] = Seq("jobId", "checkId", "referenceDate").map(camelToSnakeCase)
   }
 
@@ -104,6 +115,15 @@ object Models {
                                    executionDate: Timestamp) extends CheckResult {
     val entityType: String = "loadCheckResult"
   }
+
+  final case class ResultJobConfig(
+                                    jobId: String,
+                                    config: String,
+                                    referenceDate: Timestamp,
+                                    executionDate: Timestamp
+                                  ) extends JobResult {
+    override val entityType: String = "jobConfig"
+  }
   
   
   // !!! won't be stored in Storage DB. !!!
@@ -132,6 +152,7 @@ object Models {
                                          numMetrics: Int,
                                          numChecks: Int,
                                          numLoadChecks: Int,
+                                         numJobConfig: Int,
                                          numMetricsWithErrors: Int,
                                          numFailedChecks: Int,
                                          numFailedLoadChecks: Int,
@@ -158,6 +179,7 @@ object Models {
                               checks: Seq[ResultCheck],
                               loadChecks: Seq[ResultCheckLoad],
                               metricErrors: Seq[ResultMetricErrors],
+                              jobConfig: Seq[ResultJobConfig],
                               summaryMetrics: ResultSummaryMetrics
                             )
   
@@ -179,6 +201,7 @@ object Models {
               composedMetrics: Seq[ResultMetricComposed],
               checks: Seq[ResultCheck],
               loadChecks: Seq[ResultCheckLoad],
+              jobConfig: Seq[ResultJobConfig],
               metricErrors: Seq[ResultMetricErrors]
              )(implicit jobId: String, settings: AppSettings): ResultSet = {
       val failedChecks = checks.filter(_.status != CalculatorStatus.Success.toString).map(_.checkId)
@@ -194,6 +217,7 @@ object Models {
         regularMetrics.size + composedMetrics.size,
         checks.size,
         loadChecks.size,
+        jobConfig.size,
         metricsWithErrors.size,
         failedChecks.size,
         failedLoadChecks.size,
@@ -201,7 +225,7 @@ object Models {
         failedChecks,
         failedLoadChecks
       )
-      ResultSet(regularMetrics, composedMetrics, checks, loadChecks, metricErrors, summary)
+      ResultSet(regularMetrics, composedMetrics, checks, loadChecks, metricErrors, jobConfig, summary)
     }
   }
 }

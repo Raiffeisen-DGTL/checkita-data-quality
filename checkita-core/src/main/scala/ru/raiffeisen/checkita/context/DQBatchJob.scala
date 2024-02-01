@@ -4,6 +4,7 @@ import org.apache.hadoop.fs.FileSystem
 import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig
+import ru.raiffeisen.checkita.config.jobconf.JobConfig
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
 import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig}
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
@@ -36,7 +37,8 @@ import scala.language.higherKinds
  * @param spark           Implicit spark session object
  * @param fs              Implicit hadoop file system object
  */
-final case class DQBatchJob(sources: Seq[Source],
+final case class DQBatchJob(jobConfig: JobConfig,
+                            sources: Seq[Source],
                             metrics: Seq[RegularMetricConfig],
                             composedMetrics: Seq[ComposedMetricConfig] = Seq.empty,
                             checks: Seq[CheckConfig] = Seq.empty,

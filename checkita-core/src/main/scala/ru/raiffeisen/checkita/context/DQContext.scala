@@ -309,6 +309,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    * @return Data Quality batch job instances wrapped into Result[_].
    */
   def buildBatchJob(
+                jobConfig: JobConfig,
                 jobId: String,
                 sources: Seq[Source],
                 metrics: Seq[RegularMetricConfig] = Seq.empty,
@@ -324,7 +325,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     logJobBuildStart
     
     getStorageManager.map(storageManager =>
-      DQBatchJob(sources, metrics, composedMetrics, checks, loadChecks, targets, schemas, connections, storageManager)
+      DQBatchJob(jobConfig, sources, metrics, composedMetrics, checks, loadChecks, targets, schemas, connections, storageManager)
     )
   }
 
@@ -342,7 +343,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    *                        Connections are used primarily to send targets.
    * @return Data Quality stream job instances wrapped into Result[_].
    */
-  def buildStreamJob(
+  def buildStreamJob(jobConfig: JobConfig,
                      jobId: String,
                      sources: Seq[Source],
                      metrics: Seq[RegularMetricConfig] = Seq.empty,
@@ -370,6 +371,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       .flatMap(_ => getStorageManager)
       .map(storageManager =>
         DQStreamJob(
+          jobConfig,
           sources,
           metrics,
           composedMetrics,
@@ -412,6 +414,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     
     allSources.combineT3(connections, schemas, getStorageManager)(
       (sources, conn, sch, manager) => DQBatchJob(
+        jobConfig,
         sources.values.toSeq,
         regularMetrics,
         composedMetrics,
@@ -458,6 +461,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
 
     allSources.combineT3(connections, schemas, getStorageManager)(
       (sources, conn, _, manager) => DQStreamJob(
+        jobConfig,
         sources.values.toSeq,
         regularMetrics,
         composedMetrics,

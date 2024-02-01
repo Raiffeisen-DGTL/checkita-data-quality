@@ -5,6 +5,7 @@ import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.appconf.StreamConfig
 import ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig
+import ru.raiffeisen.checkita.config.jobconf.JobConfig
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
 import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig}
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
@@ -42,7 +43,8 @@ import scala.util.Try
  * @param spark           Implicit spark session object
  * @param fs              Implicit hadoop file system object
  */
-final case class DQStreamWindowJob(settings: AppSettings,
+final case class DQStreamWindowJob(jobConfig: JobConfig,
+                                   settings: AppSettings,
                                    sources: Seq[Source],
                                    metrics: Seq[RegularMetricConfig],
                                    composedMetrics: Seq[ComposedMetricConfig] = Seq.empty,

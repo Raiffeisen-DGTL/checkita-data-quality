@@ -1,7 +1,9 @@
 package ru.raiffeisen.checkita.context
 
+import com.typesafe.config.ConfigRenderOptions
 import org.apache.hadoop.fs.FileSystem
 import org.apache.spark.sql.SparkSession
+
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.jobconf.Checks.{CheckConfig, SnapshotCheckConfig, TrendCheckConfig}
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
@@ -19,6 +21,8 @@ import ru.raiffeisen.checkita.targets.TargetProcessors._
 import ru.raiffeisen.checkita.storage.Models._
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
+import ru.raiffeisen.checkita.config.IO.writeJobConfig
+import ru.raiffeisen.checkita.config.jobconf.JobConfig
 
 import scala.reflect.runtime.universe.TypeTag
 import scala.util.Try
@@ -28,6 +32,7 @@ import scala.util.Try
  */
 trait DQJob extends Logging {
 
+  val jobConfig: JobConfig
   val sources: Seq[Source]
   val metrics: Seq[RegularMetricConfig]
   val composedMetrics: Seq[ComposedMetricConfig]
@@ -293,6 +298,23 @@ trait DQJob extends Logging {
       metResults.toSeq.flatMap(_._2).flatMap(r => r.finalizeMetricErrors)
     }
 
+  protected def performJobResult(jobConfig: JobConfig)
+                                (implicit settings: AppSettings, jobId: String): Result[Seq[ResultJobConfig]] = {
+
+    val renderOpts = ConfigRenderOptions.defaults().setComments(false).setOriginComments(false).setFormatted(false)
+    writeJobConfig(jobConfig) match {
+            case Right(c) => Right(Seq(ResultJobConfig(
+              jobId,
+              c.root().render(renderOpts),
+              settings.referenceDateTime.getUtcTS,
+              settings.executionDateTime.getUtcTS
+            )
+            )
+            )
+          }
+  }
+
+
   /**
    * Combines all results into a final result set.
    *
@@ -308,16 +330,17 @@ trait DQJob extends Logging {
   protected def combineResults(stage: String,
                                loadCheckResults: Seq[ResultCheckLoad],
                                checkResults: Result[Seq[ResultCheck]],
+                               jobResult: Result[Seq[ResultJobConfig]],
                                regularMetricResults: Result[Seq[ResultMetricRegular]],
                                composedMetricResults: Result[Seq[ResultMetricComposed]],
                                metricErrors: Result[Seq[ResultMetricErrors]])
                               (implicit settings: AppSettings): Result[ResultSet] =
-    liftToResult(loadCheckResults).combineT4(
-      checkResults, regularMetricResults, composedMetricResults, metricErrors
+    liftToResult(loadCheckResults).combineT5(
+      checkResults, jobResult, regularMetricResults, composedMetricResults, metricErrors
     ) {
-      case (lcChkRes, chkRes, regMetRes, compMetRes, metErrs) =>
+      case (lcChkRes, chkRes, jobRes, regMetRes, compMetRes, metErrs) =>
         log.info(s"$stage Summarize results...")
-        ResultSet(sources.size, regMetRes, compMetRes, chkRes, lcChkRes, metErrs)
+        ResultSet(sources.size, regMetRes, compMetRes, chkRes, lcChkRes, jobRes, metErrs)
     }
 
   /**
@@ -326,7 +349,7 @@ trait DQJob extends Logging {
    * @param resultSet Final results set
    * @return Either a status string or a list of saving errors.
    */
-  protected def saveResults(stage: String, resultSet: Result[ResultSet]): Result[String] =
+  protected def saveResults(stage: String, resultSet: Result[ResultSet]): Result[String] = //add here
     resultSet.flatMap { results =>
       storageManager match {
         case Some(mgr) =>
@@ -349,7 +372,8 @@ trait DQJob extends Logging {
             saveWithLogs(results.regularMetrics, "regular metrics"),
             saveWithLogs(results.composedMetrics, "composed metrics"),
             saveWithLogs(results.loadChecks, "load checks"),
-            saveWithLogs(results.checks, "checks")
+            saveWithLogs(results.checks, "checks"),
+            saveWithLogs(results.jobConfig, "job config")
           ).reduce((r1, r2) => r1.combine(r2)((_, _) => "Success"))
             .mapLeft(_.map(e => s"$stage $e")) // update error messages with running stage
         case None =>
@@ -423,9 +447,10 @@ trait DQJob extends Logging {
     val regularMetricResults = finalizeRegularMetrics(getStage(storageStage), allMetricCalcResults)
     val composedMetricResults = finalizeComposedMetrics(getStage(storageStage), allMetricCalcResults)
     val metricErrors = finalizeMetricErrors(getStage(storageStage), allMetricCalcResults)
+    val jobResult = performJobResult(jobConfig)
     // Combine all results:
     val resSet = combineResults(
-      getStage(storageStage), loadCheckResults, checkResults, regularMetricResults, composedMetricResults, metricErrors
+      getStage(storageStage), loadCheckResults, checkResults, jobResult, regularMetricResults, composedMetricResults, metricErrors
     )
     // Save results to storage
     val resSaveState = migrationState.flatMap(_ => saveResults(getStage(storageStage), resSet))
