@@ -1,4 +1,4 @@
-CREATE TABLE "${defaultSchema}"."results_job_config"
+CREATE TABLE "${defaultSchema}"."job_state"
 (
     "job_id"            TEXT             NOT NULL,
     "config"            TEXT             NOT NULL,

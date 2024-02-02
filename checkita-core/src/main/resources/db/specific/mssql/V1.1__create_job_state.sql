@@ -1,8 +1,8 @@
-CREATE TABLE "${defaultSchema}"."results_job_config"
+CREATE TABLE "${defaultSchema}"."job_state"
 (
-    "job_id"            TEXT             NOT NULL,
-    "config"            TEXT             NOT NULL,
-    "reference_date"    TIMESTAMP        NOT NULL,
-    "execution_date"    TIMESTAMP        NOT NULL,
+    "job_id"            VARCHAR(512)     NOT NULL,
+    "config"            VARCHAR(MAX)     NOT NULL,
+    "reference_date"    DATETIME         NOT NULL,
+    "execution_date"    DATETIME         NOT NULL,
     UNIQUE ("job_id", "reference_date")
 );

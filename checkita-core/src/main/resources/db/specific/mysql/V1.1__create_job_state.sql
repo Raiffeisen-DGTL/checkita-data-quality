@@ -1,6 +1,6 @@
-CREATE TABLE "${defaultSchema}"."results_job_config"
+CREATE TABLE "${defaultSchema}"."job_state"
 (
-    "job_id"            TEXT             NOT NULL,
+    "job_id"            VARCHAR(512)     NOT NULL,
     "config"            TEXT             NOT NULL,
     "reference_date"    TIMESTAMP        NOT NULL,
     "execution_date"    TIMESTAMP        NOT NULL,

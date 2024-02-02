@@ -298,17 +298,16 @@ trait DQJob extends Logging {
       metResults.toSeq.flatMap(_._2).flatMap(r => r.finalizeMetricErrors)
     }
 
-  protected def performJobResult(jobConfig: JobConfig)
-                                (implicit settings: AppSettings, jobId: String): Result[Seq[ResultJobConfig]] = {
+  protected def finalizeJobState(jobConfig: JobConfig)
+                                (implicit settings: AppSettings, jobId: String): Result[JobState] = {
 
     val renderOpts = ConfigRenderOptions.defaults().setComments(false).setOriginComments(false).setFormatted(false)
     writeJobConfig(jobConfig) match {
-            case Right(c) => Right(Seq(ResultJobConfig(
+            case Right(c) => Right(JobState(
               jobId,
               c.root().render(renderOpts),
               settings.referenceDateTime.getUtcTS,
               settings.executionDateTime.getUtcTS
-            )
             )
             )
           }
@@ -330,13 +329,13 @@ trait DQJob extends Logging {
   protected def combineResults(stage: String,
                                loadCheckResults: Seq[ResultCheckLoad],
                                checkResults: Result[Seq[ResultCheck]],
-                               jobResult: Result[Seq[ResultJobConfig]],
+                               jobState: Result[JobState],
                                regularMetricResults: Result[Seq[ResultMetricRegular]],
                                composedMetricResults: Result[Seq[ResultMetricComposed]],
                                metricErrors: Result[Seq[ResultMetricErrors]])
                               (implicit settings: AppSettings): Result[ResultSet] =
     liftToResult(loadCheckResults).combineT5(
-      checkResults, jobResult, regularMetricResults, composedMetricResults, metricErrors
+      checkResults, jobState, regularMetricResults, composedMetricResults, metricErrors
     ) {
       case (lcChkRes, chkRes, jobRes, regMetRes, compMetRes, metErrs) =>
         log.info(s"$stage Summarize results...")
@@ -373,7 +372,7 @@ trait DQJob extends Logging {
             saveWithLogs(results.composedMetrics, "composed metrics"),
             saveWithLogs(results.loadChecks, "load checks"),
             saveWithLogs(results.checks, "checks"),
-            saveWithLogs(results.jobConfig, "job config")
+            saveWithLogs(Seq(results.jobConfig), "job state")
           ).reduce((r1, r2) => r1.combine(r2)((_, _) => "Success"))
             .mapLeft(_.map(e => s"$stage $e")) // update error messages with running stage
         case None =>
@@ -447,10 +446,10 @@ trait DQJob extends Logging {
     val regularMetricResults = finalizeRegularMetrics(getStage(storageStage), allMetricCalcResults)
     val composedMetricResults = finalizeComposedMetrics(getStage(storageStage), allMetricCalcResults)
     val metricErrors = finalizeMetricErrors(getStage(storageStage), allMetricCalcResults)
-    val jobResult = performJobResult(jobConfig)
+    val jobState = finalizeJobState(jobConfig)
     // Combine all results:
     val resSet = combineResults(
-      getStage(storageStage), loadCheckResults, checkResults, jobResult, regularMetricResults, composedMetricResults, metricErrors
+      getStage(storageStage), loadCheckResults, checkResults, jobState, regularMetricResults, composedMetricResults, metricErrors
     )
     // Save results to storage
     val resSaveState = migrationState.flatMap(_ => saveResults(getStage(storageStage), resSet))

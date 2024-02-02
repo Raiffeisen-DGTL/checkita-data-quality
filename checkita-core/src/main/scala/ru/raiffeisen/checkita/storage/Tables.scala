@@ -53,17 +53,6 @@ class Tables(val profile: JdbcProfile) {
     def getUniqueCond(r: R): Rep[Boolean] =
       jobId === r.jobId && checkId === r.checkId && referenceDate === r.referenceDate
   }
-
-  sealed abstract class JobResultTable[R <: ResultJobConfig](tag: Tag, schema: Option[String], table: String)
-    extends DQTable[R](tag, schema, table) {
-
-    def config: Rep[String] = column[String]("config")
-    def referenceDate: Rep[Timestamp] = column[Timestamp]("reference_date")
-    def executionDate: Rep[Timestamp] = column[Timestamp]("execution_date")
-
-    def getUniqueCond(r: R): Rep[Boolean] =
-      jobId === r.jobId && referenceDate === r.referenceDate
-  }
   
   class ResultMetricRegularTable(tag: Tag, schema: Option[String]) 
     extends MetricResultTable[ResultMetricRegular](tag, schema, "results_metric_regular") {
@@ -151,15 +140,24 @@ class Tables(val profile: JdbcProfile) {
     ) <> (ResultCheckLoad.tupled, ResultCheckLoad.unapply)
   }
 
-  class ResultJobConfigTable(tag: Tag, schema: Option[String])
-    extends JobResultTable[ResultJobConfig](tag, schema, "results_job_config") {
+  class JobStateTable(tag: Tag, schema: Option[String])
+    extends DQTable[JobState](tag, schema, "job_state") {
 
-    override def * : ProvenShape[ResultJobConfig] = (
+    def config: Rep[String] = column[String]("config")
+
+    def referenceDate: Rep[Timestamp] = column[Timestamp]("reference_date")
+
+    def executionDate: Rep[Timestamp] = column[Timestamp]("execution_date")
+
+    def getUniqueCond(r: JobState): Rep[Boolean] =
+      jobId === r.jobId && referenceDate === r.referenceDate
+
+    def * : ProvenShape[JobState] = (
       jobId,
       config,
       referenceDate,
       executionDate
-    ) <> (ResultJobConfig.tupled, ResultJobConfig.unapply)
+    ) <> (JobState.tupled, JobState.unapply)
   }
     
   object TableImplicits {
@@ -187,11 +185,11 @@ class Tables(val profile: JdbcProfile) {
         TableQuery[ResultCheckLoadTable]((t: Tag) => new ResultCheckLoadTable(t, schema))
     }
 
-    implicit object ResultJobConfigTableOps extends DQTableOps[ResultJobConfig] {
-      type T = ResultJobConfigTable
+    implicit object JobStateTableOps extends DQTableOps[JobState] {
+      type T = JobStateTable
 
-      def getTableQuery(schema: Option[String]): TableQuery[ResultJobConfigTable] =
-        TableQuery[ResultJobConfigTable]((t: Tag) => new ResultJobConfigTable(t, schema))
+      def getTableQuery(schema: Option[String]): TableQuery[JobStateTable] =
+        TableQuery[JobStateTable]((t: Tag) => new JobStateTable(t, schema))
     }
   }
   }
