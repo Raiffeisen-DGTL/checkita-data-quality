@@ -32,7 +32,7 @@ object ResultUtils {
      * @param includeStackTrace Flag indicating whether to include error stack trace into log message
      * @return Result[T] with either result of error log message
      */
-    def toResult(preMsg: String = "", includeStackTrace: Boolean = false): Result[T] =
+    def toResult(preMsg: String = "", includeStackTrace: Boolean = true): Result[T] =
       value match {
         case Success(v) => Right(v)
         case Failure(e) =>

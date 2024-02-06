@@ -100,7 +100,7 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
         from_json(xmlToJson(col(colName).cast(StringType)), schemaGetter("XML").schema).alias(colName)
       case KafkaTopicFormat.Avro =>
         // intentionally use deprecated method to support compatibility with Spark 2.4.x versions.
-        from_avro(col(colName), schemaGetter("AVRO").toAvroSchema.toString).alias(colName)
+        from_avro(col(colName), schemaGetter("AVRO").toAvroSchema).alias(colName)
       case other => throw new IllegalArgumentException(
         s"Wrong kafka topic message format for column '$colName': ${other.toString}"
       )

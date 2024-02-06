@@ -31,7 +31,8 @@ object IO {
   private def write[T](config: T, root: String, confName: String)
                       (implicit cw: ConfigWriter[T]): Result[Config] = 
     Try(cw.to(config).atKey(root)).toResult(
-      preMsg = s"Unable to write Data Quality $confName configuration to TypeSafe Config object with following error:"
+      preMsg = s"Unable to write Data Quality $confName configuration to TypeSafe Config object with following error:",
+      includeStackTrace = false
     )
 
   /**
@@ -63,7 +64,8 @@ object IO {
   private def read[T](input: T, confName: String)
                      (implicit p: ConfigParser[T]): Result[Config] =
     Try(p.parse(input)).toResult(
-      preMsg = s"Unable to read Data Quality $confName configuration into TypeSafe config object due to following error:"
+      preMsg = s"Unable to read Data Quality $confName configuration into TypeSafe config object due to following error:",
+      includeStackTrace = false
     )
 
   /**
