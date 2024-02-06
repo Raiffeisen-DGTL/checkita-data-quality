@@ -1,6 +1,5 @@
 package ru.raiffeisen.checkita.readers
 
-import org.apache.avro.Schema
 import org.apache.avro.Schema.Parser
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.avro.SchemaConverters
@@ -19,15 +18,29 @@ object SchemaReaders {
    * @param id Schema ID
    * @param schema Schema in form of StructType
    * @param columnWidths Sequence of column widths in order (to support fixed-width file reading)
+   * @param rawAvro Raw avro schema representation (string in JSON format).
+   *                In case when Avro schema is read from file, the original schema is stored to
+   *                prevent unnecessary conversions.
    */
-  final case class SourceSchema(id: String, schema: StructType, columnWidths: Seq[Int] = Seq.empty) {
+  final case class SourceSchema(
+                                 id: String,
+                                 schema: StructType,
+                                 columnWidths: Seq[Int] = Seq.empty,
+                                 rawAvro: Option[String] = None
+                               ) {
 
+    // todo: fix decimal type conversion:
+    //       by default spark decimal type is converted to fixed avro type.
+    //       But often decimal type is represented as bytes type in avro schema.
+    //       As conversion is fixed, then rawAvro will become unnecessary and will be removed.
     /**
-     * Converts Spark StructType into Avro schema
+     * Converts Spark StructType into Avro schema rendered as JSON string.
      *
-     * @return Avro schema object
+     * @return Avro schema JSON string
      */
-    def toAvroSchema: Schema = SchemaConverters.toAvroType(schema, nullable = true, recordName = id)
+    def toAvroSchema: String = rawAvro.getOrElse(
+      SchemaConverters.toAvroType(schema, nullable = false, recordName = id).toString
+    )
   }
 
   /**
@@ -166,7 +179,7 @@ object SchemaReaders {
         .dataType
         .asInstanceOf[StructType]
 
-      SourceSchema(config.id.value, sparkSchema)
+      SourceSchema(config.id.value, sparkSchema, rawAvro = Some(avroSchema.toString))
     }
   }
 
