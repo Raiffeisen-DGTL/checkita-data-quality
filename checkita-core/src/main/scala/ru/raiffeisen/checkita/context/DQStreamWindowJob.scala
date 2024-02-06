@@ -63,15 +63,15 @@ final case class DQStreamWindowJob(settings: AppSettings,
   private val bufferStage: String = RunStage.CheckProcessorBuffer.entryName
 
   /**
-   * Returns copy of the application settings object with reference and execution date being
-   * set for the provided window start time.
+   * Returns copy of the application settings object with modified execution and reference dates:
+   *   - reference date is set to the window start time
+   *   - execution date is set to current time (time when windows processing has started)
    *
    * @param windowId Window start time as unix epoch
    * @return Copy of the application settings with updated reference and execution datetime.
    */
   private def copySettings(windowId: Long): AppSettings = settings.copy(
-    executionDateTime = EnrichedDT.fromEpoch(
-      windowId, settings.executionDateTime.dateFormat, settings.executionDateTime.timeZone),
+    executionDateTime = settings.executionDateTime.resetToCurrentTime,
     referenceDateTime = EnrichedDT.fromEpoch(
       windowId, settings.referenceDateTime.dateFormat, settings.referenceDateTime.timeZone)
   )

@@ -71,7 +71,15 @@ case class EnrichedDT(dateFormat: DateFormat, timeZone: ZoneId, dateString: Opti
   def getUtcTsWithOffset(offset: Duration): Timestamp = Timestamp.valueOf(
     zonedDT.minusSeconds(offset.toSeconds).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime
   )
+
+  /**
+   * Returns a new EnrichedDT instance with the same date format and time zone, but with time
+   * being set to current time.
+   * @return New instance of EnrichedDT for current time.
+   */
+  def resetToCurrentTime: EnrichedDT = EnrichedDT(this.dateFormat, this.timeZone)
 }
+
 object EnrichedDT {
   /**
    * Builds EnrichedDT instance from Unix epoch (in seconds)

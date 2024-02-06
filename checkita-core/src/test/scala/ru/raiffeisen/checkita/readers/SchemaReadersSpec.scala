@@ -2,6 +2,7 @@ package ru.raiffeisen.checkita.readers
 
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.auto._
+import org.apache.avro.Schema.Parser
 import org.apache.spark.sql.types._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -10,8 +11,11 @@ import ru.raiffeisen.checkita.Common._
 import ru.raiffeisen.checkita.config.RefinedTypes.ID
 import ru.raiffeisen.checkita.readers.SchemaReaders._
 
+import java.io.File
+import scala.util.Try
+
 class SchemaReadersSpec extends AnyWordSpec with Matchers {
-  
+
   "DelimitedSchemaReader" must {
     "correctly read schema when provided with delimited schema config" in {
       val schema = DelimitedSchemaConfig(ID("schema"), Refined.unsafeApply(Seq(
@@ -74,8 +78,14 @@ class SchemaReadersSpec extends AnyWordSpec with Matchers {
     }
   }
   
-  "AvroSchemaConfig" must {
+  "AvroSchemaReader" must {
     "correctly read schema when provided with avro schema config" in {
+      val fileToString: String => Option[String] = path => Try {
+        val schemaParser = new Parser()
+        val avroSchema = schemaParser.parse(new File(path))
+        avroSchema.toString
+      }.toOption
+
       val schema1Path = getClass.getResource("/test_schema1.avsc").getPath
       val schema2Path = getClass.getResource("/test_schema2.avsc").getPath
       val schema1 = AvroSchemaConfig(ID("schema1"), Refined.unsafeApply(schema1Path))
@@ -85,7 +95,7 @@ class SchemaReadersSpec extends AnyWordSpec with Matchers {
         StructField("column1", StringType, nullable = true),
         StructField("column2", IntegerType, nullable = true),
         StructField("column3", DoubleType, nullable = true)
-      )))
+      )), Seq.empty, fileToString(schema1Path))
 
       val schema2Result = SourceSchema("schema2", StructType(Seq(
         StructField("column1", StringType, nullable = true),
@@ -94,7 +104,7 @@ class SchemaReadersSpec extends AnyWordSpec with Matchers {
           StructField("sub_column2", DoubleType, nullable = false)
         )), nullable = false),
         StructField("column3", DoubleType, nullable = true)
-      )))
+      )), Seq.empty, fileToString(schema2Path))
 
       val schema1Read = AvroSchemaReader.read(schema1)
       val schema2Read = AvroSchemaReader.read(schema2)
