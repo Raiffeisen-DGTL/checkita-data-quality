@@ -21,6 +21,12 @@ object RefinedTypes {
   type FixedShortColumn = String Refined MatchesRegex[W.`"""^[^\\n\\r\\t:]+:\\d+$"""`.T]
   type AccuracyDouble = Double Refined Interval.Closed[W.`0.0`.T, W.`1.0`.T]
   type RegexPattern = String Refined Regex
+
+  /**
+   * Refinement for string holding secret key for sensitive data encryption.
+   * This string should contain at least 32 characters.
+   */
+  type EncryptionKey = String Refined MatchesRegex[W.`"""^.{32}.*$"""`.T]
   
   /**
    * Various refinements for string sequences:

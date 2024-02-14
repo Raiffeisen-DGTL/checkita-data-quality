@@ -3,7 +3,6 @@ package ru.raiffeisen.checkita.context
 import com.typesafe.config.ConfigRenderOptions
 import org.apache.hadoop.fs.FileSystem
 import org.apache.spark.sql.SparkSession
-
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.jobconf.Checks.{CheckConfig, SnapshotCheckConfig, TrendCheckConfig}
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
@@ -21,7 +20,7 @@ import ru.raiffeisen.checkita.targets.TargetProcessors._
 import ru.raiffeisen.checkita.storage.Models._
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
-import ru.raiffeisen.checkita.config.IO.writeJobConfig
+import ru.raiffeisen.checkita.config.IO.{writeEncryptedJobConfig, writeJobConfig}
 import ru.raiffeisen.checkita.config.jobconf.JobConfig
 
 import scala.reflect.runtime.universe.TypeTag
@@ -298,18 +297,34 @@ trait DQJob extends Logging {
       metResults.toSeq.flatMap(_._2).flatMap(r => r.finalizeMetricErrors)
     }
 
+  /**
+   * Finalizes job state: select whether to encrypt or not and converts to the final representation
+   * ready for writing into storage DB or sending via targets.
+   *
+   * @param jobConfig   Parsed Data Quality job configuration
+   * @param settings    Implicit application settings object
+   * @param jobId       Current Job ID
+   * @return Either a finalized of job state.
+   */
   protected def finalizeJobState(jobConfig: JobConfig)
                                 (implicit settings: AppSettings, jobId: String): Result[JobState] = {
 
+    val writeFunc = settings.configEncryptor match {
+      case Some(e) =>
+        writeEncryptedJobConfig(jobConfig)(e)
+      case None =>
+        writeJobConfig(jobConfig)
+    }
+
     val renderOpts = ConfigRenderOptions.defaults().setComments(false).setOriginComments(false).setFormatted(false)
-    writeJobConfig(jobConfig) match {
-            case Right(c) => Right(JobState(
-              jobId,
-              c.root().render(renderOpts),
-              settings.referenceDateTime.getUtcTS,
-              settings.executionDateTime.getUtcTS
-            )
-            )
+    writeFunc match {
+      case Right(c) => Right(JobState(
+        jobId,
+        c.root().render(renderOpts),
+        settings.referenceDateTime.getUtcTS,
+        settings.executionDateTime.getUtcTS
+      )
+      )
           }
   }
 
