@@ -8,6 +8,7 @@ import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.io.{File, InputStreamReader, SequenceInputStream, Serializable}
 import java.nio.charset.StandardCharsets
+import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe.{MethodSymbol, TypeTag, typeOf}
 import scala.util.Try
 
@@ -53,6 +54,26 @@ object Common {
       case (v: DateFormat, k) => k -> v.pattern
       case (v, k) => k -> v
     }.toMap
+  }
+
+  /**
+   * Retrieves DQ variables from environment, combines them with explicitly provided variables
+   * and then converts them into a string that will be prepended to a configuration prior reading.
+   *
+   * @param extraVariables Explicitly provided extra variables.
+   * @return String with variables to be prepended to configuration.
+   *
+   * @note Variables are collected from system and java-runtime environment and retained only those that are related to
+   *       Checkita Data Quality Framework: following regex is used to find such variables: `^(?i)(DQ)[a-z0-9_-]+$`.
+   *       These variables are combined with the ones provided in `extraVariables` argument and further used during
+   *       configuration files parsing.
+   */
+  def getPrependVars(extraVariables: Map[String, String]): String = {
+    val variablesRegex = "^(?i)(DQ)[a-z0-9_-]+$" // system variables must match the given regex.
+    val systemVariables = System.getProperties.asScala.filterKeys(_ matches variablesRegex)
+    (systemVariables ++ extraVariables).map {
+      case (k, v) => k + ": \"" + v + "\""
+    }.mkString("", "\n", "\n")
   }
 
   /**

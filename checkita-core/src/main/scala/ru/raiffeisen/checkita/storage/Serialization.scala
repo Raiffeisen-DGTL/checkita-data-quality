@@ -2,7 +2,6 @@ package ru.raiffeisen.checkita.storage
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
-import org.json4s
 import org.json4s._
 import org.json4s.jackson.JsonMethods.parse
 import org.json4s.jackson.Serialization.{write, writePretty}

@@ -16,7 +16,7 @@ import scala.util.Try
  * @param dateString Datetime string
  */
 case class EnrichedDT(dateFormat: DateFormat, timeZone: ZoneId, dateString: Option[String] = None) {
-  
+
   /** Formatter with required time zone */
   private val formatter = dateFormat.formatter.withZone(timeZone)
 
@@ -32,7 +32,7 @@ case class EnrichedDT(dateFormat: DateFormat, timeZone: ZoneId, dateString: Opti
    *   - try to get LocalTime
    * First one to succeed will be returned. If none of these attempts succeeds then exception will be thrown.  
    */
-  private val zonedDT = if (dateString.isEmpty) ZonedDateTime.now(timeZone) else {
+  private val zonedDT: ZonedDateTime = if (dateString.isEmpty) ZonedDateTime.now(timeZone) else {
     val accessor = formatter.parse(dateString.get)
     val tryDateTime = Try(LocalDateTime.from(accessor).atZone(timeZone))
     val tryDate = Try(LocalDate.from(accessor).atStartOfDay(timeZone))
@@ -61,6 +61,18 @@ case class EnrichedDT(dateFormat: DateFormat, timeZone: ZoneId, dateString: Opti
    */
   def getUtcTS: Timestamp = Timestamp.valueOf(
     zonedDT.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime
+  )
+
+  /**
+   * Creates new EnrichedDT instance by offsetting current one by offset duration.
+   * Maximum offset precision is seconds.
+   * @param offset Offset duration (backwards)
+   * @return New EnrichedDT instance with offset
+   */
+  def withOffset(offset: Duration): EnrichedDT = EnrichedDT(
+    this.dateFormat,
+    this.timeZone,
+    Some(this.zonedDT.minusSeconds(offset.toSeconds).format(formatter))
   )
 
   /**
