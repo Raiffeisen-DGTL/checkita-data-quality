@@ -12,6 +12,7 @@ import java.sql.Timestamp
 object Models {
 
   type UniqueResult = String :: String :: Timestamp :: HNil
+  type JobUniqueResult = String :: Timestamp :: HNil
 
   sealed abstract class DQEntity extends Product {
     val jobId: String // mandatory for all entities
@@ -104,6 +105,16 @@ object Models {
                                    executionDate: Timestamp) extends CheckResult {
     val entityType: String = "loadCheckResult"
   }
+
+  final case class JobState(jobId: String,
+                            config: String,
+                            referenceDate: Timestamp,
+                            executionDate: Timestamp
+                           ) extends DQEntity {
+    val uniqueFields: JobUniqueResult = jobId :: referenceDate :: HNil
+    val uniqueFieldNames: Seq[String] = Seq("jobId", "referenceDate").map(camelToSnakeCase)
+    override val entityType: String = "jobState"
+  }
   
   
   // !!! won't be stored in Storage DB. !!!
@@ -158,6 +169,7 @@ object Models {
                               checks: Seq[ResultCheck],
                               loadChecks: Seq[ResultCheckLoad],
                               metricErrors: Seq[ResultMetricErrors],
+                              jobConfig: JobState,
                               summaryMetrics: ResultSummaryMetrics
                             )
   
@@ -179,6 +191,7 @@ object Models {
               composedMetrics: Seq[ResultMetricComposed],
               checks: Seq[ResultCheck],
               loadChecks: Seq[ResultCheckLoad],
+              jobConfig: JobState,
               metricErrors: Seq[ResultMetricErrors]
              )(implicit jobId: String, settings: AppSettings): ResultSet = {
       val failedChecks = checks.filter(_.status != CalculatorStatus.Success.toString).map(_.checkId)
@@ -201,7 +214,7 @@ object Models {
         failedChecks,
         failedLoadChecks
       )
-      ResultSet(regularMetrics, composedMetrics, checks, loadChecks, metricErrors, summary)
+      ResultSet(regularMetrics, composedMetrics, checks, loadChecks, metricErrors, jobConfig, summary)
     }
   }
 }

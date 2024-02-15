@@ -1,5 +1,6 @@
 package ru.raiffeisen.checkita.utils
 
+import java.io.{PrintWriter, StringWriter}
 import scala.util.{Failure, Success, Try}
 
 object ResultUtils {
@@ -21,14 +22,28 @@ object ResultUtils {
   
   /**
    * Implicit conversion for Try[T] with extra methods
+   *
    * @param value Try value
    * @tparam T Type of Try value
    */
   implicit class TryOps[T](value: Try[T]) {
 
     /**
+     * Function to print stack trace to string maintaining its formatting.
+     *
+     * @param e Throwable
+     * @return Stack trace string
+     */
+    private def getStackTraceAsString(e: Throwable) = {
+      val sw = new StringWriter
+      e.printStackTrace(new PrintWriter(sw))
+      sw.toString
+    }
+
+    /**
      * Converts Try[T] into a Result[T]
-     * @param preMsg Additional descriptive message added to error message
+     *
+     * @param preMsg            Additional descriptive message added to error message
      * @param includeStackTrace Flag indicating whether to include error stack trace into log message
      * @return Result[T] with either result of error log message
      */
@@ -36,8 +51,7 @@ object ResultUtils {
       value match {
         case Success(v) => Right(v)
         case Failure(e) =>
-          val msg = preMsg + "\n" + e.getMessage +
-            (if (includeStackTrace) e.getStackTrace.mkString("\n", "\n", "") else "")
+          val msg = if (includeStackTrace) preMsg + "\n" + getStackTraceAsString(e) else preMsg + "\n" + e.getMessage
           Left(Vector(msg))
       }
   }
@@ -167,6 +181,13 @@ object ResultUtils {
       val g1 = (v1: R1, v2: R2, v3: R3, v4: R4) => (v1, v2, v3, v4)
       val g2: (T, (R1, R2, R3, R4)) => S = (v, t) => f(v, t._1, t._2, t._3, t._4)
       value.combine(r1.combineT3(r2, r3, r4)(g1))(g2)
+    }
+
+    def combineT5[R1, R2, R3, R4, R5, S](r1: Result[R1], r2: Result[R2], r3: Result[R3], r4: Result[R4], r5: Result[R5])
+                                        (f: (T, R1, R2, R3, R4, R5) => S): Result[S] = {
+      val g1 = (v1: R1, v2: R2, v3: R3, v4: R4, v5: R5) => (v1, v2, v3, v4, v5)
+      val g2: (T, (R1, R2, R3, R4, R5)) => S = (v, t) => f(v, t._1, t._2, t._3, t._4, t._5)
+      value.combine(r1.combineT4(r2, r3, r4, r5)(g1))(g2)
     }
   }
 }

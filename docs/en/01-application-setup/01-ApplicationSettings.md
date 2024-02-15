@@ -122,6 +122,19 @@ It is also possible to provide list of default Spark configuration parameters us
 These parameters should be provided as `defaultSparkOptions` list where each parameter is a string in format:
 `spark.param.name=spark.param.value`.
 
+## Encryption
+
+When `storage` section is defined, it is also recommended to use `encryption` section in order to protect sensitive 
+information in job config. This should be done by defining the parameters within the application configuration file:
+
+* `secret` -  Secret string used to encrypt/decrypt sensitive fields. This string should contain at least 32 characters. 
+*Required*. 
+* `keyFields` - List of key fields used to identify fields that requires encryption/decryption. 
+*Optional, default is `[password, secret]`*.
+
+If `encryption` section is missing then job config will be saved in database as is.
+
+
 ## Example of Application Configuration File
 
 Hocon configuration format supports variable substitution and Checkita Data Quality framework has a mechanism to 
@@ -173,6 +186,11 @@ appConfig: {
   mattermost: {
     host: "https://some-team.mattermost.com"
     token: ${dqMattermostToken}
+  }
+
+  encryption: {
+    secret: "secretmustbeatleastthirtytwocharacters"
+    keyFields: ["password", "username", "url"]
   }
 }
 ```

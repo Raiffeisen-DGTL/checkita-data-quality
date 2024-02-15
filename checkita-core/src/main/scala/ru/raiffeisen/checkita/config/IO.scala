@@ -54,6 +54,18 @@ object IO {
     write[JobConfig](config, "jobConfig", "job")
 
   /**
+   * Safely writes Data Quality Job configuration into TypeSafe Config and then
+   * encrypts all sensitive fields (including spark parameters).
+   *
+   * @param config    Instance of Data Quality job configuration
+   * @param encryptor Implicit configuration encryptor
+   * @return Either TypeSafe Config object with encrypted Data Quality job configuration
+   *         or a list with error occurred during write or encryption process.
+   */
+  def writeEncryptedJobConfig(config: JobConfig)(implicit encryptor: ConfigEncryptor): Result[Config] =
+    writeJobConfig(config).flatMap(encryptor.encryptConfig)
+
+  /**
    * Reads Data Quality configuration into TypeSafe config object.
    * @param input Data Quality configuration input
    * @param confName Data Quality configuration name (either application or job)
@@ -153,6 +165,32 @@ object IO {
    */
   def readJobConfig[T](input: T)(implicit parser: ConfigParser[T]): Result[JobConfig] =
     read[T](input, "job")
+      .flatMap(parse[JobConfig](_, "job", "jobConfig"))
+      .flatMap(runPostValidation)
+
+  /**
+   * Reads Encrypted Data Quality job configuration.
+   * Job configuration reading includes three stages:
+   *   - Reading input into TypeSafe Config object
+   *   - Decryption of previously encrypted sensitive fields.
+   *   - Parsing config object into instance of Data Quality job configuration class
+   *   - Running post validations for Data Quality job configuration
+   *     Validations at each stage are chained i.e. if the above stage fails the next stages
+   *     are not evaluated. This is intentional behaviour: there is no point in parsing config object if
+   *     it wasn't successfully read from input at the first stage. And, again, there is no sense in running
+   *     post validations if Data Quality job configuration wasn't parsed successfully as the whole point of post validations
+   *     is to check cross reference validity of different objects in Data Quality job configuration.
+   *
+   * @param input     Job configuration input
+   * @param parser    Implicit TypeSafe config parser for input of type T
+   * @param encryptor Implicit configuration encryptor
+   * @tparam T Type of input
+   * @return Either a valid job configuration or a list of reading or validation errors
+   */
+  def readEncryptedJobConfig[T](input: T)(implicit parser: ConfigParser[T],
+                                          encryptor: ConfigEncryptor): Result[JobConfig] =
+    read[T](input, "job")
+      .flatMap(encryptor.decryptConfig)
       .flatMap(parse[JobConfig](_, "job", "jobConfig"))
       .flatMap(runPostValidation)
 }

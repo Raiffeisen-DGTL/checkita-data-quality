@@ -1,8 +1,10 @@
 package ru.raiffeisen.checkita.context
 
+import com.typesafe.config.ConfigRenderOptions
 import org.apache.hadoop.fs.FileSystem
 import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.AppSettings
+import ru.raiffeisen.checkita.config.ConfigEncryptor
 import ru.raiffeisen.checkita.config.jobconf.Checks.{CheckConfig, SnapshotCheckConfig, TrendCheckConfig}
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
 import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig}
@@ -19,6 +21,8 @@ import ru.raiffeisen.checkita.targets.TargetProcessors._
 import ru.raiffeisen.checkita.storage.Models._
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
+import ru.raiffeisen.checkita.config.IO.{writeEncryptedJobConfig, writeJobConfig}
+import ru.raiffeisen.checkita.config.jobconf.JobConfig
 
 import scala.reflect.runtime.universe.TypeTag
 import scala.util.Try
@@ -28,6 +32,7 @@ import scala.util.Try
  */
 trait DQJob extends Logging {
 
+  val jobConfig: JobConfig
   val sources: Seq[Source]
   val metrics: Seq[RegularMetricConfig]
   val composedMetrics: Seq[ComposedMetricConfig]
@@ -294,6 +299,34 @@ trait DQJob extends Logging {
     }
 
   /**
+   * Finalizes job state: select whether to encrypt or not and converts to the final representation
+   * ready for writing into storage DB or sending via targets.
+   *
+   * @param jobConfig   Parsed Data Quality job configuration
+   * @param settings    Implicit application settings object
+   * @param jobId       Current Job ID
+   * @return Either a finalized of job state.
+   */
+  protected def finalizeJobState(jobConfig: JobConfig)
+                                (implicit settings: AppSettings, jobId: String): Result[JobState] = {
+
+    val renderOpts = ConfigRenderOptions.defaults().setComments(false).setOriginComments(false).setFormatted(false)
+
+    val writeFunc = (jc: JobConfig) => settings.configEncryptor match {
+      case Some(e) => writeEncryptedJobConfig(jc)(new ConfigEncryptor(e.secretKey, e.fields))
+      case None => writeJobConfig(jc)
+    }
+
+    writeFunc(jobConfig).map(jc => JobState(
+      jobId,
+      jc.root().render(renderOpts),
+      settings.referenceDateTime.getUtcTS,
+      settings.executionDateTime.getUtcTS
+    ))
+  }
+
+
+  /**
    * Combines all results into a final result set.
    *
    * @param stage                 Stage indication used for logging.
@@ -308,16 +341,17 @@ trait DQJob extends Logging {
   protected def combineResults(stage: String,
                                loadCheckResults: Seq[ResultCheckLoad],
                                checkResults: Result[Seq[ResultCheck]],
+                               jobState: Result[JobState],
                                regularMetricResults: Result[Seq[ResultMetricRegular]],
                                composedMetricResults: Result[Seq[ResultMetricComposed]],
                                metricErrors: Result[Seq[ResultMetricErrors]])
                               (implicit settings: AppSettings): Result[ResultSet] =
-    liftToResult(loadCheckResults).combineT4(
-      checkResults, regularMetricResults, composedMetricResults, metricErrors
+    liftToResult(loadCheckResults).combineT5(
+      checkResults, jobState, regularMetricResults, composedMetricResults, metricErrors
     ) {
-      case (lcChkRes, chkRes, regMetRes, compMetRes, metErrs) =>
+      case (lcChkRes, chkRes, jobRes, regMetRes, compMetRes, metErrs) =>
         log.info(s"$stage Summarize results...")
-        ResultSet(sources.size, regMetRes, compMetRes, chkRes, lcChkRes, metErrs)
+        ResultSet(sources.size, regMetRes, compMetRes, chkRes, lcChkRes, jobRes, metErrs)
     }
 
   /**
@@ -349,7 +383,8 @@ trait DQJob extends Logging {
             saveWithLogs(results.regularMetrics, "regular metrics"),
             saveWithLogs(results.composedMetrics, "composed metrics"),
             saveWithLogs(results.loadChecks, "load checks"),
-            saveWithLogs(results.checks, "checks")
+            saveWithLogs(results.checks, "checks"),
+            saveWithLogs(Seq(results.jobConfig), "job state")
           ).reduce((r1, r2) => r1.combine(r2)((_, _) => "Success"))
             .mapLeft(_.map(e => s"$stage $e")) // update error messages with running stage
         case None =>
@@ -423,9 +458,10 @@ trait DQJob extends Logging {
     val regularMetricResults = finalizeRegularMetrics(getStage(storageStage), allMetricCalcResults)
     val composedMetricResults = finalizeComposedMetrics(getStage(storageStage), allMetricCalcResults)
     val metricErrors = finalizeMetricErrors(getStage(storageStage), allMetricCalcResults)
+    val jobState = finalizeJobState(jobConfig)
     // Combine all results:
     val resSet = combineResults(
-      getStage(storageStage), loadCheckResults, checkResults, regularMetricResults, composedMetricResults, metricErrors
+      getStage(storageStage), loadCheckResults, checkResults, jobState, regularMetricResults, composedMetricResults, metricErrors
     )
     // Save results to storage
     val resSaveState = migrationState.flatMap(_ => saveResults(getStage(storageStage), resSet))

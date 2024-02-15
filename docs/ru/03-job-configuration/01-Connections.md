@@ -93,12 +93,12 @@
 ```hocon
 jobConfig: {
   connections: {
-    postgresql: [
-      {id: "postgre_db1", url: "postgre1.db.com:5432/public", user: "dq-user", password: "dq-password"}
+    postgres: [
+      {id: "postgre_db1", url: "postgre1.db.com:5432/public", username: "dq-user", password: "dq-password"}
       {
         id: "postgre_db2",
         url: "postgre2.db.com:5432/public",
-        user: "dq-user",
+        username: "dq-user",
         password: "dq-password",
         schema: "dataquality"
       }

@@ -60,11 +60,9 @@ trait KafkaWriter[T <: KafkaOutputConfig] extends OutputWriter[Seq[String], T] {
       s"Kafka '$targetType' output configuration refers to not a Kafka connection.")
 
     val data = if (settings.aggregatedKafkaOutput) {
-      val aggregated = result.mkString("[\n", ",\n", "\n]")
-      Seq(keyGenerator(aggregated, jobId, targetType) -> aggregated)
-    } else {
-      result.map(m => keyGenerator(m, jobId, extractEntity(m)) -> m)
-    }
+      val aggregated = if (result.nonEmpty) Seq(result.mkString("[\n", ",\n", "\n]")) else Seq.empty[String]
+      aggregated.map(m => keyGenerator(m, jobId, targetType) -> m)
+    } else result.map(m => keyGenerator(m, jobId, extractEntity(m)) -> m)
     (conn, data)
   }.toResult().flatMap {
     case (conn, data) => conn.asInstanceOf[KafkaConnection].writeData(KafkaOutput(

@@ -1,5 +1,6 @@
 package ru.raiffeisen.checkita.storage
 
+import com.typesafe.config.Config
 import ru.raiffeisen.checkita.storage.Models._
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
@@ -138,6 +139,26 @@ class Tables(val profile: JdbcProfile) {
       executionDate
     ) <> (ResultCheckLoad.tupled, ResultCheckLoad.unapply)
   }
+
+  class JobStateTable(tag: Tag, schema: Option[String])
+    extends DQTable[JobState](tag, schema, "job_state") {
+
+    def config: Rep[String] = column[String]("config")
+
+    def referenceDate: Rep[Timestamp] = column[Timestamp]("reference_date")
+
+    def executionDate: Rep[Timestamp] = column[Timestamp]("execution_date")
+
+    def getUniqueCond(r: JobState): Rep[Boolean] =
+      jobId === r.jobId && referenceDate === r.referenceDate
+
+    def * : ProvenShape[JobState] = (
+      jobId,
+      config,
+      referenceDate,
+      executionDate
+    ) <> (JobState.tupled, JobState.unapply)
+  }
     
   object TableImplicits {
     implicit object ResultMetricColumnarTableOps extends DQTableOps[ResultMetricRegular] {
@@ -163,5 +184,12 @@ class Tables(val profile: JdbcProfile) {
       def getTableQuery(schema: Option[String]): TableQuery[ResultCheckLoadTable] =
         TableQuery[ResultCheckLoadTable]((t: Tag) => new ResultCheckLoadTable(t, schema))
     }
+
+    implicit object JobStateTableOps extends DQTableOps[JobState] {
+      type T = JobStateTable
+
+      def getTableQuery(schema: Option[String]): TableQuery[JobStateTable] =
+        TableQuery[JobStateTable]((t: Tag) => new JobStateTable(t, schema))
+    }
   }
-}
+  }

@@ -4,7 +4,7 @@ import org.apache.logging.log4j.Level
 import org.apache.spark.SparkConf
 import ru.raiffeisen.checkita.config.IO.readAppConfig
 import ru.raiffeisen.checkita.config.Parsers._
-import ru.raiffeisen.checkita.config.appconf.{AppConfig, EmailConfig, MattermostConfig, StorageConfig, StreamConfig}
+import ru.raiffeisen.checkita.config.appconf.{AppConfig, Encryption, EmailConfig, MattermostConfig, StorageConfig, StreamConfig}
 import ru.raiffeisen.checkita.utils.Common.{paramsSeqToMap, prepareConfig}
 import ru.raiffeisen.checkita.utils.ResultUtils._
 import ru.raiffeisen.checkita.utils.EnrichedDT
@@ -14,6 +14,7 @@ import scala.util.Try
 
 /**
  * Application settings
+ *
  * @param executionDateTime Job execution date-time (actual time when job is started)
  * @param referenceDateTime Reference date-time (for which the job is performed)
  * @param allowNotifications Enables notifications to be sent from DQ application
@@ -28,6 +29,7 @@ import scala.util.Try
  * @param emailConfig Configuration of connection to SMTP server
  * @param mattermostConfig Configuration of connection to Mattermost API
  * @param streamConfig Streaming settings (used in streaming applications only)
+ * @param configEncryptor Encryption settings
  * @param sparkConf Spark configuration parameters
  * @param isLocal Boolean flag indicating whether spark application must be run locally.
  * @param isShared Boolean flag indicating whether spark application running within shared spark context.
@@ -49,6 +51,7 @@ final case class AppSettings(
                               emailConfig: Option[EmailConfig],
                               mattermostConfig: Option[MattermostConfig],
                               streamConfig: StreamConfig,
+                              configEncryptor: Option[Encryption],
                               sparkConf: SparkConf,
                               isLocal: Boolean,
                               isShared: Boolean,
@@ -127,6 +130,7 @@ object AppSettings {
         appConfig.email,
         appConfig.mattermost,
         appConfig.streaming,
+        appConfig.encryption,
         conf,
         isLocal,
         isShared,
@@ -169,7 +173,7 @@ object AppSettings {
    * @return Application settings object
    */
   def apply(): AppSettings = {
-    val defaultAppConf = AppConfig(None, None, None, None)
+    val defaultAppConf = AppConfig(None, None, None, None, None)
     val execDateTime = EnrichedDT(
       defaultAppConf.dateTimeOptions.executionDateFormat, defaultAppConf.dateTimeOptions.timeZone
     )
@@ -194,6 +198,7 @@ object AppSettings {
       defaultAppConf.email,
       defaultAppConf.mattermost,
       defaultAppConf.streaming,
+      defaultAppConf.encryption,
       new SparkConf(),
       isLocal = false,
       isShared = false,

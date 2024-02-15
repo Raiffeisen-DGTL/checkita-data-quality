@@ -51,6 +51,7 @@ There are for types of result are written in storage:
 * composed metrics results
 * load checks results
 * checks results
+* job state
 
 Schemas for all results types are given below.
 
@@ -134,6 +135,18 @@ only one set of results per Data Quality job and given reference date.
 | upper_bound        | DOUBLE      |            |
 | status             | STRING      | NOT NULL   |
 | message            | STRING      |            |
+| reference_date     | TIMESTAMP   | NOT NULL   |
+| execution_date     | TIMESTAMP   | NOT NULL   |
+
+### Job State Schema
+
+* Primary key: `(job_id, reference_date)`
+* `config` is a JSON string.
+
+| Column Name        | Column Type | Constraint |
+|--------------------|-------------|------------|
+| job_id             | STRING      | NOT NULL   |
+| config             | STRING      | NOT NULL   |
 | reference_date     | TIMESTAMP   | NOT NULL   |
 | execution_date     | TIMESTAMP   | NOT NULL   |
 
@@ -227,4 +240,17 @@ COMMENT 'Data Quality Checks Results'
 PARTITIONED BY (job_id STRING)
 STORED AS PARQUET
 LOCATION '${schema_dir}/results_check';
+
+DROP TABLE IF EXISTS ${schema_name}.job_state;
+CREATE EXTERNAL TABLE ${schema_name}.job_state
+(
+    job_id            STRING COMMENT '',
+    config            STRING COMMENT '',
+    reference_date    TIMESTAMP COMMENT '',
+    execution_date    TIMESTAMP COMMENT ''
+)
+    COMMENT 'Data Quality Job State'
+    PARTITIONED BY (job_id STRING)
+    STORED AS PARQUET
+    LOCATION '${schema_dir}/job_state';
 ```
