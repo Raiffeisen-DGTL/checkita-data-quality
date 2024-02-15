@@ -4,6 +4,7 @@ import com.typesafe.config.ConfigRenderOptions
 import org.apache.hadoop.fs.FileSystem
 import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.AppSettings
+import ru.raiffeisen.checkita.config.ConfigEncryptor
 import ru.raiffeisen.checkita.config.jobconf.Checks.{CheckConfig, SnapshotCheckConfig, TrendCheckConfig}
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
 import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig}
@@ -309,23 +310,19 @@ trait DQJob extends Logging {
   protected def finalizeJobState(jobConfig: JobConfig)
                                 (implicit settings: AppSettings, jobId: String): Result[JobState] = {
 
-    val writeFunc = settings.configEncryptor match {
-      case Some(e) =>
-        writeEncryptedJobConfig(jobConfig)(e)
-      case None =>
-        writeJobConfig(jobConfig)
+    val renderOpts = ConfigRenderOptions.defaults().setComments(false).setOriginComments(false).setFormatted(false)
+
+    val writeFunc = (jc: JobConfig) => settings.configEncryptor match {
+      case Some(e) => writeEncryptedJobConfig(jc)(new ConfigEncryptor(e.secretKey, e.fields))
+      case None => writeJobConfig(jc)
     }
 
-    val renderOpts = ConfigRenderOptions.defaults().setComments(false).setOriginComments(false).setFormatted(false)
-    writeFunc match {
-      case Right(c) => Right(JobState(
-        jobId,
-        c.root().render(renderOpts),
-        settings.referenceDateTime.getUtcTS,
-        settings.executionDateTime.getUtcTS
-      )
-      )
-          }
+    writeFunc(jobConfig).map(jc => JobState(
+      jobId,
+      jc.root().render(renderOpts),
+      settings.referenceDateTime.getUtcTS,
+      settings.executionDateTime.getUtcTS
+    ))
   }
 
 

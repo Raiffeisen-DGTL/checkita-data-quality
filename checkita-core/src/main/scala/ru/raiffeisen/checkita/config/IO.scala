@@ -4,7 +4,7 @@ import com.typesafe.config.Config
 import pureconfig.generic.auto.{exportReader, exportWriter}
 import pureconfig.{ConfigReader, ConfigSource, ConfigWriter}
 import ru.raiffeisen.checkita.config.Parsers._
-import ru.raiffeisen.checkita.config.appconf.{AppConfig, ConfigEncryptor}
+import ru.raiffeisen.checkita.config.appconf.AppConfig
 import ru.raiffeisen.checkita.config.jobconf.JobConfig
 import ru.raiffeisen.checkita.config.validation.PostValidation.allPostValidations
 import ru.raiffeisen.checkita.utils.ResultUtils._

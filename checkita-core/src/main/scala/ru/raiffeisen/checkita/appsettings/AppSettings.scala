@@ -4,7 +4,7 @@ import org.apache.logging.log4j.Level
 import org.apache.spark.SparkConf
 import ru.raiffeisen.checkita.config.IO.readAppConfig
 import ru.raiffeisen.checkita.config.Parsers._
-import ru.raiffeisen.checkita.config.appconf.{AppConfig, ConfigEncryptor, EmailConfig, MattermostConfig, StorageConfig, StreamConfig}
+import ru.raiffeisen.checkita.config.appconf.{AppConfig, Encryption, EmailConfig, MattermostConfig, StorageConfig, StreamConfig}
 import ru.raiffeisen.checkita.utils.Common.{paramsSeqToMap, prepareConfig}
 import ru.raiffeisen.checkita.utils.ResultUtils._
 import ru.raiffeisen.checkita.utils.EnrichedDT
@@ -51,7 +51,7 @@ final case class AppSettings(
                               emailConfig: Option[EmailConfig],
                               mattermostConfig: Option[MattermostConfig],
                               streamConfig: StreamConfig,
-                              configEncryptor: Option[ConfigEncryptor],
+                              configEncryptor: Option[Encryption],
                               sparkConf: SparkConf,
                               isLocal: Boolean,
                               isShared: Boolean,

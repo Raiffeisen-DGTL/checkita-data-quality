@@ -20,7 +20,7 @@ final case class AppConfig(
                             storage: Option[StorageConfig],
                             email: Option[EmailConfig],
                             mattermost: Option[MattermostConfig],
-                            encryption: Option[ConfigEncryptor],
+                            encryption: Option[Encryption],
                             streaming: StreamConfig = StreamConfig(),
                             dateTimeOptions: DateTimeConfig = DateTimeConfig(),
                             enablers: Enablers = Enablers(),

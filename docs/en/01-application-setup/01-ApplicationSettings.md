@@ -75,7 +75,7 @@ Parameters for connecting to Data Quality results storage are defined in `storag
 For more information on results storage refer to [Data Quality Results Storage](03-ResultsStorage.md) chapter
 of the documentation.
 
-This, connection to storage is configured using following parameters:
+Thus, connection to storage is configured using following parameters:
 
 * `dbType` - Type of database used to store Data Quality results. *Required*.
 * `url` - Database connection URL (without protocol identifiers). *Required*.
@@ -132,7 +132,7 @@ information in job config. This should be done by defining the parameters within
 * `keyFields` - List of key fields used to identify fields that requires encryption/decryption. 
 *Optional, default is `[password, secret]`*.
 
-If `encryption` section is missing then job config will be saved in database as is
+If `encryption` section is missing then job config will be saved in database as is.
 
 
 ## Example of Application Configuration File

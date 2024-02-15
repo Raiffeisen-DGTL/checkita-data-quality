@@ -1,19 +1,18 @@
-package ru.raiffeisen.checkita.config.appconf
+package ru.raiffeisen.checkita.config
+
+import com.typesafe.config._
+import eu.timepit.refined.api.RefType
+import ru.raiffeisen.checkita.config.RefinedTypes.{EncryptionKey, SparkParam}
+import ru.raiffeisen.checkita.utils.ResultUtils.{Result, TryOps}
 
 import java.nio.charset.StandardCharsets
 import java.security.SecureRandom
 import java.util.Base64
 import javax.crypto.spec.{IvParameterSpec, PBEKeySpec, SecretKeySpec}
 import javax.crypto.{Cipher, SecretKeyFactory}
-
 import scala.collection.JavaConverters._
 import scala.util.Try
 
-import com.typesafe.config._
-import eu.timepit.refined.api.RefType
-
-import ru.raiffeisen.checkita.config.RefinedTypes.{EncryptionKey, SparkParam}
-import ru.raiffeisen.checkita.utils.ResultUtils.{Result, TryOps}
 
 /**
  * Class that holds methods to encrypt and decrypt certain fields in configuration.
@@ -24,7 +23,7 @@ import ru.raiffeisen.checkita.utils.ResultUtils.{Result, TryOps}
  * @param keyFields List of key fields used to identify fields that requires encryption/decryption.
  *                  If field name contains some of these fields then it will be subjected to encryption/decryption.
  */
-final case class ConfigEncryptor(secret: EncryptionKey, keyFields: Seq[String] = Seq("password", "secret")) {
+class ConfigEncryptor(secret: EncryptionKey, keyFields: Seq[String] = Seq("password", "secret")) {
 
   private val algorithm = "AES"
   private val cipher = "AES/CBC/PKCS5Padding"
