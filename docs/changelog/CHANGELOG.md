@@ -1,3 +1,18 @@
+# [1.2.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.1.1...v1.2.0) (2024-2-16)
+
+
+### Bug Fixes
+
+* docs update (describe new type of conn) and minor fixes ([#23](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/23)) ([c6abb81](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/c6abb811159df60499516594dde4900fd8a4ca1a))
+* minor code fixes ([#25](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/25)) ([688929d](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/688929d3e8e41ff14d51d619d1acb3ba1990faa3))
+
+
+### Features
+
+* added ClickHouse connection ([#22](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/22)) ([d8add79](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/d8add795b47f126bbd707a6d9d6011c16dfa4caf))
+* added Greenplum connection  ([#21](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/21)) ([5756eff](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/5756eff0d7803599129cb73e176bc6f8861a2df1))
+* new entity in storage db - job config state ([#24](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/24)) ([fbe650c](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/fbe650c6cf79dc0e8991c8e88111ec482916b8ee))
+
 ## [1.1.1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.1.0...v1.1.1) (2023-12-20)
 
 
