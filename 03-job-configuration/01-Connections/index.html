@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.2">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.9">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.f2e4d321.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -429,14 +429,12 @@
       
     
     
-    
-    
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    
+    <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
@@ -455,7 +453,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -565,14 +563,12 @@
       
     
     
-    
-    
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    
+    <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
@@ -591,7 +587,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -759,14 +755,15 @@
       
     
     
-    
-    
+      
+        
+        
       
       
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
@@ -907,9 +904,27 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#clickhouse-connection-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      ClickHouse Connection Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kafka-connection-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       Kafka Connection Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#greenplum-connection-configuration-via-pivotal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Greenplum Connection Configuration (via pivotal)
     </span>
   </a>
   
@@ -1210,14 +1225,12 @@
       
     
     
-    
-    
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    
+    <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
@@ -1236,7 +1249,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -1351,12 +1364,14 @@ systems are supported:</p>
 <li>MySQL</li>
 <li>MS SQL</li>
 <li>H2</li>
+<li>ClickHouse</li>
 </ul>
 </li>
 <li>Connection to message queues:<ul>
 <li>Kafka</li>
 </ul>
 </li>
+<li>Connection to Greenoplum via pivotal connector</li>
 </ul>
 <p>All connections must have and <code>id</code> to uniquely identify its configuration and also may have an optional list of
 additional  Spark parameters can be specified in field <code>parameters</code> to provide some extra configuration required
@@ -1429,6 +1444,18 @@ by Spark to read data from a particular system.</p>
 <li><code>parameters</code> - <em>Optional</em>. List of Spark parameters if required where each parameter is a string in format:
   <code>spark.param.name=spark.param.value</code>.</li>
 </ul>
+<h2 id="clickhouse-connection-configuration">ClickHouse Connection Configuration</h2>
+<p>Configuration to ClickHouse can be set up in the same way as to MS SQL, using following parameters:</p>
+<ul>
+<li><code>id</code> - <em>Required</em>. Connection ID;</li>
+<li><code>url</code> - <em>Required</em>. Connection URL. Should contain host, port and name of database.
+  In addition, extra parameters can be supplied in connection URL if required.
+  <em>Connection protocol must not be specified.</em></li>
+<li><code>username</code> - <em>Optional</em>. Username used to connect to ClickHouse database if required.</li>
+<li><code>password</code> - <em>Optional</em>. Password used to connect to ClickHouse database if required.</li>
+<li><code>parameters</code> - <em>Optional</em>. List of Spark parameters if required where each parameter is a string in format:
+  <code>spark.param.name=spark.param.value</code>.</li>
+</ul>
 <h2 id="kafka-connection-configuration">Kafka Connection Configuration</h2>
 <p>In order to connect to set up connection to Kafka brokers, it is required to supply following parameters:</p>
 <ul>
@@ -1455,17 +1482,33 @@ command as follows:</p>
 </span><span id="__span-1-4">--files<span class="w"> </span>file.keytab,jaas.conf,&lt;other<span class="w"> </span>files<span class="w"> </span>required<span class="w"> </span><span class="k">for</span><span class="w"> </span>DQ&gt;
 </span></code></pre></div></li>
 </ul>
+<h2 id="greenplum-connection-configuration-via-pivotal">Greenplum Connection Configuration (via pivotal)</h2>
+<p>Configuring connection to Greenplum, you must specify the following parameters:</p>
+<ul>
+<li><code>id</code> - <em>Required</em>. Connection ID;</li>
+<li><code>url</code> - <em>Required</em>. Connection URL. Should contain host, port and name of database.
+  In addition, extra parameters can be supplied in connection URL if required.
+  <em>Connection protocol must not be specified.</em></li>
+<li><code>username</code> - <em>Optional</em>. Username used to connect to Greenplum database if required.</li>
+<li><code>password</code> - <em>Optional</em>. Password used to connect to Greenplum database if required.</li>
+<li><code>schema</code> - <em>Optional</em>. schema to lookup tables from. If omitted, default schema is used.</li>
+<li><code>parameters</code> - <em>Optional</em>. List of Spark parameters if required where each parameter is a string in format:
+  <code>spark.param.name=spark.param.value</code>.</li>
+</ul>
+<p>Pivotal connector is not published in public repositories such as Maven Central. Therefore, this dependency is 
+unmanaged and should be manually added to Spark application during submit (using spark.jars configuration parameter). 
+Connector jar-file can be downloaded from official <a href="https://network.pivotal.io/products/vmware-greenplum#/releases/1427678/file_groups/17497">Pivotal releases</a>.</p>
 <h2 id="connections-configuration-example">Connections Configuration Example</h2>
 <p>As it is shown in the example below, connections of the same type are grouped within subsections named after the type
 of connection. These subsections should contain a list of connection configurations of the corresponding type.</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1">jobConfig: {
 </span><span id="__span-2-2">  connections: {
-</span><span id="__span-2-3">    postgresql: [
-</span><span id="__span-2-4">      {id: &quot;postgre_db1&quot;, url: &quot;postgre1.db.com:5432/public&quot;, user: &quot;dq-user&quot;, password: &quot;dq-password&quot;}
+</span><span id="__span-2-3">    postgres: [
+</span><span id="__span-2-4">      {id: &quot;postgre_db1&quot;, url: &quot;postgre1.db.com:5432/public&quot;, username: &quot;dq-user&quot;, password: &quot;dq-password&quot;}
 </span><span id="__span-2-5">      {
 </span><span id="__span-2-6">        id: &quot;postgre_db2&quot;,
 </span><span id="__span-2-7">        url: &quot;postgre2.db.com:5432/public&quot;,
-</span><span id="__span-2-8">        user: &quot;dq-user&quot;,
+</span><span id="__span-2-8">        username: &quot;dq-user&quot;,
 </span><span id="__span-2-9">        password: &quot;dq-password&quot;,
 </span><span id="__span-2-10">        schema: &quot;dataquality&quot;
 </span><span id="__span-2-11">      }
@@ -1476,20 +1519,41 @@ of connection. These subsections should contain a list of connection configurati
 </span><span id="__span-2-16">    sqlite: [
 </span><span id="__span-2-17">      {id: &quot;sqlite_db&quot;, url: &quot;some/path/to/db.sqlite&quot;}
 </span><span id="__span-2-18">    ],
-</span><span id="__span-2-19">    kafka: [
-</span><span id="__span-2-20">      {id: &quot;kafka_cluster_1&quot;, servers: [&quot;server1:9092&quot;, &quot;server2:9092&quot;]}
-</span><span id="__span-2-21">      {
-</span><span id="__span-2-22">        id: &quot;kafka_cluster_2&quot;,
-</span><span id="__span-2-23">        servers: [&quot;kafka-broker1:9092&quot;, &quot;kafka-broker2:9092&quot;, &quot;kafka-broker3:9092&quot;]
-</span><span id="__span-2-24">        parameters: [
-</span><span id="__span-2-25">          &quot;security.protocol=SASL_PLAINTEXT&quot;,
-</span><span id="__span-2-26">          &quot;sasl.mechanism=GSSAPI&quot;,
-</span><span id="__span-2-27">          &quot;sasl.kerberos.service.name=kafka-service&quot;
-</span><span id="__span-2-28">        ]
-</span><span id="__span-2-29">      }
-</span><span id="__span-2-30">    ]
-</span><span id="__span-2-31">  }
-</span><span id="__span-2-32">}
+</span><span id="__span-2-19">    mysql: [
+</span><span id="__span-2-20">      {id: &quot;mysql_db1&quot;, url: &quot;mysql.db.com:8306/public&quot;, username: &quot;user&quot;, password: &quot;pass&quot;}
+</span><span id="__span-2-21">    ],
+</span><span id="__span-2-22">    mssql: [
+</span><span id="__span-2-23">      {id: &quot;mssql_db1&quot;, url: &quot;mssql.db.com:8433&quot;, username: &quot;user&quot;, password: &quot;pass&quot;}
+</span><span id="__span-2-24">    ],
+</span><span id="__span-2-25">    h2: [
+</span><span id="__span-2-26">      {id: &quot;h2_db1&quot;, url: &quot;h2.db.com:9092/default&quot;, username: &quot;user&quot;, password: &quot;pass&quot;}
+</span><span id="__span-2-27">    ],
+</span><span id="__span-2-28">    clickhouse: [
+</span><span id="__span-2-29">      {id: &quot;clickhouse_db1&quot;, url: &quot;clickhouse.db.com:8123&quot;, username: &quot;user&quot;, password: &quot;pass&quot;}
+</span><span id="__span-2-30">    ],
+</span><span id="__span-2-31">    kafka: [
+</span><span id="__span-2-32">      {id: &quot;kafka_cluster_1&quot;, servers: [&quot;server1:9092&quot;, &quot;server2:9092&quot;]}
+</span><span id="__span-2-33">      {
+</span><span id="__span-2-34">        id: &quot;kafka_cluster_2&quot;,
+</span><span id="__span-2-35">        servers: [&quot;kafka-broker1:9092&quot;, &quot;kafka-broker2:9092&quot;, &quot;kafka-broker3:9092&quot;]
+</span><span id="__span-2-36">        parameters: [
+</span><span id="__span-2-37">          &quot;security.protocol=SASL_PLAINTEXT&quot;,
+</span><span id="__span-2-38">          &quot;sasl.mechanism=GSSAPI&quot;,
+</span><span id="__span-2-39">          &quot;sasl.kerberos.service.name=kafka-service&quot;
+</span><span id="__span-2-40">        ]
+</span><span id="__span-2-41">      }
+</span><span id="__span-2-42">    ],
+</span><span id="__span-2-43">    greenplum: [
+</span><span id="__span-2-44">      {
+</span><span id="__span-2-45">        id: &quot;greenplum_db1&quot;, 
+</span><span id="__span-2-46">        url: &quot;greenplum.db.com:5432/postgres&quot;, 
+</span><span id="__span-2-47">        username: &quot;user&quot;, 
+</span><span id="__span-2-48">        password: &quot;pass&quot;,
+</span><span id="__span-2-49">        schema: &quot;public&quot;
+</span><span id="__span-2-50">      }
+</span><span id="__span-2-51">    ]
+</span><span id="__span-2-52">  }
+</span><span id="__span-2-53">}
 </span></code></pre></div>
 
 
@@ -1537,10 +1601,10 @@ of connection. These subsections should contain a list of connection configurati
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
       
     
   </body>

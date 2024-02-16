@@ -183,6 +183,10 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="ru.raiffeisen.checkita.config">config</a></dd></dl></div>
     </li><li class="current-entities indented4">
                         <span class="separator"></span>
+                        <a class="class" href="ConfigEncryptor.html" title="Class that holds methods to encrypt and decrypt certain fields in configuration."></a>
+                        <a href="ConfigEncryptor.html" title="Class that holds methods to encrypt and decrypt certain fields in configuration.">ConfigEncryptor</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
                         <a class="object" href="Enums$.html" title=""></a>
                         <a href="Enums$.html" title="">Enums</a>
                       </li><li class="current-entities indented4">
@@ -556,6 +560,29 @@ Application configuration reading includes two stages:</p><ul><li>Reading input 
 Validations at each stage are chained i.e. if the above stage fails the next stages
 are not evaluated. This is intentional behaviour: there is no point in parsing config object if
 it wasn't successfully read from input at the first stage.</li></ul></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>Type of input</p></dd><dt class="param">input</dt><dd class="cmt"><p>Application configuration input</p></dd><dt class="param">parser</dt><dd class="cmt"><p>Implicit TypeSafe config parser for input of type T</p></dd><dt>returns</dt><dd class="cmt"><p>Either a valid application configuration or a list of reading or validation errors</p></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.IO#readEncryptedJobConfig" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="readEncryptedJobConfig[T](input:T)(implicitparser:ru.raiffeisen.checkita.config.Parsers.ConfigParser[T],implicitencryptor:ru.raiffeisen.checkita.config.ConfigEncryptor):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.config.jobconf.JobConfig]"></a><a id="readEncryptedJobConfig[T](T)(ConfigParser[T],ConfigEncryptor):Result[JobConfig]"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/IO$.html#readEncryptedJobConfig[T](input:T)(implicitparser:ru.raiffeisen.checkita.config.Parsers.ConfigParser[T],implicitencryptor:ru.raiffeisen.checkita.config.ConfigEncryptor):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.config.jobconf.JobConfig]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">readEncryptedJobConfig</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="input">input: <span class="extype" name="ru.raiffeisen.checkita.config.IO.readEncryptedJobConfig.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="parser">parser: <a href="Parsers$$ConfigParser.html" class="extype" name="ru.raiffeisen.checkita.config.Parsers.ConfigParser">ConfigParser</a>[<span class="extype" name="ru.raiffeisen.checkita.config.IO.readEncryptedJobConfig.T">T</span>]</span>, <span name="encryptor">encryptor: <a href="ConfigEncryptor.html" class="extype" name="ru.raiffeisen.checkita.config.ConfigEncryptor">ConfigEncryptor</a></span>)</span><span class="result">: <a href="../utils/ResultUtils$.html#Result[T]=Either[Vector[String],T]" class="extmbr" name="ru.raiffeisen.checkita.utils.ResultUtils.Result">Result</a>[<a href="jobconf/JobConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfig">JobConfig</a>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Reads Encrypted Data Quality job configuration.</p><div class="fullcomment"><div class="comment cmt"><p>Reads Encrypted Data Quality job configuration.
+Job configuration reading includes three stages:</p><ul><li>Reading input into TypeSafe Config object</li><li>Decryption of previously encrypted sensitive fields.</li><li>Parsing config object into instance of Data Quality job configuration class</li><li>Running post validations for Data Quality job configuration
+    Validations at each stage are chained i.e. if the above stage fails the next stages
+    are not evaluated. This is intentional behaviour: there is no point in parsing config object if
+    it wasn't successfully read from input at the first stage. And, again, there is no sense in running
+    post validations if Data Quality job configuration wasn't parsed successfully as the whole point of post validations
+    is to check cross reference validity of different objects in Data Quality job configuration.
+</li></ul></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>Type of input</p></dd><dt class="param">input</dt><dd class="cmt"><p>Job configuration input</p></dd><dt class="param">parser</dt><dd class="cmt"><p>Implicit TypeSafe config parser for input of type T</p></dd><dt class="param">encryptor</dt><dd class="cmt"><p>Implicit configuration encryptor</p></dd><dt>returns</dt><dd class="cmt"><p>Either a valid job configuration or a list of reading or validation errors</p></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.IO#readJobConfig" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="readJobConfig[T](input:T)(implicitparser:ru.raiffeisen.checkita.config.Parsers.ConfigParser[T]):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.config.jobconf.JobConfig]"></a><a id="readJobConfig[T](T)(ConfigParser[T]):Result[JobConfig]"></a>
       <span class="permalink">
@@ -733,6 +760,26 @@ and passes all post validation checks then it is valid.</p></div><dl class="para
       
       <p class="shortcomment cmt">Safely writes Data Quality application configuration into TypeSafe Config.</p><div class="fullcomment"><div class="comment cmt"><p>Safely writes Data Quality application configuration into TypeSafe Config.</p></div><dl class="paramcmts block"><dt class="param">config</dt><dd class="cmt"><p>Instance of Data Quality application configuration</p></dd><dt>returns</dt><dd class="cmt"><p>Either TypeSafe Config object with Data Quality application configuration
         or a list with error occurred during write.</p></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.IO#writeEncryptedJobConfig" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="writeEncryptedJobConfig(config:ru.raiffeisen.checkita.config.jobconf.JobConfig)(implicitencryptor:ru.raiffeisen.checkita.config.ConfigEncryptor):ru.raiffeisen.checkita.utils.ResultUtils.Result[com.typesafe.config.Config]"></a><a id="writeEncryptedJobConfig(JobConfig)(ConfigEncryptor):Result[Config]"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/IO$.html#writeEncryptedJobConfig(config:ru.raiffeisen.checkita.config.jobconf.JobConfig)(implicitencryptor:ru.raiffeisen.checkita.config.ConfigEncryptor):ru.raiffeisen.checkita.utils.ResultUtils.Result[com.typesafe.config.Config]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writeEncryptedJobConfig</span><span class="params">(<span name="config">config: <a href="jobconf/JobConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfig">JobConfig</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="encryptor">encryptor: <a href="ConfigEncryptor.html" class="extype" name="ru.raiffeisen.checkita.config.ConfigEncryptor">ConfigEncryptor</a></span>)</span><span class="result">: <a href="../utils/ResultUtils$.html#Result[T]=Either[Vector[String],T]" class="extmbr" name="ru.raiffeisen.checkita.utils.ResultUtils.Result">Result</a>[<span class="extype" name="com.typesafe.config.Config">Config</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Safely writes Data Quality Job configuration into TypeSafe Config and then
+encrypts all sensitive fields (including spark parameters).</p><div class="fullcomment"><div class="comment cmt"><p>Safely writes Data Quality Job configuration into TypeSafe Config and then
+encrypts all sensitive fields (including spark parameters).
+</p></div><dl class="paramcmts block"><dt class="param">config</dt><dd class="cmt"><p>Instance of Data Quality job configuration</p></dd><dt class="param">encryptor</dt><dd class="cmt"><p>Implicit configuration encryptor</p></dd><dt>returns</dt><dd class="cmt"><p>Either TypeSafe Config object with encrypted Data Quality job configuration
+        or a list with error occurred during write or encryption process.</p></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.IO#writeJobConfig" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="writeJobConfig(config:ru.raiffeisen.checkita.config.jobconf.JobConfig):ru.raiffeisen.checkita.utils.ResultUtils.Result[com.typesafe.config.Config]"></a><a id="writeJobConfig(JobConfig):Result[Config]"></a>
       <span class="permalink">

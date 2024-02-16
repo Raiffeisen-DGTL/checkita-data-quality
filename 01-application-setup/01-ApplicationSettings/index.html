@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.2">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.9">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.f2e4d321.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -431,14 +431,15 @@
       
     
     
-    
-    
+      
+        
+        
       
       
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
@@ -588,6 +589,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#encryption" class="md-nav__link">
+    <span class="md-ellipsis">
+      Encryption
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#example-of-application-configuration-file" class="md-nav__link">
     <span class="md-ellipsis">
       Example of Application Configuration File
@@ -679,14 +689,12 @@
       
     
     
-    
-    
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    
+    <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
@@ -705,7 +713,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -871,14 +879,12 @@
       
     
     
-    
-    
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    
+    <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
@@ -897,7 +903,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -1210,14 +1216,12 @@
       
     
     
-    
-    
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    
+    <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
@@ -1236,7 +1240,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -1446,6 +1450,16 @@ configuration, then exception would be thrown at runtime.</p>
 <p>It is also possible to provide list of default Spark configuration parameters used across multiple jobs.
 These parameters should be provided as <code>defaultSparkOptions</code> list where each parameter is a string in format:
 <code>spark.param.name=spark.param.value</code>.</p>
+<h2 id="encryption">Encryption</h2>
+<p>When <code>storage</code> section is defined, it is also recommended to use <code>encryption</code> section in order to protect sensitive 
+information in job config. This should be done by defining the parameters within the application configuration file:</p>
+<ul>
+<li><code>secret</code> -  Secret string used to encrypt/decrypt sensitive fields. This string should contain at least 32 characters. 
+<em>Required</em>. </li>
+<li><code>keyFields</code> - List of key fields used to identify fields that requires encryption/decryption. 
+<em>Optional, default is <code>[password, secret]</code></em>.</li>
+</ul>
+<p>If <code>encryption</code> section is missing then job config will be saved in database as is.</p>
 <h2 id="example-of-application-configuration-file">Example of Application Configuration File</h2>
 <p>Hocon configuration format supports variable substitution and Checkita Data Quality framework has a mechanism to 
 feed configuration files with extra variables at runtime. For more information,
@@ -1495,7 +1509,12 @@ chapter of the documentation.</p>
 </span><span id="__span-0-42">    host: &quot;https://some-team.mattermost.com&quot;
 </span><span id="__span-0-43">    token: ${dqMattermostToken}
 </span><span id="__span-0-44">  }
-</span><span id="__span-0-45">}
+</span><span id="__span-0-45">
+</span><span id="__span-0-46">  encryption: {
+</span><span id="__span-0-47">    secret: &quot;secretmustbeatleastthirtytwocharacters&quot;
+</span><span id="__span-0-48">    keyFields: [&quot;password&quot;, &quot;username&quot;, &quot;url&quot;]
+</span><span id="__span-0-49">  }
+</span><span id="__span-0-50">}
 </span></code></pre></div>
 
 
@@ -1543,10 +1562,10 @@ chapter of the documentation.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
       
     
   </body>

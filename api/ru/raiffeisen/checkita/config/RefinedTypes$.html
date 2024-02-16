@@ -183,6 +183,10 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="ru.raiffeisen.checkita.config">config</a></dd></dl></div>
     </li><li class="current-entities indented4">
                         <span class="separator"></span>
+                        <a class="class" href="ConfigEncryptor.html" title="Class that holds methods to encrypt and decrypt certain fields in configuration."></a>
+                        <a href="ConfigEncryptor.html" title="Class that holds methods to encrypt and decrypt certain fields in configuration.">ConfigEncryptor</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
                         <a class="object" href="Enums$.html" title=""></a>
                         <a href="Enums$.html" title="">Enums</a>
                       </li><li class="current-entities indented4">
@@ -350,6 +354,24 @@ of original datetime pattern.</p></div><dl class="paramcmts block"><dt class="pa
       </span>
       
       
+    </li><li name="ru.raiffeisen.checkita.config.RefinedTypes.EncryptionKey" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="EncryptionKey=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^.{32}.*$&quot;)]]"></a><a id="EncryptionKey:EncryptionKey"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/RefinedTypes$.html#EncryptionKey=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^.{32}.*$&quot;)]]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">EncryptionKey</span><span class="result alias"> = <span class="extype" name="eu.timepit.refined.api.Refined">Refined</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="eu.timepit.refined.string.MatchesRegex">MatchesRegex</span>[String(&quot;^.{32}.*$&quot;)]]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Refinement for string holding secret key for sensitive data encryption.</p><div class="fullcomment"><div class="comment cmt"><p>Refinement for string holding secret key for sensitive data encryption.
+This string should contain at least 32 characters.
+</p></div></div>
     </li><li name="ru.raiffeisen.checkita.config.RefinedTypes.FixedShortColumn" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="FixedShortColumn=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^[^\\n\\r\\t:]+:\\d+$&quot;)]]"></a><a id="FixedShortColumn:FixedShortColumn"></a>
       <span class="permalink">

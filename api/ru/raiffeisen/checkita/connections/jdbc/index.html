@@ -133,6 +133,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="ru.raiffeisen.checkita">checkita</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.connections.greenplum" visbl="pub" class="indented5 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="greenplum"></a><a id="greenplum:greenplum"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/connections/greenplum/index.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="../greenplum/index.html"><span class="name">greenplum</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="ru.raiffeisen.checkita.connections">connections</a></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.connections.jdbc" visbl="pub" class="indented5 current" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="jdbc"></a><a id="jdbc:jdbc"></a>
       <span class="permalink">
@@ -150,6 +166,10 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="ru.raiffeisen.checkita.connections">connections</a></dd></dl></div>
     </li><li class="current-entities indented5">
+                        <span class="separator"></span>
+                        <a class="class" href="ClickHouseConnection.html" title="Connection to ClickHouse database"></a>
+                        <a href="ClickHouseConnection.html" title="Connection to ClickHouse database">ClickHouseConnection</a>
+                      </li><li class="current-entities indented5">
                         <span class="separator"></span>
                         <a class="class" href="H2Connection.html" title="Connection to H2 database"></a>
                         <a href="H2Connection.html" title="Connection to H2 database">H2Connection</a>
@@ -264,7 +284,25 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="ru.raiffeisen.checkita.connections.jdbc.H2Connection" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+              <ol><li name="ru.raiffeisen.checkita.connections.jdbc.ClickHouseConnection" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ClickHouseConnectionextendsJdbcConnection[ru.raiffeisen.checkita.config.jobconf.Connections.ClickHouseConnectionConfig]withProductwithSerializable"></a><a id="ClickHouseConnection:ClickHouseConnection"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/connections/jdbc/ClickHouseConnection.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="Connection to ClickHouse database" href="ClickHouseConnection.html"><span class="name">ClickHouseConnection</span></a><span class="params">(<span name="config">config: <a href="../../config/jobconf/Connections$$ClickHouseConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.ClickHouseConnectionConfig">ClickHouseConnectionConfig</a></span>)</span><span class="result"> extends <a href="JdbcConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.JdbcConnection">JdbcConnection</a>[<a href="../../config/jobconf/Connections$$ClickHouseConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.ClickHouseConnectionConfig">ClickHouseConnectionConfig</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Connection to ClickHouse database
+</p><div class="fullcomment"><div class="comment cmt"><p>Connection to ClickHouse database
+</p></div><dl class="paramcmts block"><dt class="param">config</dt><dd class="cmt"><p>Connection configuration</p></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.connections.jdbc.H2Connection" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="H2ConnectionextendsJdbcConnection[ru.raiffeisen.checkita.config.jobconf.Connections.H2ConnectionConfig]withProductwithSerializable"></a><a id="H2Connection:H2Connection"></a>
       <span class="permalink">
       <a href="../../../../../ru/raiffeisen/checkita/connections/jdbc/H2Connection.html" title="Permalink">
@@ -313,7 +351,9 @@
         <a title="Connection to MS SQL database" href="MSSQLConnection.html"><span class="name">MSSQLConnection</span></a><span class="params">(<span name="config">config: <a href="../../config/jobconf/Connections$$MSSQLConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.MSSQLConnectionConfig">MSSQLConnectionConfig</a></span>)</span><span class="result"> extends <a href="JdbcConnection.html" class="extype" name="ru.raiffeisen.checkita.connections.jdbc.JdbcConnection">JdbcConnection</a>[<a href="../../config/jobconf/Connections$$MSSQLConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.MSSQLConnectionConfig">MSSQLConnectionConfig</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Connection to MS SQL database</p><div class="fullcomment"><div class="comment cmt"><p>Connection to MS SQL database</p></div><dl class="paramcmts block"><dt class="param">config</dt><dd class="cmt"><p>Connection configuration</p></dd></dl></div>
+      <p class="shortcomment cmt">Connection to MS SQL database
+</p><div class="fullcomment"><div class="comment cmt"><p>Connection to MS SQL database
+</p></div><dl class="paramcmts block"><dt class="param">config</dt><dd class="cmt"><p>Connection configuration</p></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.connections.jdbc.MySQLConnection" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="MySQLConnectionextendsJdbcConnection[ru.raiffeisen.checkita.config.jobconf.Connections.MySQLConnectionConfig]withProductwithSerializable"></a><a id="MySQLConnection:MySQLConnection"></a>
       <span class="permalink">

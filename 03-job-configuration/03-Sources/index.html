@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.2">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.9">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.f2e4d321.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -429,14 +429,12 @@
       
     
     
-    
-    
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    
+    <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
@@ -455,7 +453,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -565,14 +563,12 @@
       
     
     
-    
-    
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    
+    <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
@@ -591,7 +587,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -759,14 +755,15 @@
       
     
     
-    
-    
+      
+        
+        
       
       
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
@@ -976,6 +973,15 @@
   <a href="#kafka-sources-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       Kafka Sources Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#greenplum-sources-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Greenplum Sources Configuration
     </span>
   </a>
   
@@ -1243,14 +1249,12 @@
       
     
     
-    
-    
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    
+    <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
@@ -1269,7 +1273,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -1387,6 +1391,7 @@ details on connections configurations.</p>
 <li>Hive sources: read hive table from Hive catalogue;</li>
 <li>Table sources: read tables from RDBMS via JDBC connection.</li>
 <li>Kafka sources: read topics from Kafka.</li>
+<li></li>
 </ul>
 <p>All sources must be defined in <code>sources</code> section of job configuration. 
 More details on how to configure sources of each of these types are shown below. Example of <code>sources</code> section of 
@@ -1537,6 +1542,17 @@ parameters:</p>
 <p><em>TIP</em>: In order to define JSON strings, they must be enclosed in triple quotes:
 <code>"""{"name1": {"name2": "value2", "name3": "value3""}}"""</code>.</p>
 </blockquote>
+<h2 id="greenplum-sources-configuration">Greenplum Sources Configuration</h2>
+<p>In order to read data from Greenplum table using pivotal connector it is required to provide following:</p>
+<ul>
+<li><code>id</code> - <em>Required</em>. Source ID;</li>
+<li><code>connection</code> - <em>Required</em>. Connection ID to use for table source. Connection ID must refer to Greenplum pivotal
+  connection. See <a href="../01-Connections/">Connections Configuration</a> chapter for more information.</li>
+<li><code>table</code> - <em>Optional</em>. Table to read.</li>
+<li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
+  Key fields are primarily used in error collection reports. For more details on error collection, see
+  <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+</ul>
 <h2 id="custom-sources-configuration">Custom Sources Configuration</h2>
 <p>Custom sources can be used in cases when it is required to read data from the source type that is not explicitly
 supported (by one of the configuration described above). In order to configure a custom source, it is required to
@@ -1597,7 +1613,10 @@ of the source. These subsections should contain a list of source configurations 
 </span><span id="__span-2-37">        format: &quot;json&quot;
 </span><span id="__span-2-38">      }
 </span><span id="__span-2-39">    ]
-</span><span id="__span-2-40">  }
+</span><span id="__span-2-40">    greenplum: [
+</span><span id="__span-2-41">      {id: &quot;greenplum_source_1&quot;, connection: &quot;greenplum_db&quot;, table: &quot;some_table&quot;}
+</span><span id="__span-2-42">    ]
+</span><span id="__span-2-43">  }
 </span></code></pre></div>
 
 
@@ -1645,10 +1664,10 @@ of the source. These subsections should contain a list of source configurations 
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
       
     
   </body>

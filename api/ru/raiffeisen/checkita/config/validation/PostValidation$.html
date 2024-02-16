@@ -594,6 +594,24 @@ batch and streaming sources defined.</p>
       
       <p class="shortcomment cmt">Validation to check if DQ job configuration contains errors in composed metric formulas:</p><div class="fullcomment"><div class="comment cmt"><p>Validation to check if DQ job configuration contains errors in composed metric formulas:</p><ul><li>missing reference to source metrics</li><li>wrong equation that can be parsed
 </li></ul></div></div>
+    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateGreenplumSourceRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="validateGreenplumSourceRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateGreenplumSourceRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/validation/PostValidation$.html#validateGreenplumSourceRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateGreenplumSourceRefs</span><span class="result">: (<span class="extype" name="com.typesafe.config.ConfigObject">ConfigObject</span>) ⇒ <a href="../../../../../scala/index.html#Vector[+A]=scala.collection.immutable.Vector[A]" class="extmbr" name="scala.Vector">Vector</a>[<span class="extype" name="pureconfig.error.ConfigReaderFailure">ConfigReaderFailure</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
+from table sources to pivotal connections
+</p>
     </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateIds" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="validateIds:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateIds:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
       <span class="permalink">

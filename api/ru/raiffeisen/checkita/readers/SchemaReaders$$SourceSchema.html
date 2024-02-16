@@ -208,13 +208,15 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">SourceSchema</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="schema">schema: <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span></span>, <span name="columnWidths">columnWidths: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">SourceSchema</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="schema">schema: <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span></span>, <span name="columnWidths">columnWidths: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="rawAvro">rawAvro: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">None</a></span></span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Source schema: standard representation for all explicitly defined schemas:
-all schemas are converted to spark StructType.</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Schema ID</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema in form of StructType</p></dd><dt class="param">columnWidths</dt><dd class="cmt"><p>Sequence of column widths in order (to support fixed-width file reading)</p></dd></dl><div class="toggleContainer block">
+all schemas are converted to spark StructType.</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Schema ID</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema in form of StructType</p></dd><dt class="param">columnWidths</dt><dd class="cmt"><p>Sequence of column widths in order (to support fixed-width file reading)</p></dd><dt class="param">rawAvro</dt><dd class="cmt"><p>Raw avro schema representation (string in JSON format).
+               In case when Avro schema is read from file, the original schema is stored to
+               prevent unnecessary conversions.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -265,9 +267,9 @@ all schemas are converted to spark StructType.</p></div><dl class="paramcmts blo
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(id:String,schema:org.apache.spark.sql.types.StructType,columnWidths:Seq[Int]):ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema"></a><a id="&lt;init&gt;:SourceSchema"></a>
+      <a id="&lt;init&gt;(id:String,schema:org.apache.spark.sql.types.StructType,columnWidths:Seq[Int],rawAvro:Option[String]):ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema"></a><a id="&lt;init&gt;:SourceSchema"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/readers/SchemaReaders$$SourceSchema.html#&lt;init&gt;(id:String,schema:org.apache.spark.sql.types.StructType,columnWidths:Seq[Int]):ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/readers/SchemaReaders$$SourceSchema.html#&lt;init&gt;(id:String,schema:org.apache.spark.sql.types.StructType,columnWidths:Seq[Int],rawAvro:Option[String]):ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -276,10 +278,12 @@ all schemas are converted to spark StructType.</p></div><dl class="paramcmts blo
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">SourceSchema</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="schema">schema: <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span></span>, <span name="columnWidths">columnWidths: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
+        <span class="name">SourceSchema</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="schema">schema: <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span></span>, <span name="columnWidths">columnWidths: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="rawAvro">rawAvro: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">None</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Schema ID</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema in form of StructType</p></dd><dt class="param">columnWidths</dt><dd class="cmt"><p>Sequence of column widths in order (to support fixed-width file reading)</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Schema ID</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema in form of StructType</p></dd><dt class="param">columnWidths</dt><dd class="cmt"><p>Sequence of column widths in order (to support fixed-width file reading)</p></dd><dt class="param">rawAvro</dt><dd class="cmt"><p>Raw avro schema representation (string in JSON format).
+               In case when Avro schema is read from file, the original schema is stored to
+               prevent unnecessary conversions.</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -537,6 +541,22 @@ all schemas are converted to spark StructType.</p></div><dl class="paramcmts blo
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema#rawAvro" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="rawAvro:Option[String]"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/readers/SchemaReaders$$SourceSchema.html#rawAvro:Option[String]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">rawAvro</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      
+      
     </li><li name="ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema#schema" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="schema:org.apache.spark.sql.types.StructType"></a><a id="schema:StructType"></a>
       <span class="permalink">
@@ -570,9 +590,9 @@ all schemas are converted to spark StructType.</p></div><dl class="paramcmts blo
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema#toAvroSchema" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toAvroSchema:org.apache.avro.Schema"></a><a id="toAvroSchema:Schema"></a>
+      <a id="toAvroSchema:String"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/readers/SchemaReaders$$SourceSchema.html#toAvroSchema:org.apache.avro.Schema" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/readers/SchemaReaders$$SourceSchema.html#toAvroSchema:String" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -581,12 +601,11 @@ all schemas are converted to spark StructType.</p></div><dl class="paramcmts blo
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toAvroSchema</span><span class="result">: <span class="extype" name="org.apache.avro.Schema">Schema</span></span>
+        <span class="name">toAvroSchema</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       
-      <p class="shortcomment cmt">Converts Spark StructType into Avro schema
-</p><div class="fullcomment"><div class="comment cmt"><p>Converts Spark StructType into Avro schema
-</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Avro schema object</p></dd></dl></div>
+      <p class="shortcomment cmt">Converts Spark StructType into Avro schema rendered as JSON string.</p><div class="fullcomment"><div class="comment cmt"><p>Converts Spark StructType into Avro schema rendered as JSON string.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Avro schema JSON string</p></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
