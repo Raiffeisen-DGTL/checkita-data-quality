@@ -16,7 +16,7 @@ jobs:
           token: ${{ secrets.CIBAA_TEAM_USER_TOKEN }}
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 21
       - run: npm install -g semantic-release @semantic-release/git @semantic-release/changelog @semantic-release/exec
       - run: semantic-release
         env:
