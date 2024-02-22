@@ -2,7 +2,7 @@ package ru.raiffeisen.checkita.core.metrics.regular
 
 import org.isarnproject.sketches.TDigest
 import ru.raiffeisen.checkita.core.CalculatorStatus
-import ru.raiffeisen.checkita.core.Helpers.{tryToDouble, tryToLong}
+import ru.raiffeisen.checkita.core.Casting.{tryToDouble, tryToLong}
 import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName}
 
 import scala.util.Try
