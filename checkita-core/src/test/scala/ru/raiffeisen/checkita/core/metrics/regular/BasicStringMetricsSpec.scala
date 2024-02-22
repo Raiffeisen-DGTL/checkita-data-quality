@@ -61,7 +61,7 @@ class BasicStringMetricsSpec extends AnyWordSpec with Matchers {
   
   "DuplicateValuesMetricCalculator" must {
     "return correct metric value for single column sequence" in {
-      val results = Seq(7, 7, 8, 3)
+      val results = Seq(7, 7, 8, 2)
       val values = testSingleColSeq zip results
       val metricResults = values.map(t => (
         t._1.foldLeft[MetricCalculator](new DuplicateValuesMetricCalculator())(
@@ -72,7 +72,7 @@ class BasicStringMetricsSpec extends AnyWordSpec with Matchers {
     }
 
     "return correct metric value for multi column sequence" in {
-      val results = Seq(1, 2, 0, 2)
+      val results = Seq(1, 2, 0, 0)
       val data = Seq(
         Seq(
           Seq("Gpi2C7", "DgXDiA", "Gpi2C7"),

@@ -1,7 +1,7 @@
 package ru.raiffeisen.checkita.core.metrics.regular
 
 import ru.raiffeisen.checkita.core.CalculatorStatus
-import ru.raiffeisen.checkita.core.Helpers.{tryToDate, tryToString, tryToDouble}
+import ru.raiffeisen.checkita.core.Casting.{seqToString, tryToDate, tryToDouble, tryToString}
 import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName}
 
 import scala.util.Try
@@ -29,7 +29,7 @@ object BasicStringMetrics {
     def this() = this(Set.empty[Any])
     
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator =
-      DistinctValuesMetricCalculator(uniqueValues ++ values.flatMap(tryToString).toSet, failCount)
+      DistinctValuesMetricCalculator(uniqueValues ++ values.map(v => seqToString(Seq(v))).toSet, failCount)
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
@@ -66,19 +66,11 @@ object BasicStringMetrics {
                                              protected val failMsg: String = "OK")
     extends MetricCalculator {
 
+    // axillary constructor to init metric calculator:
     def this() = this(0, Set.empty[String])
 
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
-      // First, we try to represent value as a number and then as a string.
-      // n case of failure value is represented as NONE.
-      // Such behavior allows us to compare different number representations as string values,
-      // e.g. "4" == "4.0" -> duplicates found!
-      val valuesString = values.map { v =>
-        val strVal = tryToString(v)
-        val dblVal = tryToDouble(v)
-        dblVal orElse strVal getOrElse "NONE"
-      }.mkString("")
-
+      val valuesString = seqToString(values)
       if (uniqueValues.contains(valuesString)) DuplicateValuesMetricCalculator(
         numDuplicates + 1,
         uniqueValues,

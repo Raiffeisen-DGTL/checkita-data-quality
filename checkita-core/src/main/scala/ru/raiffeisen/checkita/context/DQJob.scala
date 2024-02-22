@@ -116,10 +116,16 @@ trait DQJob extends Logging {
   protected def logMetricResults(stage: String, metType: String, mr: MetricResults): Unit = mr.foreach {
     case (mId, calcResults) => calcResults.foreach(r => r.errors match {
       case None => log.info(s"$stage ${metType.capitalize} metric '$mId' calculation completed without any errors.")
+      case Some(e) if e.errors.isEmpty => log.info(
+        s"$stage ${metType.capitalize} metric '$mId' calculation completed without any errors."
+      )
       case Some(e) =>
-        if (e.errors.isEmpty)
-          log.info(s"$stage ${metType.capitalize} metric '$mId' calculation completed without any errors.")
-        else log.warn(s"$stage ${metType.capitalize} metric '$mId' calculation yielded ${e.errors.size} errors.")
+        log.warn(s"$stage ${metType.capitalize} metric '$mId' calculation yielded ${e.errors.size} errors.")
+        log.debug(stage + " Error data are collected for following columns:" + e.columns.mkString("[", ", ", "]"))
+        e.errors.foreach{ errRow =>
+          log.debug(stage + " Error message: " + errRow.message)
+          log.debug(stage + " Collected row data: " + errRow.rowData.mkString("[", ", ", "]"))
+        }
     })
   }
 

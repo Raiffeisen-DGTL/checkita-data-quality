@@ -2,7 +2,7 @@ package ru.raiffeisen.checkita.core.metrics.regular
 
 import org.apache.commons.text.similarity.LevenshteinDistance
 import ru.raiffeisen.checkita.core.CalculatorStatus
-import ru.raiffeisen.checkita.core.Helpers.{tryToDate, tryToDouble, tryToString}
+import ru.raiffeisen.checkita.core.Casting.{tryToDate, tryToDouble, tryToString}
 import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName}
 
 import java.time.temporal.ChronoUnit.DAYS

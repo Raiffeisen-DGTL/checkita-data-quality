@@ -3,7 +3,7 @@ package ru.raiffeisen.checkita.core.metrics.regular
 import com.twitter.algebird.HyperLogLog.long2Bytes
 import com.twitter.algebird.{HLL, HyperLogLog, HyperLogLogMonoid, SpaceSaver}
 import ru.raiffeisen.checkita.core.CalculatorStatus
-import ru.raiffeisen.checkita.core.Helpers.{tryToLong, tryToString}
+import ru.raiffeisen.checkita.core.Casting.{tryToLong, tryToString}
 import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName}
 
 /**

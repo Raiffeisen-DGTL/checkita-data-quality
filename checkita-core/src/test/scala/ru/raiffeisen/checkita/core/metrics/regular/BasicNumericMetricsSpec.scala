@@ -4,7 +4,7 @@ import org.isarnproject.sketches.TDigest
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import ru.raiffeisen.checkita.core.CalculatorStatus
-import ru.raiffeisen.checkita.core.Helpers.tryToDouble
+import ru.raiffeisen.checkita.core.Casting.tryToDouble
 import ru.raiffeisen.checkita.core.metrics.regular.BasicNumericMetrics._
 import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName}
 
@@ -218,7 +218,7 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
 
     "return correct metric value and fail counts for single column sequence" in {
       val typedValues = Seq(
-        values, values.map(BigDecimal.valueOf), values.map(_.toString)
+        values, values.map(java.math.BigDecimal.valueOf), values.map(_.toString)
       )
       val metricResults = for {
         (params, result, failCount) <- paramsList
@@ -242,7 +242,7 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
       val multiColValues = (0 to 4).map(c => (0 to 4).map(r => c*5 + r)).map(_.map(values(_)))
       val typedValues = Seq(
         multiColValues,
-        multiColValues.map(s => s.map(BigDecimal.valueOf)),
+        multiColValues.map(s => s.map(java.math.BigDecimal.valueOf)),
         multiColValues.map(s => s.map(_.toString))
       )
       val metricResults = for {
