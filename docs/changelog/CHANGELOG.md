@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.2.0...v1.2.1) (2024-2-26)
+
+
+### Bug Fixes
+
+* enhance casting methods for proper conversion of primitive values to target types ([#27](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/27)) ([744384b](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/744384b77cee7bac7c23d3af700ae7fb78c0a846))
+
 # [1.2.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.1.1...v1.2.0) (2024-2-16)
 
 

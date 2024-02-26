@@ -1,3 +1,3 @@
 object Version {
-  val releaseVersion = "1.2.0"
+  val releaseVersion = "1.2.1"
 }
