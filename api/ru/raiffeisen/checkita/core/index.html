@@ -251,8 +251,8 @@
                         <a href="CalculatorStatus.html" title="Calculator Status enumeration.">CalculatorStatus</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="object" href="Helpers$.html" title=""></a>
-                        <a href="Helpers$.html" title="">Helpers</a>
+                        <a class="object" href="Casting$.html" title="Helpers used to convert values of type Any to desirable type."></a>
+                        <a href="Casting$.html" title="Helpers used to convert values of type Any to desirable type.">Casting</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="object" href="Results$.html" title=""></a>
@@ -462,10 +462,10 @@
       </span>
       
       
-    </li><li name="ru.raiffeisen.checkita.core.Helpers" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Helpers"></a><a id="Helpers:Helpers"></a>
+    </li><li name="ru.raiffeisen.checkita.core.Casting" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Casting"></a><a id="Casting:Casting"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/core/Helpers$.html" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/core/Casting$.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -474,10 +474,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Helpers$.html"><span class="name">Helpers</span></a>
+        <a title="Helpers used to convert values of type Any to desirable type." href="Casting$.html"><span class="name">Casting</span></a>
       </span>
       
-      
+      <p class="shortcomment cmt">Helpers used to convert values of type Any to desirable type.</p><div class="fullcomment"><div class="comment cmt"><p>Helpers used to convert values of type Any to desirable type.</p><p>The indent of these helpers is to manage values obtained from Spark Row to desired type for use
+in metric calculators.</p><p>As the Spark Row can stores elements of various type then we need to guess (pattern match) it to provide
+an appropriate conversion method.</p><p>For that purpose we will follow Spark SQL Type to Java types mapping:</p><ul><li>BooleanType -&gt; java.lang.Boolean</li><li>ByteType -&gt; java.lang.Byte</li><li>ShortType -&gt; java.lang.Short</li><li>IntegerType -&gt; java.lang.Integer</li><li>LongType -&gt; java.lang.Long</li><li>FloatType -&gt; java.lang.Float</li><li>DoubleType -&gt; java.lang.Double</li><li>StringType -&gt; String</li><li>DecimalType -&gt; java.math.BigDecimal</li><li>DateType -&gt; java.sql.Date if spark.sql.datetime.java8API.enabled is false</li><li>DateType -&gt; java.time.LocalDate if spark.sql.datetime.java8API.enabled is true</li><li>TimestampType -&gt; java.sql.Timestamp if spark.sql.datetime.java8API.enabled is false</li><li>TimestampType -&gt; java.time.Instant if spark.sql.datetime.java8API.enabled is true</li><li>BinaryType -&gt; byte array</li><li>ArrayType -&gt; scala.collection.Seq (use getList for java.util.List)</li><li>MapType -&gt; scala.collection.Map (use getJavaMap for java.util.Map)</li><li>StructType -&gt; org.apache.spark.sql.Row
+</li></ul></div></div>
     </li><li name="ru.raiffeisen.checkita.core.Results" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Results"></a><a id="Results:Results"></a>
       <span class="permalink">
