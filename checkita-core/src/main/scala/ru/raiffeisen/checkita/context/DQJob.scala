@@ -177,7 +177,7 @@ trait DQJob extends Logging {
                 case CalculatorStatus.Error => log.warn(s"$stage Load check calculation error: ${lcResult.message}")
               }
 
-              lcResult.finalize
+              lcResult.finalize(lc.description.map(_.value), lc.metadataString)
             }
           case None =>
             log.info(s"$stage There are no load checks found for source '${src.id}'.")
@@ -237,7 +237,7 @@ trait DQJob extends Logging {
             case CalculatorStatus.Error => log.warn(s"$stage Check calculation error: ${chkResult.message}")
           }
 
-          chkResult.finalize(chk.description.map(_.value))
+          chkResult.finalize(chk.description.map(_.value), chk.metadataString)
         }
       } else {
         log.info(s"$stage No checks are defined.")
@@ -262,7 +262,8 @@ trait DQJob extends Logging {
           val mConfig = metricsMap.get(r.metricId)
           val desc = mConfig.flatMap(_.description).map(_.value)
           val params = mConfig.flatMap(_.paramString)
-          r.finalizeAsRegular(desc, params)
+          val metadata = mConfig.flatMap(_.metadataString)
+          r.finalizeAsRegular(desc, params, metadata)
         }
     }
 
@@ -284,7 +285,8 @@ trait DQJob extends Logging {
           val mConfig = composedMetricsMap.get(r.metricId)
           val desc = mConfig.flatMap(_.description).map(_.value)
           val formula = mConfig.map(_.formula.value).getOrElse("")
-          r.finalizeAsComposed(desc, formula)
+          val metadata = mConfig.flatMap(_.metadataString)
+          r.finalizeAsComposed(desc, formula, metadata)
         }
     }
 
@@ -318,8 +320,8 @@ trait DQJob extends Logging {
 
     val renderOpts = ConfigRenderOptions.defaults().setComments(false).setOriginComments(false).setFormatted(false)
 
-    val writeFunc = (jc: JobConfig) => settings.configEncryptor match {
-      case Some(e) => writeEncryptedJobConfig(jc)(new ConfigEncryptor(e.secretKey, e.fields))
+    val writeFunc = (jc: JobConfig) => settings.encryption match {
+      case Some(e) => writeEncryptedJobConfig(jc)(new ConfigEncryptor(e.secret, e.keyFields))
       case None => writeJobConfig(jc)
     }
 

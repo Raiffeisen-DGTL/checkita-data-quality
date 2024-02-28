@@ -18,7 +18,7 @@ class SchemaReadersSpec extends AnyWordSpec with Matchers {
 
   "DelimitedSchemaReader" must {
     "correctly read schema when provided with delimited schema config" in {
-      val schema = DelimitedSchemaConfig(ID("schema"), Refined.unsafeApply(Seq(
+      val schema = DelimitedSchemaConfig(ID("schema"), None, Refined.unsafeApply(Seq(
         GeneralColumn("col1", StringType),
         GeneralColumn("col2", IntegerType),
         GeneralColumn("col3", DoubleType)
@@ -39,7 +39,7 @@ class SchemaReadersSpec extends AnyWordSpec with Matchers {
   
   "FixedFullSchemaReader" must {
     "correctly read schema when provided with fixed full schema config" in {
-      val schema = FixedFullSchemaConfig(ID("schema"), Refined.unsafeApply(Seq(
+      val schema = FixedFullSchemaConfig(ID("schema"), None, Refined.unsafeApply(Seq(
         FixedFullColumn("col1", StringType, 5),
         FixedFullColumn("col2", IntegerType, 3),
         FixedFullColumn("col3", DoubleType, 8),
@@ -60,7 +60,7 @@ class SchemaReadersSpec extends AnyWordSpec with Matchers {
   
   "FixedShortSchemaReader" must {
     "correctly read schema when provided with fixed short schema config" in {
-      val schema = FixedShortSchemaConfig(ID("schema"), Refined.unsafeApply(Seq(
+      val schema = FixedShortSchemaConfig(ID("schema"), None, Refined.unsafeApply(Seq(
         "c-o-l-1:34", "c_o_l_2:27", "c o l 3:31", "c$o`l@4:21"
       )))
 
@@ -88,8 +88,8 @@ class SchemaReadersSpec extends AnyWordSpec with Matchers {
 
       val schema1Path = getClass.getResource("/test_schema1.avsc").getPath
       val schema2Path = getClass.getResource("/test_schema2.avsc").getPath
-      val schema1 = AvroSchemaConfig(ID("schema1"), Refined.unsafeApply(schema1Path))
-      val schema2 = AvroSchemaConfig(ID("schema2"), Refined.unsafeApply(schema2Path))
+      val schema1 = AvroSchemaConfig(ID("schema1"), None, Refined.unsafeApply(schema1Path))
+      val schema2 = AvroSchemaConfig(ID("schema2"), None, Refined.unsafeApply(schema2Path))
 
       val schema1Result = SourceSchema("schema1", StructType(Seq(
         StructField("column1", StringType, nullable = true),
@@ -117,7 +117,7 @@ class SchemaReadersSpec extends AnyWordSpec with Matchers {
     }
     
     "return error when file with avro schema is not found" in {
-      val schema = AvroSchemaConfig(ID("schema1"), "some_avro_schema.avsc")
+      val schema = AvroSchemaConfig(ID("schema1"), None, "some_avro_schema.avsc")
       AvroSchemaReader.read(schema).isLeft shouldEqual true
     }
   }

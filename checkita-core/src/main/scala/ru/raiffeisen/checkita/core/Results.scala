@@ -1,17 +1,15 @@
 package ru.raiffeisen.checkita.core
 
 import enumeratum.{Enum, EnumEntry}
-import org.json4s._
 import org.json4s.jackson.Serialization.write
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.core.metrics.ErrorCollection.MetricErrors
 import ru.raiffeisen.checkita.storage.Models._
+import ru.raiffeisen.checkita.utils.Common.jsonFormats
 
 import scala.collection.immutable
 
 object Results {
-
-  implicit val formats: DefaultFormats.type = DefaultFormats
   
   /**
    * Enumeration holding all possible result types:
@@ -62,54 +60,62 @@ object Results {
     /**
      * Converts regular metric calculator result to final regular metric result representation suitable
      * for storing into results storage and sending via targets.
+     *
      * @param description Regular metric description
-     * @param params Regular metric parameters (JSON string)
-     * @param jobId Implicit Job ID
-     * @param settings Implicit application settings object
+     * @param params      Regular metric parameters (JSON string)
+     * @param metadata    Metadata parameters specific to this regular metric (JSON List string)
+     * @param jobId       Implicit Job ID
+     * @param settings    Implicit application settings object
      * @return Finalized regular metric result
      */
     def finalizeAsRegular(description: Option[String],
-                          params: Option[String])(implicit jobId: String,
-                                                  settings: AppSettings): ResultMetricRegular = ResultMetricRegular(
-      jobId,
-      metricId,
-      metricName,
-      description,
-      write(sourceIds),
-      Some(write(columns)),
-      params,
-      result,
-      additionalResult,
-      settings.referenceDateTime.getUtcTS,
-      settings.executionDateTime.getUtcTS
-    )
+                          params: Option[String],
+                          metadata: Option[String])(implicit jobId: String,
+                                                    settings: AppSettings): ResultMetricRegular =
+      ResultMetricRegular(
+        jobId,
+        metricId,
+        metricName,
+        description,
+        metadata,
+        write(sourceIds),
+        Some(write(columns)),
+        params,
+        result,
+        additionalResult,
+        settings.referenceDateTime.getUtcTS,
+        settings.executionDateTime.getUtcTS
+      )
 
     /**
      * Converts composed metric calculator result to final composed metric result representation suitable
      * for storing into results storage and sending via targets.
+     *
      * @param description Composed metric description
-     * @param formula Composed metric formula
-     * @param jobId Implicit Job ID
-     * @param settings Implicit application settings object
+     * @param formula     Composed metric formula
+     * @param metadata    Metadata parameters specific to this composed metric (JSON List string)
+     * @param jobId       Implicit Job ID
+     * @param settings    Implicit application settings object
      * @return Finalized composed metric result
      */
     def finalizeAsComposed(description: Option[String],
-                           formula: String)(implicit jobId: String,
-                                            settings: AppSettings): ResultMetricComposed = ResultMetricComposed(
-      jobId,
-      metricId,
-      metricName,
-      description,
-      write(sourceIds),
-      formula,
-      result,
-      additionalResult,
-      settings.referenceDateTime.getUtcTS,
-      settings.executionDateTime.getUtcTS
-    )
-    
-    //  case class MetricErrors(columns: Seq[String], errors: Seq[ErrorRow])
-    // case class ErrorRow(status: CalculatorStatus, message: String, rowData: Seq[String])
+                           formula: String,
+                           metadata: Option[String])(implicit jobId: String,
+                                                     settings: AppSettings): ResultMetricComposed =
+      ResultMetricComposed(
+        jobId,
+        metricId,
+        metricName,
+        description,
+        metadata,
+        write(sourceIds),
+        formula,
+        result,
+        additionalResult,
+        settings.referenceDateTime.getUtcTS,
+        settings.executionDateTime.getUtcTS
+      )
+
     def finalizeMetricErrors(implicit jobId: String,
                              settings: AppSettings): Seq[ResultMetricErrors] = 
       errors.toSeq.flatMap{ err => 
@@ -158,27 +164,32 @@ object Results {
     /**
      * Converts check calculator result to final check result representation suitable
      * for storing into results storage and sending via targets.
+     *
      * @param description Check description
-     * @param jobId Implicit Job ID
-     * @param settings Implicit application settings object
+     * @param metadata    Metadata parameters specific to this check (JSON List string)
+     * @param jobId       Implicit Job ID
+     * @param settings    Implicit application settings object
      * @return Finalized check result
      */
-    def finalize(description: Option[String])(implicit jobId: String, settings: AppSettings): ResultCheck = ResultCheck(
-      jobId,
-      checkId,
-      checkName,
-      description,
-      write(sourceIds),
-      baseMetric,
-      comparedMetric,
-      comparedThreshold,
-      lowerBound,
-      upperBound,
-      status.toString,
-      Some(message),
-      settings.referenceDateTime.getUtcTS,
-      settings.executionDateTime.getUtcTS
-    )
+    def finalize(description: Option[String],
+                 metadata: Option[String])(implicit jobId: String, settings: AppSettings): ResultCheck =
+      ResultCheck(
+        jobId,
+        checkId,
+        checkName,
+        description,
+        metadata,
+        write(sourceIds),
+        baseMetric,
+        comparedMetric,
+        comparedThreshold,
+        lowerBound,
+        upperBound,
+        status.toString,
+        Some(message),
+        settings.referenceDateTime.getUtcTS,
+        settings.executionDateTime.getUtcTS
+      )
   }
 
   /**
@@ -203,20 +214,27 @@ object Results {
     /**
      * Converts load check calculator result to final load check result representation suitable
      * for storing into results storage and sending via targets.
-     * @param jobId Implicit Job ID
-     * @param settings Implicit application settings object
+     *
+     * @param description Load check description
+     * @param metadata    Metadata parameters specific to this load check (JSON List string)
+     * @param jobId       Implicit Job ID
+     * @param settings    Implicit application settings object
      * @return Finalized load check result
      */
-    def finalize(implicit jobId: String, settings: AppSettings): ResultCheckLoad = ResultCheckLoad(
-      jobId,
-      checkId,
-      checkName,
-      sourceId,
-      expected,
-      status.toString,
-      Some(message),
-      settings.referenceDateTime.getUtcTS,
-      settings.executionDateTime.getUtcTS
-    )
+    def finalize(description: Option[String],
+                 metadata: Option[String])(implicit jobId: String, settings: AppSettings): ResultCheckLoad =
+      ResultCheckLoad(
+        jobId,
+        checkId,
+        checkName,
+        description,
+        metadata,
+        sourceId,
+        expected,
+        status.toString,
+        Some(message),
+        settings.referenceDateTime.getUtcTS,
+        settings.executionDateTime.getUtcTS
+      )
   }
 }

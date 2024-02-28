@@ -1,11 +1,15 @@
 package ru.raiffeisen.checkita.config
 
 import com.typesafe.config.{Config, ConfigFactory}
+import org.apache.spark.sql.Column
+import org.apache.spark.sql.catalyst.analysis.{UnresolvedAttribute, UnresolvedFunction}
+import org.apache.spark.sql.catalyst.expressions.{Expression, Literal}
 import org.apache.spark.sql.execution.SparkSqlParser
 import org.apache.spark.sql.internal.SQLConf
 import pureconfig.error.{ConfigReaderFailure, ConvertFailure}
 
 import java.io.{File, FileNotFoundException, InputStreamReader}
+import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
 
 object Parsers {
@@ -25,6 +29,49 @@ object Parsers {
       case _ => throw new NoSuchMethodException("Unable to construct Spark SQL Parser")
     }
   }
+
+  /**
+   * Parsing utilities used to get list of all depended columns from unresolved Spark SQL expression.
+   * This is required for Hive partition expression parsing in order to check if this expression
+   * refers only to partitioning columns.
+   *
+   * @param ex Spark Column derived from SQL expression
+   */
+  implicit class ExpressionParsingOps(ex: Column) {
+
+    /**
+     * Tail recursive function to traverse Spark Expression children and collect all dependent column names.
+     * In addition, this function will throw an exception in case if some sub-queries or other not allowed logic
+     * is used inside expression for partitions filtering.
+     *
+     * @param expr  Sequence of top-level children from parent expression.
+     * @param attrs Accumulator for storing found column names.
+     * @return List of dependent column names for given expression.
+     */
+    @tailrec
+    private def getAllColNames(expr: Seq[Expression], attrs: Seq[String] = Seq.empty): Seq[String] =
+      if (expr.isEmpty) attrs
+      else {
+        expr.head match {
+          case _: Literal => getAllColNames(expr.tail, attrs)
+          case attr: UnresolvedAttribute => getAllColNames(expr.tail, attrs :+ attr.name)
+          case func: UnresolvedFunction => getAllColNames(func.children ++ expr.tail, attrs)
+          case _ => throw new IllegalArgumentException(
+            "Unable to parse expression to filter partition: " +
+              "expression must contain only reference to partition column, " +
+              "literals and sql functions."
+          )
+        }
+      }
+
+    /**
+     * Returns list of all dependent column names for this column expression.
+     *
+     * @return List of column names.
+     */
+    def dependentColumns: Seq[String] = getAllColNames(ex.expr.children)
+  }
+
 
   /**
    * Type class for Config parsers

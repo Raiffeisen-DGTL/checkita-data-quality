@@ -31,6 +31,7 @@ trait ResultDataFrameBuilder[T <: ResultTargetConfig] extends TargetBuilder[T, D
       case ResultTargetType.ComposedMetrics => results.composedMetrics.map(_.toRow)
       case ResultTargetType.LoadChecks => results.loadChecks.map(_.toRow)
       case ResultTargetType.Checks => results.checks.map(_.toRow)
+      case ResultTargetType.JobState => Seq(results.jobConfig.toRow)
     }
     spark.createDataFrame(rows.asJava, schema = schema)
   }.toResult(

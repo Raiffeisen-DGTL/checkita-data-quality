@@ -6,7 +6,8 @@ import ru.raiffeisen.checkita.config.Enums.TrendCheckRule
 import ru.raiffeisen.checkita.config.appconf.StreamConfig
 import ru.raiffeisen.checkita.config.jobconf.Checks._
 import ru.raiffeisen.checkita.config.jobconf.MetricParams.LevenshteinDistanceParams
-import ru.raiffeisen.checkita.config.jobconf.Sources.{DelimitedFileSourceConfig, FixedFileSourceConfig, KafkaSourceConfig, TableSourceConfig}
+import ru.raiffeisen.checkita.config.jobconf.Sources._
+import ru.raiffeisen.checkita.config.Parsers.ExpressionParsingOps
 
 import javax.validation.ValidationException
 import scala.concurrent.duration.Duration
@@ -114,7 +115,62 @@ object PreValidation {
           "for table sources either table or query to read must be defined but not both."
       )
     }
-    
+
+  /**
+   * Ensure that Hive Partition definition is either includes implicitly defined list of values
+   * or an SQL expression to filter partitions but not both.
+   *
+   * @param h Parsed hive partition configuration
+   * @return Boolean validation result
+   */
+  private def hivePartitionDefValidation(h: HivePartition): Boolean =
+    (h.values.nonEmpty && h.expr.isEmpty) || (h.values.isEmpty && h.expr.nonEmpty)
+
+  /**
+   * Ensures that in case if Hive Partition is defined with use of SQL expression
+   * then this expression must contain only reference to partition column,
+   * literals and sql functions.
+   *
+   * @param h Parsed hive partition configuration
+   * @return Boolean validation result
+   */
+  private def hivePartitionExprValidation(h: HivePartition): Boolean =
+    if (h.expr.isEmpty) true else Try(h.expr.get.dependentColumns.forall(_ == h.name.value)).getOrElse(false)
+
+  /**
+   * Implicit HivePartition reader validation
+   */
+  implicit val validateHivePartitionReader: ConfigReader[HivePartition] = deriveReader[HivePartition]
+    .ensure(
+      hivePartitionDefValidation,
+      _ => "Hive partitions to read must be defined either explicitly as a list of partition values " +
+        "or as a SQL filter expression but not both."
+    )
+    .ensure(
+      hivePartitionExprValidation,
+      _ => "Expression to filter partitions must contain only reference to partition column, literals and SQL functions."
+    )
+
+  /**
+   * Implicit HivePartition writer validation
+   */
+  implicit val validateHivePartitionWriter: ConfigWriter[HivePartition] =
+    deriveWriter[HivePartition].contramap[HivePartition]{ x =>
+      if (hivePartitionDefValidation(x)) x
+      else throw new ValidationException(
+        s"Error during writing ${x.toString}: " +
+          "Hive partitions to read must be defined either explicitly as a list of partition values " +
+          "or as a SQL filter expression but not both."
+      )
+    }.contramap[HivePartition]{ x =>
+      if (hivePartitionExprValidation(x)) x
+      else throw new ValidationException(
+        s"Error during writing ${x.toString}: " +
+          "Expression to filter partitions must contain only reference to partition column, literals and SQL functions."
+      )
+    }
+
+
   /**
    * Ensure that kafka source configuration contains at exactly on of the topic definitions.
    * @param k Parsed kafka source configuration

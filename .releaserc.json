@@ -6,15 +6,16 @@
         "@semantic-release/commit-analyzer",
         "@semantic-release/release-notes-generator",
         [
-            "@semantic-release/exec",
-            {
-                "verifyReleaseCmd": "./.prepare_release.sh ${nextRelease.version}"
-            }
-        ],
-        [
             "@semantic-release/changelog",
             {
                 "changelogFile": "docs/changelog/CHANGELOG.md"
+            }
+        ],
+        [
+            "@semantic-release/exec",
+            {
+                "verifyReleaseCmd": "./.prepare_release.sh ${nextRelease.version}",
+                "prepare": "./.prepare_changelog.sh"
             }
         ],
         [

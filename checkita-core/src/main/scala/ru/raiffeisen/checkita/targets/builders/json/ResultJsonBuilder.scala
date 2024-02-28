@@ -29,6 +29,7 @@ trait ResultJsonBuilder[T <: ResultTargetConfig] extends TargetBuilder[T, Seq[St
       case ResultTargetType.ComposedMetrics => results.composedMetrics.map(_.toJson)
       case ResultTargetType.LoadChecks => results.loadChecks.map(_.toJson)
       case ResultTargetType.Checks => results.checks.map(_.toJson)
+      case ResultTargetType.JobState => Seq(results.jobConfig.toJson)
     }
   }.toResult(
     preMsg = s"Unable to prepare json data with result targets due to following error:"

@@ -15,28 +15,28 @@ import scala.util.Try
 /**
  * Application settings
  *
- * @param executionDateTime Job execution date-time (actual time when job is started)
- * @param referenceDateTime Reference date-time (for which the job is performed)
- * @param allowNotifications Enables notifications to be sent from DQ application
- * @param allowSqlQueries Enables SQL arbitrary queries in virtual sources
+ * @param executionDateTime     Job execution date-time (actual time when job is started)
+ * @param referenceDateTime     Reference date-time (for which the job is performed)
+ * @param allowNotifications    Enables notifications to be sent from DQ application
+ * @param allowSqlQueries       Enables SQL arbitrary queries in virtual sources
  * @param aggregatedKafkaOutput Enables sending aggregates messages for Kafka Targets
  *                              (one per each target type, except checkAlerts where
  *                              one message per checkAlert will be sent)
  * @param enableCaseSensitivity Enable columns case sensitivity
- * @param errorDumpSize Maximum number of errors to be collected per single metric.
- * @param outputRepartition Sets the number of partitions when writing outputs. By default writes single file.
- * @param storageConfig Configuration of connection to Data Quality Storage
- * @param emailConfig Configuration of connection to SMTP server
- * @param mattermostConfig Configuration of connection to Mattermost API
- * @param streamConfig Streaming settings (used in streaming applications only)
- * @param configEncryptor Encryption settings
- * @param sparkConf Spark configuration parameters
- * @param isLocal Boolean flag indicating whether spark application must be run locally.
- * @param isShared Boolean flag indicating whether spark application running within shared spark context.
- * @param doMigration Boolean flag indication whether DQ storage database migration needs to be run prior result saving.
- * @param applicationName Name of Checkita Data Quality spark application
- * @param prependVars Multiline HOCON string with variables to be prepended to configuration files during their parsing.
- * @param loggingLevel Application logging level
+ * @param errorDumpSize         Maximum number of errors to be collected per single metric.
+ * @param outputRepartition     Sets the number of partitions when writing outputs. By default writes single file.
+ * @param storageConfig         Configuration of connection to Data Quality Storage
+ * @param emailConfig           Configuration of connection to SMTP server
+ * @param mattermostConfig      Configuration of connection to Mattermost API
+ * @param streamConfig          Streaming settings (used in streaming applications only)
+ * @param encryption            Encryption settings
+ * @param sparkConf             Spark configuration parameters
+ * @param isLocal               Boolean flag indicating whether spark application must be run locally.
+ * @param isShared              Boolean flag indicating whether spark application running within shared spark context.
+ * @param doMigration           Boolean flag indication whether DQ storage database migration needs to be run prior result saving.
+ * @param applicationName       Name of Checkita Data Quality spark application
+ * @param prependVars           Multiline HOCON string with variables to be prepended to configuration files during their parsing.
+ * @param loggingLevel          Application logging level
  */
 final case class AppSettings(
                               executionDateTime: EnrichedDT,
@@ -51,7 +51,7 @@ final case class AppSettings(
                               emailConfig: Option[EmailConfig],
                               mattermostConfig: Option[MattermostConfig],
                               streamConfig: StreamConfig,
-                              configEncryptor: Option[Encryption],
+                              encryption: Option[Encryption],
                               sparkConf: SparkConf,
                               isLocal: Boolean,
                               isShared: Boolean,

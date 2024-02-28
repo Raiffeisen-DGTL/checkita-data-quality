@@ -291,7 +291,10 @@ object SourceReaders {
       val preDf = spark.read.table(tableName)
       val df = if (config.partitions.nonEmpty) {
         preDf.filter(
-          config.partitions.map(p => col(p.name.value).isin(p.values.map(_.value))).reduce(_ && _)
+          config.partitions.map { p =>
+            if (p.expr.nonEmpty) p.expr.get
+            else col(p.name.value).isin(p.values.map(_.value))
+          }.reduce(_ && _)
         )
       } else preDf
       toSource(config, df)

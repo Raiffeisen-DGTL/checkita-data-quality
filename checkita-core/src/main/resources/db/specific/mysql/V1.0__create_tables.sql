@@ -1,3 +1,10 @@
+/*
+    We have to limit number of bytes used for job_id, metric_id and check_id by limiting maximum number of chars to 256.
+    This is required because these fields are used to build unique index and MySQL limits total size of the key
+    in index by 3072 bytes. We cannot reduce size of timestamp field, therefore, have to limit number of chars
+    in text fields.
+ */
+
 CREATE TABLE "${defaultSchema}"."results_metric_regular"
 (
     "job_id"            VARCHAR(256)     NOT NULL,
