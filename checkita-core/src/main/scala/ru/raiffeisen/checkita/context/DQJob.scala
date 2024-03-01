@@ -328,6 +328,7 @@ trait DQJob extends Logging {
     writeFunc(jobConfig).map(jc => JobState(
       jobId,
       jc.root().render(renderOpts),
+      settings.versionInfo.asJsonString,
       settings.referenceDateTime.getUtcTS,
       settings.executionDateTime.getUtcTS
     ))

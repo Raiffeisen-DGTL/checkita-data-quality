@@ -3,7 +3,7 @@ package ru.raiffeisen.checkita.config
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.catalyst.analysis.{UnresolvedAttribute, UnresolvedFunction}
-import org.apache.spark.sql.catalyst.expressions.{Expression, Literal}
+import org.apache.spark.sql.catalyst.expressions.{Expression, Literal, PlanExpression}
 import org.apache.spark.sql.execution.SparkSqlParser
 import org.apache.spark.sql.internal.SQLConf
 import pureconfig.error.{ConfigReaderFailure, ConvertFailure}
@@ -56,10 +56,14 @@ object Parsers {
           case _: Literal => getAllColNames(expr.tail, attrs)
           case attr: UnresolvedAttribute => getAllColNames(expr.tail, attrs :+ attr.name)
           case func: UnresolvedFunction => getAllColNames(func.children ++ expr.tail, attrs)
+          case _: PlanExpression[_] => throw new IllegalArgumentException(
+            "Unable to parse expression to filter partitions: sub-queries are not allowed"
+          )
+          case otherExpr: Expression => getAllColNames(otherExpr.children ++ expr.tail, attrs)
           case _ => throw new IllegalArgumentException(
-            "Unable to parse expression to filter partition: " +
-              "expression must contain only reference to partition column, " +
-              "literals and sql functions."
+            "Unable to parse expression to filter partitions: unknown expression sub-type found. " +
+              "Expression must contain only reference to partition column, " +
+              "literals and SQL functions."
           )
         }
       }

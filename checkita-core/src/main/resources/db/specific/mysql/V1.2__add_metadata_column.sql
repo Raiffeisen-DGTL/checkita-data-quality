@@ -3,7 +3,7 @@
     This is required because these fields are used to build unique index and MySQL limits total size of the key
     in index by 3072 bytes. We cannot reduce size of timestamp field, therefore, have to limit number of chars
     in text fields.
- */
+*/
 
 ALTER TABLE "${defaultSchema}"."results_metric_regular" RENAME TO "results_metric_regular_backup";
 CREATE TABLE "${defaultSchema}"."results_metric_regular"

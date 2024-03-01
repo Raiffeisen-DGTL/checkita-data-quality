@@ -1,6 +1,6 @@
 package ru.raiffeisen.checkita.storage
 
-import ru.raiffeisen.checkita.appsettings.AppSettings
+import ru.raiffeisen.checkita.appsettings.{AppSettings, VersionInfo}
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.utils.Common.camelToSnakeCase
 import shapeless.{::, HList, HNil}
@@ -117,6 +117,7 @@ object Models {
 
   final case class JobState(jobId: String,
                             config: String,
+                            versionInfo: String,
                             referenceDate: Timestamp,
                             executionDate: Timestamp
                            ) extends DQEntity {

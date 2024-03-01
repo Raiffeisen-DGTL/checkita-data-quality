@@ -1,6 +1,5 @@
 package ru.raiffeisen.checkita.storage
 
-import com.typesafe.config.Config
 import ru.raiffeisen.checkita.storage.Models._
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
@@ -154,6 +153,7 @@ class Tables(val profile: JdbcProfile) {
     extends DQTable[JobState](tag, schema, "job_state") {
 
     def config: Rep[String] = column[String]("config")
+    def versionInfo: Rep[String] = column[String]("version_info")
     def referenceDate: Rep[Timestamp] = column[Timestamp]("reference_date")
     def executionDate: Rep[Timestamp] = column[Timestamp]("execution_date")
 
@@ -163,6 +163,7 @@ class Tables(val profile: JdbcProfile) {
     def * : ProvenShape[JobState] = (
       jobId,
       config,
+      versionInfo,
       referenceDate,
       executionDate
     ) <> (JobState.tupled, JobState.unapply)

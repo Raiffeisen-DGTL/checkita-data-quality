@@ -11,7 +11,7 @@ import ru.raiffeisen.checkita.config.Parsers.ExpressionParsingOps
 
 import javax.validation.ValidationException
 import scala.concurrent.duration.Duration
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 // required import
 import eu.timepit.refined.auto._
@@ -132,10 +132,23 @@ object PreValidation {
    * literals and sql functions.
    *
    * @param h Parsed hive partition configuration
-   * @return Boolean validation result
+   * @return Boolean validation result as well as sequence of error message (in case of failed validation).
    */
-  private def hivePartitionExprValidation(h: HivePartition): Boolean =
-    if (h.expr.isEmpty) true else Try(h.expr.get.dependentColumns.forall(_ == h.name.value)).getOrElse(false)
+  private def hivePartitionExprValidation(h: HivePartition): (Boolean, Seq[String]) =
+    if (h.expr.isEmpty) (true, Seq.empty)
+    else Try(h.expr.get.dependentColumns) match {
+      case Success(cols) =>
+        val invalidColRefs = cols.filterNot(_ == h.name.value)
+        if (invalidColRefs.isEmpty) (true, Seq.empty)
+        else (false, Seq(
+          "Expression to filter partitions must not contain reference to other columns.",
+          "Found following invalid column references:",
+          invalidColRefs.mkString("'", ", ", "'") + ".",
+          "If you are using SQL functions without arguments, please call them with empty parentheses,",
+          "e.g. `current_date()` but not `current_date`."
+        ))
+      case Failure(e) => (false, Seq(e.getMessage))
+    }
 
   /**
    * Implicit HivePartition reader validation
@@ -147,8 +160,8 @@ object PreValidation {
         "or as a SQL filter expression but not both."
     )
     .ensure(
-      hivePartitionExprValidation,
-      _ => "Expression to filter partitions must contain only reference to partition column, literals and SQL functions."
+      h => hivePartitionExprValidation(h)._1,
+      h => hivePartitionExprValidation(h)._2.mkString(" ")
     )
 
   /**
@@ -163,11 +176,8 @@ object PreValidation {
           "or as a SQL filter expression but not both."
       )
     }.contramap[HivePartition]{ x =>
-      if (hivePartitionExprValidation(x)) x
-      else throw new ValidationException(
-        s"Error during writing ${x.toString}: " +
-          "Expression to filter partitions must contain only reference to partition column, literals and SQL functions."
-      )
+      val (isValid, errors) = hivePartitionExprValidation(x)
+      if (isValid) x else throw new ValidationException(s"Error during writing ${x.toString}: " + errors.mkString(" "))
     }
 
 
