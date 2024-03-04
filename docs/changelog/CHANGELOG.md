@@ -1,4 +1,11 @@
-# [1.3.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.2.1...v1.3.0) (2024-3-4)
+## [1.3.1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.3.0...v1.3.1) (2024-3-4)
+
+
+### Bug Fixes
+
+* update prepare-release scripts in order to fix auto-versioning and changelog formatting. ([#29](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/29)) ([9a30d59](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/9a30d59ec0b6e84225e0bbbf458546b50887c083))
+
+## [1.3.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.2.1...v1.3.0) (2024-3-4)
 
 
 ### Features
@@ -12,7 +19,7 @@
 
 * enhance casting methods for proper conversion of primitive values to target types ([#27](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/27)) ([744384b](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/744384b77cee7bac7c23d3af700ae7fb78c0a846))
 
-# [1.2.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.1.1...v1.2.0) (2024-2-16)
+## [1.2.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.1.1...v1.2.0) (2024-2-16)
 
 
 ### Bug Fixes
@@ -34,7 +41,7 @@
 
 * enhance kakfa windowing for streams and enable avro kafka message format ([#20](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/20)) ([a5e9827](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/a5e9827213da36ebc8932195018943204c3db309))
 
-# [1.1.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.0.1...v1.1.0) (2023-12-08)
+## [1.1.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.0.1...v1.1.0) (2023-12-08)
 
 
 ### Features
