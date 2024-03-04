@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.12">
     
     
       
@@ -1713,6 +1713,8 @@ compositions. These metrics are called <code>composed</code> accordingly.</p>
   object. The details on what parameters should be configured for metric are given below for each metric individually.
   Some metric definitions that require additional parameters are also have their default values set. In this case,
   <code>params</code> object can be omitted to use default options for all parameters.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this metric where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <p>Additionally, some regular metrics have a logical condition that needs to be met when calculating metric increment per
 each individual row. If metric condition is not met, then <code>Failure</code> status is returned for this particular row of data.
@@ -2178,57 +2180,61 @@ Composed metrics are listed in the separate subsection.</p>
 </span><span id="__span-0-8">      distinctValues: [
 </span><span id="__span-0-9">        {
 </span><span id="__span-0-10">          id: &quot;fixed_file_dist_name&quot;, description: &quot;Distinct values in hdfs_fixed_file&quot;,
-</span><span id="__span-0-11">          source: &quot;hdfs_fixed_file&quot;, columns: [&quot;colA&quot;]
-</span><span id="__span-0-12">        }
-</span><span id="__span-0-13">      ]
-</span><span id="__span-0-14">      nullValues: [
-</span><span id="__span-0-15">        {id: &quot;hive_table_nulls&quot;, description: &quot;Null values in columns id and name&quot;, source: &quot;hive_source_1&quot;, columns: [&quot;id&quot;, &quot;name&quot;]}
-</span><span id="__span-0-16">      ]
-</span><span id="__span-0-17">      completeness: [
-</span><span id="__span-0-18">        {id: &quot;orc_data_compl&quot;, description: &quot;Completness of column id&quot;, source: &quot;hdfs_orc_source&quot;, columns: [&quot;id&quot;]}
-</span><span id="__span-0-19">        {
-</span><span id="__span-0-20">          id: &quot;hive_table_nulls&quot;, 
-</span><span id="__span-0-21">          description: &quot;Completness of columns id and name&quot;, 
-</span><span id="__span-0-22">          source: &quot;hive_source_1&quot;, 
-</span><span id="__span-0-23">          columns: [&quot;id&quot;, &quot;name&quot;]
-</span><span id="__span-0-24">        }
-</span><span id="__span-0-25">      ]
-</span><span id="__span-0-26">      avgNumber: [
-</span><span id="__span-0-27">        {id: &quot;avro_file1_avg_bal&quot;, description: &quot;Avg number of column balance&quot;, source: &quot;hdfs_avro_source&quot;, columns: [&quot;balance&quot;]}
-</span><span id="__span-0-28">      ]
-</span><span id="__span-0-29">      regexMatch: [
-</span><span id="__span-0-30">        {
-</span><span id="__span-0-31">          id: &quot;table_source1_inn_regex&quot;, description: &quot;Regex match for inn column&quot;, source: &quot;table_source_1&quot;,
-</span><span id="__span-0-32">          columns: [&quot;inn&quot;], params: {regex: &quot;&quot;&quot;^\d{10}$&quot;&quot;&quot;}
-</span><span id="__span-0-33">        }
-</span><span id="__span-0-34">      ]
-</span><span id="__span-0-35">      stringInDomain: [
-</span><span id="__span-0-36">        {
-</span><span id="__span-0-37">          id: &quot;orc_data_segment_domain&quot;, source: &quot;hdfs_orc_source&quot;,
-</span><span id="__span-0-38">          columns: [&quot;segment&quot;], params: {domain: [&quot;FI&quot;, &quot;MID&quot;, &quot;SME&quot;, &quot;INTL&quot;, &quot;CIB&quot;]}
-</span><span id="__span-0-39">        }
-</span><span id="__span-0-40">      ]
-</span><span id="__span-0-41">      topN: [
-</span><span id="__span-0-42">        {
-</span><span id="__span-0-43">          id: &quot;filterVS_top3_currency&quot;, description: &quot;Top 3 currency in filterVS&quot;, source: &quot;filterVS&quot;,
-</span><span id="__span-0-44">          columns: [&quot;id&quot;], params: {targetNumber: 3, maxCapacity: 10}
-</span><span id="__span-0-45">        }
-</span><span id="__span-0-46">      ],
-</span><span id="__span-0-47">      levenshteinDistance: [
-</span><span id="__span-0-48">        {
-</span><span id="__span-0-49">          id: &quot;lvnstDist&quot;, source: &quot;table_source_2&quot;, columns: [&quot;col1&quot;, &quot;col2&quot;],
-</span><span id="__span-0-50">          params: {normalize: true, threshold: 0.3}
-</span><span id="__span-0-51">        }
-</span><span id="__span-0-52">      ]
-</span><span id="__span-0-53">    }
-</span><span id="__span-0-54">    composed: [
-</span><span id="__span-0-55">      {
-</span><span id="__span-0-56">        id: &quot;pct_of_null&quot;, description: &quot;Percent of null values in hive_table1&quot;,
-</span><span id="__span-0-57">        formula: &quot;100 * {{ hive_table_nulls }} ^ 2 / ( {{ hive_table_row_cnt }} + 1)&quot;
-</span><span id="__span-0-58">      }
-</span><span id="__span-0-59">    ]
-</span><span id="__span-0-60">  }
-</span><span id="__span-0-61">}
+</span><span id="__span-0-11">          source: &quot;hdfs_fixed_file&quot;, columns: [&quot;colA&quot;],
+</span><span id="__span-0-12">          metadata: [
+</span><span id="__span-0-13">            &quot;requestor=some.person@some.domain&quot;
+</span><span id="__span-0-14">            &quot;critical.metric=true&quot;
+</span><span id="__span-0-15">          ]
+</span><span id="__span-0-16">        }
+</span><span id="__span-0-17">      ]
+</span><span id="__span-0-18">      nullValues: [
+</span><span id="__span-0-19">        {id: &quot;hive_table_nulls&quot;, description: &quot;Null values in columns id and name&quot;, source: &quot;hive_source_1&quot;, columns: [&quot;id&quot;, &quot;name&quot;]}
+</span><span id="__span-0-20">      ]
+</span><span id="__span-0-21">      completeness: [
+</span><span id="__span-0-22">        {id: &quot;orc_data_compl&quot;, description: &quot;Completness of column id&quot;, source: &quot;hdfs_orc_source&quot;, columns: [&quot;id&quot;]}
+</span><span id="__span-0-23">        {
+</span><span id="__span-0-24">          id: &quot;hive_table_nulls&quot;, 
+</span><span id="__span-0-25">          description: &quot;Completness of columns id and name&quot;, 
+</span><span id="__span-0-26">          source: &quot;hive_source_1&quot;, 
+</span><span id="__span-0-27">          columns: [&quot;id&quot;, &quot;name&quot;]
+</span><span id="__span-0-28">        }
+</span><span id="__span-0-29">      ]
+</span><span id="__span-0-30">      avgNumber: [
+</span><span id="__span-0-31">        {id: &quot;avro_file1_avg_bal&quot;, description: &quot;Avg number of column balance&quot;, source: &quot;hdfs_avro_source&quot;, columns: [&quot;balance&quot;]}
+</span><span id="__span-0-32">      ]
+</span><span id="__span-0-33">      regexMatch: [
+</span><span id="__span-0-34">        {
+</span><span id="__span-0-35">          id: &quot;table_source1_inn_regex&quot;, description: &quot;Regex match for inn column&quot;, source: &quot;table_source_1&quot;,
+</span><span id="__span-0-36">          columns: [&quot;inn&quot;], params: {regex: &quot;&quot;&quot;^\d{10}$&quot;&quot;&quot;}
+</span><span id="__span-0-37">        }
+</span><span id="__span-0-38">      ]
+</span><span id="__span-0-39">      stringInDomain: [
+</span><span id="__span-0-40">        {
+</span><span id="__span-0-41">          id: &quot;orc_data_segment_domain&quot;, source: &quot;hdfs_orc_source&quot;,
+</span><span id="__span-0-42">          columns: [&quot;segment&quot;], params: {domain: [&quot;FI&quot;, &quot;MID&quot;, &quot;SME&quot;, &quot;INTL&quot;, &quot;CIB&quot;]}
+</span><span id="__span-0-43">        }
+</span><span id="__span-0-44">      ]
+</span><span id="__span-0-45">      topN: [
+</span><span id="__span-0-46">        {
+</span><span id="__span-0-47">          id: &quot;filterVS_top3_currency&quot;, description: &quot;Top 3 currency in filterVS&quot;, source: &quot;filterVS&quot;,
+</span><span id="__span-0-48">          columns: [&quot;id&quot;], params: {targetNumber: 3, maxCapacity: 10}
+</span><span id="__span-0-49">        }
+</span><span id="__span-0-50">      ],
+</span><span id="__span-0-51">      levenshteinDistance: [
+</span><span id="__span-0-52">        {
+</span><span id="__span-0-53">          id: &quot;lvnstDist&quot;, source: &quot;table_source_2&quot;, columns: [&quot;col1&quot;, &quot;col2&quot;],
+</span><span id="__span-0-54">          params: {normalize: true, threshold: 0.3}
+</span><span id="__span-0-55">        }
+</span><span id="__span-0-56">      ]
+</span><span id="__span-0-57">    }
+</span><span id="__span-0-58">    composed: [
+</span><span id="__span-0-59">      {
+</span><span id="__span-0-60">        id: &quot;pct_of_null&quot;, description: &quot;Percent of null values in hive_table1&quot;,
+</span><span id="__span-0-61">        formula: &quot;100 * {{ hive_table_nulls }} ^ 2 / ( {{ hive_table_row_cnt }} + 1)&quot;
+</span><span id="__span-0-62">      }
+</span><span id="__span-0-63">    ]
+</span><span id="__span-0-64">  }
+</span><span id="__span-0-65">}
 </span></code></pre></div>
 
 
@@ -2279,7 +2285,7 @@ Composed metrics are listed in the separate subsection.</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>

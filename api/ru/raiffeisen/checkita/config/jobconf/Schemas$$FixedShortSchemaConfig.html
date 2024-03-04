@@ -224,7 +224,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">FixedShortSchemaConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="schema">schema: <span class="extype" name="eu.timepit.refined.api.Refined">Refined</span>[<a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#FixedShortColumn=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^[^\\n\\r\\t:]+:\\d+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.FixedShortColumn">FixedShortColumn</a>], <span class="extype" name="eu.timepit.refined.collection.NonEmpty">NonEmpty</span>]</span>)</span><span class="result"> extends <a href="Schemas$$SchemaConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig">SchemaConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">FixedShortSchemaConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="schema">schema: <span class="extype" name="eu.timepit.refined.api.Refined">Refined</span>[<a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#FixedShortColumn=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^[^\\n\\r\\t:]+:\\d+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.FixedShortColumn">FixedShortColumn</a>], <span class="extype" name="eu.timepit.refined.collection.NonEmpty">NonEmpty</span>]</span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Schemas$$SchemaConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig">SchemaConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -232,11 +232,11 @@
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Fixed schema configuration used for files with fixed column width.
 Columns are defined in short notation with their name and width only.
 All columns have StringType.
-</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Schema ID</p></dd><dt class="param">schema</dt><dd class="cmt"><p>List of columns in order (format is &quot;column_name:width&quot;, e.g. &quot;zip:5&quot;)</p></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Schema ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Schema description</p></dd><dt class="param">schema</dt><dd class="cmt"><p>List of columns in order (format is &quot;column_name:width&quot;, e.g. &quot;zip:5&quot;)</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this schema</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Schemas$$SchemaConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig">SchemaConfig</a>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Schemas$$SchemaConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig">SchemaConfig</a>, <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -262,7 +262,7 @@ All columns have StringType.
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig"><span>FixedShortSchemaConfig</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig"><span>SchemaConfig</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig"><span>FixedShortSchemaConfig</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig"><span>SchemaConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity"><span>JobConfigEntity</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -283,9 +283,9 @@ All columns have StringType.
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,schema:eu.timepit.refined.api.Refined[Seq[ru.raiffeisen.checkita.config.RefinedTypes.FixedShortColumn],eu.timepit.refined.collection.NonEmpty]):ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig"></a><a id="&lt;init&gt;:FixedShortSchemaConfig"></a>
+      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],schema:eu.timepit.refined.api.Refined[Seq[ru.raiffeisen.checkita.config.RefinedTypes.FixedShortColumn],eu.timepit.refined.collection.NonEmpty],metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]):ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig"></a><a id="&lt;init&gt;:FixedShortSchemaConfig"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Schemas$$FixedShortSchemaConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,schema:eu.timepit.refined.api.Refined[Seq[ru.raiffeisen.checkita.config.RefinedTypes.FixedShortColumn],eu.timepit.refined.collection.NonEmpty]):ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Schemas$$FixedShortSchemaConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],schema:eu.timepit.refined.api.Refined[Seq[ru.raiffeisen.checkita.config.RefinedTypes.FixedShortColumn],eu.timepit.refined.collection.NonEmpty],metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]):ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -294,10 +294,10 @@ All columns have StringType.
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">FixedShortSchemaConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="schema">schema: <span class="extype" name="eu.timepit.refined.api.Refined">Refined</span>[<a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#FixedShortColumn=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^[^\\n\\r\\t:]+:\\d+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.FixedShortColumn">FixedShortColumn</a>], <span class="extype" name="eu.timepit.refined.collection.NonEmpty">NonEmpty</span>]</span>)</span>
+        <span class="name">FixedShortSchemaConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="schema">schema: <span class="extype" name="eu.timepit.refined.api.Refined">Refined</span>[<a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#FixedShortColumn=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^[^\\n\\r\\t:]+:\\d+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.FixedShortColumn">FixedShortColumn</a>], <span class="extype" name="eu.timepit.refined.collection.NonEmpty">NonEmpty</span>]</span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Schema ID</p></dd><dt class="param">schema</dt><dd class="cmt"><p>List of columns in order (format is &quot;column_name:width&quot;, e.g. &quot;zip:5&quot;)</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Schema ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Schema description</p></dd><dt class="param">schema</dt><dd class="cmt"><p>List of columns in order (format is &quot;column_name:width&quot;, e.g. &quot;zip:5&quot;)</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this schema</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -396,6 +396,22 @@ All columns have StringType.
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig#description" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="description:Option[eu.timepit.refined.types.string.NonEmptyString]"></a><a id="description:Option[NonEmptyString]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Schemas$$FixedShortSchemaConfig.html#description:Option[eu.timepit.refined.types.string.NonEmptyString]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">description</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig">FixedShortSchemaConfig</a> → JobConfigEntity</dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -468,7 +484,7 @@ All columns have StringType.
         <span class="name">id</span><span class="result">: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig">FixedShortSchemaConfig</a> → <a href="Schemas$$SchemaConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig">SchemaConfig</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig">FixedShortSchemaConfig</a> → JobConfigEntity</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -485,6 +501,38 @@ All columns have StringType.
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig#metadata" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]"></a><a id="metadata:Seq[SparkParam]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Schemas$$FixedShortSchemaConfig.html#metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metadata</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Schemas.FixedShortSchemaConfig">FixedShortSchemaConfig</a> → JobConfigEntity</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity#metadataString" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="metadataString:Option[String]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Schemas$$FixedShortSchemaConfig.html#metadataString:Option[String]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metadataString</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>JobConfigEntity</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -649,16 +697,18 @@ All columns have StringType.
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="scala.Product">
+        <div class="parent" name="scala.Product">
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
             </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig">
               <h3>Inherited from <a href="Schemas$$SchemaConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig">SchemaConfig</a></h3>
+            </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">
+              <h3>Inherited from <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span></h3>
+            </div><div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">

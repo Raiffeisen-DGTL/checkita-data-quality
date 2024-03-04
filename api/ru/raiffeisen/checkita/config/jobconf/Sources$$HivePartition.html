@@ -272,13 +272,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">HivePartition</span><span class="params">(<span name="name">name: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="values">values: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">HivePartition</span><span class="params">(<span name="name">name: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="expr">expr: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.sql.Column">Column</span>]</span>, <span name="values">values: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Configuration for Hive Table partition values to read.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name of partition column</p></dd><dt class="param">values</dt><dd class="cmt"><p>Sequence of partition values to read</p></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name of partition column</p></dd><dt class="param">expr</dt><dd class="cmt"><p>SQL Expression used to filter partitions to read</p></dd><dt class="param">values</dt><dd class="cmt"><p>Sequence of partition values to read</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -329,9 +329,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.jobconf.Sources.HivePartition#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(name:eu.timepit.refined.types.string.NonEmptyString,values:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.HivePartition"></a><a id="&lt;init&gt;:HivePartition"></a>
+      <a id="&lt;init&gt;(name:eu.timepit.refined.types.string.NonEmptyString,expr:Option[org.apache.spark.sql.Column],values:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.HivePartition"></a><a id="&lt;init&gt;:HivePartition"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$HivePartition.html#&lt;init&gt;(name:eu.timepit.refined.types.string.NonEmptyString,values:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.HivePartition" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$HivePartition.html#&lt;init&gt;(name:eu.timepit.refined.types.string.NonEmptyString,expr:Option[org.apache.spark.sql.Column],values:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.HivePartition" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -340,10 +340,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">HivePartition</span><span class="params">(<span name="name">name: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="values">values: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>)</span>
+        <span class="name">HivePartition</span><span class="params">(<span name="name">name: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="expr">expr: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.sql.Column">Column</span>]</span>, <span name="values">values: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name of partition column</p></dd><dt class="param">values</dt><dd class="cmt"><p>Sequence of partition values to read</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name of partition column</p></dd><dt class="param">expr</dt><dd class="cmt"><p>SQL Expression used to filter partitions to read</p></dd><dt class="param">values</dt><dd class="cmt"><p>Sequence of partition values to read</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -458,6 +458,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.HivePartition#expr" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="expr:Option[org.apache.spark.sql.Column]"></a><a id="expr:Option[Column]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$HivePartition.html#expr:Option[org.apache.spark.sql.Column]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">expr</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.sql.Column">Column</span>]</span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">

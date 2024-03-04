@@ -272,20 +272,20 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">DelimitedFileSourceConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="path">path: <a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a></span>, <span name="schema">schema: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a>]</span>, <span name="delimiter">delimiter: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span> = <span class="symbol">&quot;,&quot;</span></span>, <span name="quote">quote: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span> = <span class="symbol">&quot;\&quot;&quot;</span></span>, <span name="escape">escape: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span> = <span class="symbol">&quot;\\&quot;</span></span>, <span name="header">header: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="windowBy">windowBy: <a href="../Enums$$StreamWindowing.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.StreamWindowing">StreamWindowing</a> = <span class="symbol"><span class="name"><a href="../../../../index.html">ProcessingTime</a></span></span></span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Sources$$FileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.FileSourceConfig">FileSourceConfig</a> with <a href="Files$$DelimitedFileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.DelimitedFileConfig">DelimitedFileConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">DelimitedFileSourceConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="path">path: <a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a></span>, <span name="schema">schema: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a>]</span>, <span name="delimiter">delimiter: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span> = <span class="symbol">&quot;,&quot;</span></span>, <span name="quote">quote: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span> = <span class="symbol">&quot;\&quot;&quot;</span></span>, <span name="escape">escape: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span> = <span class="symbol">&quot;\\&quot;</span></span>, <span name="header">header: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="windowBy">windowBy: <a href="../Enums$$StreamWindowing.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.StreamWindowing">StreamWindowing</a> = <span class="symbol"><span class="name"><a href="../../../../index.html">ProcessingTime</a></span></span></span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Sources$$FileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.FileSourceConfig">FileSourceConfig</a> with <a href="Files$$DelimitedFileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.DelimitedFileConfig">DelimitedFileConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Delimited file source configuration
-</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">path</dt><dd class="cmt"><p>Path to file</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema ID (only if header = false)</p></dd><dt class="param">delimiter</dt><dd class="cmt"><p>Column delimiter (default: ,)</p></dd><dt class="param">quote</dt><dd class="cmt"><p>Quotation symbol (default: &quot;)</p></dd><dt class="param">escape</dt><dd class="cmt"><p>Escape symbol (default: \)</p></dd><dt class="param">header</dt><dd class="cmt"><p>Boolean flag indicating whether schema should be read from file header (default: false)</p></dd><dt class="param">windowBy</dt><dd class="cmt"><p>Source of timestamp used to build windows. Applicable only for streaming jobs!
-                 Default: processingTime - uses current timestamp at the moment when Spark processes row.
-                 Other options are:</p><ul><li>eventTime - uses column with name 'timestamp' (column must be of TimestampType).</li><li>customTime(columnName) - uses arbitrary user-defined column
-                     (column must be of TimestampType)</li></ul></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Sequence of key fields (columns that identify data row)</p></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Source description</p></dd><dt class="param">path</dt><dd class="cmt"><p>Path to file</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema ID (only if header = false)</p></dd><dt class="param">delimiter</dt><dd class="cmt"><p>Column delimiter (default: ,)</p></dd><dt class="param">quote</dt><dd class="cmt"><p>Quotation symbol (default: &quot;)</p></dd><dt class="param">escape</dt><dd class="cmt"><p>Escape symbol (default: \)</p></dd><dt class="param">header</dt><dd class="cmt"><p>Boolean flag indicating whether schema should be read from file header (default: false)</p></dd><dt class="param">windowBy</dt><dd class="cmt"><p>Source of timestamp used to build windows. Applicable only for streaming jobs!
+                   Default: processingTime - uses current timestamp at the moment when Spark processes row.
+                   Other options are:</p><ul><li>eventTime - uses column with name 'timestamp' (column must be of TimestampType).</li><li>customTime(columnName) - uses arbitrary user-defined column
+                     (column must be of TimestampType)</li></ul></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Sequence of key fields (columns that identify data row)</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this source</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Files$$DelimitedFileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.DelimitedFileConfig">DelimitedFileConfig</a>, <a href="Files$$FileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.FileConfig">FileConfig</a>, <a href="Sources$$FileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.FileSourceConfig">FileSourceConfig</a>, <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Files$$DelimitedFileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.DelimitedFileConfig">DelimitedFileConfig</a>, <a href="Files$$FileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.FileConfig">FileConfig</a>, <a href="Sources$$FileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.FileSourceConfig">FileSourceConfig</a>, <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a>, <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -311,7 +311,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig"><span>DelimitedFileSourceConfig</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Files.DelimitedFileConfig"><span>DelimitedFileConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Files.FileConfig"><span>FileConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Sources.FileSourceConfig"><span>FileSourceConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig"><span>SourceConfig</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig"><span>DelimitedFileSourceConfig</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Files.DelimitedFileConfig"><span>DelimitedFileConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Files.FileConfig"><span>FileConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Sources.FileSourceConfig"><span>FileSourceConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig"><span>SourceConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity"><span>JobConfigEntity</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -332,9 +332,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,path:ru.raiffeisen.checkita.config.RefinedTypes.URI,schema:Option[ru.raiffeisen.checkita.config.RefinedTypes.ID],delimiter:eu.timepit.refined.types.string.NonEmptyString,quote:eu.timepit.refined.types.string.NonEmptyString,escape:eu.timepit.refined.types.string.NonEmptyString,header:Boolean,windowBy:ru.raiffeisen.checkita.config.Enums.StreamWindowing,keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig"></a><a id="&lt;init&gt;:DelimitedFileSourceConfig"></a>
+      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],path:ru.raiffeisen.checkita.config.RefinedTypes.URI,schema:Option[ru.raiffeisen.checkita.config.RefinedTypes.ID],delimiter:eu.timepit.refined.types.string.NonEmptyString,quote:eu.timepit.refined.types.string.NonEmptyString,escape:eu.timepit.refined.types.string.NonEmptyString,header:Boolean,windowBy:ru.raiffeisen.checkita.config.Enums.StreamWindowing,keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString],metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]):ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig"></a><a id="&lt;init&gt;:DelimitedFileSourceConfig"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$DelimitedFileSourceConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,path:ru.raiffeisen.checkita.config.RefinedTypes.URI,schema:Option[ru.raiffeisen.checkita.config.RefinedTypes.ID],delimiter:eu.timepit.refined.types.string.NonEmptyString,quote:eu.timepit.refined.types.string.NonEmptyString,escape:eu.timepit.refined.types.string.NonEmptyString,header:Boolean,windowBy:ru.raiffeisen.checkita.config.Enums.StreamWindowing,keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$DelimitedFileSourceConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],path:ru.raiffeisen.checkita.config.RefinedTypes.URI,schema:Option[ru.raiffeisen.checkita.config.RefinedTypes.ID],delimiter:eu.timepit.refined.types.string.NonEmptyString,quote:eu.timepit.refined.types.string.NonEmptyString,escape:eu.timepit.refined.types.string.NonEmptyString,header:Boolean,windowBy:ru.raiffeisen.checkita.config.Enums.StreamWindowing,keyFields:Seq[eu.timepit.refined.types.string.NonEmptyString],metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]):ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -343,13 +343,13 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">DelimitedFileSourceConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="path">path: <a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a></span>, <span name="schema">schema: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a>]</span>, <span name="delimiter">delimiter: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span> = <span class="symbol">&quot;,&quot;</span></span>, <span name="quote">quote: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span> = <span class="symbol">&quot;\&quot;&quot;</span></span>, <span name="escape">escape: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span> = <span class="symbol">&quot;\\&quot;</span></span>, <span name="header">header: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="windowBy">windowBy: <a href="../Enums$$StreamWindowing.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.StreamWindowing">StreamWindowing</a> = <span class="symbol"><span class="name"><a href="../../../../index.html">ProcessingTime</a></span></span></span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
+        <span class="name">DelimitedFileSourceConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="path">path: <a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a></span>, <span name="schema">schema: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a>]</span>, <span name="delimiter">delimiter: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span> = <span class="symbol">&quot;,&quot;</span></span>, <span name="quote">quote: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span> = <span class="symbol">&quot;\&quot;&quot;</span></span>, <span name="escape">escape: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span> = <span class="symbol">&quot;\\&quot;</span></span>, <span name="header">header: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="windowBy">windowBy: <a href="../Enums$$StreamWindowing.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.StreamWindowing">StreamWindowing</a> = <span class="symbol"><span class="name"><a href="../../../../index.html">ProcessingTime</a></span></span></span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">path</dt><dd class="cmt"><p>Path to file</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema ID (only if header = false)</p></dd><dt class="param">delimiter</dt><dd class="cmt"><p>Column delimiter (default: ,)</p></dd><dt class="param">quote</dt><dd class="cmt"><p>Quotation symbol (default: &quot;)</p></dd><dt class="param">escape</dt><dd class="cmt"><p>Escape symbol (default: \)</p></dd><dt class="param">header</dt><dd class="cmt"><p>Boolean flag indicating whether schema should be read from file header (default: false)</p></dd><dt class="param">windowBy</dt><dd class="cmt"><p>Source of timestamp used to build windows. Applicable only for streaming jobs!
-                 Default: processingTime - uses current timestamp at the moment when Spark processes row.
-                 Other options are:</p><ul><li>eventTime - uses column with name 'timestamp' (column must be of TimestampType).</li><li>customTime(columnName) - uses arbitrary user-defined column
-                     (column must be of TimestampType)</li></ul></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Sequence of key fields (columns that identify data row)</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Source description</p></dd><dt class="param">path</dt><dd class="cmt"><p>Path to file</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema ID (only if header = false)</p></dd><dt class="param">delimiter</dt><dd class="cmt"><p>Column delimiter (default: ,)</p></dd><dt class="param">quote</dt><dd class="cmt"><p>Quotation symbol (default: &quot;)</p></dd><dt class="param">escape</dt><dd class="cmt"><p>Escape symbol (default: \)</p></dd><dt class="param">header</dt><dd class="cmt"><p>Boolean flag indicating whether schema should be read from file header (default: false)</p></dd><dt class="param">windowBy</dt><dd class="cmt"><p>Source of timestamp used to build windows. Applicable only for streaming jobs!
+                   Default: processingTime - uses current timestamp at the moment when Spark processes row.
+                   Other options are:</p><ul><li>eventTime - uses column with name 'timestamp' (column must be of TimestampType).</li><li>customTime(columnName) - uses arbitrary user-defined column
+                     (column must be of TimestampType)</li></ul></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Sequence of key fields (columns that identify data row)</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this source</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -464,6 +464,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig">DelimitedFileSourceConfig</a> → <a href="Files$$DelimitedFileConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Files.DelimitedFileConfig">DelimitedFileConfig</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig#description" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="description:Option[eu.timepit.refined.types.string.NonEmptyString]"></a><a id="description:Option[NonEmptyString]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$DelimitedFileSourceConfig.html#description:Option[eu.timepit.refined.types.string.NonEmptyString]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">description</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig">DelimitedFileSourceConfig</a> → JobConfigEntity</dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -568,7 +584,7 @@
         <span class="name">id</span><span class="result">: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig">DelimitedFileSourceConfig</a> → <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig">DelimitedFileSourceConfig</a> → JobConfigEntity</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -601,6 +617,38 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig">DelimitedFileSourceConfig</a> → <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig#metadata" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]"></a><a id="metadata:Seq[SparkParam]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$DelimitedFileSourceConfig.html#metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metadata</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.DelimitedFileSourceConfig">DelimitedFileSourceConfig</a> → JobConfigEntity</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity#metadataString" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="metadataString:Option[String]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Sources$$DelimitedFileSourceConfig.html#metadataString:Option[String]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metadataString</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>JobConfigEntity</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -829,11 +877,7 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="scala.Product">
+        <div class="parent" name="scala.Product">
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
@@ -845,6 +889,12 @@
               <h3>Inherited from <a href="Sources$$FileSourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.FileSourceConfig">FileSourceConfig</a></h3>
             </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">
               <h3>Inherited from <a href="Sources$$SourceConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Sources.SourceConfig">SourceConfig</a></h3>
+            </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">
+              <h3>Inherited from <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span></h3>
+            </div><div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">

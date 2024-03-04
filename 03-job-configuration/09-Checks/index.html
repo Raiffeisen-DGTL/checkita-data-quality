@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.12">
     
     
       
@@ -1333,6 +1333,8 @@ then checks can be configured to identify if there are any problems with quality
 <li><code>metric</code> - <em>Required</em>. Metric ID which results is checked.</li>
 <li><code>compareMetric</code> - <em>Optional</em>. Metric ID which result is used as a threshold.</li>
 <li><code>threshold</code> - <em>Optional</em>. Explicit threshold value.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this check where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <blockquote>
 <p><strong>IMPORTANT</strong>. When configuring check it should be specified either an explicit threshold value in <code>threshold</code> field
@@ -1384,6 +1386,8 @@ configured by providing a threshold value.</p>
   for <code>averageBoundRange</code> check.</li>
 <li><code>thresholdUpper</code> - <em>Required</em>. Sets maximum allowed upper deviation from historical average metric result. *Used only
   for <code>averageBoundRange</code> check.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this metric where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <blockquote>
 <p><strong>NOTE</strong>. Scala Duration string has a format of <code>&lt;length&gt;&lt;unit&gt;</code> where following units are allowed:
@@ -1406,6 +1410,8 @@ it does not exceed the threshold value.</p>
   This number should be less than or equal to number of collected top values in top N metric.</li>
 <li><code>threshold</code> - <em>Required</em>. Maximum allowed Jacquard distance between current and previous sets of records from 
   top N metric result. Should be a number in interval <code>[0, 1]</code>.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this metric where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="checks-configuration-example">Checks Configuration Example</h2>
 <p>As it is shown in the example below, checks are grouped into two subsections: <code>trend</code> and <code>snapshot</code>.
@@ -1422,50 +1428,54 @@ These subsections should contain a list of metrics configurations of the corresp
 </span><span id="__span-0-9">          rule: &quot;datetime&quot;
 </span><span id="__span-0-10">          windowSize: &quot;8d&quot;
 </span><span id="__span-0-11">          threshold: 0.25
-</span><span id="__span-0-12">        }
-</span><span id="__span-0-13">      ]
-</span><span id="__span-0-14">      averageBoundUpper: [
-</span><span id="__span-0-15">        {id: &quot;avg_pct_null&quot;, metric: &quot;pct_of_null&quot;, rule: &quot;datetime&quot;, windowSize: &quot;15d&quot;, threshold: 0.5}
-</span><span id="__span-0-16">      ]
-</span><span id="__span-0-17">      averageBoundLower: [
-</span><span id="__span-0-18">        {id: &quot;avg_distinct&quot;, metric: &quot;fixed_file_dist_name&quot;, rule: &quot;record&quot;, windowSize: 31, threshold: 0.3}
-</span><span id="__span-0-19">      ]
-</span><span id="__span-0-20">      averageBoundRange: [
-</span><span id="__span-0-21">        {
-</span><span id="__span-0-22">          id: &quot;avg_inn_match&quot;,
-</span><span id="__span-0-23">          metric: &quot;table_source1_inn_regex&quot;,
-</span><span id="__span-0-24">          rule: &quot;datetime&quot;,
-</span><span id="__span-0-25">          windowSize: &quot;8d&quot;,
-</span><span id="__span-0-26">          thresholdLower: 0.2
-</span><span id="__span-0-27">          thresholdUpper: 0.4
-</span><span id="__span-0-28">        }
-</span><span id="__span-0-29">      ]
-</span><span id="__span-0-30">      topNRank: [
-</span><span id="__span-0-31">        {id: &quot;top2_curr_match&quot;, metric: &quot;filterVS_top3_currency&quot;, targetNumber: 2, threshold: 0.1}
-</span><span id="__span-0-32">      ]
-</span><span id="__span-0-33">    }
-</span><span id="__span-0-34">    snapshot: {
-</span><span id="__span-0-35">      differByLT: [
-</span><span id="__span-0-36">        {
-</span><span id="__span-0-37">          id: &quot;row_cnt_diff&quot;,
-</span><span id="__span-0-38">          description: &quot;Number of rows in two tables should not differ on more than 5%.&quot;,
-</span><span id="__span-0-39">          metric: &quot;hive_table_row_cnt&quot;
-</span><span id="__span-0-40">          compareMetric: &quot;csv_file_row_cnt&quot;
-</span><span id="__span-0-41">          threshold: 0.05
-</span><span id="__span-0-42">        }
-</span><span id="__span-0-43">      ]
-</span><span id="__span-0-44">      equalTo: [
-</span><span id="__span-0-45">        {id: &quot;zero_nulls&quot;, description: &quot;Hive Table1 mustn&#39;t contain nulls&quot;, metric: &quot;hive_table_nulls&quot;, threshold: 0}
-</span><span id="__span-0-46">      ]
-</span><span id="__span-0-47">      greaterThan: [
-</span><span id="__span-0-48">        {id: &quot;completeness_check&quot;, metric: &quot;orc_data_compl&quot;, threshold: 0.99}
-</span><span id="__span-0-49">      ]
-</span><span id="__span-0-50">      lessThan: [
-</span><span id="__span-0-51">        {id: &quot;null_threshold&quot;, metric: &quot;pct_of_null&quot;, threshold: 0.01}
-</span><span id="__span-0-52">      ]
-</span><span id="__span-0-53">    }
-</span><span id="__span-0-54">  }
-</span><span id="__span-0-55">}
+</span><span id="__span-0-12">          metadata: [
+</span><span id="__span-0-13">            &quot;requestor=some.person@some.domain&quot;,
+</span><span id="__span-0-14">            &quot;critical.check=true&quot;
+</span><span id="__span-0-15">          ]
+</span><span id="__span-0-16">        }
+</span><span id="__span-0-17">      ]
+</span><span id="__span-0-18">      averageBoundUpper: [
+</span><span id="__span-0-19">        {id: &quot;avg_pct_null&quot;, metric: &quot;pct_of_null&quot;, rule: &quot;datetime&quot;, windowSize: &quot;15d&quot;, threshold: 0.5}
+</span><span id="__span-0-20">      ]
+</span><span id="__span-0-21">      averageBoundLower: [
+</span><span id="__span-0-22">        {id: &quot;avg_distinct&quot;, metric: &quot;fixed_file_dist_name&quot;, rule: &quot;record&quot;, windowSize: 31, threshold: 0.3}
+</span><span id="__span-0-23">      ]
+</span><span id="__span-0-24">      averageBoundRange: [
+</span><span id="__span-0-25">        {
+</span><span id="__span-0-26">          id: &quot;avg_inn_match&quot;,
+</span><span id="__span-0-27">          metric: &quot;table_source1_inn_regex&quot;,
+</span><span id="__span-0-28">          rule: &quot;datetime&quot;,
+</span><span id="__span-0-29">          windowSize: &quot;8d&quot;,
+</span><span id="__span-0-30">          thresholdLower: 0.2
+</span><span id="__span-0-31">          thresholdUpper: 0.4
+</span><span id="__span-0-32">        }
+</span><span id="__span-0-33">      ]
+</span><span id="__span-0-34">      topNRank: [
+</span><span id="__span-0-35">        {id: &quot;top2_curr_match&quot;, metric: &quot;filterVS_top3_currency&quot;, targetNumber: 2, threshold: 0.1}
+</span><span id="__span-0-36">      ]
+</span><span id="__span-0-37">    }
+</span><span id="__span-0-38">    snapshot: {
+</span><span id="__span-0-39">      differByLT: [
+</span><span id="__span-0-40">        {
+</span><span id="__span-0-41">          id: &quot;row_cnt_diff&quot;,
+</span><span id="__span-0-42">          description: &quot;Number of rows in two tables should not differ on more than 5%.&quot;,
+</span><span id="__span-0-43">          metric: &quot;hive_table_row_cnt&quot;
+</span><span id="__span-0-44">          compareMetric: &quot;csv_file_row_cnt&quot;
+</span><span id="__span-0-45">          threshold: 0.05
+</span><span id="__span-0-46">        }
+</span><span id="__span-0-47">      ]
+</span><span id="__span-0-48">      equalTo: [
+</span><span id="__span-0-49">        {id: &quot;zero_nulls&quot;, description: &quot;Hive Table1 mustn&#39;t contain nulls&quot;, metric: &quot;hive_table_nulls&quot;, threshold: 0}
+</span><span id="__span-0-50">      ]
+</span><span id="__span-0-51">      greaterThan: [
+</span><span id="__span-0-52">        {id: &quot;completeness_check&quot;, metric: &quot;orc_data_compl&quot;, threshold: 0.99}
+</span><span id="__span-0-53">      ]
+</span><span id="__span-0-54">      lessThan: [
+</span><span id="__span-0-55">        {id: &quot;null_threshold&quot;, metric: &quot;pct_of_null&quot;, threshold: 0.01}
+</span><span id="__span-0-56">      ]
+</span><span id="__span-0-57">    }
+</span><span id="__span-0-58">  }
+</span><span id="__span-0-59">}
 </span></code></pre></div>
 
 
@@ -1516,7 +1526,7 @@ These subsections should contain a list of metrics configurations of the corresp
     <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>

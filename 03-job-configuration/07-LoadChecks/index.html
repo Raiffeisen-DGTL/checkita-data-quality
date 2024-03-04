@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.12">
     
     
       
@@ -1314,7 +1314,10 @@ dataframes and load checks are used to verify their metadata.</p>
 <p>Load checks are defined in <code>loadChecks</code> section of job configuration and have following common parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Load check ID;</li>
+<li><code>description</code> - <em>Optional</em>. Load check description;</li>
 <li><code>source</code> - <em>Required</em>. Reference to a source ID which metadata is being checked;</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this load check where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <p>Currently, supported load checks are described below as well as configuration parameters specific to them.</p>
 <h2 id="minimum-column-number-check">Minimum Column Number Check</h2>
@@ -1357,17 +1360,24 @@ of the load check. These subsections should contain a list of load checks config
 </span><span id="__span-0-4">      {id: &quot;load_check_1&quot;, source: &quot;kafka_source&quot;, option: 2}
 </span><span id="__span-0-5">    ]
 </span><span id="__span-0-6">    exactColumnNum: [
-</span><span id="__span-0-7">      {id: &quot;load_check_2&quot;, source: &quot;hdfs_delimited_source&quot;, option: 3}
-</span><span id="__span-0-8">    ]
-</span><span id="__span-0-9">    columnsExist: [
-</span><span id="__span-0-10">      {id: &quot;loadCheck3&quot;, source: &quot;sqlVS&quot;, columns: [&quot;id&quot;, &quot;name&quot;, &quot;entity&quot;, &quot;description&quot;]},
-</span><span id="__span-0-11">      {id: &quot;load_check_4&quot;, source: &quot;hdfs_delimited_source&quot;, columns: [&quot;id&quot;, &quot;name&quot;, &quot;value&quot;]}
-</span><span id="__span-0-12">    ]
-</span><span id="__span-0-13">    schemaMatch: [
-</span><span id="__span-0-14">      {id: &quot;load_check_5&quot;, source: &quot;kafka_source&quot;, schema: &quot;hive_schema&quot;}
+</span><span id="__span-0-7">      {
+</span><span id="__span-0-8">        id: &quot;load_check_2&quot;, 
+</span><span id="__span-0-9">        description: &quot;Checking that source has exactly required number of columns&quot;, 
+</span><span id="__span-0-10">        source: &quot;hdfs_delimited_source&quot;, option: 3
+</span><span id="__span-0-11">        metadata: [
+</span><span id="__span-0-12">          &quot;critical.loadcheck=true&quot;
+</span><span id="__span-0-13">        ]
+</span><span id="__span-0-14">      }
 </span><span id="__span-0-15">    ]
-</span><span id="__span-0-16">  }
-</span><span id="__span-0-17">}
+</span><span id="__span-0-16">    columnsExist: [
+</span><span id="__span-0-17">      {id: &quot;loadCheck3&quot;, source: &quot;sqlVS&quot;, columns: [&quot;id&quot;, &quot;name&quot;, &quot;entity&quot;, &quot;description&quot;]},
+</span><span id="__span-0-18">      {id: &quot;load_check_4&quot;, source: &quot;hdfs_delimited_source&quot;, columns: [&quot;id&quot;, &quot;name&quot;, &quot;value&quot;]}
+</span><span id="__span-0-19">    ]
+</span><span id="__span-0-20">    schemaMatch: [
+</span><span id="__span-0-21">      {id: &quot;load_check_5&quot;, source: &quot;kafka_source&quot;, schema: &quot;hive_schema&quot;}
+</span><span id="__span-0-22">    ]
+</span><span id="__span-0-23">  }
+</span><span id="__span-0-24">}
 </span></code></pre></div>
 
 
@@ -1418,7 +1428,7 @@ of the load check. These subsections should contain a list of load checks config
     <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>

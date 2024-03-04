@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.12">
     
     
       
@@ -1391,7 +1391,9 @@ details on connections configurations.</p>
 <li>Hive sources: read hive table from Hive catalogue;</li>
 <li>Table sources: read tables from RDBMS via JDBC connection.</li>
 <li>Kafka sources: read topics from Kafka.</li>
-<li></li>
+<li>Greenplum sources: read tables from Greenplum via Pivotal Greenplum connector.</li>
+<li>Custom sources: read from sources that are not supported directly in job configuration by providing 
+  all required Spark options to connect and read from unsupported source.</li>
 </ul>
 <p>All sources must be defined in <code>sources</code> section of job configuration. 
 More details on how to configure sources of each of these types are shown below. Example of <code>sources</code> section of 
@@ -1410,6 +1412,7 @@ vary for files of different types.</p>
 <p>Common parameters for sources of any file type are:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Source ID;</li>
+<li><code>description</code> - <em>Optional</em>. Source description;</li>
 <li><code>kind</code> - <em>Required</em>. File type. Can be one of the following: <code>fixed</code>, <code>delimited</code>, <code>orc</code>, <code>parquet</code>, <code>avro</code>;</li>
 <li><code>path</code> - <em>Required</em>. File path. Can be a path to a directory or a S3-bucket. In this case all files from this
   directory/bucket will be read (assuming they all have the same schema). Note, that when reading from file system which
@@ -1418,6 +1421,8 @@ vary for files of different types.</p>
 <li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see 
   <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h3 id="fixed-width-file-sources">Fixed Width File Sources</h3>
 <p>In order to read fixed-width file it is additionally required to provide ID of the schema used to parse file content.
@@ -1429,7 +1434,7 @@ Schema itself should be defined in <code>schemas</code> section of job configura
 </ul>
 <h3 id="delimited-file-sources">Delimited File Sources</h3>
 <p>When reading delimited text file, its schema may be inferred from file header if it is presented in the file or 
-may be explicitly defined in <code>schemas</code> section of job configuration file  as described in
+may be explicitly defined in <code>schemas</code> section of job configuration file as described in
 <a href="../02-Schemas/">Schemas Configuration</a> chapter.</p>
 <p>Thus, additional parameters for configuring delimited file source are:</p>
 <ul>
@@ -1463,17 +1468,31 @@ additional parameter for avro file source configuration:</p>
 <p>In order to read data from Hive table it is required to provide following:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Source ID;</li>
+<li><code>description</code> - <em>Optional</em>. Source description;</li>
 <li><code>schema</code> - <em>Required</em>. Hive schema.</li>
 <li><code>table</code> - <em>Required</em>. Hive table.</li>
 <li><code>partitions</code> - <em>Optional</em>. List of partitions to read where each element is an object with following fields.
   If partitions are not set then entire table is read.<ul>
 <li><code>name</code> - <em>Required</em>. Partition column name</li>
-<li><code>values</code> - <em>Required</em>. List of partition column name values to read.</li>
+<li><code>expr</code> - <em>Optional</em>. SQL expression used to filter partitions to read. This SQL expression must contain
+only reference to partition column that is being filtered (one that is defined in <code>name</code> field). References to
+other columns are not allowed as well as any SQL sub-queries. It is allowed to use all types of SQL 
+functions and literals.<blockquote>
+<p><strong>IMPORTANT</strong>: If parameterless function is used, it should be called with empty parentheses, e.g.: current_date()</p>
+</blockquote>
+</li>
+<li><code>values</code> - <em>Optional</em>. List of partition column name values to read.<blockquote>
+<p><strong>IMPORTANT</strong>: When defining partitions to read, it is required to specify either an SQL expression to filter
+partitions or an explicit list of partition values but not both.</p>
+</blockquote>
+</li>
 </ul>
 </li>
 <li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="table-sources-configuration">Table Sources Configuration</h2>
 <p>Table source are read from supported RDBMS via JDBC connection. There are two options to read data from RDBMS:</p>
@@ -1485,6 +1504,7 @@ additional parameter for avro file source configuration:</p>
 supply following parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Source ID;</li>
+<li><code>description</code> - <em>Optional</em>. Source description;</li>
 <li><code>connection</code> - <em>Required</em>. Connection ID to use for table source. Connection ID must refer to connection configuration
   for one of the supported RDBMS. See <a href="../01-Connections/">Connections Configuration</a> chapter for more information.</li>
 <li><code>table</code> - <em>Optional</em>. Table to read.</li>
@@ -1492,6 +1512,8 @@ supply following parameters:</p>
 <li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <blockquote>
 <p><strong>IMPORTANT</strong>: Either <code>table</code> to read from must be specified or <code>query</code> to execute, but not both.
@@ -1512,6 +1534,7 @@ Checkita framework. In order to set up source that reads from Kafka topic/s, it 
 parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Source ID;</li>
+<li><code>description</code> - <em>Optional</em>. Source description;</li>
 <li><code>connection</code> - <em>Required</em>. Connection ID to use for kafka source. Connection ID must refer to Kafka connection 
   configuration. See <a href="../01-Connections/">Connections Configuration</a> chapter for more information.</li>
 <li><code>topics</code> - <em>Optional</em>. List of topics to read. Topics can be specified in either of two formats:<ul>
@@ -1536,6 +1559,8 @@ parameters:</p>
 <li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <p>Currently, <code>string</code>, <code>xml</code>, <code>json</code> and <code>avro</code> formats are supported to decode message key and value.</p>
 <blockquote>
@@ -1546,12 +1571,15 @@ parameters:</p>
 <p>In order to read data from Greenplum table using pivotal connector it is required to provide following:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Source ID;</li>
+<li><code>description</code> - <em>Optional</em>. Source description;</li>
 <li><code>connection</code> - <em>Required</em>. Connection ID to use for table source. Connection ID must refer to Greenplum pivotal
   connection. See <a href="../01-Connections/">Connections Configuration</a> chapter for more information.</li>
 <li><code>table</code> - <em>Optional</em>. Table to read.</li>
 <li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="custom-sources-configuration">Custom Sources Configuration</h2>
 <p>Custom sources can be used in cases when it is required to read data from the source type that is not explicitly
@@ -1559,6 +1587,7 @@ supported (by one of the configuration described above). In order to configure a
 provide following parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Source ID;</li>
+<li><code>description</code> - <em>Optional</em>. Source description;</li>
 <li><code>format</code> - <em>Required</em>. Spark DataFrame reader format that is used to read from the given source.</li>
 <li><code>path</code> - <em>Optional</em>. Path to read data from (if required).</li>
 <li><code>schema</code> - <em>Optional</em>. Explicit schema to be applied to data from the given source (if required).</li>
@@ -1566,6 +1595,8 @@ provide following parameters:</p>
 <li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <p>After parameters above are defined then spark DataFrame reader is set up to read data from the source as follows:</p>
 <div class="language-scala highlight"><pre><span></span><code><span id="__span-1-1"><span class="kd">val</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spark</span><span class="p">.</span><span class="n">read</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="n">format</span><span class="p">).</span><span class="n">schema</span><span class="p">(</span><span class="n">schema</span><span class="p">).</span><span class="n">options</span><span class="p">(</span><span class="n">options</span><span class="p">).</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -1579,44 +1610,49 @@ of the source. These subsections should contain a list of source configurations 
 </span><span id="__span-2-3">      {id: &quot;hdfs_fixed_file&quot;, kind: &quot;fixed&quot;, path: &quot;path/to/fixed/file.txt&quot;, schema: &quot;schema2&quot;}
 </span><span id="__span-2-4">      {
 </span><span id="__span-2-5">        id: &quot;hdfs_delimited_source&quot;,
-</span><span id="__span-2-6">        kind: &quot;delimited&quot;,
-</span><span id="__span-2-7">        path: &quot;path/to/csv/file.csv&quot;
-</span><span id="__span-2-8">        schema: &quot;schema1&quot;
-</span><span id="__span-2-9">      }
-</span><span id="__span-2-10">      {id: &quot;hdfs_avro_source&quot;, kind: &quot;avro&quot;, path: &quot;path/to/avro/file.avro&quot;, schema: &quot;avro_schema&quot;}
-</span><span id="__span-2-11">      {id: &quot;hdfs_orc_source&quot;, kind: &quot;orc&quot;, path: &quot;path/to/orc/file.orc&quot;}
-</span><span id="__span-2-12">    ]
-</span><span id="__span-2-13">    hive: [
-</span><span id="__span-2-14">      {
-</span><span id="__span-2-15">        id: &quot;hive_source_1&quot;, schema: &quot;some_schema&quot;, table: &quot;some_table&quot;,
-</span><span id="__span-2-16">        partitions: [{name: &quot;load_date&quot;, values: [&quot;2023-06-30&quot;, &quot;2023-07-01&quot;]}],
-</span><span id="__span-2-17">        keyFields: [&quot;id&quot;, &quot;name&quot;]
-</span><span id="__span-2-18">      }
-</span><span id="__span-2-19">    ]
-</span><span id="__span-2-20">    table: [
-</span><span id="__span-2-21">      {id: &quot;table_source_1&quot;, connection: &quot;oracle_db1&quot;, table: &quot;some_table&quot;, keyFields: [&quot;id&quot;, &quot;name&quot;]}
-</span><span id="__span-2-22">      {id: &quot;table_source_2&quot;, connection: &quot;sqlite_db&quot;, table: &quot;other_table&quot;}
-</span><span id="__span-2-23">    ]
-</span><span id="__span-2-24">    kafka: [
-</span><span id="__span-2-25">      {
-</span><span id="__span-2-26">        id: &quot;kafka_source_1&quot;,
-</span><span id="__span-2-27">        connection: &quot;kafka_broker&quot;,
-</span><span id="__span-2-28">        topics: [&quot;topic1.pub&quot;, &quot;topic2.pub&quot;]
-</span><span id="__span-2-29">        format: &quot;json&quot;
-</span><span id="__span-2-30">      }
-</span><span id="__span-2-31">      {
-</span><span id="__span-2-32">        id: &quot;kafka_source_2&quot;,
-</span><span id="__span-2-33">        brokerId: &quot;kafka_broker&quot;,
-</span><span id="__span-2-34">        topics: [&quot;topic3.pub@[1,3]&quot;]
-</span><span id="__span-2-35">        startingOffsets: &quot;&quot;&quot;{&quot;topic3.pub&quot;:{&quot;1&quot;:1234,&quot;3&quot;:2314}}&quot;&quot;&quot;
-</span><span id="__span-2-36">        options: [&quot;kafkaConsumer.pollTimeoutMs=300000&quot;]
-</span><span id="__span-2-37">        format: &quot;json&quot;
-</span><span id="__span-2-38">      }
-</span><span id="__span-2-39">    ]
-</span><span id="__span-2-40">    greenplum: [
-</span><span id="__span-2-41">      {id: &quot;greenplum_source_1&quot;, connection: &quot;greenplum_db&quot;, table: &quot;some_table&quot;}
-</span><span id="__span-2-42">    ]
-</span><span id="__span-2-43">  }
+</span><span id="__span-2-6">        description: &quot;Reading static data from CSV file&quot;
+</span><span id="__span-2-7">        kind: &quot;delimited&quot;,
+</span><span id="__span-2-8">        path: &quot;path/to/csv/file.csv&quot;
+</span><span id="__span-2-9">        schema: &quot;schema1&quot;
+</span><span id="__span-2-10">        medadata: [
+</span><span id="__span-2-11">          &quot;data.owner=some.person@some.domain&quot;
+</span><span id="__span-2-12">          &quot;file.version=1.1&quot;
+</span><span id="__span-2-13">        ]
+</span><span id="__span-2-14">      }
+</span><span id="__span-2-15">      {id: &quot;hdfs_avro_source&quot;, kind: &quot;avro&quot;, path: &quot;path/to/avro/file.avro&quot;, schema: &quot;avro_schema&quot;}
+</span><span id="__span-2-16">      {id: &quot;hdfs_orc_source&quot;, kind: &quot;orc&quot;, path: &quot;path/to/orc/file.orc&quot;}
+</span><span id="__span-2-17">    ]
+</span><span id="__span-2-18">    hive: [
+</span><span id="__span-2-19">      {
+</span><span id="__span-2-20">        id: &quot;hive_source_1&quot;, schema: &quot;some_schema&quot;, table: &quot;some_table&quot;,
+</span><span id="__span-2-21">        partitions: [{name: &quot;load_date&quot;, values: [&quot;2023-06-30&quot;, &quot;2023-07-01&quot;]}],
+</span><span id="__span-2-22">        keyFields: [&quot;id&quot;, &quot;name&quot;]
+</span><span id="__span-2-23">      }
+</span><span id="__span-2-24">    ]
+</span><span id="__span-2-25">    table: [
+</span><span id="__span-2-26">      {id: &quot;table_source_1&quot;, connection: &quot;oracle_db1&quot;, table: &quot;some_table&quot;, keyFields: [&quot;id&quot;, &quot;name&quot;]}
+</span><span id="__span-2-27">      {id: &quot;table_source_2&quot;, connection: &quot;sqlite_db&quot;, table: &quot;other_table&quot;}
+</span><span id="__span-2-28">    ]
+</span><span id="__span-2-29">    kafka: [
+</span><span id="__span-2-30">      {
+</span><span id="__span-2-31">        id: &quot;kafka_source_1&quot;,
+</span><span id="__span-2-32">        connection: &quot;kafka_broker&quot;,
+</span><span id="__span-2-33">        topics: [&quot;topic1.pub&quot;, &quot;topic2.pub&quot;]
+</span><span id="__span-2-34">        format: &quot;json&quot;
+</span><span id="__span-2-35">      }
+</span><span id="__span-2-36">      {
+</span><span id="__span-2-37">        id: &quot;kafka_source_2&quot;,
+</span><span id="__span-2-38">        brokerId: &quot;kafka_broker&quot;,
+</span><span id="__span-2-39">        topics: [&quot;topic3.pub@[1,3]&quot;]
+</span><span id="__span-2-40">        startingOffsets: &quot;&quot;&quot;{&quot;topic3.pub&quot;:{&quot;1&quot;:1234,&quot;3&quot;:2314}}&quot;&quot;&quot;
+</span><span id="__span-2-41">        options: [&quot;kafkaConsumer.pollTimeoutMs=300000&quot;]
+</span><span id="__span-2-42">        format: &quot;json&quot;
+</span><span id="__span-2-43">      }
+</span><span id="__span-2-44">    ]
+</span><span id="__span-2-45">    greenplum: [
+</span><span id="__span-2-46">      {id: &quot;greenplum_source_1&quot;, connection: &quot;greenplum_db&quot;, table: &quot;some_table&quot;}
+</span><span id="__span-2-47">    ]
+</span><span id="__span-2-48">  }
 </span></code></pre></div>
 
 
@@ -1667,7 +1703,7 @@ of the source. These subsections should contain a list of source configurations 
     <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>

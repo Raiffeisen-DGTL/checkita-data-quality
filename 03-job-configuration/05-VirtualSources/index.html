@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.12">
     
     
       
@@ -1340,6 +1340,7 @@ it can be used to create another one in the same way as regular sources.</p>
 <p>Thus, virtual sources are defined in <code>virtualSources</code> section of job configuration and have following common parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Virtual source ID;</li>
+<li><code>description</code> - <em>Optional</em>. Virtual source description;</li>
 <li><code>parentSources</code> - <em>Required</em>. List of parent sources to use for creation of virtual sources. There could be a
   limitations imposed in number of parent sources, depending on virtual source type.</li>
 <li><code>persist</code> - <em>Optional</em>. One of the allowed Spark StorageLevels used to cache virtual sources. By default, virtual
@@ -1354,6 +1355,8 @@ it can be used to create another one in the same way as regular sources.</p>
 <li><code>keyFields</code> - <em>Optional</em>. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   <a href="../../02-general-concepts/04-ErrorCollection/">Metric Error Collection</a> chapter.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this virtual source where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="sql-virtual-source-configuration">SQL Virtual Source Configuration</h2>
 <p><code>SQL</code> type of virtual sources is allowed only when <code>allowSqlQueries</code> is set to true. Otherwise, any usage of arbitrary
@@ -1412,52 +1415,57 @@ of various kinds.</p>
 </span><span id="__span-0-3">    {
 </span><span id="__span-0-4">      id: &quot;sqlVS&quot;
 </span><span id="__span-0-5">      kind: &quot;sql&quot;
-</span><span id="__span-0-6">      parentSources: [&quot;hive_source_1&quot;]
-</span><span id="__span-0-7">      persist: &quot;disk_only&quot;
-</span><span id="__span-0-8">      save: {
-</span><span id="__span-0-9">        kind: &quot;orc&quot;
-</span><span id="__span-0-10">        path: &quot;some/path/to/vs/location&quot;
-</span><span id="__span-0-11">      }
-</span><span id="__span-0-12">      query: &quot;select id, name, entity, description from hive_source_1 where load_date == &#39;2023-06-30&#39;&quot;
-</span><span id="__span-0-13">    }
-</span><span id="__span-0-14">    {
-</span><span id="__span-0-15">      id: &quot;joinVS&quot;
-</span><span id="__span-0-16">      kind: &quot;join&quot;
-</span><span id="__span-0-17">      parentSources: [&quot;hdfs_avro_source&quot;, &quot;hdfs_orc_source&quot;]
-</span><span id="__span-0-18">      joinBy: [&quot;id&quot;]
-</span><span id="__span-0-19">      joinType: &quot;leftouter&quot;
-</span><span id="__span-0-20">      persist: &quot;memory_only&quot;
-</span><span id="__span-0-21">      keyFields: [&quot;id&quot;, &quot;order_id&quot;]
-</span><span id="__span-0-22">    }
-</span><span id="__span-0-23">    {
-</span><span id="__span-0-24">      id: &quot;filterVS&quot;
-</span><span id="__span-0-25">      kind: &quot;filter&quot;
-</span><span id="__span-0-26">      parentSources: [&quot;kafka_source&quot;]
-</span><span id="__span-0-27">      expr: [&quot;key is not null&quot;]
-</span><span id="__span-0-28">      keyFields: [&quot;orderId&quot;, &quot;dttm&quot;]
-</span><span id="__span-0-29">    }
-</span><span id="__span-0-30">    {
-</span><span id="__span-0-31">      id: &quot;selectVS&quot;
-</span><span id="__span-0-32">      kind: &quot;select&quot;
-</span><span id="__span-0-33">      parentSources: [&quot;table_source_1&quot;]
-</span><span id="__span-0-34">      expr: [
-</span><span id="__span-0-35">        &quot;count(id) as id_cnt&quot;,
-</span><span id="__span-0-36">        &quot;sum(amount) as total_amount&quot;
-</span><span id="__span-0-37">      ]
-</span><span id="__span-0-38">    }
-</span><span id="__span-0-39">    {
-</span><span id="__span-0-40">      id: &quot;aggVS&quot;
-</span><span id="__span-0-41">      kind: &quot;aggregate&quot;
-</span><span id="__span-0-42">      parentSources: [&quot;hdfs_fixed_file&quot;]
-</span><span id="__span-0-43">      groupBy: [&quot;col1&quot;]
-</span><span id="__span-0-44">      expr: [
-</span><span id="__span-0-45">        &quot;avg(col2) as avg_col2&quot;,
-</span><span id="__span-0-46">        &quot;sum(col3) as sum_col3&quot;
-</span><span id="__span-0-47">      ],
-</span><span id="__span-0-48">      keyFields: [&quot;col1&quot;, &quot;avg_col2&quot;, &quot;sum_col3&quot;]
-</span><span id="__span-0-49">    }
-</span><span id="__span-0-50">  ]
-</span><span id="__span-0-51">}
+</span><span id="__span-0-6">      description: &quot;Filter data for specific date only&quot;
+</span><span id="__span-0-7">      parentSources: [&quot;hive_source_1&quot;]
+</span><span id="__span-0-8">      persist: &quot;disk_only&quot;
+</span><span id="__span-0-9">      save: {
+</span><span id="__span-0-10">        kind: &quot;orc&quot;
+</span><span id="__span-0-11">        path: &quot;some/path/to/vs/location&quot;
+</span><span id="__span-0-12">      }
+</span><span id="__span-0-13">      query: &quot;select id, name, entity, description from hive_source_1 where load_date == &#39;2023-06-30&#39;&quot;
+</span><span id="__span-0-14">      metadata: [
+</span><span id="__span-0-15">        &quot;source.owner=some.preson@some.domain&quot;
+</span><span id="__span-0-16">        &quot;critical.source=false&quot;
+</span><span id="__span-0-17">      ]
+</span><span id="__span-0-18">    }
+</span><span id="__span-0-19">    {
+</span><span id="__span-0-20">      id: &quot;joinVS&quot;
+</span><span id="__span-0-21">      kind: &quot;join&quot;
+</span><span id="__span-0-22">      parentSources: [&quot;hdfs_avro_source&quot;, &quot;hdfs_orc_source&quot;]
+</span><span id="__span-0-23">      joinBy: [&quot;id&quot;]
+</span><span id="__span-0-24">      joinType: &quot;leftouter&quot;
+</span><span id="__span-0-25">      persist: &quot;memory_only&quot;
+</span><span id="__span-0-26">      keyFields: [&quot;id&quot;, &quot;order_id&quot;]
+</span><span id="__span-0-27">    }
+</span><span id="__span-0-28">    {
+</span><span id="__span-0-29">      id: &quot;filterVS&quot;
+</span><span id="__span-0-30">      kind: &quot;filter&quot;
+</span><span id="__span-0-31">      parentSources: [&quot;kafka_source&quot;]
+</span><span id="__span-0-32">      expr: [&quot;key is not null&quot;]
+</span><span id="__span-0-33">      keyFields: [&quot;orderId&quot;, &quot;dttm&quot;]
+</span><span id="__span-0-34">    }
+</span><span id="__span-0-35">    {
+</span><span id="__span-0-36">      id: &quot;selectVS&quot;
+</span><span id="__span-0-37">      kind: &quot;select&quot;
+</span><span id="__span-0-38">      parentSources: [&quot;table_source_1&quot;]
+</span><span id="__span-0-39">      expr: [
+</span><span id="__span-0-40">        &quot;count(id) as id_cnt&quot;,
+</span><span id="__span-0-41">        &quot;sum(amount) as total_amount&quot;
+</span><span id="__span-0-42">      ]
+</span><span id="__span-0-43">    }
+</span><span id="__span-0-44">    {
+</span><span id="__span-0-45">      id: &quot;aggVS&quot;
+</span><span id="__span-0-46">      kind: &quot;aggregate&quot;
+</span><span id="__span-0-47">      parentSources: [&quot;hdfs_fixed_file&quot;]
+</span><span id="__span-0-48">      groupBy: [&quot;col1&quot;]
+</span><span id="__span-0-49">      expr: [
+</span><span id="__span-0-50">        &quot;avg(col2) as avg_col2&quot;,
+</span><span id="__span-0-51">        &quot;sum(col3) as sum_col3&quot;
+</span><span id="__span-0-52">      ],
+</span><span id="__span-0-53">      keyFields: [&quot;col1&quot;, &quot;avg_col2&quot;, &quot;sum_col3&quot;]
+</span><span id="__span-0-54">    }
+</span><span id="__span-0-55">  ]
+</span><span id="__span-0-56">}
 </span></code></pre></div>
 
 
@@ -1508,7 +1516,7 @@ of various kinds.</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>

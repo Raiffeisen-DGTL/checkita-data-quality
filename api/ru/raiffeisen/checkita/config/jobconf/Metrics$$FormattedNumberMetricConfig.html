@@ -404,17 +404,23 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">FormattedNumberMetricConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="source">source: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="columns">columns: <a href="../RefinedTypes$.html#NonEmptyStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.NonEmpty]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq">NonEmptyStringSeq</a></span>, <span name="params">params: <a href="MetricParams$$FormattedNumberParams.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.MetricParams.FormattedNumberParams">FormattedNumberParams</a></span>)</span><span class="result"> extends <a href="Metrics$$AnyColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig">AnyColumnRegularMetricConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">FormattedNumberMetricConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="source">source: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="columns">columns: <a href="../RefinedTypes$.html#NonEmptyStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.NonEmpty]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq">NonEmptyStringSeq</a></span>, <span name="params">params: <a href="MetricParams$$FormattedNumberParams.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.MetricParams.FormattedNumberParams">FormattedNumberParams</a></span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Metrics$$AnyColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig">AnyColumnRegularMetricConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Formatted number column metric configuration
-</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Metric ID</p></dd><dt class="param">source</dt><dd class="cmt"><p>Source ID over which metric is being calculated</p></dd><dt class="param">description</dt><dd class="cmt"><p>Metric description</p></dd><dt class="param">columns</dt><dd class="cmt"><p>Sequence of columns which are used for metric calculation</p></dd><dt class="param">params</dt><dd class="cmt"><p>Metric parameters</p></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>
+  Metric ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>
+  Metric description</p></dd><dt class="param">source</dt><dd class="cmt"><p>
+  Source ID over which metric is being calculated</p></dd><dt class="param">columns</dt><dd class="cmt"><p>
+  Sequence of columns which are used for metric calculation</p></dd><dt class="param">params</dt><dd class="cmt"><p>
+  Metric parameters</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>
+  List of metadata parameters specific to this metric</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Metrics$$AnyColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig">AnyColumnRegularMetricConfig</a>, <a href="Metrics$$RegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegularMetricConfig">RegularMetricConfig</a>, <a href="../../core/metrics/RegularMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.RegularMetric">RegularMetric</a>, <a href="Metrics$$MetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MetricConfig">MetricConfig</a>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Metrics$$AnyColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig">AnyColumnRegularMetricConfig</a>, <a href="Metrics$$RegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegularMetricConfig">RegularMetricConfig</a>, <a href="../../core/metrics/RegularMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.RegularMetric">RegularMetric</a>, <a href="Metrics$$MetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MetricConfig">MetricConfig</a>, <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -440,7 +446,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig"><span>FormattedNumberMetricConfig</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig"><span>AnyColumnRegularMetricConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegularMetricConfig"><span>RegularMetricConfig</span></li><li class="in" name="ru.raiffeisen.checkita.core.metrics.RegularMetric"><span>RegularMetric</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MetricConfig"><span>MetricConfig</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig"><span>FormattedNumberMetricConfig</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig"><span>AnyColumnRegularMetricConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegularMetricConfig"><span>RegularMetricConfig</span></li><li class="in" name="ru.raiffeisen.checkita.core.metrics.RegularMetric"><span>RegularMetric</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MetricConfig"><span>MetricConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity"><span>JobConfigEntity</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -461,9 +467,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,source:eu.timepit.refined.types.string.NonEmptyString,description:Option[eu.timepit.refined.types.string.NonEmptyString],columns:ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq,params:ru.raiffeisen.checkita.config.jobconf.MetricParams.FormattedNumberParams):ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig"></a><a id="&lt;init&gt;:FormattedNumberMetricConfig"></a>
+      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],source:eu.timepit.refined.types.string.NonEmptyString,columns:ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq,params:ru.raiffeisen.checkita.config.jobconf.MetricParams.FormattedNumberParams,metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]):ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig"></a><a id="&lt;init&gt;:FormattedNumberMetricConfig"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Metrics$$FormattedNumberMetricConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,source:eu.timepit.refined.types.string.NonEmptyString,description:Option[eu.timepit.refined.types.string.NonEmptyString],columns:ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq,params:ru.raiffeisen.checkita.config.jobconf.MetricParams.FormattedNumberParams):ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Metrics$$FormattedNumberMetricConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],source:eu.timepit.refined.types.string.NonEmptyString,columns:ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq,params:ru.raiffeisen.checkita.config.jobconf.MetricParams.FormattedNumberParams,metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]):ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -472,10 +478,16 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">FormattedNumberMetricConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="source">source: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="columns">columns: <a href="../RefinedTypes$.html#NonEmptyStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.NonEmpty]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq">NonEmptyStringSeq</a></span>, <span name="params">params: <a href="MetricParams$$FormattedNumberParams.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.MetricParams.FormattedNumberParams">FormattedNumberParams</a></span>)</span>
+        <span class="name">FormattedNumberMetricConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="source">source: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="columns">columns: <a href="../RefinedTypes$.html#NonEmptyStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.NonEmpty]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq">NonEmptyStringSeq</a></span>, <span name="params">params: <a href="MetricParams$$FormattedNumberParams.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.MetricParams.FormattedNumberParams">FormattedNumberParams</a></span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Metric ID</p></dd><dt class="param">source</dt><dd class="cmt"><p>Source ID over which metric is being calculated</p></dd><dt class="param">description</dt><dd class="cmt"><p>Metric description</p></dd><dt class="param">columns</dt><dd class="cmt"><p>Sequence of columns which are used for metric calculation</p></dd><dt class="param">params</dt><dd class="cmt"><p>Metric parameters</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>
+  Metric ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>
+  Metric description</p></dd><dt class="param">source</dt><dd class="cmt"><p>
+  Source ID over which metric is being calculated</p></dd><dt class="param">columns</dt><dd class="cmt"><p>
+  Sequence of columns which are used for metric calculation</p></dd><dt class="param">params</dt><dd class="cmt"><p>
+  Metric parameters</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>
+  List of metadata parameters specific to this metric</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -605,7 +617,7 @@
         <span class="name">description</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig">FormattedNumberMetricConfig</a> → <a href="Metrics$$MetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MetricConfig">MetricConfig</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig">FormattedNumberMetricConfig</a> → JobConfigEntity</dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -678,7 +690,7 @@
         <span class="name">id</span><span class="result">: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig">FormattedNumberMetricConfig</a> → <a href="Metrics$$MetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MetricConfig">MetricConfig</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig">FormattedNumberMetricConfig</a> → JobConfigEntity</dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig#initMetricCalculator" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="initMetricCalculator:ru.raiffeisen.checkita.core.metrics.MetricCalculator"></a><a id="initMetricCalculator:MetricCalculator"></a>
       <span class="permalink">
@@ -711,6 +723,38 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig#metadata" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]"></a><a id="metadata:Seq[SparkParam]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Metrics$$FormattedNumberMetricConfig.html#metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metadata</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig">FormattedNumberMetricConfig</a> → JobConfigEntity</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity#metadataString" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="metadataString:Option[String]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Metrics$$FormattedNumberMetricConfig.html#metadataString:Option[String]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metadataString</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>JobConfigEntity</dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig#metricColumns" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="metricColumns:Seq[String]"></a>
       <span class="permalink">
@@ -983,6 +1027,8 @@
               <h3>Inherited from <a href="../../core/metrics/RegularMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.RegularMetric">RegularMetric</a></h3>
             </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MetricConfig">
               <h3>Inherited from <a href="Metrics$$MetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MetricConfig">MetricConfig</a></h3>
+            </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">
+              <h3>Inherited from <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span></h3>
             </div><div class="parent" name="scala.Serializable">
               <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
             </div><div class="parent" name="java.io.Serializable">

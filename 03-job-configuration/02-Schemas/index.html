@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.12">
     
     
       
@@ -1333,6 +1333,12 @@
 </ul>
 <p>Schemas are set in <code>schemas</code> section of job configuration and can be defined in different formats as described below.
 Format in which schema is defined is set in <code>kind</code> field and defines what other fields are need to be provided.</p>
+<p>Apart from <code>kind</code> field, all types of schemas configuration contain following common parameters:</p>
+<ul>
+<li><code>id</code> - Schema ID that uniquely identifies its configuration;</li>
+<li><code>description</code> - Optional schema description;</li>
+<li><code>metadata</code> - Optional list of arbitrary user-defined metadata parameters.</li>
+</ul>
 <h2 id="delimited-schema-configuration">Delimited Schema Configuration</h2>
 <p>This kind of schema definition is primarily used to provide schemas for delimited text files such as CSV or TSV.
 Nevertheless, these schemas can be used for <code>schemaMatch</code> load checks as well. Using this type of configuration, 
@@ -1341,11 +1347,14 @@ only flat schemas can be defined (nested columns are not allowed).</p>
 <ul>
 <li><code>kind: "delimited"</code> - <em>Required</em>. Sets delimited schema definition format.</li>
 <li><code>id</code> - <em>Required</em>. Schema ID;</li>
+<li><code>description</code> - <em>Optional</em>. Schema description;</li>
 <li><code>schema</code> - <em>Required</em>. List of schema columns where each column is an object with following fields:<ul>
 <li><code>name</code> - <em>Required</em>. Name of the column;</li>
 <li><code>type</code> - <em>Required</em>. Type of the column. See <a href="#supported-type-literals">Supported Type Literals</a> for allowed types.</li>
 </ul>
 </li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this schema where each parameter
+  is a string in format:<code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="fixed-full-schema-configuration">Fixed-Full Schema Configuration</h2>
 <p>Fixed-full kind of schema definition is used to provide schemas for read fixed-width text files. The key difference from
@@ -1356,12 +1365,15 @@ Using this type of configuration, only flat schemas can be defined (nested colum
 <ul>
 <li><code>kind: "fixedFull"</code> - <em>Required</em>. Sets fixed-full schema definition format.</li>
 <li><code>id</code> - <em>Required</em>. Schema ID;</li>
+<li><code>description</code> - <em>Optional</em>. Schema description;</li>
 <li><code>schema</code> - <em>Required</em>. List of schema columns where each column is an object with following fields:<ul>
 <li><code>name</code> - <em>Required</em>. Name of the column;</li>
 <li><code>type</code> - <em>Required</em>. Type of the column. See <a href="#supported-type-literals">Supported Type Literals</a> for allowed types.</li>
 <li><code>width</code> - <em>Required</em>. Integer width of column (number of symbols).</li>
 </ul>
 </li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this schema where each parameter
+  is a string in format:<code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="fixed-short-schema-configuration">Fixed-Short Schema Configuration</h2>
 <p>Fixed-short kind of schema definition provides a more compact syntax for defining schemas used for reading fixed-width
@@ -1372,8 +1384,11 @@ Using this type of configuration, only flat schemas can be defined (nested colum
 <ul>
 <li><code>kind: "fixedShort"</code> - <em>Required</em>. Sets fixed-short schema definition format.</li>
 <li><code>id</code> - <em>Required</em>. Schema ID;</li>
+<li><code>description</code> - <em>Optional</em>. Schema description;</li>
 <li><code>schema</code> - <em>Required</em>. List of schema columns where each column is a string in format <code>columnName:columnWidth</code>.
   <em>Type of columns is always a StringType.</em></li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this schema where each parameter
+  is a string in format:<code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="avro-schema-configuration">Avro Schema Configuration</h2>
 <p>Avro kind of schema configuration is used to read schema from file with avro schema <code>.avsc</code>. Thus, schema read from 
@@ -1383,6 +1398,7 @@ in <code>schemaMatch</code> load checks. In addition, avro schema format support
 <ul>
 <li><code>kind: "avro"</code> - <em>Required</em>. Sets avro schema definition format.</li>
 <li><code>id</code> - <em>Required</em>. Schema ID;</li>
+<li><code>description</code> - <em>Optional</em>. Schema description;</li>
 <li><code>schema</code> - <em>Required</em>. Path to avro schema file <code>.avsc</code> to read schema from.</li>
 </ul>
 <h2 id="hive-schema-configuration">Hive Schema Configuration</h2>
@@ -1393,10 +1409,13 @@ in <code>schemaMatch</code> load checks.</p>
 <ul>
 <li><code>kind: "hive"</code> - <em>Required</em>. Sets hive schema definition format.</li>
 <li><code>id</code> - <em>Required</em>. Schema ID;</li>
+<li><code>description</code> - <em>Optional</em>. Schema description;</li>
 <li><code>schema</code> - <em>Required</em>. Hive schema to search for a table.</li>
 <li><code>table</code> - <em>Required</em>. Hive table to retrieve schema from.</li>
 <li><code>excludeColumns</code> - <em>Optional</em>. List of column names to exclude from schema. Sometimes it is required, e.g.
   to exclude partition columns from schema.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this schema where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="supported-type-literals">Supported Type Literals</h2>
 <p>The following type literals are supported when defining schema columns in job configuration file:</p>
@@ -1420,26 +1439,34 @@ in <code>schemaMatch</code> load checks.</p>
 </span><span id="__span-0-3">    {
 </span><span id="__span-0-4">      id: &quot;schema1&quot;
 </span><span id="__span-0-5">      kind: &quot;delimited&quot;
-</span><span id="__span-0-6">      schema: [
-</span><span id="__span-0-7">        {name: &quot;colA&quot;, type: &quot;string&quot;},
-</span><span id="__span-0-8">        {name: &quot;colB&quot;, type: &quot;timestamp&quot;},
-</span><span id="__span-0-9">        {name: &quot;colC&quot;, type: &quot;decimal(10, 3)&quot;}
-</span><span id="__span-0-10">      ]
-</span><span id="__span-0-11">    }
-</span><span id="__span-0-12">    {
-</span><span id="__span-0-13">      id: &quot;schema2&quot;
-</span><span id="__span-0-14">      kind: &quot;fixedFull&quot;,
-</span><span id="__span-0-15">      schema: [
-</span><span id="__span-0-16">        {name: &quot;col1&quot;, type: &quot;integer&quot;, width: 5},
-</span><span id="__span-0-17">        {name: &quot;col2&quot;, type: &quot;double&quot;, width: 6},
-</span><span id="__span-0-18">        {name: &quot;col3&quot;, type: &quot;boolean&quot;, width: 4}
-</span><span id="__span-0-19">      ]
-</span><span id="__span-0-20">    }
-</span><span id="__span-0-21">    {id: &quot;schema3&quot;, kind: &quot;fixedShort&quot;, schema: [&quot;colOne:5&quot;, &quot;colTwo:7&quot;, &quot;colThree:9&quot;]}
-</span><span id="__span-0-22">    {id: &quot;hive_schema&quot;, kind: &quot;hive&quot;, schema: &quot;some_schema&quot;, table: &quot;some_table&quot;}
-</span><span id="__span-0-23">    {id: &quot;avro_schema&quot;, kind: &quot;avro&quot;, schema: &quot;path/to/avro_schema.avsc&quot;}
-</span><span id="__span-0-24">  ]
-</span><span id="__span-0-25">}
+</span><span id="__span-0-6">      description: &quot;Schema describing content of CSV file&quot;
+</span><span id="__span-0-7">      schema: [
+</span><span id="__span-0-8">        {name: &quot;colA&quot;, type: &quot;string&quot;},
+</span><span id="__span-0-9">        {name: &quot;colB&quot;, type: &quot;timestamp&quot;},
+</span><span id="__span-0-10">        {name: &quot;colC&quot;, type: &quot;decimal(10, 3)&quot;}
+</span><span id="__span-0-11">      ]
+</span><span id="__span-0-12">    }
+</span><span id="__span-0-13">    {
+</span><span id="__span-0-14">      id: &quot;schema2&quot;
+</span><span id="__span-0-15">      kind: &quot;fixedFull&quot;,
+</span><span id="__span-0-16">      schema: [
+</span><span id="__span-0-17">        {name: &quot;col1&quot;, type: &quot;integer&quot;, width: 5},
+</span><span id="__span-0-18">        {name: &quot;col2&quot;, type: &quot;double&quot;, width: 6},
+</span><span id="__span-0-19">        {name: &quot;col3&quot;, type: &quot;boolean&quot;, width: 4}
+</span><span id="__span-0-20">      ]
+</span><span id="__span-0-21">    }
+</span><span id="__span-0-22">    {id: &quot;schema3&quot;, kind: &quot;fixedShort&quot;, schema: [&quot;colOne:5&quot;, &quot;colTwo:7&quot;, &quot;colThree:9&quot;]}
+</span><span id="__span-0-23">    {id: &quot;hive_schema&quot;, kind: &quot;hive&quot;, schema: &quot;some_schema&quot;, table: &quot;some_table&quot;}
+</span><span id="__span-0-24">    {
+</span><span id="__span-0-25">      id: &quot;avro_schema&quot;, 
+</span><span id="__span-0-26">      kind: &quot;avro&quot;, 
+</span><span id="__span-0-27">      schema: &quot;path/to/avro_schema.avsc&quot;
+</span><span id="__span-0-28">      metadata: [
+</span><span id="__span-0-29">        &quot;schema.origin=http://some-schema-registry-location&quot;
+</span><span id="__span-0-30">      ]
+</span><span id="__span-0-31">    }
+</span><span id="__span-0-32">  ]
+</span><span id="__span-0-33">}
 </span></code></pre></div>
 
 
@@ -1490,7 +1517,7 @@ in <code>schemaMatch</code> load checks.</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>

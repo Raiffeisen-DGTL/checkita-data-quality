@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.12">
     
     
       
@@ -1335,6 +1335,12 @@
 <p>Схема данных описываются в разделе <code>schemas</code> файла с конфигурацией Data Quality пайплайна. Схемы могут быть описаны в
 различных форматах. Формат, в котором описывается схема, указывается в поле <code>kind</code>, и определяет другие поля, которые
 должны быть заполнены.</p>
+<p>Помимо поля <code>kind</code>, схемы всех форматов описываются с помощью следующих общих параметров:</p>
+<ul>
+<li><code>id</code> - Идентификатор схемы;</li>
+<li><code>description</code> - Опциональное описание схемы;</li>
+<li><code>metadata</code> - Опциональный список произвольных параметров, определяемых пользователем.</li>
+</ul>
 <h2 id="delimited-schema">Описание схемы текстовых файлов с разделителем (Delimited Schema)</h2>
 <p>Данный тип схем в основном предназначен для чтения текстовых файлов с разделителем, таких CSV или TSV.
 Тем не менее эти схемы также могут быть использованы в загрузочных проверках <code>schemaMatch</code>. Данных тип конфигурации
@@ -1343,11 +1349,14 @@
 <ul>
 <li><code>kind: "delimited"</code> - <em>Обязательно</em>. Устанавливает формат схемы для текстовых файлов с разделителем;</li>
 <li><code>id</code> - <em>Обязательно</em>. ID схемы;</li>
+<li><code>description</code> - <em>Опционально</em>. Описание схемы;</li>
 <li><code>schema</code> - <em>Обязательно</em>. Список колонок, где каждая колонка - это объект со следующим полями:<ul>
 <li><code>name</code> - <em>Обязательно</em>. Имя колонки;</li>
 <li><code>type</code> - <em>Обязательно</em>. Тип колонки. Список поддерживаемых типов дан в главе <a href="#_1">Поддерживаемые Наименования Типов</a>.</li>
 </ul>
 </li>
+<li><code>metadata</code> - <em>Опционально</em>. Произвольный список параметров, определяемых пользователем для этой схемы
+  в формате: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="fixed-full-schema">Описание схемы файлов с фиксированной шириной колонки (Fixed-Full Schema)</h2>
 <p>Данный тип схем используется для того, чтобы читать текстовые файлы без разделителя: с фиксированной шириной колонки.
@@ -1359,12 +1368,15 @@
 <ul>
 <li><code>kind: "fixedFull"</code> - <em>Обязательно</em>. Устанавливает формат схемы для тестовых файлов без разделителя.</li>
 <li><code>id</code> - <em>Обязательно</em>. ID схемы;</li>
+<li><code>description</code> - <em>Опционально</em>. Описание схемы;</li>
 <li><code>schema</code> - <em>Обязательно</em>. Список колонок, где каждая колонка - это объект со следующим полями:<ul>
 <li><code>name</code> - <em>Обязательно</em>. Имя колонки;</li>
 <li><code>type</code> - <em>Обязательно</em>. Тип колонки. Список поддерживаемых типов дан в главе <a href="#_1">Поддерживаемые Наименования Типов</a>.</li>
 <li><code>width</code> - <em>Обязательно</em>. Ширина колонки (целое число символов).</li>
 </ul>
 </li>
+<li><code>metadata</code> - <em>Опционально</em>. Произвольный список параметров, определяемых пользователем для этой схемы
+  в формате: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="fixed-short-schema">Упрощенное описание схемы файлов с фиксированной шириной колонки (Fixed-Short Schema)</h2>
 <p>Данные тип конфигурации предоставляет более простой способ описывать схемы для файлов без разделителя. В данном случае
@@ -1376,8 +1388,11 @@
 <ul>
 <li><code>kind: "fixedShort"</code> - <em>Обязательно</em>. Устанавливает упрощенный формат схемы для тестовых файлов без разделителя.</li>
 <li><code>id</code> - <em>Обязательно</em>. ID схемы;</li>
+<li><code>description</code> - <em>Опционально</em>. Описание схемы;</li>
 <li><code>schema</code> - <em>Обязательно</em>. Список колонок, где каждая колонка это строка в формате: <code>columnName:columnWidth</code>.
   <em>Колонки всегда имеют текстовый тип.</em></li>
+<li><code>metadata</code> - <em>Опционально</em>. Произвольный список параметров, определяемых пользователем для этой схемы
+  в формате: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="avro">Описание Avro Схемы</h2>
 <p>Данный тип конфигурации используется для того, чтобы читать Avro схемы из файлов, расширением <code>.avcs</code>. Так, схема, 
@@ -1388,7 +1403,10 @@
 <ul>
 <li><code>kind: "avro"</code> - <em>Обязательно</em>. Устанавливает формат конфигурации Avro схемы.</li>
 <li><code>id</code> - <em>Обязательно</em>. ID схемы;</li>
+<li><code>description</code> - <em>Опционально</em>. Описание схемы;</li>
 <li><code>schema</code> - <em>Required</em>. Путь до <code>.avsc</code> файла из которого будет считана Avro-схема.</li>
+<li><code>metadata</code> - <em>Опционально</em>. Произвольный список параметров, определяемых пользователем для этой схемы
+  в формате: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="hive">Описание Hive Схемы</h2>
 <p>Каталог Hive также может быть использован как источник схем данных. Так, Hive формат описания схем предназначен для
@@ -1400,6 +1418,7 @@
 <ul>
 <li><code>kind: "hive"</code> - <em>Обязательно</em>. Устанавливает Hive формат описания схемы.</li>
 <li><code>id</code> - <em>Обязательно</em>. ID схемы;</li>
+<li><code>description</code> - <em>Опционально</em>. Описание схемы;</li>
 <li><code>schema</code> - <em>Обязательно</em>. Hive схема, в которой находится целевая Hive таблица.</li>
 <li><code>table</code> - <em>Обязательно</em>. Hive таблица из которой считывается схема.</li>
 <li><code>excludeColumns</code> - <em>Опционально</em>. Список колонок, которые будут исключены из схемы. Например, в некоторых ситуациях
@@ -1498,7 +1517,7 @@
     <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>

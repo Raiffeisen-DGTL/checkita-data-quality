@@ -252,16 +252,17 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">LessThanCheckConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="metric">metric: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="compareMetric">compareMetric: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="threshold">threshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>)</span><span class="result"> extends <a href="Checks$$SnapshotCheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotCheckConfig">SnapshotCheckConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">LessThanCheckConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="metric">metric: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="compareMetric">compareMetric: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="threshold">threshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Checks$$SnapshotCheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotCheckConfig">SnapshotCheckConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>'Less Than' check configuration</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Check ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Check description</p></dd><dt class="param">metric</dt><dd class="cmt"><p>Reference to a metric ID over which the check is performed</p></dd><dt class="param">compareMetric</dt><dd class="cmt"><p>Reference to a metric ID to compare with</p></dd><dt class="param">threshold</dt><dd class="cmt"><p>Explicit threshold value to compare with</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>'Less Than' check configuration
+</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Check ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Check description</p></dd><dt class="param">metric</dt><dd class="cmt"><p>Reference to a metric ID over which the check is performed</p></dd><dt class="param">compareMetric</dt><dd class="cmt"><p>Reference to a metric ID to compare with</p></dd><dt class="param">threshold</dt><dd class="cmt"><p>Explicit threshold value to compare with</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this check</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Checks$$SnapshotCheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotCheckConfig">SnapshotCheckConfig</a>, <a href="Checks$$CheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig">CheckConfig</a>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Checks$$SnapshotCheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotCheckConfig">SnapshotCheckConfig</a>, <a href="Checks$$CheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig">CheckConfig</a>, <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -287,7 +288,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig"><span>LessThanCheckConfig</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotCheckConfig"><span>SnapshotCheckConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig"><span>CheckConfig</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig"><span>LessThanCheckConfig</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotCheckConfig"><span>SnapshotCheckConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig"><span>CheckConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity"><span>JobConfigEntity</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -308,9 +309,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],metric:eu.timepit.refined.types.string.NonEmptyString,compareMetric:Option[eu.timepit.refined.types.string.NonEmptyString],threshold:Option[Double]):ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig"></a><a id="&lt;init&gt;:LessThanCheckConfig"></a>
+      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],metric:eu.timepit.refined.types.string.NonEmptyString,compareMetric:Option[eu.timepit.refined.types.string.NonEmptyString],threshold:Option[Double],metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]):ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig"></a><a id="&lt;init&gt;:LessThanCheckConfig"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Checks$$LessThanCheckConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],metric:eu.timepit.refined.types.string.NonEmptyString,compareMetric:Option[eu.timepit.refined.types.string.NonEmptyString],threshold:Option[Double]):ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Checks$$LessThanCheckConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],metric:eu.timepit.refined.types.string.NonEmptyString,compareMetric:Option[eu.timepit.refined.types.string.NonEmptyString],threshold:Option[Double],metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]):ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -319,10 +320,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">LessThanCheckConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="metric">metric: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="compareMetric">compareMetric: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="threshold">threshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>)</span>
+        <span class="name">LessThanCheckConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="metric">metric: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="compareMetric">compareMetric: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="threshold">threshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Check ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Check description</p></dd><dt class="param">metric</dt><dd class="cmt"><p>Reference to a metric ID over which the check is performed</p></dd><dt class="param">compareMetric</dt><dd class="cmt"><p>Reference to a metric ID to compare with</p></dd><dt class="param">threshold</dt><dd class="cmt"><p>Explicit threshold value to compare with</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Check ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Check description</p></dd><dt class="param">metric</dt><dd class="cmt"><p>Reference to a metric ID over which the check is performed</p></dd><dt class="param">compareMetric</dt><dd class="cmt"><p>Reference to a metric ID to compare with</p></dd><dt class="param">threshold</dt><dd class="cmt"><p>Explicit threshold value to compare with</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this check</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -452,7 +453,7 @@
         <span class="name">description</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig">LessThanCheckConfig</a> → <a href="Checks$$CheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig">CheckConfig</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig">LessThanCheckConfig</a> → JobConfigEntity</dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -541,7 +542,7 @@
         <span class="name">id</span><span class="result">: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig">LessThanCheckConfig</a> → <a href="Checks$$CheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig">CheckConfig</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig">LessThanCheckConfig</a> → JobConfigEntity</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -558,6 +559,38 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig#metadata" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]"></a><a id="metadata:Seq[SparkParam]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Checks$$LessThanCheckConfig.html#metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metadata</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig">LessThanCheckConfig</a> → JobConfigEntity</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity#metadataString" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="metadataString:Option[String]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Checks$$LessThanCheckConfig.html#metadataString:Option[String]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metadataString</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>JobConfigEntity</dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.jobconf.Checks.LessThanCheckConfig#metric" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="metric:eu.timepit.refined.types.string.NonEmptyString"></a><a id="metric:NonEmptyString"></a>
       <span class="permalink">
@@ -738,11 +771,7 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="scala.Product">
+        <div class="parent" name="scala.Product">
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
@@ -750,6 +779,12 @@
               <h3>Inherited from <a href="Checks$$SnapshotCheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotCheckConfig">SnapshotCheckConfig</a></h3>
             </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig">
               <h3>Inherited from <a href="Checks$$CheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig">CheckConfig</a></h3>
+            </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">
+              <h3>Inherited from <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span></h3>
+            </div><div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">

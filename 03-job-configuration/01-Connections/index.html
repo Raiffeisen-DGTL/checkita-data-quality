@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.12">
     
     
       
@@ -1371,25 +1371,35 @@ systems are supported:</p>
 <li>Kafka</li>
 </ul>
 </li>
-<li>Connection to Greenoplum via pivotal connector</li>
+<li>Connection to Greenplum via pivotal connector</li>
 </ul>
-<p>All connections must have and <code>id</code> to uniquely identify its configuration and also may have an optional list of
-additional  Spark parameters can be specified in field <code>parameters</code> to provide some extra configuration required
-by Spark to read data from a particular system.</p>
+<p>All connections are defined with following common parameters:</p>
+<ul>
+<li><code>id</code> - Connection ID that uniquely identifies its configuration;</li>
+<li><code>description</code> - Optional connection description;</li>
+<li><code>parameters</code> - Optional list of additional Spark parameters that can be specified to provide some extra configuration
+  required by Spark to read data from a particular system.</li>
+<li><code>metadata</code> - Optional list of arbitrary user-defined metadata parameters.</li>
+</ul>
 <p>Example of <code>connections</code> section of job configuration is shown in 
 <a href="#connections-configuration-example">Connections Configuration Example</a> below.</p>
 <h2 id="sqlite-connection-configuration">SQLite Connection Configuration</h2>
-<p>Configuring connection to SQLite database is quite easy. It is required supplying only two parameters:</p>
+<p>Configuring connection to SQLite database is quite easy. In addition to common parameters it is required to supply
+only a path to database file:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Connection ID;</li>
+<li><code>description</code> - <em>Optional</em>. Connection description;</li>
 <li><code>url</code> - <em>Required</em>. Path to SQLite database file.</li>
 <li><code>parameters</code> - <em>Optional</em>. List of Spark parameters if required where each parameter is a string in format:
   <code>spark.param.name=spark.param.value</code>.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this connection where each parameter 
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="postgresql-connection-configuration">PostgreSQL Connection Configuration</h2>
 <p>Configuration to PostgreSQL can be set up using following parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Connection ID;</li>
+<li><code>description</code> - <em>Optional</em>. Connection description;</li>
 <li><code>url</code> - <em>Required</em>. Connection URL. Should contain host, port and name of database.
   In addition, extra parameters can be supplied in connection URL if required.
   <em>Connection protocol must not be specified.</em></li>
@@ -1397,11 +1407,14 @@ by Spark to read data from a particular system.</p>
 <li><code>password</code> - <em>Optional</em>. Password used to connect to PostgreSQL database if required.</li>
 <li><code>parameters</code> - <em>Optional</em>. List of Spark parameters if required where each parameter is a string in format:
   <code>spark.param.name=spark.param.value</code>.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this connection where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="oracle-connection-configuration">Oracle Connection Configuration</h2>
 <p>Configuration to Oracle can be set up in the same way as to PostgreSQL, using following parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Connection ID;</li>
+<li><code>description</code> - <em>Optional</em>. Connection description;</li>
 <li><code>url</code> - <em>Required</em>. Connection URL. Should contain host, port and name of database.
   In addition, extra parameters can be supplied in connection URL if required.
   <em>Connection protocol must not be specified.</em></li>
@@ -1409,11 +1422,14 @@ by Spark to read data from a particular system.</p>
 <li><code>password</code> - <em>Optional</em>. Password used to connect to Oracle database if required.</li>
 <li><code>parameters</code> - <em>Optional</em>. List of Spark parameters if required where each parameter is a string in format:
   <code>spark.param.name=spark.param.value</code>.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this connection where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="mysql-connection-configuration">MySQL Connection Configuration</h2>
 <p>Configuration to MySQL can be set up in the same way as to PostgreSQL and Oracle, using following parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Connection ID;</li>
+<li><code>description</code> - <em>Optional</em>. Connection description;</li>
 <li><code>url</code> - <em>Required</em>. Connection URL. Should contain host, port and name of database.
   In addition, extra parameters can be supplied in connection URL if required.
   <em>Connection protocol must not be specified.</em></li>
@@ -1421,11 +1437,14 @@ by Spark to read data from a particular system.</p>
 <li><code>password</code> - <em>Optional</em>. Password used to connect to MySQL database if required.</li>
 <li><code>parameters</code> - <em>Optional</em>. List of Spark parameters if required where each parameter is a string in format:
   <code>spark.param.name=spark.param.value</code>.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this connection where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="ms-sql-connection-configuration">MS SQL Connection Configuration</h2>
 <p>Configuration to MS SQL can be set up similarly to the 3 previous, using following parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Connection ID;</li>
+<li><code>description</code> - <em>Optional</em>. Connection description;</li>
 <li><code>url</code> - <em>Required</em>. Connection URL. Should contain host, port and name of database.
   In addition, extra parameters can be supplied in connection URL if required.
   <em>Connection protocol must not be specified.</em></li>
@@ -1433,21 +1452,27 @@ by Spark to read data from a particular system.</p>
 <li><code>password</code> - <em>Optional</em>. Password used to connect to MS SQL database if required.</li>
 <li><code>parameters</code> - <em>Optional</em>. List of Spark parameters if required where each parameter is a string in format:
   <code>spark.param.name=spark.param.value</code>.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this connection where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="h2-connection-configuration">H2 Connection Configuration</h2>
 <p>Configuring connection to H2 database has similarly to SQLite. It is required supplying only two parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Connection ID;</li>
+<li><code>description</code> - <em>Optional</em>. Connection description;</li>
 <li><code>url</code> - <em>Required</em>. Connection URL. Should contain host, port and name of database.
   In addition, extra parameters can be supplied in connection URL if required.
   <em>Connection protocol must not be specified.</em></li>
 <li><code>parameters</code> - <em>Optional</em>. List of Spark parameters if required where each parameter is a string in format:
   <code>spark.param.name=spark.param.value</code>.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this connection where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="clickhouse-connection-configuration">ClickHouse Connection Configuration</h2>
 <p>Configuration to ClickHouse can be set up in the same way as to MS SQL, using following parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Connection ID;</li>
+<li><code>description</code> - <em>Optional</em>. Connection description;</li>
 <li><code>url</code> - <em>Required</em>. Connection URL. Should contain host, port and name of database.
   In addition, extra parameters can be supplied in connection URL if required.
   <em>Connection protocol must not be specified.</em></li>
@@ -1455,14 +1480,19 @@ by Spark to read data from a particular system.</p>
 <li><code>password</code> - <em>Optional</em>. Password used to connect to ClickHouse database if required.</li>
 <li><code>parameters</code> - <em>Optional</em>. List of Spark parameters if required where each parameter is a string in format:
   <code>spark.param.name=spark.param.value</code>.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this connection where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="kafka-connection-configuration">Kafka Connection Configuration</h2>
 <p>In order to connect to set up connection to Kafka brokers, it is required to supply following parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Connection ID;</li>
+<li><code>description</code> - <em>Optional</em>. Connection description;</li>
 <li><code>servers</code> - <em>Required</em>. List of broker servers to connect to.</li>
 <li><code>parameters</code> - <em>Optional</em>. List of Spark parameters if required where each parameter is a string in format:
   <code>spark.param.name=spark.param.value</code>. Usually, Kafka authorisation settings are provided by means of spark parameters.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this connection where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <p>If connection to Kafka cluster requires JAAS configuration file, then it should be provided via Java environment
 variables. Note, that these variables must be declared prior JVM starts, therefore, they must be set in <code>spark-submit</code> 
@@ -1486,6 +1516,7 @@ command as follows:</p>
 <p>Configuring connection to Greenplum, you must specify the following parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Connection ID;</li>
+<li><code>description</code> - <em>Optional</em>. Connection description;</li>
 <li><code>url</code> - <em>Required</em>. Connection URL. Should contain host, port and name of database.
   In addition, extra parameters can be supplied in connection URL if required.
   <em>Connection protocol must not be specified.</em></li>
@@ -1494,6 +1525,8 @@ command as follows:</p>
 <li><code>schema</code> - <em>Optional</em>. schema to lookup tables from. If omitted, default schema is used.</li>
 <li><code>parameters</code> - <em>Optional</em>. List of Spark parameters if required where each parameter is a string in format:
   <code>spark.param.name=spark.param.value</code>.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this connection where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <p>Pivotal connector is not published in public repositories such as Maven Central. Therefore, this dependency is 
 unmanaged and should be manually added to Spark application during submit (using spark.jars configuration parameter). 
@@ -1504,56 +1537,71 @@ of connection. These subsections should contain a list of connection configurati
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1">jobConfig: {
 </span><span id="__span-2-2">  connections: {
 </span><span id="__span-2-3">    postgres: [
-</span><span id="__span-2-4">      {id: &quot;postgre_db1&quot;, url: &quot;postgre1.db.com:5432/public&quot;, username: &quot;dq-user&quot;, password: &quot;dq-password&quot;}
-</span><span id="__span-2-5">      {
-</span><span id="__span-2-6">        id: &quot;postgre_db2&quot;,
-</span><span id="__span-2-7">        url: &quot;postgre2.db.com:5432/public&quot;,
-</span><span id="__span-2-8">        username: &quot;dq-user&quot;,
+</span><span id="__span-2-4">      {
+</span><span id="__span-2-5">        id: &quot;postgre_db1&quot;,
+</span><span id="__span-2-6">        description: &quot;Connection to production instance of DB&quot;
+</span><span id="__span-2-7">        url: &quot;postgre1.db.com:5432/public&quot;, 
+</span><span id="__span-2-8">        username: &quot;dq-user&quot;, 
 </span><span id="__span-2-9">        password: &quot;dq-password&quot;,
-</span><span id="__span-2-10">        schema: &quot;dataquality&quot;
-</span><span id="__span-2-11">      }
-</span><span id="__span-2-12">    ]
-</span><span id="__span-2-13">    oracle: [
-</span><span id="__span-2-14">      {id: &quot;oracle_db1&quot;, url: &quot;oracle.db.com:1521/public&quot;, username: &quot;db-user&quot;, password: &quot;dq-password&quot;}
-</span><span id="__span-2-15">    ]
-</span><span id="__span-2-16">    sqlite: [
-</span><span id="__span-2-17">      {id: &quot;sqlite_db&quot;, url: &quot;some/path/to/db.sqlite&quot;}
-</span><span id="__span-2-18">    ],
-</span><span id="__span-2-19">    mysql: [
-</span><span id="__span-2-20">      {id: &quot;mysql_db1&quot;, url: &quot;mysql.db.com:8306/public&quot;, username: &quot;user&quot;, password: &quot;pass&quot;}
-</span><span id="__span-2-21">    ],
-</span><span id="__span-2-22">    mssql: [
-</span><span id="__span-2-23">      {id: &quot;mssql_db1&quot;, url: &quot;mssql.db.com:8433&quot;, username: &quot;user&quot;, password: &quot;pass&quot;}
-</span><span id="__span-2-24">    ],
-</span><span id="__span-2-25">    h2: [
-</span><span id="__span-2-26">      {id: &quot;h2_db1&quot;, url: &quot;h2.db.com:9092/default&quot;, username: &quot;user&quot;, password: &quot;pass&quot;}
-</span><span id="__span-2-27">    ],
-</span><span id="__span-2-28">    clickhouse: [
-</span><span id="__span-2-29">      {id: &quot;clickhouse_db1&quot;, url: &quot;clickhouse.db.com:8123&quot;, username: &quot;user&quot;, password: &quot;pass&quot;}
-</span><span id="__span-2-30">    ],
-</span><span id="__span-2-31">    kafka: [
-</span><span id="__span-2-32">      {id: &quot;kafka_cluster_1&quot;, servers: [&quot;server1:9092&quot;, &quot;server2:9092&quot;]}
-</span><span id="__span-2-33">      {
-</span><span id="__span-2-34">        id: &quot;kafka_cluster_2&quot;,
-</span><span id="__span-2-35">        servers: [&quot;kafka-broker1:9092&quot;, &quot;kafka-broker2:9092&quot;, &quot;kafka-broker3:9092&quot;]
-</span><span id="__span-2-36">        parameters: [
-</span><span id="__span-2-37">          &quot;security.protocol=SASL_PLAINTEXT&quot;,
-</span><span id="__span-2-38">          &quot;sasl.mechanism=GSSAPI&quot;,
-</span><span id="__span-2-39">          &quot;sasl.kerberos.service.name=kafka-service&quot;
-</span><span id="__span-2-40">        ]
-</span><span id="__span-2-41">      }
+</span><span id="__span-2-10">        metadata: [
+</span><span id="__span-2-11">          &quot;db.owner=some.user@some.domain&quot;,
+</span><span id="__span-2-12">          &quot;environment=prod&quot;
+</span><span id="__span-2-13">        ]
+</span><span id="__span-2-14">      }
+</span><span id="__span-2-15">      {
+</span><span id="__span-2-16">        id: &quot;postgre_db2&quot;,
+</span><span id="__span-2-17">        description: &quot;Connection to test instance of DB&quot;
+</span><span id="__span-2-18">        url: &quot;postgre2.db.com:5432/public&quot;,
+</span><span id="__span-2-19">        username: &quot;dq-user&quot;,
+</span><span id="__span-2-20">        password: &quot;dq-password&quot;,
+</span><span id="__span-2-21">        schema: &quot;dataquality&quot;,
+</span><span id="__span-2-22">        metadata: [
+</span><span id="__span-2-23">          &quot;db.owner=some.user@some.domain&quot;,
+</span><span id="__span-2-24">          &quot;environment=test&quot;
+</span><span id="__span-2-25">        ]
+</span><span id="__span-2-26">      }
+</span><span id="__span-2-27">    ]
+</span><span id="__span-2-28">    oracle: [
+</span><span id="__span-2-29">      {id: &quot;oracle_db1&quot;, url: &quot;oracle.db.com:1521/public&quot;, username: &quot;db-user&quot;, password: &quot;dq-password&quot;}
+</span><span id="__span-2-30">    ]
+</span><span id="__span-2-31">    sqlite: [
+</span><span id="__span-2-32">      {id: &quot;sqlite_db&quot;, url: &quot;some/path/to/db.sqlite&quot;}
+</span><span id="__span-2-33">    ],
+</span><span id="__span-2-34">    mysql: [
+</span><span id="__span-2-35">      {id: &quot;mysql_db1&quot;, url: &quot;mysql.db.com:8306/public&quot;, username: &quot;user&quot;, password: &quot;pass&quot;}
+</span><span id="__span-2-36">    ],
+</span><span id="__span-2-37">    mssql: [
+</span><span id="__span-2-38">      {id: &quot;mssql_db1&quot;, url: &quot;mssql.db.com:8433&quot;, username: &quot;user&quot;, password: &quot;pass&quot;}
+</span><span id="__span-2-39">    ],
+</span><span id="__span-2-40">    h2: [
+</span><span id="__span-2-41">      {id: &quot;h2_db1&quot;, url: &quot;h2.db.com:9092/default&quot;, username: &quot;user&quot;, password: &quot;pass&quot;}
 </span><span id="__span-2-42">    ],
-</span><span id="__span-2-43">    greenplum: [
-</span><span id="__span-2-44">      {
-</span><span id="__span-2-45">        id: &quot;greenplum_db1&quot;, 
-</span><span id="__span-2-46">        url: &quot;greenplum.db.com:5432/postgres&quot;, 
-</span><span id="__span-2-47">        username: &quot;user&quot;, 
-</span><span id="__span-2-48">        password: &quot;pass&quot;,
-</span><span id="__span-2-49">        schema: &quot;public&quot;
-</span><span id="__span-2-50">      }
-</span><span id="__span-2-51">    ]
-</span><span id="__span-2-52">  }
-</span><span id="__span-2-53">}
+</span><span id="__span-2-43">    clickhouse: [
+</span><span id="__span-2-44">      {id: &quot;clickhouse_db1&quot;, url: &quot;clickhouse.db.com:8123&quot;, username: &quot;user&quot;, password: &quot;pass&quot;}
+</span><span id="__span-2-45">    ],
+</span><span id="__span-2-46">    kafka: [
+</span><span id="__span-2-47">      {id: &quot;kafka_cluster_1&quot;, servers: [&quot;server1:9092&quot;, &quot;server2:9092&quot;]}
+</span><span id="__span-2-48">      {
+</span><span id="__span-2-49">        id: &quot;kafka_cluster_2&quot;,
+</span><span id="__span-2-50">        servers: [&quot;kafka-broker1:9092&quot;, &quot;kafka-broker2:9092&quot;, &quot;kafka-broker3:9092&quot;]
+</span><span id="__span-2-51">        parameters: [
+</span><span id="__span-2-52">          &quot;security.protocol=SASL_PLAINTEXT&quot;,
+</span><span id="__span-2-53">          &quot;sasl.mechanism=GSSAPI&quot;,
+</span><span id="__span-2-54">          &quot;sasl.kerberos.service.name=kafka-service&quot;
+</span><span id="__span-2-55">        ]
+</span><span id="__span-2-56">      }
+</span><span id="__span-2-57">    ],
+</span><span id="__span-2-58">    greenplum: [
+</span><span id="__span-2-59">      {
+</span><span id="__span-2-60">        id: &quot;greenplum_db1&quot;, 
+</span><span id="__span-2-61">        url: &quot;greenplum.db.com:5432/postgres&quot;, 
+</span><span id="__span-2-62">        username: &quot;user&quot;, 
+</span><span id="__span-2-63">        password: &quot;pass&quot;,
+</span><span id="__span-2-64">        schema: &quot;public&quot;
+</span><span id="__span-2-65">      }
+</span><span id="__span-2-66">    ]
+</span><span id="__span-2-67">  }
+</span><span id="__span-2-68">}
 </span></code></pre></div>
 
 
@@ -1604,7 +1652,7 @@ of connection. These subsections should contain a list of connection configurati
     <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>

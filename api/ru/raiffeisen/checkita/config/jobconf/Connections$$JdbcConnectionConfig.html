@@ -248,7 +248,7 @@ and optional user/password combination
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><a href="Connections$$ConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionConfig">ConnectionConfig</a>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="Connections$$ConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionConfig">ConnectionConfig</a>, <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
             <span class="toggle">
               Known Subclasses
@@ -279,7 +279,7 @@ and optional user/password combination
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Connections.JdbcConnectionConfig"><span>JdbcConnectionConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionConfig"><span>ConnectionConfig</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Connections.JdbcConnectionConfig"><span>JdbcConnectionConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionConfig"><span>ConnectionConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity"><span>JobConfigEntity</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -303,7 +303,23 @@ and optional user/password combination
 
         <div class="values members">
               <h3>Abstract Value Members</h3>
-              <ol><li name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionConfig#id" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+              <ol><li name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity#description" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="description:Option[eu.timepit.refined.types.string.NonEmptyString]"></a><a id="description:Option[NonEmptyString]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Connections$$JdbcConnectionConfig.html#description:Option[eu.timepit.refined.types.string.NonEmptyString]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">description</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>JobConfigEntity</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity#id" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="id:ru.raiffeisen.checkita.config.RefinedTypes.ID"></a><a id="id:ID"></a>
       <span class="permalink">
       <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Connections$$JdbcConnectionConfig.html#id:ru.raiffeisen.checkita.config.RefinedTypes.ID" title="Permalink">
@@ -318,7 +334,23 @@ and optional user/password combination
         <span class="name">id</span><span class="result">: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Connections$$ConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionConfig">ConnectionConfig</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>JobConfigEntity</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity#metadata" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]"></a><a id="metadata:Seq[SparkParam]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Connections$$JdbcConnectionConfig.html#metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metadata</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>JobConfigEntity</dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionConfig#parameters" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="parameters:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]"></a><a id="parameters:Seq[SparkParam]"></a>
       <span class="permalink">
@@ -585,6 +617,22 @@ and optional user/password combination
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity#metadataString" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="metadataString:Option[String]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Connections$$JdbcConnectionConfig.html#metadataString:Option[String]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metadataString</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>JobConfigEntity</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -751,6 +799,12 @@ and optional user/password combination
         <div id="inheritedMembers">
         <div class="parent" name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionConfig">
               <h3>Inherited from <a href="Connections$$ConnectionConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionConfig">ConnectionConfig</a></h3>
+            </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">
+              <h3>Inherited from <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span></h3>
+            </div><div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">

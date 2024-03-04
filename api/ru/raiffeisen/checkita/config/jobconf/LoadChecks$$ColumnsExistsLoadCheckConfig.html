@@ -212,16 +212,17 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">ColumnsExistsLoadCheckConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="source">source: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="columns">columns: <a href="../RefinedTypes$.html#NonEmptyStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.NonEmpty]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq">NonEmptyStringSeq</a></span>)</span><span class="result"> extends <a href="LoadChecks$$LoadCheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig">LoadCheckConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">ColumnsExistsLoadCheckConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="source">source: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="columns">columns: <a href="../RefinedTypes$.html#NonEmptyStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.NonEmpty]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq">NonEmptyStringSeq</a></span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="LoadChecks$$LoadCheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig">LoadCheckConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Columns exists load check configuration</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Load check ID</p></dd><dt class="param">source</dt><dd class="cmt"><p>Source ID to be checked</p></dd><dt class="param">columns</dt><dd class="cmt"><p>Sequence of columns that must be presented in the source</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Columns exists load check configuration
+</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Load check ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Load check description</p></dd><dt class="param">source</dt><dd class="cmt"><p>Source ID to be checked</p></dd><dt class="param">columns</dt><dd class="cmt"><p>Sequence of columns that must be presented in the source</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this load check</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="LoadChecks$$LoadCheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig">LoadCheckConfig</a>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="LoadChecks$$LoadCheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig">LoadCheckConfig</a>, <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -247,7 +248,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig"><span>ColumnsExistsLoadCheckConfig</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig"><span>LoadCheckConfig</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig"><span>ColumnsExistsLoadCheckConfig</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig"><span>LoadCheckConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity"><span>JobConfigEntity</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -268,9 +269,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,source:eu.timepit.refined.types.string.NonEmptyString,columns:ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq):ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig"></a><a id="&lt;init&gt;:ColumnsExistsLoadCheckConfig"></a>
+      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],source:eu.timepit.refined.types.string.NonEmptyString,columns:ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq,metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]):ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig"></a><a id="&lt;init&gt;:ColumnsExistsLoadCheckConfig"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/LoadChecks$$ColumnsExistsLoadCheckConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,source:eu.timepit.refined.types.string.NonEmptyString,columns:ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq):ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/LoadChecks$$ColumnsExistsLoadCheckConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],source:eu.timepit.refined.types.string.NonEmptyString,columns:ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq,metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]):ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -279,10 +280,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">ColumnsExistsLoadCheckConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="source">source: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="columns">columns: <a href="../RefinedTypes$.html#NonEmptyStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.NonEmpty]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq">NonEmptyStringSeq</a></span>)</span>
+        <span class="name">ColumnsExistsLoadCheckConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="source">source: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="columns">columns: <a href="../RefinedTypes$.html#NonEmptyStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.NonEmpty]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq">NonEmptyStringSeq</a></span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Load check ID</p></dd><dt class="param">source</dt><dd class="cmt"><p>Source ID to be checked</p></dd><dt class="param">columns</dt><dd class="cmt"><p>Sequence of columns that must be presented in the source</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Load check ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Load check description</p></dd><dt class="param">source</dt><dd class="cmt"><p>Source ID to be checked</p></dd><dt class="param">columns</dt><dd class="cmt"><p>Sequence of columns that must be presented in the source</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this load check</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -397,6 +398,22 @@
       </span>
       
       
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig#description" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="description:Option[eu.timepit.refined.types.string.NonEmptyString]"></a><a id="description:Option[NonEmptyString]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/LoadChecks$$ColumnsExistsLoadCheckConfig.html#description:Option[eu.timepit.refined.types.string.NonEmptyString]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">description</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig">ColumnsExistsLoadCheckConfig</a> → JobConfigEntity</dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -485,7 +502,7 @@
         <span class="name">id</span><span class="result">: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig">ColumnsExistsLoadCheckConfig</a> → <a href="LoadChecks$$LoadCheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig">LoadCheckConfig</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig">ColumnsExistsLoadCheckConfig</a> → JobConfigEntity</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -502,6 +519,38 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig#metadata" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]"></a><a id="metadata:Seq[SparkParam]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/LoadChecks$$ColumnsExistsLoadCheckConfig.html#metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metadata</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.ColumnsExistsLoadCheckConfig">ColumnsExistsLoadCheckConfig</a> → JobConfigEntity</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity#metadataString" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="metadataString:Option[String]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/LoadChecks$$ColumnsExistsLoadCheckConfig.html#metadataString:Option[String]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metadataString</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>JobConfigEntity</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -666,16 +715,18 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="scala.Product">
+        <div class="parent" name="scala.Product">
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
             </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig">
               <h3>Inherited from <a href="LoadChecks$$LoadCheckConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig">LoadCheckConfig</a></h3>
+            </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">
+              <h3>Inherited from <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span></h3>
+            </div><div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">

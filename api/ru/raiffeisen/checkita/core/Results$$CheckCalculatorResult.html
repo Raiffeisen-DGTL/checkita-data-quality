@@ -458,9 +458,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.core.Results.CheckCalculatorResult#finalize" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="finalize(description:Option[String])(implicitjobId:String,implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings):ru.raiffeisen.checkita.storage.Models.ResultCheck"></a><a id="finalize(Option[String])(String,AppSettings):ResultCheck"></a>
+      <a id="finalize(description:Option[String],metadata:Option[String])(implicitjobId:String,implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings):ru.raiffeisen.checkita.storage.Models.ResultCheck"></a><a id="finalize(Option[String],Option[String])(String,AppSettings):ResultCheck"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/core/Results$$CheckCalculatorResult.html#finalize(description:Option[String])(implicitjobId:String,implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings):ru.raiffeisen.checkita.storage.Models.ResultCheck" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/core/Results$$CheckCalculatorResult.html#finalize(description:Option[String],metadata:Option[String])(implicitjobId:String,implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings):ru.raiffeisen.checkita.storage.Models.ResultCheck" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -469,12 +469,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">(<span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="jobId">jobId: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>)</span><span class="result">: <a href="../storage/Models$$ResultCheck.html" class="extype" name="ru.raiffeisen.checkita.storage.Models.ResultCheck">ResultCheck</a></span>
+        <span class="name">finalize</span><span class="params">(<span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="metadata">metadata: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="jobId">jobId: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>)</span><span class="result">: <a href="../storage/Models$$ResultCheck.html" class="extype" name="ru.raiffeisen.checkita.storage.Models.ResultCheck">ResultCheck</a></span>
       </span>
       
       <p class="shortcomment cmt">Converts check calculator result to final check result representation suitable
 for storing into results storage and sending via targets.</p><div class="fullcomment"><div class="comment cmt"><p>Converts check calculator result to final check result representation suitable
-for storing into results storage and sending via targets.</p></div><dl class="paramcmts block"><dt class="param">description</dt><dd class="cmt"><p>Check description</p></dd><dt class="param">jobId</dt><dd class="cmt"><p>Implicit Job ID</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt>returns</dt><dd class="cmt"><p>Finalized check result</p></dd></dl></div>
+for storing into results storage and sending via targets.
+</p></div><dl class="paramcmts block"><dt class="param">description</dt><dd class="cmt"><p>Check description</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>Metadata parameters specific to this check (JSON List string)</p></dd><dt class="param">jobId</dt><dd class="cmt"><p>Implicit Job ID</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt>returns</dt><dd class="cmt"><p>Finalized check result</p></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
