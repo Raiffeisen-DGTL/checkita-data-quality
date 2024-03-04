@@ -67,6 +67,7 @@ Checkita фреймворк записывает четыре типа резу�
 | metric_id         | STRING      | NOT NULL   |
 | metric_name       | STRING      | NOT NULL   |
 | description       | STRING      |            |
+| metadata          | STRING      |            |
 | source_id         | STRING      | NOT NULL   |
 | column_names      | STRING      |            |
 | params            | STRING      |            |
@@ -86,6 +87,7 @@ Checkita фреймворк записывает четыре типа резу�
 | metric_id         | STRING      | NOT NULL   |
 | metric_name       | STRING      | NOT NULL   |
 | description       | STRING      |            |
+| metadata          | STRING      |            |
 | source_id         | STRING      | NOT NULL   |
 | formula           | STRING      | NOT NULL   |
 | result            | DOUBLE      | NOT NULL   |
@@ -103,6 +105,8 @@ Checkita фреймворк записывает четыре типа резу�
 | job_id         | STRING      | NOT NULL   |
 | check_id       | STRING      | NOT NULL   |
 | check_name     | STRING      | NOT NULL   |
+| description    | STRING      |            |
+| metadata       | STRING      |            |
 | source_id      | STRING      | NOT NULL   |
 | expected       | STRING      | NOT NULL   |
 | status         | STRING      | NOT NULL   |
@@ -121,6 +125,7 @@ Checkita фреймворк записывает четыре типа резу�
 | check_id           | STRING      | NOT NULL   |
 | check_name         | STRING      | NOT NULL   |
 | description        | STRING      |            |
+| metadata           | STRING      |            |
 | source_id          | STRING      | NOT NULL   |
 | base_metric        | STRING      | NOT NULL   |
 | compared_metric    | STRING      |            |
@@ -131,6 +136,21 @@ Checkita фреймворк записывает четыре типа резу�
 | message            | STRING      |            |
 | reference_date     | TIMESTAMP   | NOT NULL   |
 | execution_date     | TIMESTAMP   | NOT NULL   |
+
+
+### Job State Schema
+
+* Первичный ключ: `(job_id, reference_date)`;
+* `version_info` - строка в формате JSON;
+* `config` - строка в формате JSON.
+
+| Column Name    | Column Type | Constraint |
+|----------------|-------------|------------|
+| job_id         | STRING      | NOT NULL   |
+| config         | STRING      | NOT NULL   |
+| version_info   | STRING      |            |
+| reference_date | TIMESTAMP   | NOT NULL   |
+| execution_date | TIMESTAMP   | NOT NULL   |
 
 ## Скрипты для Настройки Хранилища Результатов в Hive
 
@@ -150,6 +170,7 @@ CREATE EXTERNAL TABLE ${schema_name}.results_metric_regular
     metric_id         STRING COMMENT '',
     metric_name       STRING COMMENT '',
     description       STRING COMMENT '',
+    metadata           STRING COMMENT '',
     source_id         STRING COMMENT '',
     column_names      STRING COMMENT '',
     params            STRING COMMENT '',
@@ -170,6 +191,7 @@ CREATE EXTERNAL TABLE ${schema_name}.results_metric_composed
     metric_id         STRING COMMENT '',
     metric_name       STRING COMMENT '',
     description       STRING COMMENT '',
+    metadata           STRING COMMENT '',
     source_id         STRING COMMENT '',
     formula           STRING COMMENT '',
     result            DOUBLE COMMENT '',
@@ -188,6 +210,8 @@ CREATE EXTERNAL TABLE ${schema_name}.results_check_load
     job_id         STRING COMMENT '',
     check_id       STRING COMMENT '',
     check_name     STRING COMMENT '',
+    description    STRING COMMENT '',
+    metadata       STRING COMMENT '',
     source_id      STRING COMMENT '',
     expected       STRING COMMENT '',
     status         STRING COMMENT '',
@@ -207,6 +231,7 @@ CREATE EXTERNAL TABLE ${schema_name}.results_check
     check_id           STRING COMMENT '',
     check_name         STRING COMMENT '',
     description        STRING COMMENT '',
+    metadata           STRING COMMENT '',
     source_id          STRING COMMENT '',
     base_metric        STRING COMMENT '',
     compared_metric    STRING COMMENT '',
@@ -222,4 +247,18 @@ COMMENT 'Data Quality Checks Results'
 PARTITIONED BY (job_id STRING)
 STORED AS PARQUET
 LOCATION '${schema_dir}/results_check';
+
+DROP TABLE IF EXISTS ${schema_name}.job_state;
+CREATE EXTERNAL TABLE ${schema_name}.job_state
+(
+    job_id            STRING COMMENT '',
+    config            STRING COMMENT '',
+    version_info      STRING COMMENT '',
+    reference_date    TIMESTAMP COMMENT '',
+    execution_date    TIMESTAMP COMMENT ''
+)
+COMMENT 'Data Quality Job State'
+PARTITIONED BY (job_id STRING)
+STORED AS PARQUET
+LOCATION '${schema_dir}/job_state';
 ```

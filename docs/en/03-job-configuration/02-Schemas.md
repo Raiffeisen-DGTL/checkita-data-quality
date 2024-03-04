@@ -9,6 +9,12 @@ Schemas are used in Data Quality jobs for two purposes:
 Schemas are set in `schemas` section of job configuration and can be defined in different formats as described below.
 Format in which schema is defined is set in `kind` field and defines what other fields are need to be provided.
 
+Apart from `kind` field, all types of schemas configuration contain following common parameters:
+
+* `id` - Schema ID that uniquely identifies its configuration;
+* `description` - Optional schema description;
+* `metadata` - Optional list of arbitrary user-defined metadata parameters.
+
 ## Delimited Schema Configuration
 
 This kind of schema definition is primarily used to provide schemas for delimited text files such as CSV or TSV.
@@ -19,9 +25,12 @@ Thus, delimited definition contains following parameters:
 
 * `kind: "delimited"` - *Required*. Sets delimited schema definition format.
 * `id` - *Required*. Schema ID;
+* `description` - *Optional*. Schema description;
 * `schema` - *Required*. List of schema columns where each column is an object with following fields:
     * `name` - *Required*. Name of the column;
     * `type` - *Required*. Type of the column. See [Supported Type Literals](#supported-type-literals) for allowed types.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this schema where each parameter
+  is a string in format:`param.name=param.value`.
 
 ## Fixed-Full Schema Configuration
 
@@ -34,10 +43,13 @@ Fixed-fill schema definition contains following parameters:
 
 * `kind: "fixedFull"` - *Required*. Sets fixed-full schema definition format.
 * `id` - *Required*. Schema ID;
+* `description` - *Optional*. Schema description;
 * `schema` - *Required*. List of schema columns where each column is an object with following fields:
     * `name` - *Required*. Name of the column;
     * `type` - *Required*. Type of the column. See [Supported Type Literals](#supported-type-literals) for allowed types.
     * `width` - *Required*. Integer width of column (number of symbols).
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this schema where each parameter
+  is a string in format:`param.name=param.value`.
 
 ## Fixed-Short Schema Configuration
 
@@ -50,8 +62,11 @@ Fixed-short schema definition contains following parameters:
 
 * `kind: "fixedShort"` - *Required*. Sets fixed-short schema definition format.
 * `id` - *Required*. Schema ID;
+* `description` - *Optional*. Schema description;
 * `schema` - *Required*. List of schema columns where each column is a string in format `columnName:columnWidth`.
   *Type of columns is always a StringType.*
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this schema where each parameter
+  is a string in format:`param.name=param.value`.
 
 ## Avro Schema Configuration
 
@@ -63,6 +78,7 @@ In order to read schema from avro file it is required to supply following parame
 
 * `kind: "avro"` - *Required*. Sets avro schema definition format.
 * `id` - *Required*. Schema ID;
+* `description` - *Optional*. Schema description;
 * `schema` - *Required*. Path to avro schema file `.avsc` to read schema from.
 
 ## Hive Schema Configuration
@@ -75,10 +91,13 @@ To retrieve schema from hive table it is required to set up following parameters
 
 * `kind: "hive"` - *Required*. Sets hive schema definition format.
 * `id` - *Required*. Schema ID;
+* `description` - *Optional*. Schema description;
 * `schema` - *Required*. Hive schema to search for a table.
 * `table` - *Required*. Hive table to retrieve schema from.
 * `excludeColumns` - *Optional*. List of column names to exclude from schema. Sometimes it is required, e.g.
   to exclude partition columns from schema.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this schema where each parameter
+  is a string in format: `param.name=param.value`.
 
 ## Supported Type Literals
 
@@ -106,6 +125,7 @@ jobConfig: {
     {
       id: "schema1"
       kind: "delimited"
+      description: "Schema describing content of CSV file"
       schema: [
         {name: "colA", type: "string"},
         {name: "colB", type: "timestamp"},
@@ -123,7 +143,14 @@ jobConfig: {
     }
     {id: "schema3", kind: "fixedShort", schema: ["colOne:5", "colTwo:7", "colThree:9"]}
     {id: "hive_schema", kind: "hive", schema: "some_schema", table: "some_table"}
-    {id: "avro_schema", kind: "avro", schema: "path/to/avro_schema.avsc"}
+    {
+      id: "avro_schema", 
+      kind: "avro", 
+      schema: "path/to/avro_schema.avsc"
+      metadata: [
+        "schema.origin=http://some-schema-registry-location"
+      ]
+    }
   ]
 }
 ```

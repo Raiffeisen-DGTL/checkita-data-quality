@@ -26,6 +26,7 @@ All types of virtual sources have common features:
 Thus, virtual sources are defined in `virtualSources` section of job configuration and have following common parameters:
 
 * `id` - *Required*. Virtual source ID;
+* `description` - *Optional*. Virtual source description;
 * `parentSources` - *Required*. List of parent sources to use for creation of virtual sources. There could be a
   limitations imposed in number of parent sources, depending on virtual source type.
 * `persist` - *Optional*. One of the allowed Spark StorageLevels used to cache virtual sources. By default, virtual
@@ -38,6 +39,8 @@ Thus, virtual sources are defined in `virtualSources` section of job configurati
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-concepts/04-ErrorCollection.md) chapter.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this virtual source where each parameter
+  is a string in format: `param.name=param.value`.
 
 ## SQL Virtual Source Configuration
 
@@ -103,6 +106,7 @@ jobConfig: {
     {
       id: "sqlVS"
       kind: "sql"
+      description: "Filter data for specific date only"
       parentSources: ["hive_source_1"]
       persist: "disk_only"
       save: {
@@ -110,6 +114,10 @@ jobConfig: {
         path: "some/path/to/vs/location"
       }
       query: "select id, name, entity, description from hive_source_1 where load_date == '2023-06-30'"
+      metadata: [
+        "source.owner=some.preson@some.domain"
+        "critical.source=false"
+      ]
     }
     {
       id: "joinVS"

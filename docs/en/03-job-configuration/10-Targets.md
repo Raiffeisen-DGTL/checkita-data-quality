@@ -31,7 +31,7 @@ they are sent or saved:
 For result target of any type it is required to configure list of result to be saved or sent:
 
 * `resultTypes` - *Required*. List of result types to save or sent. May include following:
-  `regularMetrics`, `composedMetrics`, `loadChecks`, `checks`. Note that all results types are reduced 
+  `regularMetrics`, `composedMetrics`, `loadChecks`, `checks`, `jobState`. Note that all results types are reduced 
    to [Unified Targets Schema](#unified-targets-schema) and saved together.
 
 ### Save Results to File
@@ -360,7 +360,7 @@ jobConfig: {
         }
       }
       hive: {
-        resultTypes: ["regularMetrics", "composedMetrics", "loadChecks", "checks"],
+        resultTypes: ["regularMetrics", "composedMetrics", "loadChecks", "checks", "jobState"],
         schema: "WORKSPACE_CIBAA",
         table: "DQ_TARGETS"
       }

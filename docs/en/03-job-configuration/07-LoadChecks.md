@@ -8,7 +8,10 @@ dataframes and load checks are used to verify their metadata.
 Load checks are defined in `loadChecks` section of job configuration and have following common parameters:
 
 * `id` - *Required*. Load check ID;
+* `description` - *Optional*. Load check description;
 * `source` - *Required*. Reference to a source ID which metadata is being checked;
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this load check where each parameter
+  is a string in format: `param.name=param.value`.
 
 Currently, supported load checks are described below as well as configuration parameters specific to them.
 
@@ -59,7 +62,14 @@ jobConfig: {
       {id: "load_check_1", source: "kafka_source", option: 2}
     ]
     exactColumnNum: [
-      {id: "load_check_2", source: "hdfs_delimited_source", option: 3}
+      {
+        id: "load_check_2", 
+        description: "Checking that source has exactly required number of columns", 
+        source: "hdfs_delimited_source", option: 3
+        metadata: [
+          "critical.loadcheck=true"
+        ]
+      }
     ]
     columnsExist: [
       {id: "loadCheck3", source: "sqlVS", columns: ["id", "name", "entity", "description"]},
