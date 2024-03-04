@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.2.1...v1.3.0) (2024-3-4)
+
+
+### Features
+
+* job configuration enhancements: added description and metadata fields and refactored hive source partition filtering ([#28](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/28)) ([7cf24db](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/7cf24db0d4999e064612f0658ddf0f836488ec86))
+
 ## [1.2.1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.2.0...v1.2.1) (2024-2-26)
 
 
