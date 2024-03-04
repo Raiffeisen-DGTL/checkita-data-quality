@@ -1,6 +1,6 @@
 package ru.raiffeisen.checkita.storage
 
-import ru.raiffeisen.checkita.appsettings.AppSettings
+import ru.raiffeisen.checkita.appsettings.{AppSettings, VersionInfo}
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.utils.Common.camelToSnakeCase
 import shapeless.{::, HList, HNil}
@@ -20,12 +20,16 @@ object Models {
     val uniqueFields: HList
     val uniqueFieldNames: Seq[String]
   }
-  
-  sealed abstract class MetricResult extends DQEntity {
+
+  trait DescriptiveFields { this: DQEntity =>
+    val description: Option[String]  // optional description that eny result entity can have
+    val metadata: Option[String]  // optional user-defined metadata that any result entity can have
+  }
+
+  sealed abstract class MetricResult extends DQEntity with DescriptiveFields {
     val jobId: String
     val metricId: String
     val metricName: String
-    val description: Option[String]
     val sourceId: String
     val result: Double
     val additionalResult: Option[String]
@@ -36,7 +40,7 @@ object Models {
     val uniqueFieldNames: Seq[String] = Seq("jobId", "metricId", "referenceDate").map(camelToSnakeCase)
   }
 
-  sealed abstract class CheckResult extends DQEntity {
+  sealed abstract class CheckResult extends DQEntity with DescriptiveFields {
     val jobId: String
     val checkId: String
     val checkName: String
@@ -54,6 +58,7 @@ object Models {
                                        metricId: String,
                                        metricName: String,
                                        description: Option[String],
+                                       metadata: Option[String],
                                        sourceId: String,
                                        columnNames: Option[String],
                                        params: Option[String],
@@ -68,6 +73,7 @@ object Models {
                                         metricId: String,
                                         metricName: String,
                                         description: Option[String],
+                                        metadata: Option[String],
                                         sourceId: String,
                                         formula: String,
                                         result: Double,
@@ -81,6 +87,7 @@ object Models {
                                checkId: String,
                                checkName: String,
                                description: Option[String],
+                               metadata: Option[String],
                                sourceId: String,
                                baseMetric: String,
                                comparedMetric: Option[String],
@@ -97,6 +104,8 @@ object Models {
   final case class ResultCheckLoad(jobId: String,
                                    checkId: String,
                                    checkName: String,
+                                   description: Option[String],
+                                   metadata: Option[String],
                                    sourceId: String,
                                    expected: String,
                                    status: String,
@@ -108,6 +117,7 @@ object Models {
 
   final case class JobState(jobId: String,
                             config: String,
+                            versionInfo: String,
                             referenceDate: Timestamp,
                             executionDate: Timestamp
                            ) extends DQEntity {
@@ -118,17 +128,16 @@ object Models {
   
   
   // !!! won't be stored in Storage DB. !!!
-  final case class ResultMetricErrors(
-                                     jobId: String,
-                                     metricId: String,
-                                     sourceIds: Seq[String],
-                                     sourceKeyFields: Seq[String],
-                                     metricColumns: Seq[String],
-                                     status: String,
-                                     message: String,
-                                     rowData: Map[String, String],
-                                     referenceDate: Timestamp,
-                                     executionDate: Timestamp) extends DQEntity {
+  final case class ResultMetricErrors(jobId: String,
+                                      metricId: String,
+                                      sourceIds: Seq[String],
+                                      sourceKeyFields: Seq[String],
+                                      metricColumns: Seq[String],
+                                      status: String,
+                                      message: String,
+                                      rowData: Map[String, String],
+                                      referenceDate: Timestamp,
+                                      executionDate: Timestamp) extends DQEntity {
     override val uniqueFields: HList = jobId :: metricId :: referenceDate :: HNil
     override val uniqueFieldNames: Seq[String] = Seq("jobId", "metricId", "referenceDate").map(camelToSnakeCase)
     val entityType: String = "metricError"

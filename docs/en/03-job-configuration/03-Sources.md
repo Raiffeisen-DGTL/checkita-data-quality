@@ -17,7 +17,9 @@ Thus, currently Checkita supports four general types of sources:
 * Hive sources: read hive table from Hive catalogue;
 * Table sources: read tables from RDBMS via JDBC connection.
 * Kafka sources: read topics from Kafka.
-* 
+* Greenplum sources: read tables from Greenplum via Pivotal Greenplum connector.
+* Custom sources: read from sources that are not supported directly in job configuration by providing 
+  all required Spark options to connect and read from unsupported source.
 
 All sources must be defined in `sources` section of job configuration. 
 More details on how to configure sources of each of these types are shown below. Example of `sources` section of 
@@ -39,6 +41,7 @@ vary for files of different types.
 Common parameters for sources of any file type are:
 
 * `id` - *Required*. Source ID;
+* `description` - *Optional*. Source description;
 * `kind` - *Required*. File type. Can be one of the following: `fixed`, `delimited`, `orc`, `parquet`, `avro`;
 * `path` - *Required*. File path. Can be a path to a directory or a S3-bucket. In this case all files from this
   directory/bucket will be read (assuming they all have the same schema). Note, that when reading from file system which
@@ -47,6 +50,8 @@ Common parameters for sources of any file type are:
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see 
   [Metric Error Collection](../02-general-concepts/04-ErrorCollection.md) chapter.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: `param.name=param.value`.
 
 ### Fixed Width File Sources
 
@@ -60,7 +65,7 @@ Schema itself should be defined in `schemas` section of job configuration as des
 ### Delimited File Sources
 
 When reading delimited text file, its schema may be inferred from file header if it is presented in the file or 
-may be explicitly defined in `schemas` section of job configuration file  as described in
+may be explicitly defined in `schemas` section of job configuration file as described in
 [Schemas Configuration](02-Schemas.md) chapter.
 
 Thus, additional parameters for configuring delimited file source are:
@@ -100,15 +105,25 @@ As Parquet format contains schema within itself, then there are no additional pa
 In order to read data from Hive table it is required to provide following:
 
 * `id` - *Required*. Source ID;
+* `description` - *Optional*. Source description;
 * `schema` - *Required*. Hive schema.
 * `table` - *Required*. Hive table.
 * `partitions` - *Optional*. List of partitions to read where each element is an object with following fields.
   If partitions are not set then entire table is read.
     * `name` - *Required*. Partition column name
-    * `values` - *Required*. List of partition column name values to read.
+    * `expr` - *Optional*. SQL expression used to filter partitions to read. This SQL expression must contain
+    only reference to partition column that is being filtered (one that is defined in `name` field). References to
+    other columns are not allowed as well as any SQL sub-queries. It is allowed to use all types of SQL 
+    functions and literals.
+      > **IMPORTANT**: If parameterless function is used, it should be called with empty parentheses, e.g.: current_date()
+    * `values` - *Optional*. List of partition column name values to read.
+  > **IMPORTANT**: When defining partitions to read, it is required to specify either an SQL expression to filter
+  > partitions or an explicit list of partition values but not both.
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-concepts/04-ErrorCollection.md) chapter.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: `param.name=param.value`.
 
 ## Table Sources Configuration
 
@@ -121,6 +136,7 @@ In order to set up table source, it is required to
 supply following parameters:
 
 * `id` - *Required*. Source ID;
+* `description` - *Optional*. Source description;
 * `connection` - *Required*. Connection ID to use for table source. Connection ID must refer to connection configuration
   for one of the supported RDBMS. See [Connections Configuration](01-Connections.md) chapter for more information.
 * `table` - *Optional*. Table to read.
@@ -128,6 +144,8 @@ supply following parameters:
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-concepts/04-ErrorCollection.md) chapter.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: `param.name=param.value`.
 
 > **IMPORTANT**: Either `table` to read from must be specified or `query` to execute, but not both.
 > In addition, using queries is only allowed when `allowSqlQueries` is set to true. Otherwise, any usage of arbitrary
@@ -150,6 +168,7 @@ Checkita framework. In order to set up source that reads from Kafka topic/s, it 
 parameters:
 
 * `id` - *Required*. Source ID;
+* `description` - *Optional*. Source description;
 * `connection` - *Required*. Connection ID to use for kafka source. Connection ID must refer to Kafka connection 
   configuration. See [Connections Configuration](01-Connections.md) chapter for more information.
 * `topics` - *Optional*. List of topics to read. Topics can be specified in either of two formats:
@@ -172,6 +191,8 @@ parameters:
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-concepts/04-ErrorCollection.md) chapter.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: `param.name=param.value`.
 
 Currently, `string`, `xml`, `json` and `avro` formats are supported to decode message key and value.
 
@@ -183,12 +204,15 @@ Currently, `string`, `xml`, `json` and `avro` formats are supported to decode me
 In order to read data from Greenplum table using pivotal connector it is required to provide following:
 
 * `id` - *Required*. Source ID;
+* `description` - *Optional*. Source description;
 * `connection` - *Required*. Connection ID to use for table source. Connection ID must refer to Greenplum pivotal
   connection. See [Connections Configuration](01-Connections.md) chapter for more information.
 * `table` - *Optional*. Table to read.
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-concepts/04-ErrorCollection.md) chapter.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: `param.name=param.value`.
 
 ## Custom Sources Configuration
 
@@ -197,6 +221,7 @@ supported (by one of the configuration described above). In order to configure a
 provide following parameters:
 
 * `id` - *Required*. Source ID;
+* `description` - *Optional*. Source description;
 * `format` - *Required*. Spark DataFrame reader format that is used to read from the given source.
 * `path` - *Optional*. Path to read data from (if required).
 * `schema` - *Optional*. Explicit schema to be applied to data from the given source (if required).
@@ -204,6 +229,8 @@ provide following parameters:
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-concepts/04-ErrorCollection.md) chapter.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: `param.name=param.value`.
 
 After parameters above are defined then spark DataFrame reader is set up to read data from the source as follows:
 
@@ -224,9 +251,14 @@ of the source. These subsections should contain a list of source configurations 
       {id: "hdfs_fixed_file", kind: "fixed", path: "path/to/fixed/file.txt", schema: "schema2"}
       {
         id: "hdfs_delimited_source",
+        description: "Reading static data from CSV file"
         kind: "delimited",
         path: "path/to/csv/file.csv"
         schema: "schema1"
+        medadata: [
+          "data.owner=some.person@some.domain"
+          "file.version=1.1"
+        ]
       }
       {id: "hdfs_avro_source", kind: "avro", path: "path/to/avro/file.avro", schema: "avro_schema"}
       {id: "hdfs_orc_source", kind: "orc", path: "path/to/orc/file.orc"}

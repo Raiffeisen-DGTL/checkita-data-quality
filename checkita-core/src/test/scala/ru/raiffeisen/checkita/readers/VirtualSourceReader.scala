@@ -29,6 +29,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
 
       val sqlConfig = SqlVirtualSourceConfig(
         ID("sqlVS"),
+        None,
         Refined.unsafeApply(Seq("hive_source_1")),
         "select id, name, entity, description from hive_source_1 where dlk_cob_date == '2023-06-30'",
         Option(StorageLevel.DISK_ONLY),
@@ -55,6 +56,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
 
       val sqlConfig = SqlVirtualSourceConfig(
         ID("sqlVS"),
+        None,
         Refined.unsafeApply(Seq("hive_source_1")),
         "sele id, name, entity, description from hive_source_1 where dlk_cob_date == '2023-06-30'",
         Option(StorageLevel.DISK_ONLY),
@@ -80,6 +82,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
 
       val joinConfig = JoinVirtualSourceConfig(
         ID("joinVS"),
+        None,
         Refined.unsafeApply(Seq("hdfs_avro_source", "hdfs_orc_source")),
         Refined.unsafeApply(Seq("id")),
         SparkJoinType.Left,
@@ -107,6 +110,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
 
       val joinConfig = JoinVirtualSourceConfig(
         ID("joinVS"),
+        None,
         Refined.unsafeApply(Seq("hdfs_avro_source")),
         Refined.unsafeApply(Seq("id")),
         SparkJoinType.Left,
@@ -129,6 +133,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
 
       val filterConfig = FilterVirtualSourceConfig(
         ID("filterVS"),
+        None,
         Refined.unsafeApply(Seq("kafka_source")),
         Refined.unsafeApply(Seq(expr("key is not null"))),
         None,
@@ -157,6 +162,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
 
       val filterConfig = FilterVirtualSourceConfig(
         ID("filterVS"),
+        None,
         Refined.unsafeApply(Seq("kafka_source", "hdfs_avro_source")),
         Refined.unsafeApply(Seq(expr("key is not null"))),
         None,
@@ -179,6 +185,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
 
       val selectConfig = SelectVirtualSourceConfig(
         ID("selectVS"),
+        None,
         Refined.unsafeApply(Seq("table_source_1")),
         Refined.unsafeApply(Seq(expr("count(id) as id_cnt"), expr("count(name) as name_cnt"))),
         None,
@@ -207,6 +214,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
 
       val selectConfig = SelectVirtualSourceConfig(
         ID("selectVS"),
+        None,
         Refined.unsafeApply(Seq("table_source_1", "table_source_2")),
         Refined.unsafeApply(Seq(expr("count(id) as id_cnt"), expr("count(name) as name_cnt"))),
         None,
@@ -228,6 +236,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
 
       val selectConfig = AggregateVirtualSourceConfig(
         ID("aggVS"),
+        None,
         Refined.unsafeApply(Seq("hdfs_fixed_file")),
         Refined.unsafeApply(Seq("col1")),
         Refined.unsafeApply(Seq(expr("avg(col2) as avg_col2"), expr("sum(col3) as sum_col3"))),
@@ -257,6 +266,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
 
       val selectConfig = AggregateVirtualSourceConfig(
         ID("aggVS"),
+        None,
         Refined.unsafeApply(Seq("hdfs_fixed_file", "table_source_1")),
         Refined.unsafeApply(Seq("col1")),
         Refined.unsafeApply(Seq(expr("avg(col2) as avg_col2"), expr("sum(col3) as sum_col3"))),

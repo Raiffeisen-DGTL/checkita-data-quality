@@ -3,7 +3,7 @@ package ru.raiffeisen.checkita.context
 import org.apache.hadoop.fs.FileSystem
 import org.apache.logging.log4j.Level
 import org.apache.spark.sql.SparkSession
-import ru.raiffeisen.checkita.appsettings.AppSettings
+import ru.raiffeisen.checkita.appsettings.{AppSettings, VersionInfo}
 import ru.raiffeisen.checkita.config.IO.readJobConfig
 import ru.raiffeisen.checkita.config.Parsers._
 import ru.raiffeisen.checkita.config.appconf.AppConfig
@@ -61,8 +61,10 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
   private val _: Unit = {
     initLogger(settings.loggingLevel)
     val logGeneral = Seq(
-      "General Checkita Data Quality configuration:", 
-      s"* Logging level: ${settings.loggingLevel.toString}"
+      "General Checkita Data Quality configuration:",
+      s"* Checkita application version:  ${settings.versionInfo.appVersion}",
+      s"* Job Configuration API version: ${settings.versionInfo.configAPIVersion}",
+      s"* Logging level:                 ${settings.loggingLevel.toString}",
     )
     val logSparkConf = Seq(
       "* Spark configuration:",
@@ -536,14 +538,16 @@ object DQContext {
   /**
    * Builds Checkita Data Quality context provided with application-level configuration 
    * and other required initialization parameters.
-   * @param appConfig Application-level configuration
-   * @param referenceDate Reference date string
-   * @param isLocal Boolean flag indicating whether spark application must be run locally.
-   * @param isShared Boolean flag indicating whether spark application running within shared spark context.
-   * @param doMigration Boolean flag indication whether DQ storage database migration needs to be run prior result saving.
+   *
+   * @param appConfig        Application-level configuration
+   * @param referenceDate    Reference date string
+   * @param isLocal          Boolean flag indicating whether spark application must be run locally.
+   * @param isShared         Boolean flag indicating whether spark application running within shared spark context.
+   * @param doMigration      Boolean flag indication whether DQ storage database migration needs to be run prior result saving.
    * @param prependVariables Collected variables that will be prepended to job configuration file
    *                         (if one will be provided). These variables should already be transformed to a multiline HOCON string. 
-   * @param logLvl Application logging level.
+   * @param logLvl           Application logging level.
+   * @param versionInfo      Information about application and configuration API versions.
    * @return Either Data Quality context or a list of building errors.
    */
   def build(appConfig: AppConfig,
@@ -552,8 +556,9 @@ object DQContext {
             isShared: Boolean,
             doMigration: Boolean,
             prependVariables: String,
-            logLvl: Level): Result[DQContext] =
-    AppSettings.build(appConfig, referenceDate, isLocal, isShared, doMigration, prependVariables, logLvl)
+            logLvl: Level,
+            versionInfo: VersionInfo): Result[DQContext] =
+    AppSettings.build(appConfig, referenceDate, isLocal, isShared, doMigration, prependVariables, logLvl, versionInfo)
       .flatMap(settings => build(settings))
 
   /**

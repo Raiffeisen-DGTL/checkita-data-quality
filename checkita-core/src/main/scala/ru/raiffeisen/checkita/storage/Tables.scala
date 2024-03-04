@@ -1,6 +1,5 @@
 package ru.raiffeisen.checkita.storage
 
-import com.typesafe.config.Config
 import ru.raiffeisen.checkita.storage.Models._
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
@@ -16,7 +15,14 @@ class Tables(val profile: JdbcProfile) {
     def jobId: Rep[String] = column[String]("job_id") // mandatory for all entities.
     def getUniqueCond(r: R): Rep[Boolean]
   }
-  
+
+  trait DescriptiveColumns[R <: DQEntity] { this: DQTable[R] =>
+    // optional description that eny result entity can have
+    def description: Rep[Option[String]] = column[Option[String]]("description")
+    // optional user-defined metadata that any result entity can have
+    def metadata: Rep[Option[String]] = column[Option[String]]("metadata")
+  }
+
   trait DQTableOps[R <: DQEntity] {
     type T <: DQTable[R]
     def getTableQuery(schema: Option[String]): TableQuery[T]
@@ -24,11 +30,10 @@ class Tables(val profile: JdbcProfile) {
   }
   
   sealed abstract class MetricResultTable[R <: MetricResult](tag: Tag, schema: Option[String], table: String)
-      extends DQTable[R](tag, schema, table) {
+      extends DQTable[R](tag, schema, table) with DescriptiveColumns[R] {
     
     def metricId: Rep[String] = column[String]("metric_id")
     def metricName: Rep[String] = column[String]("metric_name")
-    def description: Rep[Option[String]] = column[Option[String]]("description")
     def sourceId: Rep[String] = column[String]("source_id")
     def result: Rep[Double] = column[Double]("result")
     def additionalResult: Rep[Option[String]] = column[Option[String]]("additional_result")
@@ -40,7 +45,7 @@ class Tables(val profile: JdbcProfile) {
   }
   
   sealed abstract class CheckResultTable[R <: CheckResult](tag: Tag, schema: Option[String], table: String)
-      extends DQTable[R](tag, schema, table) {
+      extends DQTable[R](tag, schema, table) with DescriptiveColumns[R] {
     
     def checkId: Rep[String] = column[String]("check_id")
     def checkName: Rep[String] = column[String]("check_name")
@@ -65,6 +70,7 @@ class Tables(val profile: JdbcProfile) {
       metricId,
       metricName,
       description,
+      metadata,
       sourceId,
       columnNames,
       params,
@@ -85,6 +91,7 @@ class Tables(val profile: JdbcProfile) {
       metricId,
       metricName,
       description,
+      metadata,
       sourceId,
       formula,
       result,
@@ -96,8 +103,7 @@ class Tables(val profile: JdbcProfile) {
 
   class ResultCheckTable(tag: Tag,schema: Option[String])
     extends CheckResultTable[ResultCheck](tag, schema, "results_check") {
-    
-    def description: Rep[Option[String]] = column[Option[String]]("description")
+
     def baseMetric: Rep[String] = column[String]("base_metric")
     def comparedMetric: Rep[Option[String]] = column[Option[String]]("compared_metric")
     def comparedThreshold: Rep[Option[Double]] = column[Option[Double]]("compared_threshold")
@@ -109,6 +115,7 @@ class Tables(val profile: JdbcProfile) {
       checkId,
       checkName,
       description,
+      metadata,
       sourceId,
       baseMetric,
       comparedMetric,
@@ -131,6 +138,8 @@ class Tables(val profile: JdbcProfile) {
       jobId,
       checkId,
       checkName,
+      description,
+      metadata,
       sourceId,
       expected,
       status,
@@ -144,9 +153,8 @@ class Tables(val profile: JdbcProfile) {
     extends DQTable[JobState](tag, schema, "job_state") {
 
     def config: Rep[String] = column[String]("config")
-
+    def versionInfo: Rep[String] = column[String]("version_info")
     def referenceDate: Rep[Timestamp] = column[Timestamp]("reference_date")
-
     def executionDate: Rep[Timestamp] = column[Timestamp]("execution_date")
 
     def getUniqueCond(r: JobState): Rep[Boolean] =
@@ -155,6 +163,7 @@ class Tables(val profile: JdbcProfile) {
     def * : ProvenShape[JobState] = (
       jobId,
       config,
+      versionInfo,
       referenceDate,
       executionDate
     ) <> (JobState.tupled, JobState.unapply)
@@ -192,4 +201,4 @@ class Tables(val profile: JdbcProfile) {
         TableQuery[JobStateTable]((t: Tag) => new JobStateTable(t, schema))
     }
   }
-  }
+}

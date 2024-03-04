@@ -2,7 +2,7 @@ package ru.raiffeisen.checkita.config.jobconf
 
 import eu.timepit.refined.types.string.NonEmptyString
 import ru.raiffeisen.checkita.config.Enums.TrendCheckRule
-import ru.raiffeisen.checkita.config.RefinedTypes.{AccuracyDouble, ID, PositiveInt}
+import ru.raiffeisen.checkita.config.RefinedTypes.{AccuracyDouble, ID, PositiveInt, SparkParam}
 import ru.raiffeisen.checkita.core.checks.CheckCalculator
 import ru.raiffeisen.checkita.core.checks.snapshot._
 import ru.raiffeisen.checkita.core.checks.trend._
@@ -11,13 +11,11 @@ object Checks {
 
   /**
    * Base class for check configurations.
-   * All checks must have an ID and a optional field with check description.
+   * All checks are described as DQ entities that must have a reference to metric ID that is being checked.
    * Additionally, it is required to define method for appropriate check calculator initiation.
    */
-  sealed abstract class CheckConfig {
-    val id: ID
+  sealed abstract class CheckConfig extends JobConfigEntity {
     val metric: NonEmptyString
-    val description: Option[NonEmptyString]
     def getCalculator: CheckCalculator
   }
 
@@ -51,31 +49,24 @@ object Checks {
     val windowSize: NonEmptyString
     val windowOffset: Option[NonEmptyString]
   }
-  
-//  /**
-//   * Base class for sql check configurations.
-//   * All sql checks must have a reference to source ID (must be a JDBC source)
-//   * and also a query to execute.
-//   */
-//  sealed abstract class SqlCheckConfig extends CheckConfig {
-//    val source: NonEmptyString
-//    val query: NonEmptyString
-//  }
 
   /**
    * 'Differ by less than' check configuration
-   * @param id Check ID
-   * @param description Check description
-   * @param metric Reference to a metric ID over which the check is performed
+   *
+   * @param id            Check ID
+   * @param description   Check description
+   * @param metric        Reference to a metric ID over which the check is performed
    * @param compareMetric Reference to a metric ID to compare with
-   * @param threshold Threshold value indicating maximum difference between metric and compareMetric
+   * @param threshold     Threshold value indicating maximum difference between metric and compareMetric
+   * @param metadata      List of metadata parameters specific to this check
    */
   final case class DifferByLtCheckConfig(
                                     id: ID,
                                     description: Option[NonEmptyString],
                                     metric: NonEmptyString,
                                     compareMetric: Option[NonEmptyString],
-                                    threshold: Option[Double]
+                                    threshold: Option[Double],
+                                    metadata: Seq[SparkParam] = Seq.empty
                                   ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = DifferByLTCheckCalculator(
       id.value, metric.value, compareMetric.map(_.value), threshold.get
@@ -84,18 +75,21 @@ object Checks {
 
   /**
    * 'Equal to' check configuration
-   * @param id Check ID
-   * @param description Check description
-   * @param metric Reference to a metric ID over which the check is performed
+   *
+   * @param id            Check ID
+   * @param description   Check description
+   * @param metric        Reference to a metric ID over which the check is performed
    * @param compareMetric Reference to a metric ID to compare with
-   * @param threshold Explicit threshold value to compare with
+   * @param threshold     Explicit threshold value to compare with
+   * @param metadata      List of metadata parameters specific to this check
    */
   final case class EqualToCheckConfig(
                                     id: ID,
                                     description: Option[NonEmptyString],
                                     metric: NonEmptyString,
                                     compareMetric: Option[NonEmptyString],
-                                    threshold: Option[Double]
+                                    threshold: Option[Double],
+                                    metadata: Seq[SparkParam] = Seq.empty
                                   ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = EqualToCheckCalculator(
       id.value, metric.value, compareMetric.map(_.value), threshold
@@ -104,18 +98,21 @@ object Checks {
 
   /**
    * 'Less Than' check configuration
-   * @param id Check ID
-   * @param description Check description
-   * @param metric Reference to a metric ID over which the check is performed
+   *
+   * @param id            Check ID
+   * @param description   Check description
+   * @param metric        Reference to a metric ID over which the check is performed
    * @param compareMetric Reference to a metric ID to compare with
-   * @param threshold Explicit threshold value to compare with
+   * @param threshold     Explicit threshold value to compare with
+   * @param metadata      List of metadata parameters specific to this check
    */
   final case class LessThanCheckConfig(
                                   id: ID,
                                   description: Option[NonEmptyString],
                                   metric: NonEmptyString,
                                   compareMetric: Option[NonEmptyString],
-                                  threshold: Option[Double]
+                                  threshold: Option[Double],
+                                  metadata: Seq[SparkParam] = Seq.empty
                                 ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = LessThanCheckCalculator(
       id.value, metric.value, compareMetric.map(_.value), threshold
@@ -124,18 +121,21 @@ object Checks {
 
   /**
    * 'Greater than' check configuration
-   * @param id Check ID
-   * @param description Check description
-   * @param metric Reference to a metric ID over which the check is performed
+   *
+   * @param id            Check ID
+   * @param description   Check description
+   * @param metric        Reference to a metric ID over which the check is performed
    * @param compareMetric Reference to a metric ID to compare with
-   * @param threshold Explicit threshold value to compare with
+   * @param threshold     Explicit threshold value to compare with
+   * @param metadata      List of metadata parameters specific to this check
    */
   final case class GreaterThanCheckConfig(
                                      id: ID,
                                      description: Option[NonEmptyString],
                                      metric: NonEmptyString,
                                      compareMetric: Option[NonEmptyString],
-                                     threshold: Option[Double]
+                                     threshold: Option[Double],
+                                     metadata: Seq[SparkParam] = Seq.empty
                                    ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = GreaterThanCheckCalculator(
       id.value, metric.value, compareMetric.map(_.value), threshold
@@ -144,14 +144,16 @@ object Checks {
 
   /**
    * 'Average bound full' check configuration
-   * @param id Check ID
-   * @param description Check description
-   * @param metric Reference to a metric ID over which the check is performed
-   * @param rule Window calculation rule: by datetime or by number of records.
-   * @param windowSize Size of the window for average metric value calculation
-   *                   (either a number of records or duration).
+   *
+   * @param id           Check ID
+   * @param description  Check description
+   * @param metric       Reference to a metric ID over which the check is performed
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation
+   *                     (either a number of records or duration).
    * @param windowOffset Optional window offset (either a number of records or duration)
-   * @param threshold Threshold value to calculate upper and lower bounds to compare with.
+   * @param threshold    Threshold value to calculate upper and lower bounds to compare with.
+   * @param metadata     List of metadata parameters specific to this check
    */
   final case class AverageBoundFullCheckConfig(
                                         id: ID,
@@ -160,7 +162,8 @@ object Checks {
                                         rule: TrendCheckRule,
                                         windowSize: NonEmptyString,
                                         windowOffset: Option[NonEmptyString],
-                                        threshold: AccuracyDouble
+                                        threshold: AccuracyDouble,
+                                        metadata: Seq[SparkParam] = Seq.empty
                                         ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundFullCheckCalculator(
       id.value, metric.value, threshold.value, rule, windowSize.value, windowOffset.map(_.value)
@@ -169,14 +172,16 @@ object Checks {
 
   /**
    * 'Average bound upper' check configuration
-   * @param id Check ID
-   * @param description Check description
-   * @param metric Reference to a metric ID over which the check is performed
-   * @param rule Window calculation rule: by datetime or by number of records.
-   * @param windowSize Size of the window for average metric value calculation
-   *                   (either a number of records or duration).
+   *
+   * @param id           Check ID
+   * @param description  Check description
+   * @param metric       Reference to a metric ID over which the check is performed
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation
+   *                     (either a number of records or duration).
    * @param windowOffset Optional window offset (either a number of records or duration)
-   * @param threshold Threshold value to calculate upper bound to compare with.
+   * @param threshold    Threshold value to calculate upper bound to compare with.
+   * @param metadata     List of metadata parameters specific to this check
    */
   final case class AverageBoundUpperCheckConfig(
                                           id: ID,
@@ -185,7 +190,8 @@ object Checks {
                                           rule: TrendCheckRule,
                                           windowSize: NonEmptyString,
                                           windowOffset: Option[NonEmptyString],
-                                          threshold: AccuracyDouble
+                                          threshold: AccuracyDouble,
+                                          metadata: Seq[SparkParam] = Seq.empty
                                         ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundUpperCheckCalculator(
       id.value, metric.value, threshold.value, rule, windowSize.value, windowOffset.map(_.value)
@@ -194,14 +200,16 @@ object Checks {
 
   /**
    * 'Average bound lower' check configuration
-   * @param id Check ID
-   * @param description Check description
-   * @param metric Reference to a metric ID over which the check is performed
-   * @param rule Window calculation rule: by datetime or by number of records.
-   * @param windowSize Size of the window for average metric value calculation
-   *                   (either a number of records or duration).
+   *
+   * @param id           Check ID
+   * @param description  Check description
+   * @param metric       Reference to a metric ID over which the check is performed
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation
+   *                     (either a number of records or duration).
    * @param windowOffset Optional window offset (either a number of records or duration)
-   * @param threshold Threshold value to calculate lower bound to compare with.
+   * @param threshold    Threshold value to calculate lower bound to compare with.
+   * @param metadata     List of metadata parameters specific to this check
    */
   final case class AverageBoundLowerCheckConfig(
                                            id: ID,
@@ -210,7 +218,8 @@ object Checks {
                                            rule: TrendCheckRule,
                                            windowSize: NonEmptyString,
                                            windowOffset: Option[NonEmptyString],
-                                           threshold: AccuracyDouble
+                                           threshold: AccuracyDouble,
+                                           metadata: Seq[SparkParam] = Seq.empty
                                          ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundLowerCheckCalculator(
       id.value, metric.value, threshold.value, rule, windowSize.value, windowOffset.map(_.value)
@@ -219,15 +228,17 @@ object Checks {
 
   /**
    * 'Average bound range' check configuration
-   * @param id Check ID
-   * @param description Check description
-   * @param metric Reference to a metric ID over which the check is performed
-   * @param rule Window calculation rule: by datetime or by number of records.
-   * @param windowSize Size of the window for average metric value calculation
-   *                   (either a number of records or duration).
-   * @param windowOffset Optional window offset (either a number of records or duration)
+   *
+   * @param id             Check ID
+   * @param description    Check description
+   * @param metric         Reference to a metric ID over which the check is performed
+   * @param rule           Window calculation rule: by datetime or by number of records.
+   * @param windowSize     Size of the window for average metric value calculation
+   *                       (either a number of records or duration).
+   * @param windowOffset   Optional window offset (either a number of records or duration)
    * @param thresholdLower Threshold value to calculate lower bound to compare with.
    * @param thresholdUpper Threshold value to calculate upper bound to compare with.
+   * @param metadata       List of metadata parameters specific to this check
    */
   final case class AverageBoundRangeCheckConfig(
                                            id: ID,
@@ -237,7 +248,8 @@ object Checks {
                                            windowSize: NonEmptyString,
                                            windowOffset: Option[NonEmptyString],
                                            thresholdLower: AccuracyDouble,
-                                           thresholdUpper: AccuracyDouble
+                                           thresholdUpper: AccuracyDouble,
+                                           metadata: Seq[SparkParam] = Seq.empty
                                          ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundRangeCheckCalculator(
       id.value, metric.value, thresholdLower.value, thresholdUpper.value,
@@ -247,19 +259,22 @@ object Checks {
 
   /**
    * TopN rank check configuration
-   * @param id Check ID
-   * @param description Check description
-   * @param metric Reference to a metric ID over which the check is performed
+   *
+   * @param id           Check ID
+   * @param description  Check description
+   * @param metric       Reference to a metric ID over which the check is performed
    * @param targetNumber Number of records from TopN metric result (R <= N)
-   * @param threshold Threshold value representing maximum allowed Jacquard distance
-   *                  between current and previous R-records from TopN metric result.
+   * @param threshold    Threshold value representing maximum allowed Jacquard distance
+   *                     between current and previous R-records from TopN metric result.
+   * @param metadata     List of metadata parameters specific to this check
    */
   final case class TopNRankCheckConfig(
                                   id: ID,
                                   description: Option[NonEmptyString],
                                   metric: NonEmptyString,
                                   targetNumber: PositiveInt,
-                                  threshold: AccuracyDouble
+                                  threshold: AccuracyDouble,
+                                  metadata: Seq[SparkParam] = Seq.empty
                                 ) extends TrendCheckConfig {
     def getCalculator: CheckCalculator = TopNRankCheckCalculator(
       id.value, metric.value, targetNumber.value, threshold.value

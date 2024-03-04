@@ -166,6 +166,7 @@ object Enums {
     case object ComposedMetrics extends ResultTargetType
     case object LoadChecks extends ResultTargetType
     case object Checks extends ResultTargetType
+    case object JobState extends ResultTargetType
 
     override def values: immutable.IndexedSeq[ResultTargetType] = findValues
   }

@@ -4,10 +4,10 @@ import org.apache.logging.log4j.Level
 import org.apache.spark.SparkConf
 import ru.raiffeisen.checkita.config.IO.readAppConfig
 import ru.raiffeisen.checkita.config.Parsers._
-import ru.raiffeisen.checkita.config.appconf.{AppConfig, Encryption, EmailConfig, MattermostConfig, StorageConfig, StreamConfig}
+import ru.raiffeisen.checkita.config.appconf._
 import ru.raiffeisen.checkita.utils.Common.{paramsSeqToMap, prepareConfig}
-import ru.raiffeisen.checkita.utils.ResultUtils._
 import ru.raiffeisen.checkita.utils.EnrichedDT
+import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.io.InputStreamReader
 import scala.util.Try
@@ -15,28 +15,29 @@ import scala.util.Try
 /**
  * Application settings
  *
- * @param executionDateTime Job execution date-time (actual time when job is started)
- * @param referenceDateTime Reference date-time (for which the job is performed)
- * @param allowNotifications Enables notifications to be sent from DQ application
- * @param allowSqlQueries Enables SQL arbitrary queries in virtual sources
+ * @param executionDateTime     Job execution date-time (actual time when job is started)
+ * @param referenceDateTime     Reference date-time (for which the job is performed)
+ * @param allowNotifications    Enables notifications to be sent from DQ application
+ * @param allowSqlQueries       Enables SQL arbitrary queries in virtual sources
  * @param aggregatedKafkaOutput Enables sending aggregates messages for Kafka Targets
  *                              (one per each target type, except checkAlerts where
  *                              one message per checkAlert will be sent)
  * @param enableCaseSensitivity Enable columns case sensitivity
- * @param errorDumpSize Maximum number of errors to be collected per single metric.
- * @param outputRepartition Sets the number of partitions when writing outputs. By default writes single file.
- * @param storageConfig Configuration of connection to Data Quality Storage
- * @param emailConfig Configuration of connection to SMTP server
- * @param mattermostConfig Configuration of connection to Mattermost API
- * @param streamConfig Streaming settings (used in streaming applications only)
- * @param configEncryptor Encryption settings
- * @param sparkConf Spark configuration parameters
- * @param isLocal Boolean flag indicating whether spark application must be run locally.
- * @param isShared Boolean flag indicating whether spark application running within shared spark context.
- * @param doMigration Boolean flag indication whether DQ storage database migration needs to be run prior result saving.
- * @param applicationName Name of Checkita Data Quality spark application
- * @param prependVars Multiline HOCON string with variables to be prepended to configuration files during their parsing.
- * @param loggingLevel Application logging level
+ * @param errorDumpSize         Maximum number of errors to be collected per single metric.
+ * @param outputRepartition     Sets the number of partitions when writing outputs. By default writes single file.
+ * @param storageConfig         Configuration of connection to Data Quality Storage
+ * @param emailConfig           Configuration of connection to SMTP server
+ * @param mattermostConfig      Configuration of connection to Mattermost API
+ * @param streamConfig          Streaming settings (used in streaming applications only)
+ * @param encryption            Encryption settings
+ * @param sparkConf             Spark configuration parameters
+ * @param isLocal               Boolean flag indicating whether spark application must be run locally.
+ * @param isShared              Boolean flag indicating whether spark application running within shared spark context.
+ * @param doMigration           Boolean flag indication whether DQ storage database migration needs to be run prior result saving.
+ * @param applicationName       Name of Checkita Data Quality spark application
+ * @param prependVars           Multiline HOCON string with variables to be prepended to configuration files during their parsing.
+ * @param loggingLevel          Application logging level
+ * @param versionInfo           Information about application and configuration API versions.
  */
 final case class AppSettings(
                               executionDateTime: EnrichedDT,
@@ -51,14 +52,15 @@ final case class AppSettings(
                               emailConfig: Option[EmailConfig],
                               mattermostConfig: Option[MattermostConfig],
                               streamConfig: StreamConfig,
-                              configEncryptor: Option[Encryption],
+                              encryption: Option[Encryption],
                               sparkConf: SparkConf,
                               isLocal: Boolean,
                               isShared: Boolean,
                               doMigration: Boolean,
                               applicationName: Option[String],
                               prependVars: String,
-                              loggingLevel: Level
+                              loggingLevel: Level,
+                              versionInfo: VersionInfo
                             )
 
 object AppSettings {
@@ -68,14 +70,16 @@ object AppSettings {
    * The whole purpose of this method is to provide additional validation while initializing the application-level settings:
    *   - catch possible errors when parsing execution and reference datetime;
    *   - catch possible errors when setting up spark configuration.
-   * @param appConfig Application-level configuration
-   * @param referenceDate Reference date string
-   * @param isLocal Boolean flag indicating whether spark application must be run locally.
-   * @param isShared Boolean flag indicating whether spark application running within shared spark context.
-   * @param doMigration Boolean flag indication whether DQ storage database migration needs to be run prior result saving.
+   *
+   * @param appConfig        Application-level configuration
+   * @param referenceDate    Reference date string
+   * @param isLocal          Boolean flag indicating whether spark application must be run locally.
+   * @param isShared         Boolean flag indicating whether spark application running within shared spark context.
+   * @param doMigration      Boolean flag indication whether DQ storage database migration needs to be run prior result saving.
    * @param prependVariables Collected variables that will be prepended to job configuration file
    *                         (if one will be provided). These variables should already be transformed to a multiline HOCON string. 
-   * @param logLvl Application logging level.
+   * @param logLvl           Application logging level.
+   * @param versionInfo      Information about application and configuration API versions.
    * @return Either application settings object or a list of building errors.
    */
   def build(appConfig: AppConfig,
@@ -84,7 +88,8 @@ object AppSettings {
             isShared: Boolean,
             doMigration: Boolean,
             prependVariables: String,
-            logLvl: Level): Result[AppSettings] = {
+            logLvl: Level,
+            versionInfo: VersionInfo): Result[AppSettings] = {
       
     val execDateTime = Try(EnrichedDT(
       appConfig.dateTimeOptions.executionDateFormat, appConfig.dateTimeOptions.timeZone
@@ -137,7 +142,8 @@ object AppSettings {
         doMigration,
         appConfig.applicationName.map(_.value),
         prependVars,
-        logLvl
+        logLvl,
+        versionInfo
       )
     }
   }
@@ -145,14 +151,15 @@ object AppSettings {
   /**
    * Build application settings object provided with path to an application configuration HOCON file as well as
    * other required initialization parameters.
-   * @param appConfig Path to an application-level configuration file (HOCON)
-   * @param referenceDate Reference date string
-   * @param isLocal Boolean flag indicating whether spark application must be run locally.
-   * @param isShared Boolean flag indicating whether spark application running within shared spark context.
-   * @param doMigration Boolean flag indication whether DQ storage database migration needs to be run prior result saving.
+   *
+   * @param appConfig        Path to an application-level configuration file (HOCON)
+   * @param referenceDate    Reference date string
+   * @param isLocal          Boolean flag indicating whether spark application must be run locally.
+   * @param isShared         Boolean flag indicating whether spark application running within shared spark context.
+   * @param doMigration      Boolean flag indication whether DQ storage database migration needs to be run prior result saving.
    * @param prependVariables Collected variables that will be prepended to job configuration file
    *                         (if one will be provided). These variables should already be transformed to a multiline HOCON string. 
-   * @param logLvl Application logging level.
+   * @param logLvl           Application logging level.
    * @return Either application settings object or a list of building errors.
    */
   def build(appConfig: String,
@@ -161,10 +168,12 @@ object AppSettings {
             isShared: Boolean,
             doMigration: Boolean,
             prependVariables: String,
-            logLvl: Level): Result[AppSettings] =
-    prepareConfig(Seq(appConfig), prependVariables, "application")
-      .flatMap(readAppConfig[InputStreamReader])
-      .flatMap(build(_, referenceDate, isLocal, isShared, doMigration, prependVariables, logLvl))
+            logLvl: Level): Result[AppSettings] = for {
+      prependVars <- prepareConfig(Seq(appConfig), prependVariables, "application")
+      config <- readAppConfig[InputStreamReader](prependVars)
+      versionInfo <- VersionInfo.loadVersion
+      settings <- build(config, referenceDate, isLocal, isShared, doMigration, prependVariables, logLvl, versionInfo)
+    } yield settings
 
   /**
    * Build default application settings object.
@@ -184,7 +193,9 @@ object AppSettings {
       "referenceDate: \"" + refDateTime.render + "\"",
       "executionDate: \"" + execDateTime.render + "\""
     ).mkString("", "\n", "\n")
-    
+
+    val versionInfo = VersionInfo.loadVersion.getOrElse(VersionInfo.unknown)
+
     AppSettings(
       execDateTime,
       refDateTime,
@@ -205,7 +216,8 @@ object AppSettings {
       doMigration = false,
       None,
       prependVars,
-      Level.INFO
+      Level.INFO,
+      versionInfo
     )
   }
 }

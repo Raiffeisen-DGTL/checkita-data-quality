@@ -15,12 +15,11 @@ object Sources {
 
   /**
    * Base class for all source configurations.
-   * All sources must have an ID and optional sequence of keyFields
+   * All sources are described as DQ entities that might have an optional sequence of keyFields
    * which will uniquely identify data row in error collection reports.
-   * In addition, it should be indicated whether this source is streamable
+   * In addition, it should be indicated whether this source is streamable or not.
    */
-  sealed abstract class SourceConfig {
-    val id: ID
+  sealed abstract class SourceConfig extends JobConfigEntity {
     val keyFields: Seq[NonEmptyString]
     val streamable: Boolean
   }
@@ -28,19 +27,23 @@ object Sources {
   /**
    * JDBC Table source configuration
    *
-   * @param id         Source ID
-   * @param connection Connection ID (must be JDBC connection)
-   * @param table      Table to read
-   * @param query      Query to execute
-   * @param keyFields  Sequence of key fields (columns that identify data row)
+   * @param id          Source ID
+   * @param description Source description
+   * @param connection  Connection ID (must be JDBC connection)
+   * @param table       Table to read
+   * @param query       Query to execute
+   * @param keyFields   Sequence of key fields (columns that identify data row)
+   * @param metadata    List of metadata parameters specific to this source
    * @note Either table to read or query to execute must be defined but not both.
    */
   final case class TableSourceConfig(
                                       id: ID,
+                                      description: Option[NonEmptyString],
                                       connection: ID,
                                       table: Option[NonEmptyString],
                                       query: Option[NonEmptyString],
-                                      keyFields: Seq[NonEmptyString] = Seq.empty
+                                      keyFields: Seq[NonEmptyString] = Seq.empty,
+                                      metadata: Seq[SparkParam] = Seq.empty
                                     ) extends SourceConfig {
     val streamable: Boolean = false
   }
@@ -49,30 +52,36 @@ object Sources {
    * Configuration for Hive Table partition values to read.
    *
    * @param name   Name of partition column
+   * @param expr   SQL Expression used to filter partitions to read
    * @param values Sequence of partition values to read
    */
   final case class HivePartition(
                                   name: NonEmptyString,
-                                  values: Seq[NonEmptyString]
+                                  expr: Option[Column],
+                                  values: Seq[NonEmptyString] = Seq.empty
                                 )
 
   /**
    * Hive table source configuration
    *
-   * @param id         Source ID
-   * @param schema     Hive schema
-   * @param table      Hive table
-   * @param partitions Sequence of partitions to read.
-   *                   The order of partition columns should correspond to order in which
-   *                   partition columns are defined in hive table DDL.
-   * @param keyFields  Sequence of key fields (columns that identify data row)
+   * @param id          Source ID
+   * @param description Source description
+   * @param schema      Hive schema
+   * @param table       Hive table
+   * @param partitions  Sequence of partitions to read.
+   *                    The order of partition columns should correspond to order in which
+   *                    partition columns are defined in hive table DDL.
+   * @param keyFields   Sequence of key fields (columns that identify data row)
+   * @param metadata    List of metadata parameters specific to this source
    */
   final case class HiveSourceConfig(
                                      id: ID,
+                                     description: Option[NonEmptyString],
                                      schema: NonEmptyString,
                                      table: NonEmptyString,
                                      partitions: Seq[HivePartition] = Seq.empty,
-                                     keyFields: Seq[NonEmptyString] = Seq.empty
+                                     keyFields: Seq[NonEmptyString] = Seq.empty,
+                                     metadata: Seq[SparkParam] = Seq.empty
                                    ) extends SourceConfig {
     val streamable: Boolean = false
   }
@@ -81,6 +90,7 @@ object Sources {
    * Kafka source configuration
    *
    * @param id              Source ID
+   * @param description     Source description
    * @param connection      Connection ID (must be a Kafka Connection)
    * @param topics          Sequence of topics to read
    * @param topicPattern    Pattern that defined topics to read
@@ -103,9 +113,11 @@ object Sources {
    *                        Used to parse kafka message value.
    * @param options         Sequence of additional Kafka options
    * @param keyFields       Sequence of key fields (columns that identify data row)
+   * @param metadata        List of metadata parameters specific to this source
    */
   final case class KafkaSourceConfig(
                                       id: ID,
+                                      description: Option[NonEmptyString],
                                       connection: ID,
                                       topics: Seq[NonEmptyString] = Seq.empty,
                                       topicPattern: Option[NonEmptyString],
@@ -117,7 +129,8 @@ object Sources {
                                       keySchema: Option[ID] = None,
                                       valueSchema: Option[ID] = None,
                                       options: Seq[SparkParam] = Seq.empty,
-                                      keyFields: Seq[NonEmptyString] = Seq.empty
+                                      keyFields: Seq[NonEmptyString] = Seq.empty,
+                                      metadata: Seq[SparkParam] = Seq.empty
                                     ) extends SourceConfig {
     val streamable: Boolean = true
   }
@@ -125,17 +138,21 @@ object Sources {
   /**
    * Greenplum Table source configuration
    *
-   * @param id         Source ID
-   * @param connection Connection ID (must be pivotal connection)
-   * @param table      Table to read
-   * @param keyFields  Sequence of key fields (columns that identify data row)
+   * @param id          Source ID
+   * @param description Source description
+   * @param connection  Connection ID (must be pivotal connection)
+   * @param table       Table to read
+   * @param keyFields   Sequence of key fields (columns that identify data row)
+   * @param metadata    List of metadata parameters specific to this source
    */
   final case class GreenplumSourceConfig(
-                                      id: ID,
-                                      connection: ID,
-                                      table: Option[NonEmptyString],
-                                      keyFields: Seq[NonEmptyString] = Seq.empty
-                                    ) extends SourceConfig {
+                                          id: ID,
+                                          description: Option[NonEmptyString],
+                                          connection: ID,
+                                          table: Option[NonEmptyString],
+                                          keyFields: Seq[NonEmptyString] = Seq.empty,
+                                          metadata: Seq[SparkParam] = Seq.empty
+                                        ) extends SourceConfig {
     val streamable: Boolean = false
   }
 
@@ -151,23 +168,27 @@ object Sources {
   /**
    * Fixed-width file source configuration
    *
-   * @param id        Source ID
-   * @param path      Path to file
-   * @param schema    Schema ID (must be either fixedFull or fixedShort schema)
-   * @param windowBy  Source of timestamp used to build windows. Applicable only for streaming jobs!
-   *                  Default: processingTime - uses current timestamp at the moment when Spark processes row.
-   *                  Other options are:
+   * @param id          Source ID
+   * @param description Source description
+   * @param path        Path to file
+   * @param schema      Schema ID (must be either fixedFull or fixedShort schema)
+   * @param windowBy    Source of timestamp used to build windows. Applicable only for streaming jobs!
+   *                    Default: processingTime - uses current timestamp at the moment when Spark processes row.
+   *                    Other options are:
    *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
    *                    - customTime(columnName) - uses arbitrary user-defined column
    *                      (column must be of TimestampType)
-   * @param keyFields Sequence of key fields (columns that identify data row)
+   * @param keyFields   Sequence of key fields (columns that identify data row)
+   * @param metadata    List of metadata parameters specific to this source
    */
   final case class FixedFileSourceConfig(
                                           id: ID,
+                                          description: Option[NonEmptyString],
                                           path: URI,
                                           schema: Option[ID],
                                           windowBy: StreamWindowing = ProcessingTime,
-                                          keyFields: Seq[NonEmptyString] = Seq.empty
+                                          keyFields: Seq[NonEmptyString] = Seq.empty,
+                                          metadata: Seq[SparkParam] = Seq.empty
                                         ) extends FileSourceConfig with FixedFileConfig {
     val streamable: Boolean = true
   }
@@ -175,23 +196,26 @@ object Sources {
   /**
    * Delimited file source configuration
    *
-   * @param id        Source ID
-   * @param path      Path to file
-   * @param delimiter Column delimiter (default: ,)
-   * @param quote     Quotation symbol (default: ")
-   * @param escape    Escape symbol (default: \)
-   * @param header    Boolean flag indicating whether schema should be read from file header (default: false)
-   * @param schema    Schema ID (only if header = false)
-   * @param windowBy  Source of timestamp used to build windows. Applicable only for streaming jobs!
-   *                  Default: processingTime - uses current timestamp at the moment when Spark processes row.
-   *                  Other options are:
+   * @param id          Source ID
+   * @param description Source description
+   * @param path        Path to file
+   * @param delimiter   Column delimiter (default: ,)
+   * @param quote       Quotation symbol (default: ")
+   * @param escape      Escape symbol (default: \)
+   * @param header      Boolean flag indicating whether schema should be read from file header (default: false)
+   * @param schema      Schema ID (only if header = false)
+   * @param windowBy    Source of timestamp used to build windows. Applicable only for streaming jobs!
+   *                    Default: processingTime - uses current timestamp at the moment when Spark processes row.
+   *                    Other options are:
    *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
    *                    - customTime(columnName) - uses arbitrary user-defined column
    *                      (column must be of TimestampType)
-   * @param keyFields Sequence of key fields (columns that identify data row)
+   * @param keyFields   Sequence of key fields (columns that identify data row)
+   * @param metadata    List of metadata parameters specific to this source
    */
   final case class DelimitedFileSourceConfig(
                                               id: ID,
+                                              description: Option[NonEmptyString],
                                               path: URI,
                                               schema: Option[ID],
                                               delimiter: NonEmptyString = ",",
@@ -199,7 +223,8 @@ object Sources {
                                               escape: NonEmptyString = "\\",
                                               header: Boolean = false,
                                               windowBy: StreamWindowing = ProcessingTime,
-                                              keyFields: Seq[NonEmptyString] = Seq.empty
+                                              keyFields: Seq[NonEmptyString] = Seq.empty,
+                                              metadata: Seq[SparkParam] = Seq.empty
                                             ) extends FileSourceConfig with DelimitedFileConfig {
     val streamable: Boolean = true
   }
@@ -207,23 +232,27 @@ object Sources {
   /**
    * Avro file source configuration
    *
-   * @param id        Source ID
-   * @param path      Path to file
-   * @param schema    Schema ID
-   * @param windowBy  Source of timestamp used to build windows. Applicable only for streaming jobs!
-   *                  Default: processingTime - uses current timestamp at the moment when Spark processes row.
-   *                  Other options are:
+   * @param id          Source ID
+   * @param description Source description
+   * @param path        Path to file
+   * @param schema      Schema ID
+   * @param windowBy    Source of timestamp used to build windows. Applicable only for streaming jobs!
+   *                    Default: processingTime - uses current timestamp at the moment when Spark processes row.
+   *                    Other options are:
    *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
    *                    - customTime(columnName) - uses arbitrary user-defined column
    *                      (column must be of TimestampType)
-   * @param keyFields Sequence of key fields (columns that identify data row)
+   * @param keyFields   Sequence of key fields (columns that identify data row)
+   * @param metadata    List of metadata parameters specific to this source
    */
   final case class AvroFileSourceConfig(
                                          id: ID,
+                                         description: Option[NonEmptyString],
                                          path: URI,
                                          schema: Option[ID],
                                          windowBy: StreamWindowing = ProcessingTime,
-                                         keyFields: Seq[NonEmptyString] = Seq.empty
+                                         keyFields: Seq[NonEmptyString] = Seq.empty,
+                                         metadata: Seq[SparkParam] = Seq.empty
                                        ) extends FileSourceConfig with AvroFileConfig {
     val streamable: Boolean = true
   }
@@ -231,23 +260,27 @@ object Sources {
   /**
    * Orc file source configuration
    *
-   * @param id        Source ID
-   * @param path      Path to file
-   * @param schema    Schema ID
-   * @param windowBy  Source of timestamp used to build windows. Applicable only for streaming jobs!
-   *                  Default: processingTime - uses current timestamp at the moment when Spark processes row.
-   *                  Other options are:
+   * @param id          Source ID
+   * @param description Source description
+   * @param path        Path to file
+   * @param schema      Schema ID
+   * @param windowBy    Source of timestamp used to build windows. Applicable only for streaming jobs!
+   *                    Default: processingTime - uses current timestamp at the moment when Spark processes row.
+   *                    Other options are:
    *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
    *                    - customTime(columnName) - uses arbitrary user-defined column
    *                      (column must be of TimestampType)
-   * @param keyFields Sequence of key fields (columns that identify data row)
+   * @param keyFields   Sequence of key fields (columns that identify data row)
+   * @param metadata    List of metadata parameters specific to this source
    */
   final case class OrcFileSourceConfig(
                                         id: ID,
+                                        description: Option[NonEmptyString],
                                         path: URI,
                                         schema: Option[ID],
                                         windowBy: StreamWindowing = ProcessingTime,
-                                        keyFields: Seq[NonEmptyString] = Seq.empty
+                                        keyFields: Seq[NonEmptyString] = Seq.empty,
+                                        metadata: Seq[SparkParam] = Seq.empty
                                       ) extends FileSourceConfig with OrcFileConfig {
     val streamable: Boolean = true
   }
@@ -255,23 +288,27 @@ object Sources {
   /**
    * Parquet file source configuration
    *
-   * @param id        Source ID
-   * @param path      Path to file
-   * @param schema    Schema ID
-   * @param windowBy  Source of timestamp used to build windows. Applicable only for streaming jobs!
-   *                  Default: processingTime - uses current timestamp at the moment when Spark processes row.
-   *                  Other options are:
+   * @param id          Source ID
+   * @param description Source description
+   * @param path        Path to file
+   * @param schema      Schema ID
+   * @param windowBy    Source of timestamp used to build windows. Applicable only for streaming jobs!
+   *                    Default: processingTime - uses current timestamp at the moment when Spark processes row.
+   *                    Other options are:
    *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
    *                    - customTime(columnName) - uses arbitrary user-defined column
    *                      (column must be of TimestampType)
-   * @param keyFields Sequence of key fields (columns that identify data row)
+   * @param keyFields   Sequence of key fields (columns that identify data row)
+   * @param metadata    List of metadata parameters specific to this source
    */
   final case class ParquetFileSourceConfig(
                                             id: ID,
+                                            description: Option[NonEmptyString],
                                             path: URI,
                                             schema: Option[ID],
                                             windowBy: StreamWindowing = ProcessingTime,
-                                            keyFields: Seq[NonEmptyString] = Seq.empty
+                                            keyFields: Seq[NonEmptyString] = Seq.empty,
+                                            metadata: Seq[SparkParam] = Seq.empty
                                           ) extends FileSourceConfig with ParquetFileConfig {
     val streamable: Boolean = true
   }
@@ -279,20 +316,25 @@ object Sources {
   /**
    * Custom source configuration:
    * used to read from source types that are not supported explicitly.
-   * @param id Source ID
-   * @param format Source format to set in spark reader.
-   * @param path Path to load the source from (if required)
-   * @param schema Explicit schema applied to source data (if required)
-   * @param options List of additional spark options required to read the source (if any)
-   * @param keyFields Sequence of key fields (columns that identify data row)
+   *
+   * @param id          Source ID
+   * @param description Source description
+   * @param format      Source format to set in spark reader.
+   * @param path        Path to load the source from (if required)
+   * @param schema      Explicit schema applied to source data (if required)
+   * @param options     List of additional spark options required to read the source (if any)
+   * @param keyFields   Sequence of key fields (columns that identify data row)
+   * @param metadata    List of metadata parameters specific to this source
    */
   final case class CustomSource(
-                                id: ID,
-                                format: NonEmptyString,
-                                path: Option[URI],
-                                schema: Option[ID],
-                                options: Seq[SparkParam] = Seq.empty,
-                                keyFields: Seq[NonEmptyString] = Seq.empty
+                                 id: ID,
+                                 description: Option[NonEmptyString],
+                                 format: NonEmptyString,
+                                 path: Option[URI],
+                                 schema: Option[ID],
+                                 options: Seq[SparkParam] = Seq.empty,
+                                 keyFields: Seq[NonEmptyString] = Seq.empty,
+                                 metadata: Seq[SparkParam] = Seq.empty
                                ) extends SourceConfig {
     val streamable: Boolean = false // todo: make custom source streamable
   }
@@ -317,19 +359,23 @@ object Sources {
    * Sql virtual source configuration
    *
    * @param id            Virtual source ID
+   * @param description   Source description
    * @param parentSources Non-empty sequence of parent sources
    * @param query         SQL query to build virtual source from parent sources
    * @param persist       Spark storage level in order to persist dataframe during job execution.
    * @param save          Configuration to save virtual source as a file.
    * @param keyFields     Sequence of key fields (columns that identify data row)
+   * @param metadata      List of metadata parameters specific to this source
    */
   final case class SqlVirtualSourceConfig(
                                            id: ID,
+                                           description: Option[NonEmptyString],
                                            parentSources: NonEmptyStringSeq,
                                            query: NonEmptyString,
                                            persist: Option[StorageLevel],
                                            save: Option[FileOutputConfig],
-                                           keyFields: Seq[NonEmptyString] = Seq.empty
+                                           keyFields: Seq[NonEmptyString] = Seq.empty,
+                                           metadata: Seq[SparkParam] = Seq.empty
                                          ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
     val streamable: Boolean = false
@@ -340,21 +386,25 @@ object Sources {
    * Join virtual source configuration
    *
    * @param id            Virtual source ID
+   * @param description   Source description
    * @param parentSources Sequence of exactly two parent sources.
    * @param joinBy        Non-empty sequence of columns to join by.
    * @param joinType      Spark join type.
    * @param persist       Spark storage level in order to persist dataframe during job execution.
    * @param save          Configuration to save virtual source as a file.
    * @param keyFields     Sequence of key fields (columns that identify data row)
+   * @param metadata      List of metadata parameters specific to this source
    */
   final case class JoinVirtualSourceConfig(
                                             id: ID,
+                                            description: Option[NonEmptyString],
                                             parentSources: DoubleElemStringSeq,
                                             joinBy: NonEmptyStringSeq,
                                             joinType: SparkJoinType,
                                             persist: Option[StorageLevel],
                                             save: Option[FileOutputConfig],
-                                            keyFields: Seq[NonEmptyString] = Seq.empty
+                                            keyFields: Seq[NonEmptyString] = Seq.empty,
+                                            metadata: Seq[SparkParam] = Seq.empty
                                           ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
     val streamable: Boolean = false
@@ -365,6 +415,7 @@ object Sources {
    * Filter virtual source configuration
    *
    * @param id            Virtual source ID
+   * @param description   Source description
    * @param parentSources Sequence containing exactly one source.
    * @param expr          Non-empty sequence of spark sql expression used to filter source.
    *                      All expressions must return boolean. Source is filtered using logical
@@ -372,15 +423,18 @@ object Sources {
    * @param persist       Spark storage level in order to persist dataframe during job execution.
    * @param save          Configuration to save virtual source as a file.
    * @param keyFields     Sequence of key fields (columns that identify data row)
+   * @param metadata      List of metadata parameters specific to this source
    */
   final case class FilterVirtualSourceConfig(
                                               id: ID,
+                                              description: Option[NonEmptyString],
                                               parentSources: SingleElemStringSeq,
                                               expr: Seq[Column] Refined NonEmpty,
                                               persist: Option[StorageLevel],
                                               save: Option[FileOutputConfig],
                                               windowBy: Option[StreamWindowing],
-                                              keyFields: Seq[NonEmptyString] = Seq.empty
+                                              keyFields: Seq[NonEmptyString] = Seq.empty,
+                                              metadata: Seq[SparkParam] = Seq.empty
                                             ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
     val streamable: Boolean = true
@@ -390,21 +444,25 @@ object Sources {
    * Select virtual source configuration
    *
    * @param id            Virtual source ID
+   * @param description   Source description
    * @param parentSources Sequence containing exactly one source.
    * @param expr          Non-empty sequence of spark sql expression used select column from parent source.
    *                      One expression per each resultant column
    * @param persist       Spark storage level in order to persist dataframe during job execution.
    * @param save          Configuration to save virtual source as a file.
    * @param keyFields     Sequence of key fields (columns that identify data row)
+   * @param metadata      List of metadata parameters specific to this source
    */
   final case class SelectVirtualSourceConfig(
                                               id: ID,
+                                              description: Option[NonEmptyString],
                                               parentSources: SingleElemStringSeq,
                                               expr: Seq[Column] Refined NonEmpty,
                                               persist: Option[StorageLevel],
                                               save: Option[FileOutputConfig],
                                               windowBy: Option[StreamWindowing],
-                                              keyFields: Seq[NonEmptyString] = Seq.empty
+                                              keyFields: Seq[NonEmptyString] = Seq.empty,
+                                              metadata: Seq[SparkParam] = Seq.empty
                                             ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
     val streamable: Boolean = true
@@ -414,6 +472,7 @@ object Sources {
    * Aggregate virtual source configuration
    *
    * @param id            Virtual source ID
+   * @param description   Source description
    * @param parentSources Sequence containing exactly one source.
    * @param groupBy       Non-empty sequence of columns by which to perform grouping
    * @param expr          Non-empty sequence of spark sql expression used to get aggregated columns.
@@ -421,15 +480,18 @@ object Sources {
    * @param persist       Spark storage level in order to persist dataframe during job execution.
    * @param save          Configuration to save virtual source as a file.
    * @param keyFields     Sequence of key fields (columns that identify data row)
+   * @param metadata      List of metadata parameters specific to this source
    */
   final case class AggregateVirtualSourceConfig(
                                                  id: ID,
+                                                 description: Option[NonEmptyString],
                                                  parentSources: SingleElemStringSeq,
                                                  groupBy: NonEmptyStringSeq,
                                                  expr: Seq[Column] Refined NonEmpty,
                                                  persist: Option[StorageLevel],
                                                  save: Option[FileOutputConfig],
-                                                 keyFields: Seq[NonEmptyString] = Seq.empty
+                                                 keyFields: Seq[NonEmptyString] = Seq.empty,
+                                                 metadata: Seq[SparkParam] = Seq.empty
                                                ) extends VirtualSourceConfig {
     val parents: Seq[String] = parentSources.value
     val streamable: Boolean = false

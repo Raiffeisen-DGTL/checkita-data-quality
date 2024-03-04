@@ -3,6 +3,7 @@ package ru.raiffeisen.checkita.utils
 import eu.timepit.refined.api.Refined
 import org.apache.commons.io.FileUtils.openInputStream
 import org.apache.commons.io.IOUtils.toInputStream
+import org.json4s.DefaultFormats
 import ru.raiffeisen.checkita.config.RefinedTypes.DateFormat
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
@@ -12,7 +13,9 @@ import scala.reflect.runtime.universe.{MethodSymbol, TypeTag, typeOf}
 import scala.util.Try
 
 object Common {
-  
+
+  implicit val jsonFormats: DefaultFormats.type = DefaultFormats
+
   /**
    * Converts camelCase name into snake_case name
    * @param name camelCase name to convert

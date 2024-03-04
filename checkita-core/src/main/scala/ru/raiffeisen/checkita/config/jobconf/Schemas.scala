@@ -4,7 +4,7 @@ import eu.timepit.refined.api.Refined
 import eu.timepit.refined.collection.NonEmpty
 import eu.timepit.refined.types.string.NonEmptyString
 import org.apache.spark.sql.types.DataType
-import ru.raiffeisen.checkita.config.RefinedTypes.{FixedShortColumn, ID, PositiveInt, URI}
+import ru.raiffeisen.checkita.config.RefinedTypes.{FixedShortColumn, ID, PositiveInt, SparkParam, URI}
 
 object Schemas {
 
@@ -39,73 +39,91 @@ object Schemas {
                                   ) extends Column
 
   /**
-   * Base class for all schema configurations. All schemas must have an ID.
+   * Base class for all schema configurations. All schemas are described as DQ entities.
    */
-  sealed abstract class SchemaConfig {
-    val id: ID
-  }
+  sealed abstract class SchemaConfig extends JobConfigEntity
 
   /**
    * Delimited schema configuration used for delimited files such as CSV or TSV.
    *
-   * @param id     Schema ID
-   * @param schema List of columns in order.
+   * @param id          Schema ID
+   * @param description Schema description
+   * @param schema      List of columns in order.
+   * @param metadata    List of metadata parameters specific to this schema
    */
   final case class DelimitedSchemaConfig(
                                           id: ID,
-                                          schema: Seq[GeneralColumn] Refined NonEmpty
+                                          description: Option[NonEmptyString],
+                                          schema: Seq[GeneralColumn] Refined NonEmpty,
+                                          metadata: Seq[SparkParam] = Seq.empty
                                         ) extends SchemaConfig
 
   /**
    * Fixed schema configuration used for files with fixed column width.
    * Columns are fully defined with their name, type and width.
    *
-   * @param id     Schema ID
-   * @param schema List of columns in order
+   * @param id          Schema ID
+   * @param description Schema description
+   * @param schema      List of columns in order
+   * @param metadata    List of metadata parameters specific to this schema
    */
   final case class FixedFullSchemaConfig(
                                           id: ID,
-                                          schema: Seq[FixedFullColumn] Refined NonEmpty
+                                          description: Option[NonEmptyString],
+                                          schema: Seq[FixedFullColumn] Refined NonEmpty,
+                                          metadata: Seq[SparkParam] = Seq.empty
                                         ) extends SchemaConfig
-  
+
   /**
    * Fixed schema configuration used for files with fixed column width.
    * Columns are defined in short notation with their name and width only.
    * All columns have StringType.
    *
-   * @param id     Schema ID
-   * @param schema List of columns in order (format is "column_name:width", e.g. "zip:5")
+   * @param id          Schema ID
+   * @param description Schema description
+   * @param schema      List of columns in order (format is "column_name:width", e.g. "zip:5")
+   * @param metadata    List of metadata parameters specific to this schema
    */
   final case class FixedShortSchemaConfig(
                                            id: ID,
-                                           schema: Seq[FixedShortColumn] Refined NonEmpty
+                                           description: Option[NonEmptyString],
+                                           schema: Seq[FixedShortColumn] Refined NonEmpty,
+                                           metadata: Seq[SparkParam] = Seq.empty
                                          ) extends SchemaConfig
 
   /**
    * Avro schema configuration
    *
-   * @param id     Schema ID
-   * @param schema Path to Avro schema file (.avsc)
+   * @param id          Schema ID
+   * @param description Schema description
+   * @param schema      Path to Avro schema file (.avsc)
+   * @param metadata    List of metadata parameters specific to this schema
    */
   final case class AvroSchemaConfig(
                                      id: ID,
+                                     description: Option[NonEmptyString],
                                      schema: URI,
+                                     metadata: Seq[SparkParam] = Seq.empty
                                    ) extends SchemaConfig
 
   /**
    * Schema configuration that is read from hive catalog
    *
    * @param id             Schema ID
+   * @param description    Schema description
    * @param schema         Hive Schema
    * @param table          Hive Table
    * @param excludeColumns Columns to exclude from schema
    *                       (e.g. it might be necessary to exclude table partitioning columns)
+   * @param metadata       List of metadata parameters specific to this schema
    */
   final case class HiveSchemaConfig(
                                      id: ID,
+                                     description: Option[NonEmptyString],
                                      schema: NonEmptyString,
                                      table: NonEmptyString,
-                                     excludeColumns: Seq[NonEmptyString] = Seq.empty
+                                     excludeColumns: Seq[NonEmptyString] = Seq.empty,
+                                     metadata: Seq[SparkParam] = Seq.empty
                                    ) extends SchemaConfig
 
 }

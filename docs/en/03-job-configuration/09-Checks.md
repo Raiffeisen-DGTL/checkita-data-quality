@@ -33,6 +33,8 @@ Snapshot checks are configured using common set of parameters, which are:
 * `metric` - *Required*. Metric ID which results is checked.
 * `compareMetric` - *Optional*. Metric ID which result is used as a threshold.
 * `threshold` - *Optional*. Explicit threshold value.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this check where each parameter
+  is a string in format: `param.name=param.value`.
 
 > **IMPORTANT**. When configuring check it should be specified either an explicit threshold value in `threshold` field
 > or other metric ID in `compareMetric` field which result will be used as a threshold value.
@@ -79,6 +81,8 @@ Trend checks are configured using following set of parameters:
   for `averageBoundRange` check.
 * `thresholdUpper` - *Required*. Sets maximum allowed upper deviation from historical average metric result. *Used only
   for `averageBoundRange` check.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this metric where each parameter
+  is a string in format: `param.name=param.value`.
 
 > **NOTE**. Scala Duration string has a format of `<length><unit>` where following units are allowed:
 > `d`, `day`, `h`, `hr`, `hour`, `m`, `min`, `minute`, `s`, `sec`, `second`, `ms`, `milli`, `millisecond`,
@@ -101,6 +105,8 @@ Top N rank check is configured using following parameters:
   This number should be less than or equal to number of collected top values in top N metric.
 * `threshold` - *Required*. Maximum allowed Jacquard distance between current and previous sets of records from 
   top N metric result. Should be a number in interval `[0, 1]`.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this metric where each parameter
+  is a string in format: `param.name=param.value`.
 
 ## Checks Configuration Example
 
@@ -120,6 +126,10 @@ jobConfig: {
           rule: "datetime"
           windowSize: "8d"
           threshold: 0.25
+          metadata: [
+            "requestor=some.person@some.domain",
+            "critical.check=true"
+          ]
         }
       ]
       averageBoundUpper: [

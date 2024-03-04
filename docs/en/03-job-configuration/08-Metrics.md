@@ -27,6 +27,8 @@ All regular metrics are defined using following common parameters:
   object. The details on what parameters should be configured for metric are given below for each metric individually.
   Some metric definitions that require additional parameters are also have their default values set. In this case,
   `params` object can be omitted to use default options for all parameters.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this metric where each parameter
+  is a string in format: `param.name=param.value`.
 
 Additionally, some regular metrics have a logical condition that needs to be met when calculating metric increment per
 each individual row. If metric condition is not met, then `Failure` status is returned for this particular row of data.
@@ -648,7 +650,11 @@ jobConfig: {
       distinctValues: [
         {
           id: "fixed_file_dist_name", description: "Distinct values in hdfs_fixed_file",
-          source: "hdfs_fixed_file", columns: ["colA"]
+          source: "hdfs_fixed_file", columns: ["colA"],
+          metadata: [
+            "requestor=some.person@some.domain"
+            "critical.metric=true"
+          ]
         }
       ]
       nullValues: [

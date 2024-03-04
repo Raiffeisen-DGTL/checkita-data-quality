@@ -2,13 +2,13 @@ package ru.raiffeisen.checkita.storage
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
-import org.json4s
 import org.json4s._
 import org.json4s.jackson.JsonMethods.parse
 import org.json4s.jackson.Serialization.{write, writePretty}
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.storage.Models.DQEntity
 import ru.raiffeisen.checkita.storage.Serialization.ResultsSerializationOps.unifiedSchema
+import ru.raiffeisen.checkita.utils.Common.jsonFormats
 
 import scala.reflect.runtime.universe._
 import scala.util.Try
@@ -18,9 +18,6 @@ object Serialization {
   
   /** Implicit conversion for results to enable their unified serialization. */
   implicit class ResultsSerializationOps[T <: DQEntity : TypeTag](value: T)(implicit settings: AppSettings) {
-
-    /** Implicit Json4s formats */
-    implicit val formats: DefaultFormats.type = DefaultFormats
     
     /**
      * Extract of field names from unified schema (not in order)

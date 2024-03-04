@@ -9,7 +9,7 @@ import ru.raiffeisen.checkita.config.RefinedTypes.EncryptionKey
  * @param secret Secret string used to encrypt/decrypt sensitive fields
  * @param keyFields List of key fields used to identify fields that requires encryption/decryption.
  */
-final case class Encryption(secret: EncryptionKey, keyFields: Seq[String] = Seq("password", "secret")) {
-  val secretKey: EncryptionKey = secret
-  val fields: Seq[String] = keyFields
-}
+final case class Encryption(
+                             secret: EncryptionKey,
+                             keyFields: Seq[String] = Seq("password", "secret")
+                           )

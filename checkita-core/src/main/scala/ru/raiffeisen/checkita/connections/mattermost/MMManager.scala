@@ -4,10 +4,11 @@ import org.apache.http.client.methods.{HttpUriRequest, RequestBuilder}
 import org.apache.http.entity.{InputStreamEntity, StringEntity}
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.{HttpEntity, HttpException, HttpHeaders}
+import org.json4s.JValue
 import org.json4s.jackson.Serialization
-import org.json4s.{DefaultFormats, JValue}
 import ru.raiffeisen.checkita.config.appconf.MattermostConfig
 import ru.raiffeisen.checkita.connections.BinaryAttachment
+import ru.raiffeisen.checkita.utils.Common.jsonFormats
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.io.ByteArrayInputStream
@@ -24,8 +25,6 @@ case class MMManager(conf: MattermostConfig) {
   private val client = HttpClientBuilder.create().build()
 
   private val responseHandler = new MMResponseHandler
-
-  implicit private val jsonFormats: DefaultFormats.type = org.json4s.DefaultFormats
 
   /**
    * This field contains user ID which is used to connect to Mattermost API and from which the messages will be sent.

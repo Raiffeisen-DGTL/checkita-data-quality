@@ -63,7 +63,7 @@ only one set of results per Data Quality job and given reference date.
 
 ### Regular Metrics Results Schema
 
-* Primary key: `(job_id, metric_id, reference_date)`
+* Primary key: `(job_id, metric_id, reference_date)`;
 * `source_id` & `column_names` contain string representation of lists in format `'[val1,val2,val3]'`.
 * `params` is a JSON string.
 
@@ -73,6 +73,7 @@ only one set of results per Data Quality job and given reference date.
 | metric_id         | STRING      | NOT NULL   |
 | metric_name       | STRING      | NOT NULL   |
 | description       | STRING      |            |
+| metadata          | STRING      |            |
 | source_id         | STRING      | NOT NULL   |
 | column_names      | STRING      |            |
 | params            | STRING      |            |
@@ -83,7 +84,7 @@ only one set of results per Data Quality job and given reference date.
 
 ### Composed Metrics Results Schema
 
-* Primary key: `(job_id, metric_id, reference_date)`
+* Primary key: `(job_id, metric_id, reference_date)`;
 * `source_id` contains string representation of lists in format `'[val1,val2,val3]'`.
 
 | Column Name       | Column Type | Constraint |
@@ -92,6 +93,7 @@ only one set of results per Data Quality job and given reference date.
 | metric_id         | STRING      | NOT NULL   |
 | metric_name       | STRING      | NOT NULL   |
 | description       | STRING      |            |
+| metadata          | STRING      |            |
 | source_id         | STRING      | NOT NULL   |
 | formula           | STRING      | NOT NULL   |
 | result            | DOUBLE      | NOT NULL   |
@@ -101,7 +103,7 @@ only one set of results per Data Quality job and given reference date.
 
 ### Load Checks Results Schema
 
-* Primary key: `(job_id, check_id, reference_date)`
+* Primary key: `(job_id, check_id, reference_date)`;
 * `source_id` contains string representation of lists in format `'[val1,val2,val3]'`.
 
 | Column Name    | Column Type | Constraint |
@@ -109,6 +111,8 @@ only one set of results per Data Quality job and given reference date.
 | job_id         | STRING      | NOT NULL   |
 | check_id       | STRING      | NOT NULL   |
 | check_name     | STRING      | NOT NULL   |
+| description    | STRING      |            |
+| metadata       | STRING      |            |
 | source_id      | STRING      | NOT NULL   |
 | expected       | STRING      | NOT NULL   |
 | status         | STRING      | NOT NULL   |
@@ -118,7 +122,7 @@ only one set of results per Data Quality job and given reference date.
 
 ### Checks Results Schema
 
-* Primary key: `(job_id, check_id, reference_date)`
+* Primary key: `(job_id, check_id, reference_date)`;
 * `source_id` contains string representation of lists in format `'[val1,val2,val3]'`.
 
 | Column Name        | Column Type | Constraint |
@@ -127,6 +131,7 @@ only one set of results per Data Quality job and given reference date.
 | check_id           | STRING      | NOT NULL   |
 | check_name         | STRING      | NOT NULL   |
 | description        | STRING      |            |
+| metadata           | STRING      |            |
 | source_id          | STRING      | NOT NULL   |
 | base_metric        | STRING      | NOT NULL   |
 | compared_metric    | STRING      |            |
@@ -140,15 +145,17 @@ only one set of results per Data Quality job and given reference date.
 
 ### Job State Schema
 
-* Primary key: `(job_id, reference_date)`
+* Primary key: `(job_id, reference_date)`;
+* `version_info` is a JSON string;
 * `config` is a JSON string.
 
-| Column Name        | Column Type | Constraint |
-|--------------------|-------------|------------|
-| job_id             | STRING      | NOT NULL   |
-| config             | STRING      | NOT NULL   |
-| reference_date     | TIMESTAMP   | NOT NULL   |
-| execution_date     | TIMESTAMP   | NOT NULL   |
+| Column Name    | Column Type | Constraint |
+|----------------|-------------|------------|
+| job_id         | STRING      | NOT NULL   |
+| config         | STRING      | NOT NULL   |
+| version_info   | STRING      |            |
+| reference_date | TIMESTAMP   | NOT NULL   |
+| execution_date | TIMESTAMP   | NOT NULL   |
 
 ## Hive Storage Setup Scripts
 
@@ -168,6 +175,7 @@ CREATE EXTERNAL TABLE ${schema_name}.results_metric_regular
     metric_id         STRING COMMENT '',
     metric_name       STRING COMMENT '',
     description       STRING COMMENT '',
+    metadata          STRING COMMENT '',
     source_id         STRING COMMENT '',
     column_names      STRING COMMENT '',
     params            STRING COMMENT '',
@@ -188,6 +196,7 @@ CREATE EXTERNAL TABLE ${schema_name}.results_metric_composed
     metric_id         STRING COMMENT '',
     metric_name       STRING COMMENT '',
     description       STRING COMMENT '',
+    metadata          STRING COMMENT '',
     source_id         STRING COMMENT '',
     formula           STRING COMMENT '',
     result            DOUBLE COMMENT '',
@@ -206,6 +215,8 @@ CREATE EXTERNAL TABLE ${schema_name}.results_check_load
     job_id         STRING COMMENT '',
     check_id       STRING COMMENT '',
     check_name     STRING COMMENT '',
+    description    STRING COMMENT '',
+    metadata       STRING COMMENT '',
     source_id      STRING COMMENT '',
     expected       STRING COMMENT '',
     status         STRING COMMENT '',
@@ -225,6 +236,7 @@ CREATE EXTERNAL TABLE ${schema_name}.results_check
     check_id           STRING COMMENT '',
     check_name         STRING COMMENT '',
     description        STRING COMMENT '',
+    metadata           STRING COMMENT '',
     source_id          STRING COMMENT '',
     base_metric        STRING COMMENT '',
     compared_metric    STRING COMMENT '',
@@ -246,11 +258,12 @@ CREATE EXTERNAL TABLE ${schema_name}.job_state
 (
     job_id            STRING COMMENT '',
     config            STRING COMMENT '',
+    version_info      STRING COMMENT '',
     reference_date    TIMESTAMP COMMENT '',
     execution_date    TIMESTAMP COMMENT ''
 )
-    COMMENT 'Data Quality Job State'
-    PARTITIONED BY (job_id STRING)
-    STORED AS PARQUET
-    LOCATION '${schema_dir}/job_state';
+COMMENT 'Data Quality Job State'
+PARTITIONED BY (job_id STRING)
+STORED AS PARQUET
+LOCATION '${schema_dir}/job_state';
 ```
