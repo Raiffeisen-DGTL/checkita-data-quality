@@ -1,4 +1,5 @@
 set -eu
 
 echo "Updating changelog headers' levels ..."
-sed -rie 's/^# \[/## \[/g' docs/changelog/CHANGELOG.md
+sed -ri 's/^# \[/## \[/g' docs/changelog/CHANGELOG.md
+echo "Headers' levels updated."
