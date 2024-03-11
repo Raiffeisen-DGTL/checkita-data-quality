@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.3.1...v1.3.2) (2024-03-11)
+
+
+### Bug Fixes
+
+* resolve config values substitution logic during encryption/decryption. ([#30](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/30)) ([b252f9d](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/b252f9d2ca4b9eec3c0ad92692b5fa323b4ed953))
+
 ## [1.3.1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.3.0...v1.3.1) (2024-3-4)
 
 
