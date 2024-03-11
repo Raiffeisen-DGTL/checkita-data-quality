@@ -132,6 +132,7 @@ class ConfigEncryptor(secret: EncryptionKey, keyFields: Seq[String] = Seq("passw
    * @param substitutor      Function that substitutes value.
    * @param config           Configuration to traverse.
    * @return New instance of configuration with all required values being substituted.
+   * @note Only string values are substituted.
    */
   private def substituteConfigValues(shouldSubstitute: String => Boolean,
                                      substitutor: String => String)(config: Config): Config = {
@@ -141,14 +142,19 @@ class ConfigEncryptor(secret: EncryptionKey, keyFields: Seq[String] = Seq("passw
       case cList: ConfigList => ConfigValueFactory.fromIterable(cList.asScala.map(v => loop(v)).asJava)
       case cVal: ConfigValue => key match {
         case Some(k) => if (shouldSubstitute(k)) { // value came from object => modify it if object key matches predicate
-          val originValue = cVal.unwrapped().asInstanceOf[String]
-          ConfigValueFactory.fromAnyRef(substitutor(originValue))
+          cVal.unwrapped() match {
+            case strVal: String => ConfigValueFactory.fromAnyRef(substitutor(strVal))
+            case _ => cVal
+          }
         } else cVal
-        case None => RefType.applyRef[SparkParam](cVal.unwrapped().asInstanceOf[String]) match {
-          case Right(paramValue) =>
-            val kv = paramValue.value.split("=", 2)
-            if (shouldSubstitute(kv(0))) ConfigValueFactory.fromAnyRef(kv(0) + "=" + substitutor(kv(1))) else cVal
-          case Left(_) => cVal
+        case None => cVal.unwrapped() match {
+          case strVal: String => RefType.applyRef[SparkParam](strVal) match {
+            case Right(paramValue) =>
+              val kv = paramValue.value.split("=", 2)
+              if (shouldSubstitute(kv(0))) ConfigValueFactory.fromAnyRef(kv(0) + "=" + substitutor(kv(1))) else cVal
+            case Left(_) => cVal
+          }
+          case _ => cVal
         }
       }
     }
