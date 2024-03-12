@@ -107,7 +107,9 @@ object MetricStreamProcessor extends MetricProcessor with Logging {
       assert(
         streamKeys.size == streamKeyIds.size,
         s"Some of key fields were not found for stream '$streamId' in batch $batchId. " +
-          s"Please ensure that keyFields are always exist within streamed messages."
+        "Following keyFields are not found within stream columns: " +
+        streamKeys.filterNot(columnIndexes.contains).mkString("[`", "`, `", "`]") +
+        s". Please ensure that keyFields are always exist within streamed messages."
       )
 
       val metricsByColumns = streamMetrics.groupBy(

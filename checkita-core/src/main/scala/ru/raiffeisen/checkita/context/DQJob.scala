@@ -298,12 +298,20 @@ trait DQJob extends Logging {
    * @param metricResults Map with all metric results
    * @param settings      Implicit application settings object
    * @return Either a finalized sequence of metric errors or a list of conversion errors.
+   *
+   * @note There could be a situations when metric errors hold the same error data.
+   *       We are not interested in sending repeating data neither to storage database nor to Targets.
+   *       Therefore, sequence of metric errors is deduplicated by unique constraint.
    */
   protected def finalizeMetricErrors(stage: String, metricResults: Result[MetricResults])
-                                    (implicit settings: AppSettings): Result[Seq[ResultMetricErrors]] =
+                                    (implicit settings: AppSettings): Result[Seq[ResultMetricError]] =
     metricResults.mapValue { metResults =>
       log.info(s"$stage Finalize metric errors...")
-      metResults.toSeq.flatMap(_._2).flatMap(r => r.finalizeMetricErrors)
+      metResults.toSeq.flatMap(_._2)
+        .flatMap(r => r.finalizeMetricErrors)
+        .groupBy(_.groupingKey).values.map(_.head).toSeq
+      // todo: is deduplication a performance issue for large amount of errors?
+      // remove records that violate unique constraint - only one record per unique key.
     }
 
   /**
@@ -353,7 +361,7 @@ trait DQJob extends Logging {
                                jobState: Result[JobState],
                                regularMetricResults: Result[Seq[ResultMetricRegular]],
                                composedMetricResults: Result[Seq[ResultMetricComposed]],
-                               metricErrors: Result[Seq[ResultMetricErrors]])
+                               metricErrors: Result[Seq[ResultMetricError]])
                               (implicit settings: AppSettings): Result[ResultSet] =
     liftToResult(loadCheckResults).combineT5(
       checkResults, jobState, regularMetricResults, composedMetricResults, metricErrors
@@ -369,7 +377,8 @@ trait DQJob extends Logging {
    * @param resultSet Final results set
    * @return Either a status string or a list of saving errors.
    */
-  protected def saveResults(stage: String, resultSet: Result[ResultSet]): Result[String] =
+  protected def saveResults(stage: String, resultSet: Result[ResultSet])
+                           (implicit settings: AppSettings): Result[String] =
     resultSet.flatMap { results =>
       storageManager match {
         case Some(mgr) =>
@@ -387,13 +396,19 @@ trait DQJob extends Logging {
             )
 
           log.info(s"$stage Saving results...")
-          // save all results and combine the write operation results:
+          if (!settings.saveErrorsToStorage) log.info(
+            s"$stage Metric errors will not be saved to storage database as per application configuration. " +
+              "Set parameter `saveErrorsToStorage` to `true` in order to save metric errors to storage database."
+          )
+          // save all results and combine the write operation statuses:
           Seq(
             saveWithLogs(results.regularMetrics, "regular metrics"),
             saveWithLogs(results.composedMetrics, "composed metrics"),
             saveWithLogs(results.loadChecks, "load checks"),
             saveWithLogs(results.checks, "checks"),
-            saveWithLogs(Seq(results.jobConfig), "job state")
+            saveWithLogs(Seq(results.jobConfig), "job state"),
+            if (settings.saveErrorsToStorage) saveWithLogs(results.metricErrors, "metric errors")
+            else liftToResult("Metric errors are not saved in storage")
           ).reduce((r1, r2) => r1.combine(r2)((_, _) => "Success"))
             .mapLeft(_.map(e => s"$stage $e")) // update error messages with running stage
         case None =>

@@ -15,7 +15,7 @@ import slick.jdbc._
 import java.sql.Timestamp
 import java.util.concurrent.Executors
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutor}
+import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutor, Future}
 import scala.reflect.runtime.universe._
 import scala.util.Try
 
@@ -147,6 +147,7 @@ object Managers {
   
   class DqJdbcStorageManager(ds: DqStorageJdbcConnection) extends DqStorageManager with SlickProfile {
 
+    val batchSize: Int = 100
     val dbType: DQStorageType = ds.getType
     import profile.api._
     
@@ -155,7 +156,7 @@ object Managers {
     val tables: Tables = new Tables(profile)
 
     private def runUpsert[R <: DQEntity : TypeTag](data: Seq[R],
-                                                   ops: tables.DQTableOps[R]): (String, Int) = {
+                                                   ops: tables.DQTableOps[R]): Future[(String, Int)] = {
       val table = ops.getTableQuery(ds.getSchema)
       val tableName = table.baseTableRow.tableName
       
@@ -173,8 +174,8 @@ object Managers {
         )
         db.run(upsertQuery)
       }
-      
-      val result = upsert.map{ s => 
+
+      upsert.map{ s =>
         val numRows = s.map{
           case x: Int => x
           case Some(x) => x.asInstanceOf[Int]
@@ -182,12 +183,34 @@ object Managers {
         }.sum
         (tableName, numRows)
       }
-      Await.result(result, Duration.Inf)
     }
-    
+
+    /**
+     * Saves results to a corresponding table in storage database.
+     *
+     * @param results Sequence of results to be saved
+     * @param ops     Implicit table extension methods used to retrieve
+     *                instance of Slick table that matches the result type.
+     * @tparam R Type of results to be saved
+     * @return Results write operation status string.
+     * @note Results are saved with use of upsert logic.
+     *       Thus, existing records that conflicts with new ones by unique
+     *       constraint are found first. Then, these records replaced with new ones
+     *       and remaining records are appended to the table.
+     *       Process of finding conflicting records involves multiple logical operators
+     *       chaining that might lead to stack overflow error in Slick
+     *       (see https://github.com/slick/slick/issues/1606).
+     *       In order to avoid such error a sequence of results is
+     *       split into batches of `batchSize` and upsert operation
+     *       is performed per each batch separately.
+     */
     def saveResults[R <: DQEntity : TypeTag](results: Seq[R])
                                             (implicit ops: tables.DQTableOps[R]): String = {
-      val (table, numRows) = runUpsert[R](results, ops)
+      val result = results.grouped(batchSize)
+        .map(r => runUpsert[R](r, ops))
+        .reduceLeft((fa, fb) => fa.flatMap(a => fb.map(b => (a._1, a._2 + b._2))))
+
+      val (table, numRows) =  Await.result(result, Duration.Inf)
       s"Successfully upsert $numRows rows into table '$table'."
     }
 

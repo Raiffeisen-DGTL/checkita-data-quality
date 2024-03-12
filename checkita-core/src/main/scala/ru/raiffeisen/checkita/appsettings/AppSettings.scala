@@ -22,7 +22,8 @@ import scala.util.Try
  * @param aggregatedKafkaOutput Enables sending aggregates messages for Kafka Targets
  *                              (one per each target type, except checkAlerts where
  *                              one message per checkAlert will be sent)
- * @param enableCaseSensitivity Enable columns case sensitivity
+ * @param enableCaseSensitivity Enables columns case sensitivity
+ * @param saveErrorsToStorage   Enables metric errors to be stored in storage database.
  * @param errorDumpSize         Maximum number of errors to be collected per single metric.
  * @param outputRepartition     Sets the number of partitions when writing outputs. By default writes single file.
  * @param storageConfig         Configuration of connection to Data Quality Storage
@@ -46,6 +47,7 @@ final case class AppSettings(
                               allowSqlQueries: Boolean,
                               aggregatedKafkaOutput: Boolean,
                               enableCaseSensitivity: Boolean,
+                              saveErrorsToStorage: Boolean,
                               errorDumpSize: Int,
                               outputRepartition: Int,
                               storageConfig: Option[StorageConfig],
@@ -129,6 +131,7 @@ object AppSettings {
         appConfig.enablers.allowSqlQueries,
         appConfig.enablers.aggregatedKafkaOutput,
         appConfig.enablers.enableCaseSensitivity,
+        appConfig.enablers.saveErrorsToStorage,
         appConfig.enablers.errorDumpSize.value,
         appConfig.enablers.outputRepartition.value,
         appConfig.storage,
@@ -203,6 +206,7 @@ object AppSettings {
       defaultAppConf.enablers.allowSqlQueries,
       defaultAppConf.enablers.aggregatedKafkaOutput,
       defaultAppConf.enablers.enableCaseSensitivity,
+      defaultAppConf.enablers.saveErrorsToStorage,
       defaultAppConf.enablers.errorDumpSize.value,
       defaultAppConf.enablers.outputRepartition.value,
       defaultAppConf.storage,

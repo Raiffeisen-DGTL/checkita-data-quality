@@ -12,6 +12,9 @@ import eu.timepit.refined.auto._
  *                              (one per each target type, except checkAlerts where
  *                              one message per checkAlert will be sent)
  * @param enableCaseSensitivity Enable columns case sensitivity
+ * @param saveErrorsToStorage Enables metric errors to be stored in storage database.
+ *                            Be careful when storing metric errors in storage database
+ *                            as this might overload the storage.
  * @param errorDumpSize Maximum number of errors to be collected per single metric per partition.
  * @param outputRepartition Sets the number of partitions when writing outputs. By default writes single file.
  */
@@ -20,6 +23,7 @@ final case class Enablers(
                            allowNotifications: Boolean = false,
                            aggregatedKafkaOutput: Boolean = false,
                            enableCaseSensitivity: Boolean = false,
+                           saveErrorsToStorage: Boolean = false,
                            errorDumpSize: PositiveInt = 10000,
                            outputRepartition: PositiveInt = 1
                          )

@@ -49,7 +49,9 @@ object MetricBatchProcessor extends MetricProcessor {
 
     assert(
       sourceKeys.size == sourceKeyIds.size,
-      s"Some of key fields were not found for source '${source.id}'. Please, check them."
+      s"Some of key fields were not found for source '${source.id}'. " +
+      "Following keyFields are not found within source columns: " +
+        sourceKeys.filterNot(columnIndexes.contains).mkString("[`", "`, `", "`]")
     )
 
     val metricsByColumns = sourceMetrics.groupBy(

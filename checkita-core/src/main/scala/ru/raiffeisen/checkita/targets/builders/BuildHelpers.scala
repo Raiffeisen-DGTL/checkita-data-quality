@@ -1,6 +1,6 @@
 package ru.raiffeisen.checkita.targets.builders
 
-import ru.raiffeisen.checkita.storage.Models.ResultMetricErrors
+import ru.raiffeisen.checkita.storage.Models.ResultMetricError
 
 import scala.util.Try
 
@@ -14,9 +14,9 @@ trait BuildHelpers {
    * @return Filtered sequence of metric errors
    * @note If requested metric IDs are not provided (sequence is empty) then errors for all metrics are returned.
    */
-  def filterErrors(errors: Seq[ResultMetricErrors],
+  def filterErrors(errors: Seq[ResultMetricError],
                    requested: Seq[String],
-                   dumpSize: Int): Seq[ResultMetricErrors] =
+                   dumpSize: Int): Seq[ResultMetricError] =
     errors
       .filter(r => if (requested.isEmpty) true else requested.contains(r.metricId))
       .groupBy(_.metricId)

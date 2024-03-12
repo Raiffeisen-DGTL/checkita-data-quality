@@ -95,6 +95,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       s"  - allowSqlQueries:          ${settings.allowSqlQueries}",
       s"  - aggregatedKafkaOutput:    ${settings.aggregatedKafkaOutput}",
       s"  - enableCaseSensitivity:    ${settings.enableCaseSensitivity}",
+      s"  - saveErrorsToStorage:      ${settings.saveErrorsToStorage}",
       s"  - errorDumpSize:            ${settings.errorDumpSize}",
       s"  - outputRepartition:        ${settings.outputRepartition}"   
     )
@@ -147,6 +148,14 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       "* Extra variables:",
       s"  - List of all available variables (values are not shown intentionally): $extraVarsList"
     )
+
+    val encryptionKeyFields = settings.encryption.map(e => e.keyFields.mkString("[", ", ", "]"))
+    val logEncryption = Seq(
+      "* Encryption configuration:",
+      encryptionKeyFields.map(kf =>
+        s"  - Encrypt configuration keys that contain following substrings: $kf"
+      ).getOrElse("Encryption configuration is not set. The job state will be saved as is.")
+    )
     
     (
       logGeneral ++ 
@@ -157,7 +166,8 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       logStorageConf ++ 
       logEmailConfig ++ 
       logMMConfig ++
-      logExtraVars
+      logExtraVars ++
+      logEncryption
     ).foreach(msg => log.info(s"$settingsStage $msg"))
   }
 

@@ -131,7 +131,7 @@ object SourceReaders {
         case ReadMode.Batch =>
           val batchReader = spark.read.format(format.toLowerCase)
           if (format.toLowerCase == "avro")
-            schema.map(sch => batchReader.option("avroSchema", sch.toAvroSchema.toString))
+            schema.map(sch => batchReader.option("avroSchema", sch.toAvroSchema))
               .getOrElse(batchReader).load(path)
           else schema.map(sch => batchReader.schema(sch.schema)).getOrElse(batchReader).load(path)
         case ReadMode.Stream =>
@@ -293,7 +293,7 @@ object SourceReaders {
         preDf.filter(
           config.partitions.map { p =>
             if (p.expr.nonEmpty) p.expr.get
-            else col(p.name.value).isin(p.values.map(_.value))
+            else col(p.name.value).isin(p.values.map(_.value): _*)
           }.reduce(_ && _)
         )
       } else preDf
