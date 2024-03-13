@@ -204,12 +204,15 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">StorageConfig</span><span class="params">(<span name="dbType">dbType: <a href="../Enums$$DQStorageType.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.DQStorageType">DQStorageType</a></span>, <span name="url">url: <a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a></span>, <span name="username">username: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="password">password: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="schema">schema: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">StorageConfig</span><span class="params">(<span name="dbType">dbType: <a href="../Enums$$DQStorageType.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.DQStorageType">DQStorageType</a></span>, <span name="url">url: <a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a></span>, <span name="username">username: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="password">password: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="schema">schema: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="saveErrorsToStorage">saveErrorsToStorage: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Application-level configuration describing connection to history database.</p></div><dl class="paramcmts block"><dt class="param">dbType</dt><dd class="cmt"><p>Type of database used to store DQ data (one of the supported RDBMS)</p></dd><dt class="param">url</dt><dd class="cmt"><p>Connection URL (without protocol identifiers)</p></dd><dt class="param">username</dt><dd class="cmt"><p>Username to connect to database with (if required)</p></dd><dt class="param">password</dt><dd class="cmt"><p>Password to connect to database with (if required)</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema where data quality tables are located (if required)</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Application-level configuration describing connection to history database.
+</p></div><dl class="paramcmts block"><dt class="param">dbType</dt><dd class="cmt"><p>Type of database used to store DQ data (one of the supported RDBMS)</p></dd><dt class="param">url</dt><dd class="cmt"><p>Connection URL (without protocol identifiers)</p></dd><dt class="param">username</dt><dd class="cmt"><p>Username to connect to database with (if required)</p></dd><dt class="param">password</dt><dd class="cmt"><p>Password to connect to database with (if required)</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema where data quality tables are located (if required)</p></dd><dt class="param">saveErrorsToStorage</dt><dd class="cmt"><p>Enables metric errors to be stored in storage database.
+                           Be careful when storing metric errors in storage database
+                           as this might overload the storage.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -260,9 +263,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.appconf.StorageConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(dbType:ru.raiffeisen.checkita.config.Enums.DQStorageType,url:ru.raiffeisen.checkita.config.RefinedTypes.URI,username:Option[eu.timepit.refined.types.string.NonEmptyString],password:Option[eu.timepit.refined.types.string.NonEmptyString],schema:Option[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.appconf.StorageConfig"></a><a id="&lt;init&gt;:StorageConfig"></a>
+      <a id="&lt;init&gt;(dbType:ru.raiffeisen.checkita.config.Enums.DQStorageType,url:ru.raiffeisen.checkita.config.RefinedTypes.URI,username:Option[eu.timepit.refined.types.string.NonEmptyString],password:Option[eu.timepit.refined.types.string.NonEmptyString],schema:Option[eu.timepit.refined.types.string.NonEmptyString],saveErrorsToStorage:Boolean):ru.raiffeisen.checkita.config.appconf.StorageConfig"></a><a id="&lt;init&gt;:StorageConfig"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/appconf/StorageConfig.html#&lt;init&gt;(dbType:ru.raiffeisen.checkita.config.Enums.DQStorageType,url:ru.raiffeisen.checkita.config.RefinedTypes.URI,username:Option[eu.timepit.refined.types.string.NonEmptyString],password:Option[eu.timepit.refined.types.string.NonEmptyString],schema:Option[eu.timepit.refined.types.string.NonEmptyString]):ru.raiffeisen.checkita.config.appconf.StorageConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/appconf/StorageConfig.html#&lt;init&gt;(dbType:ru.raiffeisen.checkita.config.Enums.DQStorageType,url:ru.raiffeisen.checkita.config.RefinedTypes.URI,username:Option[eu.timepit.refined.types.string.NonEmptyString],password:Option[eu.timepit.refined.types.string.NonEmptyString],schema:Option[eu.timepit.refined.types.string.NonEmptyString],saveErrorsToStorage:Boolean):ru.raiffeisen.checkita.config.appconf.StorageConfig" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -271,10 +274,12 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">StorageConfig</span><span class="params">(<span name="dbType">dbType: <a href="../Enums$$DQStorageType.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.DQStorageType">DQStorageType</a></span>, <span name="url">url: <a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a></span>, <span name="username">username: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="password">password: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="schema">schema: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>)</span>
+        <span class="name">StorageConfig</span><span class="params">(<span name="dbType">dbType: <a href="../Enums$$DQStorageType.html" class="extype" name="ru.raiffeisen.checkita.config.Enums.DQStorageType">DQStorageType</a></span>, <span name="url">url: <a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a></span>, <span name="username">username: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="password">password: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="schema">schema: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="saveErrorsToStorage">saveErrorsToStorage: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dbType</dt><dd class="cmt"><p>Type of database used to store DQ data (one of the supported RDBMS)</p></dd><dt class="param">url</dt><dd class="cmt"><p>Connection URL (without protocol identifiers)</p></dd><dt class="param">username</dt><dd class="cmt"><p>Username to connect to database with (if required)</p></dd><dt class="param">password</dt><dd class="cmt"><p>Password to connect to database with (if required)</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema where data quality tables are located (if required)</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dbType</dt><dd class="cmt"><p>Type of database used to store DQ data (one of the supported RDBMS)</p></dd><dt class="param">url</dt><dd class="cmt"><p>Connection URL (without protocol identifiers)</p></dd><dt class="param">username</dt><dd class="cmt"><p>Username to connect to database with (if required)</p></dd><dt class="param">password</dt><dd class="cmt"><p>Password to connect to database with (if required)</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Schema where data quality tables are located (if required)</p></dd><dt class="param">saveErrorsToStorage</dt><dd class="cmt"><p>Enables metric errors to be stored in storage database.
+                           Be careful when storing metric errors in storage database
+                           as this might overload the storage.</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -529,6 +534,22 @@
       </span>
       <span class="symbol">
         <span class="name">password</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>
+      </span>
+      
+      
+    </li><li name="ru.raiffeisen.checkita.config.appconf.StorageConfig#saveErrorsToStorage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="saveErrorsToStorage:Boolean"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/appconf/StorageConfig.html#saveErrorsToStorage:Boolean" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">saveErrorsToStorage</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       
       

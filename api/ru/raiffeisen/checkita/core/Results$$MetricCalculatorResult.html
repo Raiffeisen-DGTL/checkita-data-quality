@@ -486,10 +486,10 @@ for storing into results storage and sending via targets.
 for storing into results storage and sending via targets.</p><div class="fullcomment"><div class="comment cmt"><p>Converts regular metric calculator result to final regular metric result representation suitable
 for storing into results storage and sending via targets.
 </p></div><dl class="paramcmts block"><dt class="param">description</dt><dd class="cmt"><p>Regular metric description</p></dd><dt class="param">params</dt><dd class="cmt"><p>Regular metric parameters (JSON string)</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>Metadata parameters specific to this regular metric (JSON List string)</p></dd><dt class="param">jobId</dt><dd class="cmt"><p>Implicit Job ID</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt>returns</dt><dd class="cmt"><p>Finalized regular metric result</p></dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.core.Results.MetricCalculatorResult#finalizeMetricErrors" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="finalizeMetricErrors(implicitjobId:String,implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings):Seq[ru.raiffeisen.checkita.storage.Models.ResultMetricErrors]"></a><a id="finalizeMetricErrors(String,AppSettings):Seq[ResultMetricErrors]"></a>
+    </li><li name="ru.raiffeisen.checkita.core.Results.MetricCalculatorResult#finalizeMetricErrors" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalizeMetricErrors(implicitjobId:String,implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings):Seq[ru.raiffeisen.checkita.storage.Models.ResultMetricError]"></a><a id="finalizeMetricErrors(String,AppSettings):Seq[ResultMetricError]"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/core/Results$$MetricCalculatorResult.html#finalizeMetricErrors(implicitjobId:String,implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings):Seq[ru.raiffeisen.checkita.storage.Models.ResultMetricErrors]" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/core/Results$$MetricCalculatorResult.html#finalizeMetricErrors(implicitjobId:String,implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings):Seq[ru.raiffeisen.checkita.storage.Models.ResultMetricError]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -498,10 +498,13 @@ for storing into results storage and sending via targets.
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalizeMetricErrors</span><span class="params">(<span class="implicit">implicit </span><span name="jobId">jobId: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>)</span><span class="result">: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../storage/Models$$ResultMetricErrors.html" class="extype" name="ru.raiffeisen.checkita.storage.Models.ResultMetricErrors">ResultMetricErrors</a>]</span>
+        <span class="name">finalizeMetricErrors</span><span class="params">(<span class="implicit">implicit </span><span name="jobId">jobId: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>)</span><span class="result">: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../storage/Models$$ResultMetricError.html" class="extype" name="ru.raiffeisen.checkita.storage.Models.ResultMetricError">ResultMetricError</a>]</span>
       </span>
       
-      
+      <p class="shortcomment cmt">Retrieves sequence of finalized metric errors from metric calculator result
+that is suitable for storing into results storage and sending via targets.</p><div class="fullcomment"><div class="comment cmt"><p>Retrieves sequence of finalized metric errors from metric calculator result
+that is suitable for storing into results storage and sending via targets.
+</p></div><dl class="paramcmts block"><dt class="param">jobId</dt><dd class="cmt"><p>Implicit Job ID</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt>returns</dt><dd class="cmt"><p>Sequence of finalized metric errors</p></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">

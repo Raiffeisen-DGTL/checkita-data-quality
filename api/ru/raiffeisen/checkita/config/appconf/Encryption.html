@@ -204,13 +204,14 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Encryption</span><span class="params">(<span name="secret">secret: <a href="../RefinedTypes$.html#EncryptionKey=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^.{32}.*$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.EncryptionKey">EncryptionKey</a></span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq(&quot;password&quot;, &quot;secret&quot;)</a></span></span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">Encryption</span><span class="params">(<span name="secret">secret: <a href="../RefinedTypes$.html#EncryptionKey=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^.{32}.*$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.EncryptionKey">EncryptionKey</a></span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq(&quot;password&quot;, &quot;secret&quot;)</a></span></span></span>, <span name="encryptErrorData">encryptErrorData: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Application-level configuration describing encryption sensitive fields
-</p></div><dl class="paramcmts block"><dt class="param">secret</dt><dd class="cmt"><p>Secret string used to encrypt/decrypt sensitive fields</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>List of key fields used to identify fields that requires encryption/decryption.</p></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">secret</dt><dd class="cmt"><p>Secret string used to encrypt/decrypt sensitive fields</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>List of key fields used to identify fields that requires encryption/decryption.</p></dd><dt class="param">encryptErrorData</dt><dd class="cmt"><p>Boolean flag indicating whether rowData (contains excerpts from data sources)
+                        field in metric errors should be encrypted.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -261,9 +262,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.appconf.Encryption#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(secret:ru.raiffeisen.checkita.config.RefinedTypes.EncryptionKey,keyFields:Seq[String]):ru.raiffeisen.checkita.config.appconf.Encryption"></a><a id="&lt;init&gt;:Encryption"></a>
+      <a id="&lt;init&gt;(secret:ru.raiffeisen.checkita.config.RefinedTypes.EncryptionKey,keyFields:Seq[String],encryptErrorData:Boolean):ru.raiffeisen.checkita.config.appconf.Encryption"></a><a id="&lt;init&gt;:Encryption"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/appconf/Encryption.html#&lt;init&gt;(secret:ru.raiffeisen.checkita.config.RefinedTypes.EncryptionKey,keyFields:Seq[String]):ru.raiffeisen.checkita.config.appconf.Encryption" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/appconf/Encryption.html#&lt;init&gt;(secret:ru.raiffeisen.checkita.config.RefinedTypes.EncryptionKey,keyFields:Seq[String],encryptErrorData:Boolean):ru.raiffeisen.checkita.config.appconf.Encryption" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -272,10 +273,11 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">Encryption</span><span class="params">(<span name="secret">secret: <a href="../RefinedTypes$.html#EncryptionKey=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^.{32}.*$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.EncryptionKey">EncryptionKey</a></span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq(&quot;password&quot;, &quot;secret&quot;)</a></span></span></span>)</span>
+        <span class="name">Encryption</span><span class="params">(<span name="secret">secret: <a href="../RefinedTypes$.html#EncryptionKey=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^.{32}.*$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.EncryptionKey">EncryptionKey</a></span>, <span name="keyFields">keyFields: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq(&quot;password&quot;, &quot;secret&quot;)</a></span></span></span>, <span name="encryptErrorData">encryptErrorData: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">secret</dt><dd class="cmt"><p>Secret string used to encrypt/decrypt sensitive fields</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>List of key fields used to identify fields that requires encryption/decryption.</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">secret</dt><dd class="cmt"><p>Secret string used to encrypt/decrypt sensitive fields</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>List of key fields used to identify fields that requires encryption/decryption.</p></dd><dt class="param">encryptErrorData</dt><dd class="cmt"><p>Boolean flag indicating whether rowData (contains excerpts from data sources)
+                        field in metric errors should be encrypted.</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -374,6 +376,22 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.appconf.Encryption#encryptErrorData" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="encryptErrorData:Boolean"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/appconf/Encryption.html#encryptErrorData:Boolean" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">encryptErrorData</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">

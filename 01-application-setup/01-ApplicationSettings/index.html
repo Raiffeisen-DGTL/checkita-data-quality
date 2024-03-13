@@ -1414,6 +1414,7 @@ of the documentation.</p>
 <li><code>username</code> - Username to connect to database with (if required). <em>Optional</em>.</li>
 <li><code>password</code> - Password to connect to database with (if required). <em>Optional</em>.</li>
 <li><code>schema</code> - Schema where data quality tables are located (if required). <em>Optional</em>.</li>
+<li><code>saveErrorsToStorage</code> - Enables metric errors to be stored in storage database. <em>Optional, default is <code>false</code></em>.</li>
 </ul>
 <blockquote>
 <p><strong>IMPORTANT</strong> If <code>storage</code> section is missing then application will run without usage of results storage:</p>
@@ -1421,6 +1422,12 @@ of the documentation.</p>
 <li>results won't be saved (only targets can be sent);</li>
 <li>trend checks (used for anomaly detection in data) won't be performed as they require historical data.</li>
 </ul>
+<p>In addition, be mindful when storing metric errors to storage database. Depending on <code>errorDumpSize</code> settings, 
+the number of collected errors could be quite large. This will load to overloading DQ storage as well as increase
+database write operations execution time. Another concern is related to the fact that metric errors contain 
+data excerpts from sources being checked. These excerpts might contain some sensitive information that is rather 
+not to be stored in DQ storage database. Alternatively, these excerpts can be encrypted before storing. 
+See <a href="#encryption">Encryption</a> configuration for more details.</p>
 </blockquote>
 <h2 id="email-configuration">Email Configuration</h2>
 <p>In order to send notification via email it is necessary to configure connection to SMTP server which should be defined
@@ -1458,8 +1465,17 @@ information in job config. This should be done by defining the parameters within
 <em>Required</em>. </li>
 <li><code>keyFields</code> - List of key fields used to identify fields that requires encryption/decryption. 
 <em>Optional, default is <code>[password, secret]</code></em>.</li>
+<li><code>encryptErrorData</code> - Boolean flag indicating whether it is necessary tp encrypt data excerpts within collected 
+  metric errors. <em>Optional, default is <code>false</code></em></li>
 </ul>
-<p>If <code>encryption</code> section is missing then job config will be saved in database as is.</p>
+<p>If <code>encryption</code> section is missing then any sensitive information will not be encrypted.</p>
+<blockquote>
+<p><strong>IMPORTANT</strong> Both keys of job configuration and data excerpts that metric errors contain might 
+contain some sensitive information. Storing raw sensitive information  in DQ storage database 
+might not satisfy security requirements. Therefore, DQ framework offers functionality to encrypt 
+sensitive data with AES256 encryption algorithm. As AES25 is a symmetric algorithm then encrypted 
+data can be decrypted with use secret key if needed.</p>
+</blockquote>
 <h2 id="example-of-application-configuration-file">Example of Application Configuration File</h2>
 <p>Hocon configuration format supports variable substitution and Checkita Data Quality framework has a mechanism to 
 feed configuration files with extra variables at runtime. For more information,
@@ -1493,28 +1509,30 @@ chapter of the documentation.</p>
 </span><span id="__span-0-26">    username: &quot;postgres&quot;
 </span><span id="__span-0-27">    password: &quot;postgres&quot;
 </span><span id="__span-0-28">    schema: &quot;dqdb&quot;
-</span><span id="__span-0-29">  }
-</span><span id="__span-0-30">
-</span><span id="__span-0-31">  email: {
-</span><span id="__span-0-32">    host: &quot;smtp.some-company.domain&quot;
-</span><span id="__span-0-33">    port: &quot;25&quot;
-</span><span id="__span-0-34">    username: &quot;emailUser&quot;
-</span><span id="__span-0-35">    password: &quot;emailPassword&quot;
-</span><span id="__span-0-36">    address: &quot;some.service@some-company.domain&quot;
-</span><span id="__span-0-37">    name: &quot;Data Quality Service&quot;
-</span><span id="__span-0-38">    sslOnConnect: true
-</span><span id="__span-0-39">  }
-</span><span id="__span-0-40">
-</span><span id="__span-0-41">  mattermost: {
-</span><span id="__span-0-42">    host: &quot;https://some-team.mattermost.com&quot;
-</span><span id="__span-0-43">    token: ${dqMattermostToken}
-</span><span id="__span-0-44">  }
-</span><span id="__span-0-45">
-</span><span id="__span-0-46">  encryption: {
-</span><span id="__span-0-47">    secret: &quot;secretmustbeatleastthirtytwocharacters&quot;
-</span><span id="__span-0-48">    keyFields: [&quot;password&quot;, &quot;username&quot;, &quot;url&quot;]
-</span><span id="__span-0-49">  }
-</span><span id="__span-0-50">}
+</span><span id="__span-0-29">    saveErrorsToStorage: true
+</span><span id="__span-0-30">  }
+</span><span id="__span-0-31">
+</span><span id="__span-0-32">  email: {
+</span><span id="__span-0-33">    host: &quot;smtp.some-company.domain&quot;
+</span><span id="__span-0-34">    port: &quot;25&quot;
+</span><span id="__span-0-35">    username: &quot;emailUser&quot;
+</span><span id="__span-0-36">    password: &quot;emailPassword&quot;
+</span><span id="__span-0-37">    address: &quot;some.service@some-company.domain&quot;
+</span><span id="__span-0-38">    name: &quot;Data Quality Service&quot;
+</span><span id="__span-0-39">    sslOnConnect: true
+</span><span id="__span-0-40">  }
+</span><span id="__span-0-41">
+</span><span id="__span-0-42">  mattermost: {
+</span><span id="__span-0-43">    host: &quot;https://some-team.mattermost.com&quot;
+</span><span id="__span-0-44">    token: ${dqMattermostToken}
+</span><span id="__span-0-45">  }
+</span><span id="__span-0-46">
+</span><span id="__span-0-47">  encryption: {
+</span><span id="__span-0-48">    secret: &quot;secretmustbeatleastthirtytwocharacters&quot;
+</span><span id="__span-0-49">    keyFields: [&quot;password&quot;, &quot;username&quot;, &quot;url&quot;]
+</span><span id="__span-0-50">    encryptErrorData: true
+</span><span id="__span-0-51">  }
+</span><span id="__span-0-52">}
 </span></code></pre></div>
 
 

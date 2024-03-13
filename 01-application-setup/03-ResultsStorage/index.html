@@ -596,6 +596,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#metric-error-results-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metric Error Results Schema
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#load-checks-results-schema" class="md-nav__link">
     <span class="md-ellipsis">
       Load Checks Results Schema
@@ -1536,6 +1545,84 @@ only one set of results per Data Quality job and given reference date.</p>
 </tr>
 </tbody>
 </table>
+<h3 id="metric-error-results-schema">Metric Error Results Schema</h3>
+<ul>
+<li>Primary key: <code>(job_id, error_hash, reference_date)</code>;</li>
+<li><code>source_id</code> is a JSON string;</li>
+<li><code>source_key_fields</code> is a JSON string;</li>
+<li><code>metric_columns</code> is a JSON string;</li>
+<li><code>row_data</code> is a JSON string.</li>
+<li><code>errorHash</code> is a MD5 hash string computed from values of columns <code>metric_id</code>, <code>status</code>, <code>message</code> and <code>row_data</code></li>
+</ul>
+<blockquote>
+<p><strong>NOTE</strong> Error hash is computed with use of raw value of <code>row_data</code> field even if it is encrypted later.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Column Type</th>
+<th>Constraint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>job_id</td>
+<td>TEXT</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>metric_id</td>
+<td>TEXT</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>source_id</td>
+<td>TEXT</td>
+<td></td>
+</tr>
+<tr>
+<td>source_key_fields</td>
+<td>TEXT</td>
+<td></td>
+</tr>
+<tr>
+<td>metric_columns</td>
+<td>TEXT</td>
+<td></td>
+</tr>
+<tr>
+<td>status</td>
+<td>TEXT</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>message</td>
+<td>TEXT</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>row_data</td>
+<td>TEXT</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>error_hash</td>
+<td>TEXT</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>reference_date</td>
+<td>TIMESTAMP</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>execution_date</td>
+<td>TIMESTAMP</td>
+<td>NOT NULL</td>
+</tr>
+</tbody>
+</table>
 <h3 id="load-checks-results-schema">Load Checks Results Schema</h3>
 <ul>
 <li>Primary key: <code>(job_id, check_id, reference_date)</code>;</li>
@@ -1789,63 +1876,83 @@ only one set of results per Data Quality job and given reference date.</p>
 </span><span id="__span-0-45">STORED AS PARQUET
 </span><span id="__span-0-46">LOCATION &#39;${schema_dir}/results_metric_composed&#39;;
 </span><span id="__span-0-47">
-</span><span id="__span-0-48">DROP TABLE IF EXISTS ${schema_name}.results_check_load;
-</span><span id="__span-0-49">CREATE EXTERNAL TABLE ${schema_name}.results_check_load
+</span><span id="__span-0-48">DROP TABLE IF EXISTS ${schema_name}.results_metric_error;
+</span><span id="__span-0-49">CREATE EXTERNAL TABLE ${schema_name}.results_metric_error
 </span><span id="__span-0-50">(
-</span><span id="__span-0-51">    job_id         STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-52">    check_id       STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-53">    check_name     STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-54">    description    STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-55">    metadata       STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-56">    source_id      STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-57">    expected       STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-58">    status         STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-59">    message        STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-60">    reference_date TIMESTAMP COMMENT &#39;&#39;,
-</span><span id="__span-0-61">    execution_date TIMESTAMP COMMENT &#39;&#39;
+</span><span id="__span-0-51">    job_id            STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-52">    metric_id         STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-53">    source_id         STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-54">    source_key_fields STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-55">    metric_columns    STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-56">    status            STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-57">    message           STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-58">    row_data          STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-59">    error_hash        STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-60">    reference_date    TIMESTAMP COMMENT &#39;&#39;,
+</span><span id="__span-0-61">    execution_date    TIMESTAMP COMMENT &#39;&#39;,
 </span><span id="__span-0-62">)
-</span><span id="__span-0-63">COMMENT &#39;Data Quality Load Checks Results&#39;
+</span><span id="__span-0-63">COMMENT &#39;Data Quality Metrics Error Results&#39;
 </span><span id="__span-0-64">PARTITIONED BY (job_id STRING)
 </span><span id="__span-0-65">STORED AS PARQUET
-</span><span id="__span-0-66">LOCATION &#39;${schema_dir}/results_check_load&#39;;
+</span><span id="__span-0-66">LOCATION &#39;${schema_dir}/results_metric_error&#39;;
 </span><span id="__span-0-67">
-</span><span id="__span-0-68">DROP TABLE IF EXISTS ${schema_name}.results_check;
-</span><span id="__span-0-69">CREATE EXTERNAL TABLE ${schema_name}.results_check
+</span><span id="__span-0-68">DROP TABLE IF EXISTS ${schema_name}.results_check_load;
+</span><span id="__span-0-69">CREATE EXTERNAL TABLE ${schema_name}.results_check_load
 </span><span id="__span-0-70">(
-</span><span id="__span-0-71">    job_id             STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-72">    check_id           STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-73">    check_name         STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-74">    description        STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-75">    metadata           STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-76">    source_id          STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-77">    base_metric        STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-78">    compared_metric    STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-79">    compared_threshold DOUBLE COMMENT &#39;&#39;,
-</span><span id="__span-0-80">    lower_bound        DOUBLE COMMENT &#39;&#39;,
-</span><span id="__span-0-81">    upper_bound        DOUBLE COMMENT &#39;&#39;,
-</span><span id="__span-0-82">    status             STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-83">    message            STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-84">    reference_date     TIMESTAMP COMMENT &#39;&#39;,
-</span><span id="__span-0-85">    execution_date     TIMESTAMP COMMENT &#39;&#39;
-</span><span id="__span-0-86">)
-</span><span id="__span-0-87">COMMENT &#39;Data Quality Checks Results&#39;
-</span><span id="__span-0-88">PARTITIONED BY (job_id STRING)
-</span><span id="__span-0-89">STORED AS PARQUET
-</span><span id="__span-0-90">LOCATION &#39;${schema_dir}/results_check&#39;;
-</span><span id="__span-0-91">
-</span><span id="__span-0-92">DROP TABLE IF EXISTS ${schema_name}.job_state;
-</span><span id="__span-0-93">CREATE EXTERNAL TABLE ${schema_name}.job_state
-</span><span id="__span-0-94">(
-</span><span id="__span-0-95">    job_id            STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-96">    config            STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-97">    version_info      STRING COMMENT &#39;&#39;,
-</span><span id="__span-0-98">    reference_date    TIMESTAMP COMMENT &#39;&#39;,
-</span><span id="__span-0-99">    execution_date    TIMESTAMP COMMENT &#39;&#39;
-</span><span id="__span-0-100">)
-</span><span id="__span-0-101">COMMENT &#39;Data Quality Job State&#39;
-</span><span id="__span-0-102">PARTITIONED BY (job_id STRING)
-</span><span id="__span-0-103">STORED AS PARQUET
-</span><span id="__span-0-104">LOCATION &#39;${schema_dir}/job_state&#39;;
+</span><span id="__span-0-71">    job_id         STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-72">    check_id       STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-73">    check_name     STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-74">    description    STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-75">    metadata       STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-76">    source_id      STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-77">    expected       STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-78">    status         STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-79">    message        STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-80">    reference_date TIMESTAMP COMMENT &#39;&#39;,
+</span><span id="__span-0-81">    execution_date TIMESTAMP COMMENT &#39;&#39;
+</span><span id="__span-0-82">)
+</span><span id="__span-0-83">COMMENT &#39;Data Quality Load Checks Results&#39;
+</span><span id="__span-0-84">PARTITIONED BY (job_id STRING)
+</span><span id="__span-0-85">STORED AS PARQUET
+</span><span id="__span-0-86">LOCATION &#39;${schema_dir}/results_check_load&#39;;
+</span><span id="__span-0-87">
+</span><span id="__span-0-88">DROP TABLE IF EXISTS ${schema_name}.results_check;
+</span><span id="__span-0-89">CREATE EXTERNAL TABLE ${schema_name}.results_check
+</span><span id="__span-0-90">(
+</span><span id="__span-0-91">    job_id             STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-92">    check_id           STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-93">    check_name         STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-94">    description        STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-95">    metadata           STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-96">    source_id          STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-97">    base_metric        STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-98">    compared_metric    STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-99">    compared_threshold DOUBLE COMMENT &#39;&#39;,
+</span><span id="__span-0-100">    lower_bound        DOUBLE COMMENT &#39;&#39;,
+</span><span id="__span-0-101">    upper_bound        DOUBLE COMMENT &#39;&#39;,
+</span><span id="__span-0-102">    status             STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-103">    message            STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-104">    reference_date     TIMESTAMP COMMENT &#39;&#39;,
+</span><span id="__span-0-105">    execution_date     TIMESTAMP COMMENT &#39;&#39;
+</span><span id="__span-0-106">)
+</span><span id="__span-0-107">COMMENT &#39;Data Quality Checks Results&#39;
+</span><span id="__span-0-108">PARTITIONED BY (job_id STRING)
+</span><span id="__span-0-109">STORED AS PARQUET
+</span><span id="__span-0-110">LOCATION &#39;${schema_dir}/results_check&#39;;
+</span><span id="__span-0-111">
+</span><span id="__span-0-112">DROP TABLE IF EXISTS ${schema_name}.job_state;
+</span><span id="__span-0-113">CREATE EXTERNAL TABLE ${schema_name}.job_state
+</span><span id="__span-0-114">(
+</span><span id="__span-0-115">    job_id            STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-116">    config            STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-117">    version_info      STRING COMMENT &#39;&#39;,
+</span><span id="__span-0-118">    reference_date    TIMESTAMP COMMENT &#39;&#39;,
+</span><span id="__span-0-119">    execution_date    TIMESTAMP COMMENT &#39;&#39;
+</span><span id="__span-0-120">)
+</span><span id="__span-0-121">COMMENT &#39;Data Quality Job State&#39;
+</span><span id="__span-0-122">PARTITIONED BY (job_id STRING)
+</span><span id="__span-0-123">STORED AS PARQUET
+</span><span id="__span-0-124">LOCATION &#39;${schema_dir}/job_state&#39;;
 </span></code></pre></div>
 
 

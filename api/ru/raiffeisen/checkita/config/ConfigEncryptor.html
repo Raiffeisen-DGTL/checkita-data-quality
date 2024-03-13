@@ -401,6 +401,23 @@ in the Data Quality storage.
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.ConfigEncryptor#decrypt" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="decrypt(value:String):String"></a><a id="decrypt(String):String"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/ConfigEncryptor.html#decrypt(value:String):String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">decrypt</span><span class="params">(<span name="value">value: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Decrypts string value using AES256 algorithm.</p><div class="fullcomment"><div class="comment cmt"><p>Decrypts string value using AES256 algorithm. Uses user-defined secret key for decryption.
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>String value to decrypt</p></dd><dt>returns</dt><dd class="cmt"><p>Either decrypted string or a list of decryption errors.</p></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.ConfigEncryptor#decryptConfig" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="decryptConfig(config:com.typesafe.config.Config):ru.raiffeisen.checkita.utils.ResultUtils.Result[com.typesafe.config.Config]"></a><a id="decryptConfig(Config):Result[Config]"></a>
       <span class="permalink">
@@ -419,6 +436,23 @@ in the Data Quality storage.
       <p class="shortcomment cmt">Decrypts sensitive fields in the provided configuration
 </p><div class="fullcomment"><div class="comment cmt"><p>Decrypts sensitive fields in the provided configuration
 </p></div><dl class="paramcmts block"><dt class="param">config</dt><dd class="cmt"><p>Configuration to encrypt</p></dd><dt>returns</dt><dd class="cmt"><p>New configuration instance with sensitive fields being decrypted.</p></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.ConfigEncryptor#encrypt" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="encrypt(value:String):String"></a><a id="encrypt(String):String"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/ConfigEncryptor.html#encrypt(value:String):String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">encrypt</span><span class="params">(<span name="value">value: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Encrypts string value using AES256 algorithm.</p><div class="fullcomment"><div class="comment cmt"><p>Encrypts string value using AES256 algorithm. Uses user-defined secret key for encryption.
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>String value to encrypt</p></dd><dt>returns</dt><dd class="cmt"><p>Either encrypted string or a list of encryption errors.</p></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.ConfigEncryptor#encryptConfig" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="encryptConfig(config:com.typesafe.config.Config):ru.raiffeisen.checkita.utils.ResultUtils.Result[com.typesafe.config.Config]"></a><a id="encryptConfig(Config):Result[Config]"></a>
       <span class="permalink">
