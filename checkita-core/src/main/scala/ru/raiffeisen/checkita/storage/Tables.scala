@@ -161,15 +161,10 @@ class Tables(val profile: JdbcProfile) {
     def status: Rep[String] = column[String]("status")
     def message: Rep[String] = column[String]("message")
     def rowData: Rep[String] = column[String]("row_data")
+    def errorHash: Rep[String] = column[String]("error_hash")
 
-    def getUniqueCond(r: ResultMetricError): Rep[Boolean] = (
-      jobId === r.jobId &&
-      metricId === r.metricId &&
-      status === r.status &&
-      message === r.message &&
-      rowData === r.rowData &&
-      referenceDate === r.referenceDate
-    )
+    def getUniqueCond(r: ResultMetricError): Rep[Boolean] =
+      jobId === r.jobId && errorHash === r.errorHash && referenceDate === r.referenceDate
 
     def * : ProvenShape[ResultMetricError] = (
       jobId,
@@ -180,6 +175,7 @@ class Tables(val profile: JdbcProfile) {
       status,
       message,
       rowData,
+      errorHash,
       referenceDate,
       executionDate
     ) <> (ResultMetricError.tupled, ResultMetricError.unapply)

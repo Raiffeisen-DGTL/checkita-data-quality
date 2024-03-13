@@ -37,8 +37,10 @@ object SourceReaders {
      * @param df Spark Dataframe
      * @return Source
      */
-    protected def toSource(config: T, df: DataFrame): Source = 
-      Source(config.id.value, df, config.keyFields.map(_.value))
+    protected def toSource(config: T, df: DataFrame)
+                          (implicit settings: AppSettings): Source = {
+      Source.validated(config.id.value, df, config.keyFields.map(_.value))(settings.enableCaseSensitivity)
+    }
 
     /**
      * Tries to read source given the source configuration.
@@ -57,10 +59,10 @@ object SourceReaders {
      */
     def tryToRead(config: T,
                   readMode: ReadMode)(implicit settings: AppSettings,
-                                                spark: SparkSession,
-                                                fs: FileSystem,
-                                                schemas: Map[String, SourceSchema],
-                                                connections: Map[String, DQConnection]): Source
+                                      spark: SparkSession,
+                                      fs: FileSystem,
+                                      schemas: Map[String, SourceSchema],
+                                      connections: Map[String, DQConnection]): Source
 
     /**
      * Safely reads source given source configuration.

@@ -81,6 +81,20 @@ object ResultUtils {
      */
     def toResult(f: L => Vector[String]): Result[R] = mapLeft[Vector[String]](f)
   }
+
+  implicit class OptionOps[T](value: Option[T]) {
+    /**
+     * Converts Option[T] into a Result[T]
+     *
+     * @param preMsg            Additional descriptive message added to error message
+     * @return Result[T] with either result or error log message
+     */
+    def toResult(preMsg: String = ""): Result[T] =
+      value match {
+        case Some(v) => Right(v)
+        case None => Left(Vector(s"$preMsg\nOption value is absent"))
+      }
+  }
   
   /**
    * Implicit conversion for Result[T] with some extra methods

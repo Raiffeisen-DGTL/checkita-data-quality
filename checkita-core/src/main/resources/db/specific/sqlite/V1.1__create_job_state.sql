@@ -4,5 +4,5 @@ CREATE TABLE "job_state"
     "config"            TEXT             NOT NULL,
     "reference_date"    TIMESTAMP        NOT NULL,
     "execution_date"    TIMESTAMP        NOT NULL,
-    UNIQUE ("job_id", "reference_date")
+    UNIQUE ("job_id", "reference_date") ON CONFLICT REPLACE
 );

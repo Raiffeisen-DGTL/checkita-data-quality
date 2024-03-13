@@ -4,6 +4,7 @@ import org.apache.hadoop.fs.FileSystem
 import org.apache.logging.log4j.Level
 import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.{AppSettings, VersionInfo}
+import ru.raiffeisen.checkita.config.ConfigEncryptor
 import ru.raiffeisen.checkita.config.IO.readJobConfig
 import ru.raiffeisen.checkita.config.Parsers._
 import ru.raiffeisen.checkita.config.appconf.AppConfig
@@ -95,7 +96,6 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       s"  - allowSqlQueries:          ${settings.allowSqlQueries}",
       s"  - aggregatedKafkaOutput:    ${settings.aggregatedKafkaOutput}",
       s"  - enableCaseSensitivity:    ${settings.enableCaseSensitivity}",
-      s"  - saveErrorsToStorage:      ${settings.saveErrorsToStorage}",
       s"  - errorDumpSize:            ${settings.errorDumpSize}",
       s"  - outputRepartition:        ${settings.outputRepartition}"   
     )
@@ -103,6 +103,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       case Some(conf) => Seq(
         "* Storage configuration:",
         s"  - Run DB migration:  ${settings.doMigration}",
+        s"  - Save Errors to DB: ${conf.saveErrorsToStorage}",
         s"  - Data base type:    ${conf.dbType.toString}",
         s"  - Connection url:    ${conf.url.value}",
       ) ++ conf.username.map(
@@ -149,13 +150,15 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       s"  - List of all available variables (values are not shown intentionally): $extraVarsList"
     )
 
-    val encryptionKeyFields = settings.encryption.map(e => e.keyFields.mkString("[", ", ", "]"))
     val logEncryption = Seq(
-      "* Encryption configuration:",
-      encryptionKeyFields.map(kf =>
-        s"  - Encrypt configuration keys that contain following substrings: $kf"
-      ).getOrElse("Encryption configuration is not set. The job state will be saved as is.")
-    )
+      "* Encryption configuration:"
+    ) ++ settings.encryption.map { eCfg =>
+      val kf = eCfg.keyFields.mkString("[", ", ", "]")
+      Seq(
+        s"  - Encrypt configuration keys that contain following substrings: $kf",
+        s"  - Encrypt metric errors row data: ${eCfg.encryptErrorData}",
+      )
+    }.getOrElse(Seq("  - Encryption configuration is not set and, therefore, results will not be encrypted."))
     
     (
       logGeneral ++ 

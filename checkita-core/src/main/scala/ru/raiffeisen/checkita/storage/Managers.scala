@@ -22,6 +22,10 @@ import scala.util.Try
 object Managers {
   
   sealed abstract class DqStorageManager {
+    protected val ds: DqStorageConnection
+    val tables: Tables
+    def saveErrors: Boolean = ds.config.saveErrorsToStorage
+
     protected def getTimeWindow(startDT: EnrichedDT,
                                 windowSize: String,
                                 windowOffset: Option[String]): (Timestamp, Timestamp) = {
@@ -31,13 +35,11 @@ object Managers {
       val fromDT = startDT.getUtcTsWithOffset(window + offset)
       (fromDT, untilDT)
     }
-    
-    protected def filterByOffset[R <: MetricResult](records: Seq[R], offset: Int): Seq[R] = 
+
+    protected def filterByOffset[R <: MetricResult](records: Seq[R], offset: Int): Seq[R] =
       records.sortBy(r => (-r.referenceDate.getTime, r.metricName))
         .zipWithIndex.filter(t => t._2 >= offset).map(_._1)
 
-    val tables: Tables
-    
     def saveResults[R <: DQEntity : TypeTag](results: Seq[R])(implicit ops: tables.DQTableOps[R]): String
 
     def loadMetricResults[R <: MetricResult : TypeTag](jobId: String,
@@ -145,7 +147,7 @@ object Managers {
     }
   }
   
-  class DqJdbcStorageManager(ds: DqStorageJdbcConnection) extends DqStorageManager with SlickProfile {
+  class DqJdbcStorageManager(val ds: DqStorageJdbcConnection) extends DqStorageManager with SlickProfile {
 
     val batchSize: Int = 100
     val dbType: DQStorageType = ds.getType
@@ -251,7 +253,7 @@ object Managers {
     def getConnection: DqStorageConnection = ds
   }
   
-  class DqHiveStorageManager(ds: DqStorageHiveConnection,
+  class DqHiveStorageManager(val ds: DqStorageHiveConnection,
                              spark: SparkSession) extends DqStorageManager with SlickProfile with SparkBasedManager {
 
     private val hiveSchema = ds.getSchema
@@ -302,7 +304,7 @@ object Managers {
     def getConnection: DqStorageConnection = ds
   }
 
-  class DqFileStorageManager(ds: DqStorageFileConnection,
+  class DqFileStorageManager(val ds: DqStorageFileConnection,
                              spark: SparkSession,
                              fs: FileSystem) extends DqStorageManager with SlickProfile with SparkBasedManager {
 

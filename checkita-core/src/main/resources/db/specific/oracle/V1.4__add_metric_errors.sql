@@ -1,4 +1,3 @@
-/* no unique constraint for metric error table */
 CREATE TABLE "${defaultSchema}"."results_metric_error"
 (
     "job_id"            VARCHAR(512)   NOT NULL,
@@ -9,6 +8,8 @@ CREATE TABLE "${defaultSchema}"."results_metric_error"
     "status"            VARCHAR(512)   NOT NULL,
     "message"           CLOB           NOT NULL,
     "row_data"          CLOB           NOT NULL,
+    "error_hash"        VARCHAR(512)   NOT NULL,
     "reference_date"    TIMESTAMP      NOT NULL,
-    "execution_date"    TIMESTAMP      NOT NULL
+    "execution_date"    TIMESTAMP      NOT NULL,
+    UNIQUE ("job_id", "error_hash", "reference_date")
 );

@@ -11,7 +11,7 @@ import javax.sql.DataSource
 object Connections {
 
   sealed abstract class DqStorageConnection {
-    protected val config: StorageConfig
+    val config: StorageConfig
     def getType: DQStorageType = config.dbType
   }
   

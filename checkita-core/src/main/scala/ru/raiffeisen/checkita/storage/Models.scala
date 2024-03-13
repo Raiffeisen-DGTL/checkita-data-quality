@@ -1,11 +1,10 @@
 package ru.raiffeisen.checkita.storage
 
-import ru.raiffeisen.checkita.appsettings.{AppSettings, VersionInfo}
+import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.utils.Common.camelToSnakeCase
 import shapeless.{::, HList, HNil}
 
-import java.security.MessageDigest
 import java.sql.Timestamp
 
 // store arrays as string: '[val1, val2, val3]'
@@ -135,20 +134,12 @@ object Models {
                                      status: String,
                                      message: String,
                                      rowData: String,
+                                     errorHash: String,
                                      referenceDate: Timestamp,
                                      executionDate: Timestamp) extends DQEntity {
-    override val uniqueFields: HList = jobId :: metricId :: status :: message :: rowData :: referenceDate :: HNil
-    override val uniqueFieldNames: Seq[String] =
-      Seq("jobId", "metricId", "referenceDate", "status", "message", "rowData").map(camelToSnakeCase)
+    override val uniqueFields: HList = jobId :: errorHash :: referenceDate :: HNil
+    override val uniqueFieldNames: Seq[String] = Seq("jobId", "errorHash", "referenceDate").map(camelToSnakeCase)
     val entityType: String = "metricError"
-
-    /**
-     * Use this key to deduplicate sequence of metric errors
-     */
-    def groupingKey: String = {
-      val uniqueFieldsStr = jobId + metricId + status + message + rowData + referenceDate.toString
-      MessageDigest.getInstance("MD5").digest(uniqueFieldsStr.getBytes).map("%02x".format(_)).mkString
-    }
   }
 
   final case class ResultSummaryMetrics(

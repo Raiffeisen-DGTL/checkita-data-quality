@@ -7,6 +7,7 @@ import ru.raiffeisen.checkita.core.metrics.ErrorCollection.MetricErrors
 import ru.raiffeisen.checkita.storage.Models._
 import ru.raiffeisen.checkita.utils.Common.jsonFormats
 
+import java.security.MessageDigest
 import scala.collection.immutable
 
 object Results {
@@ -127,18 +128,29 @@ object Results {
     def finalizeMetricErrors(implicit jobId: String,
                              settings: AppSettings): Seq[ResultMetricError] =
       errors.toSeq.flatMap{ err => 
-        err.errors.map(e => ResultMetricError(
-          jobId,
-          metricId,
-          write(sourceIds),
-          write(sourceKeyFields),
-          write(columns),
-          e.status.toString,
-          e.message,
-          write(err.columns.zip(e.rowData).toMap),
-          settings.referenceDateTime.getUtcTS,
-          settings.executionDateTime.getUtcTS
-        ))
+        err.errors.map { e =>
+
+          val status = e.status.toString
+          val message = e.message
+          val rowData = write(err.columns.zip(e.rowData).toMap)
+          val errorHash = MessageDigest.getInstance("MD5").digest(
+            (metricId + status + message + rowData).getBytes
+          ).map("%02x".format(_)).mkString
+
+          ResultMetricError(
+            jobId,
+            metricId,
+            write(sourceIds),
+            write(sourceKeyFields),
+            write(columns),
+            status,
+            message,
+            rowData,
+            errorHash,
+            settings.referenceDateTime.getUtcTS,
+            settings.executionDateTime.getUtcTS
+          )
+        }
       }
   }
 

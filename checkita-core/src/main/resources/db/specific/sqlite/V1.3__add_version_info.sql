@@ -6,7 +6,7 @@ CREATE TABLE "job_state"
     "version_info"      TEXT             NOT NULL,
     "reference_date"    TIMESTAMP        NOT NULL,
     "execution_date"    TIMESTAMP        NOT NULL,
-    UNIQUE ("job_id", "reference_date")
+    UNIQUE ("job_id", "reference_date") ON CONFLICT REPLACE
 );
 INSERT INTO "job_state" (
     "job_id",

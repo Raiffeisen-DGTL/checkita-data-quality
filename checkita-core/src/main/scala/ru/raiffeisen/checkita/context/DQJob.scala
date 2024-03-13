@@ -309,10 +309,35 @@ trait DQJob extends Logging {
       log.info(s"$stage Finalize metric errors...")
       metResults.toSeq.flatMap(_._2)
         .flatMap(r => r.finalizeMetricErrors)
-        .groupBy(_.groupingKey).values.map(_.head).toSeq
+        .groupBy(_.errorHash).values.map(_.head).toSeq
       // todo: is deduplication a performance issue for large amount of errors?
       // remove records that violate unique constraint - only one record per unique key.
     }
+
+  /**
+   * Encrypts rowData field in metric errors if requested per application configuration.
+   * Row data field in metric errors contains excerpt from data source and, therefore, these
+   * data can contain some sensitive information. In order to protect it, users can configure
+   * encryption chapter in application configuration and store encrypted rowData in DQ storage.
+   * @param errors Sequence of metric errors to encrypt
+   * @param settings Implicit application settings object
+   * @return Sequence of metric errors with encrypted rowData field (if requested per configuration) or
+   *         a list of encryption errors.
+   *
+   * @note When metric errors are send via targets rowData field is never encrypted.
+   */
+  protected def encryptMetricErrors(errors: Seq[ResultMetricError])
+                                   (implicit settings: AppSettings): Result[Seq[ResultMetricError]] =
+    if (settings.encryption.exists(_.encryptErrorData) && errors.nonEmpty) {
+      settings.encryption.toResult("Unable to retrieve encryption configuration:")
+        .map(enCfg => new ConfigEncryptor(enCfg.secret, enCfg.keyFields))
+        .flatMap { e =>
+          Try { errors.map { err =>
+            val encryptedRowData = e.encrypt(err.rowData)
+            err.copy(rowData = encryptedRowData)
+          }}.toResult(preMsg = "Unable to encrypt metric errors' rowData fields due to following error:")
+        }
+    } else liftToResult(errors)
 
   /**
    * Finalizes job state: select whether to encrypt or not and converts to the final representation
@@ -396,7 +421,7 @@ trait DQJob extends Logging {
             )
 
           log.info(s"$stage Saving results...")
-          if (!settings.saveErrorsToStorage) log.info(
+          if (!mgr.saveErrors) log.info(
             s"$stage Metric errors will not be saved to storage database as per application configuration. " +
               "Set parameter `saveErrorsToStorage` to `true` in order to save metric errors to storage database."
           )
@@ -407,7 +432,8 @@ trait DQJob extends Logging {
             saveWithLogs(results.loadChecks, "load checks"),
             saveWithLogs(results.checks, "checks"),
             saveWithLogs(Seq(results.jobConfig), "job state"),
-            if (settings.saveErrorsToStorage) saveWithLogs(results.metricErrors, "metric errors")
+            if (mgr.saveErrors)
+              encryptMetricErrors(results.metricErrors).flatMap(errs => saveWithLogs(errs, "metric errors"))
             else liftToResult("Metric errors are not saved in storage")
           ).reduce((r1, r2) => r1.combine(r2)((_, _) => "Success"))
             .mapLeft(_.map(e => s"$stage $e")) // update error messages with running stage
