@@ -1,3 +1,10 @@
+## [1.4.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.3.2...v1.4.0) (2024-03-13)
+
+
+### Features
+
+* new db table to store metric errors ([#31](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/31)) ([37db1ed](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/37db1edc940d870815dda2ba86d3d2b277ba0650))
+
 ## [1.3.2](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.3.1...v1.3.2) (2024-03-11)
 
 
