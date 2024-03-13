@@ -101,6 +101,33 @@ only one set of results per Data Quality job and given reference date.
 | reference_date    | TIMESTAMP   | NOT NULL   |
 | execution_date    | TIMESTAMP   | NOT NULL   |
 
+
+### Metric Error Results Schema
+
+* Primary key: `(job_id, error_hash, reference_date)`;
+* `source_id` is a JSON string;
+* `source_key_fields` is a JSON string;
+* `metric_columns` is a JSON string;
+* `row_data` is a JSON string.
+* `errorHash` is a MD5 hash string computed from values of columns `metric_id`, `status`, `message` and `row_data`
+
+> **NOTE** Error hash is computed with use of raw value of `row_data` field even if it is encrypted later.
+
+| Column Name       | Column Type | Constraint |
+|-------------------|-------------|------------|
+| job_id            | TEXT        | NOT NULL   |
+| metric_id         | TEXT        | NOT NULL   |
+| source_id         | TEXT        |            |
+| source_key_fields | TEXT        |            |
+| metric_columns    | TEXT        |            |
+| status            | TEXT        | NOT NULL   |
+| message           | TEXT        | NOT NULL   |
+| row_data          | TEXT        | NOT NULL   |
+| error_hash        | TEXT        | NOT NULL   |
+| reference_date    | TIMESTAMP   | NOT NULL   |
+| execution_date    | TIMESTAMP   | NOT NULL   |
+
+
 ### Load Checks Results Schema
 
 * Primary key: `(job_id, check_id, reference_date)`;
@@ -208,6 +235,26 @@ COMMENT 'Data Quality Composed Metrics Results'
 PARTITIONED BY (job_id STRING)
 STORED AS PARQUET
 LOCATION '${schema_dir}/results_metric_composed';
+
+DROP TABLE IF EXISTS ${schema_name}.results_metric_error;
+CREATE EXTERNAL TABLE ${schema_name}.results_metric_error
+(
+    job_id            STRING COMMENT '',
+    metric_id         STRING COMMENT '',
+    source_id         STRING COMMENT '',
+    source_key_fields STRING COMMENT '',
+    metric_columns    STRING COMMENT '',
+    status            STRING COMMENT '',
+    message           STRING COMMENT '',
+    row_data          STRING COMMENT '',
+    error_hash        STRING COMMENT '',
+    reference_date    TIMESTAMP COMMENT '',
+    execution_date    TIMESTAMP COMMENT '',
+)
+COMMENT 'Data Quality Metrics Error Results'
+PARTITIONED BY (job_id STRING)
+STORED AS PARQUET
+LOCATION '${schema_dir}/results_metric_error';
 
 DROP TABLE IF EXISTS ${schema_name}.results_check_load;
 CREATE EXTERNAL TABLE ${schema_name}.results_check_load

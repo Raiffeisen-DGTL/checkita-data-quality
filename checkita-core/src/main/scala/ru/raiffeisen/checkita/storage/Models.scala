@@ -1,6 +1,6 @@
 package ru.raiffeisen.checkita.storage
 
-import ru.raiffeisen.checkita.appsettings.{AppSettings, VersionInfo}
+import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.utils.Common.camelToSnakeCase
 import shapeless.{::, HList, HNil}
@@ -125,21 +125,20 @@ object Models {
     val uniqueFieldNames: Seq[String] = Seq("jobId", "referenceDate").map(camelToSnakeCase)
     override val entityType: String = "jobState"
   }
-  
-  
-  // !!! won't be stored in Storage DB. !!!
-  final case class ResultMetricErrors(jobId: String,
-                                      metricId: String,
-                                      sourceIds: Seq[String],
-                                      sourceKeyFields: Seq[String],
-                                      metricColumns: Seq[String],
-                                      status: String,
-                                      message: String,
-                                      rowData: Map[String, String],
-                                      referenceDate: Timestamp,
-                                      executionDate: Timestamp) extends DQEntity {
-    override val uniqueFields: HList = jobId :: metricId :: referenceDate :: HNil
-    override val uniqueFieldNames: Seq[String] = Seq("jobId", "metricId", "referenceDate").map(camelToSnakeCase)
+
+  final case class ResultMetricError(jobId: String,
+                                     metricId: String,
+                                     sourceId: String,
+                                     sourceKeyFields: String,
+                                     metricColumns: String,
+                                     status: String,
+                                     message: String,
+                                     rowData: String,
+                                     errorHash: String,
+                                     referenceDate: Timestamp,
+                                     executionDate: Timestamp) extends DQEntity {
+    override val uniqueFields: HList = jobId :: errorHash :: referenceDate :: HNil
+    override val uniqueFieldNames: Seq[String] = Seq("jobId", "errorHash", "referenceDate").map(camelToSnakeCase)
     val entityType: String = "metricError"
   }
 
@@ -177,7 +176,7 @@ object Models {
                               composedMetrics: Seq[ResultMetricComposed],
                               checks: Seq[ResultCheck],
                               loadChecks: Seq[ResultCheckLoad],
-                              metricErrors: Seq[ResultMetricErrors],
+                              metricErrors: Seq[ResultMetricError],
                               jobConfig: JobState,
                               summaryMetrics: ResultSummaryMetrics
                             )
@@ -201,7 +200,7 @@ object Models {
               checks: Seq[ResultCheck],
               loadChecks: Seq[ResultCheckLoad],
               jobConfig: JobState,
-              metricErrors: Seq[ResultMetricErrors]
+              metricErrors: Seq[ResultMetricError]
              )(implicit jobId: String, settings: AppSettings): ResultSet = {
       val failedChecks = checks.filter(_.status != CalculatorStatus.Success.toString).map(_.checkId)
       val failedLoadChecks = loadChecks.filter(_.status != CalculatorStatus.Success.toString).map(_.checkId)

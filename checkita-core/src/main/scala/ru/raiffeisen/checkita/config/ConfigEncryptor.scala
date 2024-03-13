@@ -33,6 +33,9 @@ class ConfigEncryptor(secret: EncryptionKey, keyFields: Seq[String] = Seq("passw
   private val ivLength = 16
   private val saltTail = "Checkita"
 
+  private val aesSecretKey = getSecretKeySpec(secret)
+  private val initialIv = generateIV
+
   /**
    * Function that checks whether field value should be encrypted based on field name
    */
@@ -82,40 +85,34 @@ class ConfigEncryptor(secret: EncryptionKey, keyFields: Seq[String] = Seq("passw
    * Encrypts string value using AES256 algorithm. Uses user-defined secret key for encryption.
    *
    * @param value String value to encrypt
-   * @param key   User-defined secret key
    * @return Either encrypted string or a list of encryption errors.
    */
-  private def encrypt(value: String, key: EncryptionKey): String = {
-    val aesKey = getSecretKeySpec(key)
-    val (iv, ivSpec) = generateIV
-
+  def encrypt(value: String): String = {
     val c = Cipher.getInstance(cipher)
-    c.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec)
+    c.init(Cipher.ENCRYPT_MODE, aesSecretKey, initialIv._2)
     val cipherBytes = c.doFinal(value.getBytes(StandardCharsets.UTF_8))
     val encrypted = new Array[Byte](ivLength + cipherBytes.length)
 
     // Prepend IV to cipher output:
-    Array.copy(iv, 0, encrypted, 0, ivLength)
+    Array.copy(initialIv._1, 0, encrypted, 0, ivLength)
     Array.copy(cipherBytes, 0, encrypted, ivLength, cipherBytes.length)
 
     // return base64-encoded string from encrypted byte array:
     Base64.getEncoder.encodeToString(encrypted)
-  } // .toResult(preMsg = s"Unable encrypt string due to following error:")
+  }
 
   /**
    * Decrypts string value using AES256 algorithm. Uses user-defined secret key for decryption.
    *
    * @param value String value to decrypt
-   * @param key   User-defined secret key
    * @return Either decrypted string or a list of decryption errors.
    */
-  private def decrypt(value: String, key: EncryptionKey): String = {
+  def decrypt(value: String): String = {
     val encrypted = Base64.getDecoder.decode(value)
-    val aesKey = getSecretKeySpec(key)
     val (_, ivSpec) = extractIV(encrypted)
 
     val c = Cipher.getInstance(cipher)
-    c.init(Cipher.DECRYPT_MODE, aesKey, ivSpec)
+    c.init(Cipher.DECRYPT_MODE, aesSecretKey, ivSpec)
 
     // extract only portion of array related to encrypted string (without IV bytes)
     val cipherBytes = new Array[Byte](encrypted.length - ivLength)
@@ -123,7 +120,7 @@ class ConfigEncryptor(secret: EncryptionKey, keyFields: Seq[String] = Seq("passw
 
     // return decrypted data as a string:
     new String(c.doFinal(cipherBytes), StandardCharsets.UTF_8)
-  } // .toResult(preMsg = "Unable to decrypt string due to following error:")
+  }
 
   /**
    * Recursive function used to traverse Typesafe configuration and substitute values if necessary.
@@ -169,7 +166,7 @@ class ConfigEncryptor(secret: EncryptionKey, keyFields: Seq[String] = Seq("passw
    * @return New configuration instance with sensitive fields being encrypted.
    */
   def encryptConfig(config: Config): Result[Config] = Try(
-    substituteConfigValues(shouldEncrypt, (value: String) => encrypt(value, secret))(config)
+    substituteConfigValues(shouldEncrypt, encrypt)(config)
   ).toResult(preMsg = s"Unable encrypt configuration due to following error:")
 
   /**
@@ -179,7 +176,7 @@ class ConfigEncryptor(secret: EncryptionKey, keyFields: Seq[String] = Seq("passw
    * @return New configuration instance with sensitive fields being decrypted.
    */
   def decryptConfig(config: Config): Result[Config] = Try(
-    substituteConfigValues(shouldEncrypt, (value: String) => decrypt(value, secret))(config)
+    substituteConfigValues(shouldEncrypt, decrypt)(config)
   ).toResult(preMsg = s"Unable decrypt configuration due to following error:")
 }
 

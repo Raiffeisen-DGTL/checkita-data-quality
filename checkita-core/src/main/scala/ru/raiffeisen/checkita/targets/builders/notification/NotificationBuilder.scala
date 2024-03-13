@@ -4,7 +4,7 @@ import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.Enums.TemplateFormat
 import ru.raiffeisen.checkita.connections.BinaryAttachment
 import ru.raiffeisen.checkita.core.CalculatorStatus
-import ru.raiffeisen.checkita.storage.Models.{CheckResult, ResultMetricErrors, ResultSummaryMetrics}
+import ru.raiffeisen.checkita.storage.Models.{CheckResult, ResultMetricError, ResultSummaryMetrics}
 import ru.raiffeisen.checkita.storage.Serialization._
 import ru.raiffeisen.checkita.targets.builders.BuildHelpers
 import ru.raiffeisen.checkita.utils.Templating.renderTemplate
@@ -31,7 +31,7 @@ trait NotificationBuilder extends BuildHelpers {
       renderTemplate(finalTemplate, summaryMetrics.getFieldsMap)
     }
 
-  protected def buildErrorsAttachment(errors: Seq[ResultMetricErrors],
+  protected def buildErrorsAttachment(errors: Seq[ResultMetricError],
                                       requested: Seq[String],
                                       dumpSize: Int)(implicit settings: AppSettings): Option[BinaryAttachment] = {
     filterErrors(errors, requested, dumpSize) match {

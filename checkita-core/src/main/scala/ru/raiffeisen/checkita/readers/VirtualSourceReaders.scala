@@ -61,7 +61,9 @@ object VirtualSourceReaders {
         val df = getDataFrame(config, readMode)
         // persist if necessary:
         if (config.persist.nonEmpty) df.persist(config.persist.get)
-        Source(config.id.value, df, config.keyFields.map(_.value), config.parents)
+        Source.validated(
+          config.id.value, df, config.keyFields.map(_.value), config.parents
+        )(settings.enableCaseSensitivity)
       }.toResult(
         preMsg = s"Unable to read virtual source '${config.id.value}' due to following error: "
       )

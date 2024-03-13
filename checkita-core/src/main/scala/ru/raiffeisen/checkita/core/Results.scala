@@ -7,6 +7,7 @@ import ru.raiffeisen.checkita.core.metrics.ErrorCollection.MetricErrors
 import ru.raiffeisen.checkita.storage.Models._
 import ru.raiffeisen.checkita.utils.Common.jsonFormats
 
+import java.security.MessageDigest
 import scala.collection.immutable
 
 object Results {
@@ -116,36 +117,56 @@ object Results {
         settings.executionDateTime.getUtcTS
       )
 
+    /**
+     * Retrieves sequence of finalized metric errors from metric calculator result
+     * that is suitable for storing into results storage and sending via targets.
+     *
+     * @param jobId    Implicit Job ID
+     * @param settings Implicit application settings object
+     * @return Sequence of finalized metric errors
+     */
     def finalizeMetricErrors(implicit jobId: String,
-                             settings: AppSettings): Seq[ResultMetricErrors] = 
+                             settings: AppSettings): Seq[ResultMetricError] =
       errors.toSeq.flatMap{ err => 
-        err.errors.map(e => ResultMetricErrors(
-          jobId,
-          metricId,
-          sourceIds,
-          sourceKeyFields,
-          columns,
-          e.status.toString,
-          e.message,
-          err.columns.zip(e.rowData).toMap,
-          settings.referenceDateTime.getUtcTS,
-          settings.executionDateTime.getUtcTS
-        ))
+        err.errors.map { e =>
+
+          val status = e.status.toString
+          val message = e.message
+          val rowData = write(err.columns.zip(e.rowData).toMap)
+          val errorHash = MessageDigest.getInstance("MD5").digest(
+            (metricId + status + message + rowData).getBytes
+          ).map("%02x".format(_)).mkString
+
+          ResultMetricError(
+            jobId,
+            metricId,
+            write(sourceIds),
+            write(sourceKeyFields),
+            write(columns),
+            status,
+            message,
+            rowData,
+            errorHash,
+            settings.referenceDateTime.getUtcTS,
+            settings.executionDateTime.getUtcTS
+          )
+        }
       }
   }
 
   /**
    * Check calculator result.
-   * @param checkId Check ID
-   * @param checkName Check calculator name
-   * @param baseMetric Base metric used to build check
-   * @param comparedMetric Metric to compare with
+   *
+   * @param checkId           Check ID
+   * @param checkName         Check calculator name
+   * @param baseMetric        Base metric used to build check
+   * @param comparedMetric    Metric to compare with
    * @param comparedThreshold Threshold to compare with
-   * @param lowerBound Allowed lower bound for base metric value
-   * @param upperBound Allowed upper bound for base metric value
-   * @param status Check status
-   * @param message Check message
-   * @param resultType Type of result
+   * @param lowerBound        Allowed lower bound for base metric value
+   * @param upperBound        Allowed upper bound for base metric value
+   * @param status            Check status
+   * @param message           Check message
+   * @param resultType        Type of result
    */
   final case class CheckCalculatorResult(
                                           checkId: String,
@@ -194,12 +215,13 @@ object Results {
 
   /**
    * Load check calculator result
-   * @param checkId Check ID
-   * @param checkName Load check calculator name
-   * @param sourceId Source ID
-   * @param expected Expected value
-   * @param status Check status
-   * @param message Check message
+   *
+   * @param checkId    Check ID
+   * @param checkName  Load check calculator name
+   * @param sourceId   Source ID
+   * @param expected   Expected value
+   * @param status     Check status
+   * @param message    Check message
    * @param resultType Type of result
    */
   final case class LoadCheckCalculatorResult(

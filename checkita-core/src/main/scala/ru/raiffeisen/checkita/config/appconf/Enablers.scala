@@ -6,14 +6,14 @@ import eu.timepit.refined.auto._
 /**
  * Application-level configuration for switchers (enablers)
  *
- * @param allowSqlQueries Enables arbitrary SQL queries in virtual sources
- * @param allowNotifications Enables notifications to be sent from DQ application
+ * @param allowSqlQueries       Enables arbitrary SQL queries in virtual sources
+ * @param allowNotifications    Enables notifications to be sent from DQ application
  * @param aggregatedKafkaOutput Enables sending aggregates messages for Kafka Targets
  *                              (one per each target type, except checkAlerts where
  *                              one message per checkAlert will be sent)
  * @param enableCaseSensitivity Enable columns case sensitivity
- * @param errorDumpSize Maximum number of errors to be collected per single metric per partition.
- * @param outputRepartition Sets the number of partitions when writing outputs. By default writes single file.
+ * @param errorDumpSize         Maximum number of errors to be collected per single metric per partition.
+ * @param outputRepartition     Sets the number of partitions when writing outputs. By default writes single file.
  */
 final case class Enablers(
                            allowSqlQueries: Boolean = false,

@@ -37,8 +37,10 @@ object SourceReaders {
      * @param df Spark Dataframe
      * @return Source
      */
-    protected def toSource(config: T, df: DataFrame): Source = 
-      Source(config.id.value, df, config.keyFields.map(_.value))
+    protected def toSource(config: T, df: DataFrame)
+                          (implicit settings: AppSettings): Source = {
+      Source.validated(config.id.value, df, config.keyFields.map(_.value))(settings.enableCaseSensitivity)
+    }
 
     /**
      * Tries to read source given the source configuration.
@@ -57,10 +59,10 @@ object SourceReaders {
      */
     def tryToRead(config: T,
                   readMode: ReadMode)(implicit settings: AppSettings,
-                                                spark: SparkSession,
-                                                fs: FileSystem,
-                                                schemas: Map[String, SourceSchema],
-                                                connections: Map[String, DQConnection]): Source
+                                      spark: SparkSession,
+                                      fs: FileSystem,
+                                      schemas: Map[String, SourceSchema],
+                                      connections: Map[String, DQConnection]): Source
 
     /**
      * Safely reads source given source configuration.
@@ -131,7 +133,7 @@ object SourceReaders {
         case ReadMode.Batch =>
           val batchReader = spark.read.format(format.toLowerCase)
           if (format.toLowerCase == "avro")
-            schema.map(sch => batchReader.option("avroSchema", sch.toAvroSchema.toString))
+            schema.map(sch => batchReader.option("avroSchema", sch.toAvroSchema))
               .getOrElse(batchReader).load(path)
           else schema.map(sch => batchReader.schema(sch.schema)).getOrElse(batchReader).load(path)
         case ReadMode.Stream =>
@@ -293,7 +295,7 @@ object SourceReaders {
         preDf.filter(
           config.partitions.map { p =>
             if (p.expr.nonEmpty) p.expr.get
-            else col(p.name.value).isin(p.values.map(_.value))
+            else col(p.name.value).isin(p.values.map(_.value): _*)
           }.reduce(_ && _)
         )
       } else preDf

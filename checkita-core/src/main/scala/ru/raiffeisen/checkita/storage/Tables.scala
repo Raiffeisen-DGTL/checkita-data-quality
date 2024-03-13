@@ -12,7 +12,12 @@ class Tables(val profile: JdbcProfile) {
   
   sealed abstract class DQTable[R <: DQEntity](tag: Tag, schema: Option[String], table: String)
       extends Table[R](tag, schema, table) {
-    def jobId: Rep[String] = column[String]("job_id") // mandatory for all entities.
+
+    // columns that are mandatory for all entities:
+    def jobId: Rep[String] = column[String]("job_id")
+    def referenceDate: Rep[Timestamp] = column[Timestamp]("reference_date")
+    def executionDate: Rep[Timestamp] = column[Timestamp]("execution_date")
+
     def getUniqueCond(r: R): Rep[Boolean]
   }
 
@@ -37,8 +42,6 @@ class Tables(val profile: JdbcProfile) {
     def sourceId: Rep[String] = column[String]("source_id")
     def result: Rep[Double] = column[Double]("result")
     def additionalResult: Rep[Option[String]] = column[Option[String]]("additional_result")
-    def referenceDate: Rep[Timestamp] = column[Timestamp]("reference_date")
-    def executionDate: Rep[Timestamp] = column[Timestamp]("execution_date")
 
     def getUniqueCond(r: R): Rep[Boolean] =
       jobId === r.jobId && metricId === r.metricId && referenceDate === r.referenceDate
@@ -52,8 +55,6 @@ class Tables(val profile: JdbcProfile) {
     def sourceId: Rep[String] = column[String]("source_id")
     def status: Rep[String] = column[String]("status")
     def message: Rep[Option[String]] = column[Option[String]]("message")
-    def referenceDate: Rep[Timestamp] = column[Timestamp]("reference_date")
-    def executionDate: Rep[Timestamp] = column[Timestamp]("execution_date")
 
     def getUniqueCond(r: R): Rep[Boolean] =
       jobId === r.jobId && checkId === r.checkId && referenceDate === r.referenceDate
@@ -149,13 +150,42 @@ class Tables(val profile: JdbcProfile) {
     ) <> (ResultCheckLoad.tupled, ResultCheckLoad.unapply)
   }
 
+  class ResultMetricErrorTable(tag: Tag, schema: Option[String])
+    extends DQTable[ResultMetricError](tag, schema, "results_metric_error") {
+
+
+    def metricId: Rep[String] = column[String]("metric_id")
+    def sourceId: Rep[String] = column[String]("source_id")
+    def sourceKeyFields: Rep[String] = column[String]("source_key_fields")
+    def metricColumns: Rep[String] = column[String]("metric_columns")
+    def status: Rep[String] = column[String]("status")
+    def message: Rep[String] = column[String]("message")
+    def rowData: Rep[String] = column[String]("row_data")
+    def errorHash: Rep[String] = column[String]("error_hash")
+
+    def getUniqueCond(r: ResultMetricError): Rep[Boolean] =
+      jobId === r.jobId && errorHash === r.errorHash && referenceDate === r.referenceDate
+
+    def * : ProvenShape[ResultMetricError] = (
+      jobId,
+      metricId,
+      sourceId,
+      sourceKeyFields,
+      metricColumns,
+      status,
+      message,
+      rowData,
+      errorHash,
+      referenceDate,
+      executionDate
+    ) <> (ResultMetricError.tupled, ResultMetricError.unapply)
+  }
+
   class JobStateTable(tag: Tag, schema: Option[String])
     extends DQTable[JobState](tag, schema, "job_state") {
 
     def config: Rep[String] = column[String]("config")
     def versionInfo: Rep[String] = column[String]("version_info")
-    def referenceDate: Rep[Timestamp] = column[Timestamp]("reference_date")
-    def executionDate: Rep[Timestamp] = column[Timestamp]("execution_date")
 
     def getUniqueCond(r: JobState): Rep[Boolean] =
       jobId === r.jobId && referenceDate === r.referenceDate
@@ -192,6 +222,13 @@ class Tables(val profile: JdbcProfile) {
       type T = ResultCheckLoadTable
       def getTableQuery(schema: Option[String]): TableQuery[ResultCheckLoadTable] =
         TableQuery[ResultCheckLoadTable]((t: Tag) => new ResultCheckLoadTable(t, schema))
+    }
+
+    implicit object ResultMetricErrorTableOps extends DQTableOps[ResultMetricError] {
+      type T = ResultMetricErrorTable
+
+      def getTableQuery(schema: Option[String]): TableQuery[ResultMetricErrorTable] =
+        TableQuery[ResultMetricErrorTable]((t: Tag) => new ResultMetricErrorTable(t, schema))
     }
 
     implicit object JobStateTableOps extends DQTableOps[JobState] {

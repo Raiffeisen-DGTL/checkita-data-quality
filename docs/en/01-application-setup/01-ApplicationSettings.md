@@ -82,11 +82,19 @@ Thus, connection to storage is configured using following parameters:
 * `username` - Username to connect to database with (if required). *Optional*.
 * `password` - Password to connect to database with (if required). *Optional*.
 * `schema` - Schema where data quality tables are located (if required). *Optional*.
+* `saveErrorsToStorage` - Enables metric errors to be stored in storage database. *Optional, default is `false`*.
 
 > **IMPORTANT** If `storage` section is missing then application will run without usage of results storage:
 > 
 > * results won't be saved (only targets can be sent);
 > * trend checks (used for anomaly detection in data) won't be performed as they require historical data.
+> 
+> In addition, be mindful when storing metric errors to storage database. Depending on `errorDumpSize` settings, 
+> the number of collected errors could be quite large. This will load to overloading DQ storage as well as increase
+> database write operations execution time. Another concern is related to the fact that metric errors contain 
+> data excerpts from sources being checked. These excerpts might contain some sensitive information that is rather 
+> not to be stored in DQ storage database. Alternatively, these excerpts can be encrypted before storing. 
+> See [Encryption](#encryption) configuration for more details.
 
 ## Email Configuration
 
@@ -131,9 +139,16 @@ information in job config. This should be done by defining the parameters within
 *Required*. 
 * `keyFields` - List of key fields used to identify fields that requires encryption/decryption. 
 *Optional, default is `[password, secret]`*.
+* `encryptErrorData` - Boolean flag indicating whether it is necessary tp encrypt data excerpts within collected 
+  metric errors. *Optional, default is `false`*
 
-If `encryption` section is missing then job config will be saved in database as is.
+If `encryption` section is missing then any sensitive information will not be encrypted.
 
+> **IMPORTANT** Both keys of job configuration and data excerpts that metric errors contain might 
+> contain some sensitive information. Storing raw sensitive information  in DQ storage database 
+> might not satisfy security requirements. Therefore, DQ framework offers functionality to encrypt 
+> sensitive data with AES256 encryption algorithm. As AES25 is a symmetric algorithm then encrypted 
+> data can be decrypted with use secret key if needed.
 
 ## Example of Application Configuration File
 
@@ -171,6 +186,7 @@ appConfig: {
     username: "postgres"
     password: "postgres"
     schema: "dqdb"
+    saveErrorsToStorage: true
   }
 
   email: {
@@ -191,6 +207,7 @@ appConfig: {
   encryption: {
     secret: "secretmustbeatleastthirtytwocharacters"
     keyFields: ["password", "username", "url"]
+    encryptErrorData: true
   }
 }
 ```
