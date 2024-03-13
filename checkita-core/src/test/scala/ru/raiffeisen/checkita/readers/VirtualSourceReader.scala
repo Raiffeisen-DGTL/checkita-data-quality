@@ -34,7 +34,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         "select id, name, entity, description from hive_source_1 where dlk_cob_date == '2023-06-30'",
         Option(StorageLevel.DISK_ONLY),
         Option(OrcFileOutputConfig("tmp/DQ/sqlVS")),
-        Seq("batchId")
+        Seq("id")
       )
 
       val sqlVirtualSource = SqlVirtualSourceReader.read(sqlConfig, parentSources, ReadMode.Batch)
@@ -61,7 +61,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         "sele id, name, entity, description from hive_source_1 where dlk_cob_date == '2023-06-30'",
         Option(StorageLevel.DISK_ONLY),
         Option(OrcFileOutputConfig("tmp/DQ/sqlVS")),
-        Seq("batchId")
+        Seq("id")
       )
 
       val sqlVirtualSource = SqlVirtualSourceReader.read(sqlConfig, parentSources, ReadMode.Batch)
@@ -88,7 +88,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         SparkJoinType.Left,
         Option(StorageLevel.MEMORY_ONLY),
         Option(OrcFileOutputConfig("tmp/DQ/sqlVS")),
-        Seq("batchId")
+        Seq("id")
       )
 
       val joinVirtualSource = JoinVirtualSourceReader.read(joinConfig, parentSources, ReadMode.Batch)
@@ -116,7 +116,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         SparkJoinType.Left,
         Option(StorageLevel.MEMORY_ONLY),
         Option(OrcFileOutputConfig("tmp/DQ/sqlVS")),
-        Seq("batchId")
+        Seq("id")
       )
 
       val joinVirtualSource = JoinVirtualSourceReader.read(joinConfig, parentSources, ReadMode.Batch)
@@ -139,7 +139,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         None,
         None,
         None,
-        Seq("batchId", "dttm")
+        Seq("key", "name")
       )
 
       val filterVirtualSource = FilterVirtualSourceReader.read(filterConfig, parentSources, ReadMode.Batch)
@@ -168,7 +168,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
         None,
         None,
         None,
-        Seq("batchId", "dttm")
+        Seq("key", "name")
       )
 
       val filterVirtualSource = FilterVirtualSourceReader.read(filterConfig, parentSources, ReadMode.Batch)
