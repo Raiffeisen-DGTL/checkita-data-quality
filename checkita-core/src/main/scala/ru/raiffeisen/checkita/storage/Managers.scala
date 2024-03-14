@@ -207,7 +207,8 @@ object Managers {
      *       is performed per each batch separately.
      */
     def saveResults[R <: DQEntity : TypeTag](results: Seq[R])
-                                            (implicit ops: tables.DQTableOps[R]): String = {
+                                            (implicit ops: tables.DQTableOps[R]): String =
+    if (results.isEmpty) "Nothing to save." else {
       val result = results.grouped(batchSize)
         .map(r => runUpsert[R](r, ops))
         .reduceLeft((fa, fb) => fa.flatMap(a => fb.map(b => (a._1, a._2 + b._2))))
