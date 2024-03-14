@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.4.0...v1.4.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* fixed bug in results saving logic ([#32](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/32)) ([613b596](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/613b596c2867ecdf71d565d759d39a17abf866dd))
+
 ## [1.4.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.3.2...v1.4.0) (2024-03-13)
 
 
