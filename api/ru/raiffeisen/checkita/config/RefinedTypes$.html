@@ -286,9 +286,9 @@
         <div id="types" class="types members">
               <h3>Type Members</h3>
               <ol><li name="ru.raiffeisen.checkita.config.RefinedTypes.AccuracyDouble" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="AccuracyDouble=eu.timepit.refined.api.Refined[Double,eu.timepit.refined.numeric.Interval.Closed[Double(0.0),Double(1.0)]]"></a><a id="AccuracyDouble:AccuracyDouble"></a>
+      <a id="AccuracyDouble=eu.timepit.refined.api.Refined[Double,eu.timepit.refined.numeric.Interval.OpenClosed[Double(0.0),Double(1.0)]]"></a><a id="AccuracyDouble:AccuracyDouble"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/config/RefinedTypes$.html#AccuracyDouble=eu.timepit.refined.api.Refined[Double,eu.timepit.refined.numeric.Interval.Closed[Double(0.0),Double(1.0)]]" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/RefinedTypes$.html#AccuracyDouble=eu.timepit.refined.api.Refined[Double,eu.timepit.refined.numeric.Interval.OpenClosed[Double(0.0),Double(1.0)]]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -297,7 +297,7 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">AccuracyDouble</span><span class="result alias"> = <span class="extype" name="eu.timepit.refined.api.Refined">Refined</span>[<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="eu.timepit.refined.numeric.Interval.Closed">Closed</span>[Double(0.0), Double(1.0)]]</span>
+        <span class="name">AccuracyDouble</span><span class="result alias"> = <span class="extype" name="eu.timepit.refined.api.Refined">Refined</span>[<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="eu.timepit.refined.numeric.Interval.OpenClosed">OpenClosed</span>[Double(0.0), Double(1.0)]]</span>
       </span>
       
       
@@ -338,22 +338,24 @@ of original datetime pattern.</p></div><dl class="paramcmts block"><dt class="pa
       </span>
       
       
-    </li><li name="ru.raiffeisen.checkita.config.RefinedTypes.Email" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Email=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$&quot;)]]"></a><a id="Email:Email"></a>
+    </li><li name="ru.raiffeisen.checkita.config.RefinedTypes.Email" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="EmailextendsProductwithSerializable"></a><a id="Email:Email"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/config/RefinedTypes$.html#Email=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$&quot;)]]" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/RefinedTypes$$Email.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">type</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Email</span><span class="result alias"> = <span class="extype" name="eu.timepit.refined.api.Refined">Refined</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="eu.timepit.refined.string.MatchesRegex">MatchesRegex</span>[String(&quot;^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$&quot;)]]</span>
+        <a title="Email class is used to wrap email addresses and provide email validation during configuration parsing." href="RefinedTypes$$Email.html"><span class="name">Email</span></a><span class="params">(<span name="value">value: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      
+      <p class="shortcomment cmt">Email class is used to wrap email addresses and provide email validation
+during configuration parsing.</p><div class="fullcomment"><div class="comment cmt"><p>Email class is used to wrap email addresses and provide email validation
+during configuration parsing.</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>Validated email address</p></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.RefinedTypes.EncryptionKey" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="EncryptionKey=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^.{32}.*$&quot;)]]"></a><a id="EncryptionKey:EncryptionKey"></a>
       <span class="permalink">
