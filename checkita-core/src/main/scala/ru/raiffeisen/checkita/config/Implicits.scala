@@ -1,5 +1,6 @@
 package ru.raiffeisen.checkita.config
 
+import org.apache.commons.validator.routines.EmailValidator
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.functions.expr
 import org.apache.spark.sql.types.DataType
@@ -8,7 +9,7 @@ import pureconfig.generic.{FieldCoproductHint, ProductHint}
 import pureconfig.{CamelCase, ConfigConvert, ConfigFieldMapping}
 import ru.raiffeisen.checkita.config.Enums._
 import ru.raiffeisen.checkita.config.Parsers.idParser
-import ru.raiffeisen.checkita.config.RefinedTypes.{DateFormat, ID}
+import ru.raiffeisen.checkita.config.RefinedTypes.{DateFormat, Email, ID}
 import ru.raiffeisen.checkita.config.jobconf.Outputs.FileOutputConfig
 import ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig
 import ru.raiffeisen.checkita.config.jobconf.Sources.{FileSourceConfig, VirtualSourceConfig}
@@ -36,7 +37,14 @@ object Implicits {
       },
       id => id.value
     )
-    
+
+  implicit val emailConverter: ConfigConvert[Email] = ConfigConvert[String].xmap[Email](
+    emailString =>
+      if (EmailValidator.getInstance().isValid(emailString)) Email(emailString)
+      else throw new IllegalArgumentException(s"Email '$emailString' is not valid."),
+    email => email.value
+  )
+
   implicit val dateFormatConverter: ConfigConvert[DateFormat] =
     ConfigConvert[String].xmap[DateFormat](DateFormat.fromString, _.pattern)
 
