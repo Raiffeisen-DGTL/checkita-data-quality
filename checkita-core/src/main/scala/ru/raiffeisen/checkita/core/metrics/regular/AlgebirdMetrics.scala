@@ -30,11 +30,13 @@ object AlgebirdMetrics {
                                          protected val status: CalculatorStatus = CalculatorStatus.Success,
                                          protected val failMsg: String = "OK")
     extends MetricCalculator {
-    
-    // axillary constrictor to init metric calculator:
+
+    // Auxiliary constrictor to init metric calculator:
+    // Accuracy is limited to a value that correspond to bits number of 30 or less.
+    // This is done to prevent integer overflow when computing HLL monoid size.
     def this(accuracyError: Double) = this(
-      new HyperLogLogMonoid(HyperLogLog.bitsForError(accuracyError)).zero,
-      HyperLogLog.bitsForError(accuracyError),
+      new HyperLogLogMonoid(HyperLogLog.bitsForError(math.max(accuracyError, 0.00003174))).zero,
+      HyperLogLog.bitsForError(math.max(accuracyError, 0.00003174)),
       accuracyError
     )
 
@@ -65,10 +67,9 @@ object AlgebirdMetrics {
       Map(MetricName.ApproximateDistinctValues.entryName -> (hLL.approximateSize.estimate.toDouble, None))
 
     def merge(m2: MetricCalculator): MetricCalculator = {
-      val monoid = new HyperLogLogMonoid(this.bitsNumber)
       val that = m2.asInstanceOf[HyperLogLogMetricCalculator]
       HyperLogLogMetricCalculator(
-        monoid.plus(this.hLL, that.hLL),
+        this.hLL + that.hLL,
         this.bitsNumber,
         this.accuracyError,
         this.failCount + that.getFailCounter,

@@ -6,8 +6,9 @@ object Dependencies {
   val enumeratum = "com.beachape" %% "enumeratum" % "1.7.2"
   val isarn = "org.isarnproject" %% "isarn-sketches" % "0.3.0"
   val algebird = "com.twitter" %% "algebird-core" % "0.13.9"
-  val commonText = "org.apache.commons" % "commons-text" % "1.10.0"
-  val commonMail = "org.apache.commons" % "commons-email" % "1.5"
+  val commonsText = "org.apache.commons" % "commons-text" % "1.10.0"
+  val commonsMail = "org.apache.commons" % "commons-email" % "1.5"
+  val commonsValidators = "commons-validator" % "commons-validator" % "1.8.0"
   val mustache = "com.github.spullara.mustache.java" % "compiler" %"0.9.10"
 
   // XML support in json4s published in a separate package,
@@ -51,8 +52,9 @@ object Dependencies {
     enumeratum,
     isarn,
     algebird,
-    commonText,
-    commonMail,
+    commonsText,
+    commonsMail,
+    commonsValidators,
     mustache,
     jsonJava,
     refined,

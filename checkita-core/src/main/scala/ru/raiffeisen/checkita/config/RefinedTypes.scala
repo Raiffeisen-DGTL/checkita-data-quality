@@ -10,16 +10,15 @@ import eu.timepit.refined.string._
 import java.time.format.DateTimeFormatter
 
 object RefinedTypes {
-//  type ID = String Refined MatchesRegex[W.`"""^[a-zA-Z0-9_]+$"""`.T]
+
   type URI = String Refined Uri
   type URL = String Refined Url
   type Port = Int Refined Interval.Closed[W.`0`.T, W.`9999`.T]
-  type Email = String Refined MatchesRegex[W.`"""^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"""`.T]
   type MMRecipient = String Refined MatchesRegex[W.`"""^(@|#)[a-zA-Z][a-zA-Z0-9.\\-_]+$"""`.T]
   type SparkParam = String Refined MatchesRegex[W.`"""^\\S+?\\=[\\S\\s]+$"""`.T]
   type PositiveInt = Int Refined Positive
   type FixedShortColumn = String Refined MatchesRegex[W.`"""^[^\\n\\r\\t:]+:\\d+$"""`.T]
-  type AccuracyDouble = Double Refined Interval.Closed[W.`0.0`.T, W.`1.0`.T]
+  type AccuracyDouble = Double Refined Interval.OpenClosed[W.`0.0`.T, W.`1.0`.T]
   type RegexPattern = String Refined Regex
 
   /**
@@ -49,7 +48,14 @@ object RefinedTypes {
    * @param value Validated ID value
    */
   case class ID(value: String)
-  
+
+  /**
+   * Email class is used to wrap email addresses and provide email validation
+   * during configuration parsing.
+   * @param value Validated email address
+   */
+  case class Email(value: String)
+
   /**
    * DateFormat class is used to store both date-time pattern and corresponding formatter.
    * Such construction allows to verify if pattern is convertable to formatter at the point
