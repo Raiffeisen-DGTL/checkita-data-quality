@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.4.1...v1.4.2) (2024-03-20)
+
+
+### Bug Fixes
+
+* fixed bugs in HLL metric calculators and in email validation ([#33](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/33)) ([8009ed5](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/8009ed56d0a2b61acc96689ea6e31589bae39e37))
+
 ## [1.4.1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.4.0...v1.4.1) (2024-03-14)
 
 
