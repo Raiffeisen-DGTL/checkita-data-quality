@@ -1,6 +1,8 @@
 package ru.raiffeisen.checkita.config.jobconf
 
-import ru.raiffeisen.checkita.config.RefinedTypes.ID
+import eu.timepit.refined.types.string.NonEmptyString
+
+import ru.raiffeisen.checkita.config.RefinedTypes.{ID, SparkParam}
 import ru.raiffeisen.checkita.config.jobconf.Checks.ChecksConfig
 import ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionsConfig
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadChecksConfig
@@ -12,6 +14,7 @@ import ru.raiffeisen.checkita.config.jobconf.Targets.TargetsConfig
 /**
  * Data Quality job-level configuration
  * @param jobId Job ID
+ * @param jobDescription Job description
  * @param connections Connections to external data systems (RDBMS, Message Brokers, etc.)
  * @param schemas Various schema definitions
  * @param sources Data sources processed within current job (only applicable to batch jobs).
@@ -22,9 +25,11 @@ import ru.raiffeisen.checkita.config.jobconf.Targets.TargetsConfig
  * @param metrics Metrics to be calculated for data sources
  * @param checks Checks to be performed over metrics
  * @param targets Targets that define various job result outputs to a multiple channels
+ * @param jobMetadata List of metadata parameters
  */
 final case class JobConfig(
                             jobId: ID,
+                            jobDescription: Option[NonEmptyString],
                             connections: Option[ConnectionsConfig],
                             schemas: Seq[SchemaConfig] = Seq.empty,
                             sources: Option[SourcesConfig],
@@ -34,5 +39,6 @@ final case class JobConfig(
                             loadChecks: Option[LoadChecksConfig],
                             metrics: Option[MetricsConfig],
                             checks: Option[ChecksConfig],
-                            targets: Option[TargetsConfig]
+                            targets: Option[TargetsConfig],
+                            jobMetadata: Seq[SparkParam] = Seq.empty
                           )
