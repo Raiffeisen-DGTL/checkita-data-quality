@@ -4,6 +4,8 @@ import eu.timepit.refined.types.string.NonEmptyString
 import org.json4s.jackson.Serialization.write
 import ru.raiffeisen.checkita.config.RefinedTypes._
 import ru.raiffeisen.checkita.config.jobconf.MetricParams._
+import ru.raiffeisen.checkita.core.dfmetrics.BasicStringMetrics._
+import ru.raiffeisen.checkita.core.dfmetrics.{DFMetricCalculator, DFRegularMetric}
 import ru.raiffeisen.checkita.core.metrics.regular.AlgebirdMetrics._
 import ru.raiffeisen.checkita.core.metrics.regular.BasicNumericMetrics._
 import ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics._
@@ -209,10 +211,13 @@ object Metrics {
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+  ) extends AnyColumnRegularMetricConfig with DFRegularMetric {
     val metricName: MetricName                 = MetricName.NullValues
     val paramString: Option[String]            = None
     def initMetricCalculator: MetricCalculator = new NullValuesMetricCalculator()
+
+    override def initDFMetricCalculator: DFMetricCalculator =
+      DFNullValuesMetricCalculator(id.value, columns.value)
   }
 
   /** Empty values column metric configuration
@@ -262,11 +267,14 @@ object Metrics {
       columns: NonEmptyStringSeq,
       params: CompletenessParams = CompletenessParams(),
       metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+  ) extends AnyColumnRegularMetricConfig with DFRegularMetric {
     val metricName: MetricName      = MetricName.Completeness
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initMetricCalculator: MetricCalculator =
       new CompletenessMetricCalculator(params.includeEmptyStrings)
+
+    override def initDFMetricCalculator: DFMetricCalculator =
+      DFCompletenessMetricCalculator(id.value, columns.value, params.includeEmptyStrings)
   }
 
   /** Sequence completeness column metric configuration
@@ -371,10 +379,13 @@ object Metrics {
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+  ) extends AnyColumnRegularMetricConfig with DFRegularMetric {
     val metricName: MetricName                 = MetricName.MaxString
     val paramString: Option[String]            = None
     def initMetricCalculator: MetricCalculator = new MaxStringValueMetricCalculator()
+
+    override def initDFMetricCalculator: DFMetricCalculator =
+      DFMaxStringValueMetricCalculator(id.value, columns.value)
   }
 
   /** Average string column metric configuration
@@ -453,11 +464,14 @@ object Metrics {
       columns: NonEmptyStringSeq,
       params: StringDomainParams,
       metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+  ) extends AnyColumnRegularMetricConfig with DFRegularMetric {
     val metricName: MetricName      = MetricName.StringInDomain
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initMetricCalculator: MetricCalculator =
       new StringInDomainValuesMetricCalculator(params.domain.value.toSet)
+
+    override def initDFMetricCalculator: DFMetricCalculator =
+      DFStringInDomainValuesMetricCalculator(id.value, columns.value, params.domain.value.toSet)
   }
 
   /** String out domain column metric configuration
@@ -540,10 +554,13 @@ object Metrics {
       columns: NonEmptyStringSeq,
       params: RegexParams,
       metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+  ) extends AnyColumnRegularMetricConfig with DFRegularMetric {
     val metricName: MetricName                 = MetricName.RegexMatch
     val paramString: Option[String]            = Some(write(getFieldsMap(params)))
     def initMetricCalculator: MetricCalculator = new RegexMatchMetricCalculator(params.regex.value)
+
+    override def initDFMetricCalculator: DFMetricCalculator =
+      DFRegexMatchCalculator(id.value, columns.value, params.regex.value)
   }
 
   /** Regex mismatch column metric configuration
