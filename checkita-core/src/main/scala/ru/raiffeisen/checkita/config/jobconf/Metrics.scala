@@ -4,6 +4,8 @@ import eu.timepit.refined.types.string.NonEmptyString
 import org.json4s.jackson.Serialization.write
 import ru.raiffeisen.checkita.config.RefinedTypes._
 import ru.raiffeisen.checkita.config.jobconf.MetricParams._
+import ru.raiffeisen.checkita.core.dfmetrics.BasicStringMetrics._
+import ru.raiffeisen.checkita.core.dfmetrics.{DFMetricCalculator, DFRegularMetric}
 import ru.raiffeisen.checkita.core.metrics.regular.AlgebirdMetrics._
 import ru.raiffeisen.checkita.core.metrics.regular.BasicNumericMetrics._
 import ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics._
