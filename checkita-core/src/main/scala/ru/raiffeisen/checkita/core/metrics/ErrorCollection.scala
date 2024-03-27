@@ -3,9 +3,6 @@ package ru.raiffeisen.checkita.core.metrics
 import org.apache.spark.util.AccumulatorV2
 import ru.raiffeisen.checkita.core.CalculatorStatus
 
-import java.util
-import java.util.ArrayList
-
 
 object ErrorCollection {
 
@@ -65,7 +62,7 @@ object ErrorCollection {
   class LimitedCollectionAccumulator[T](limit: Int) extends AccumulatorV2[T, java.util.List[T]] {
     private var _list: java.util.List[T] = _
 
-    private def getOrCreate: util.List[T] = {
+    private def getOrCreate: java.util.List[T] = {
       _list = Option(_list).getOrElse(new java.util.ArrayList[T]())
       _list
     }
@@ -123,7 +120,7 @@ object ErrorCollection {
     }
 
     override def value: java.util.List[T] = this.synchronized {
-      java.util.Collections.unmodifiableList(new util.ArrayList[T](getOrCreate))
+      java.util.Collections.unmodifiableList(new java.util.ArrayList[T](getOrCreate))
     }
   }
 }
