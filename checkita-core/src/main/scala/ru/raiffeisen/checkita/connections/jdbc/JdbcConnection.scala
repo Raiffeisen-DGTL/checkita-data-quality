@@ -74,7 +74,7 @@ abstract class JdbcConnection[T <: JdbcConnectionConfig] extends DQConnection {
         spark.read.jdbc(connectionUrl, table, props)
       case (None, Some(q)) => if (settings.allowSqlQueries) {
           props.put("url", connectionUrl)
-          props.put("dbtable", s"($q) ${sourceConfig.id.value}")
+          props.put("dbtable", s"($q) t")
           spark.read.format("jdbc").options(props.asScala).load()
         } else throw new UnsupportedOperationException(
           "FORBIDDEN: Can't load table source with query due to usage of arbitrary SQL queries is not allowed. " + 

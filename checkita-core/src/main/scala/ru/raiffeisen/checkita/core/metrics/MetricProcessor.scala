@@ -23,11 +23,13 @@ trait MetricProcessor {
   /**
    * Creates Spark collection accumulator of required type to collect metric errors and registers it.
    *
-   * @param spark Implicit Spark Session object
+   * @param spark    Implicit Spark Session object
+   * @param dumpSize Implicit value of maximum number of metric failure (or errors) to be collected.
    * @return Registered metric errors accumulator
    */
-  protected def getAndRegisterErrorAccumulator(implicit spark: SparkSession): CollectionAccumulator[AccType] = {
-    val acc = new CollectionAccumulator[AccType]
+  protected def getAndRegisterErrorAccumulator(implicit spark: SparkSession,
+                                               dumpSize: Int): LimitedCollectionAccumulator[AccType] = {
+    val acc = new LimitedCollectionAccumulator[AccType](dumpSize)
     spark.sparkContext.register(acc)
     acc
   }
@@ -177,9 +179,9 @@ trait MetricProcessor {
    *         (Some of the metric calculators yield multiple results)
    */
   protected def buildResults(groupedCalculators: GroupedCalculators,
-                           metricErrors: Map[String, MetricErrors],
-                           sourceId: String,
-                           sourceKeys: Seq[String]): MetricResults = groupedCalculators.toSeq.flatMap {
+                             metricErrors: Map[String, MetricErrors],
+                             sourceId: String,
+                             sourceKeys: Seq[String]): MetricResults = groupedCalculators.toSeq.flatMap {
     case (columns: Seq[String], calculators: Seq[(MetricCalculator, Seq[RegularMetric])]) =>
       calculators.flatMap {
         case (calculator: MetricCalculator, metrics: Seq[RegularMetric]) =>
