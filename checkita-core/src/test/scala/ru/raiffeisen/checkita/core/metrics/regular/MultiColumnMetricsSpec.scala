@@ -105,19 +105,27 @@ class MultiColumnMetricsSpec extends AnyWordSpec with Matchers {
     "return correct metric value and fail status and counts for multi-column sequence" in {
       val results = Seq.fill(4)(2)
       val statuses = Seq.fill(3)(CalculatorStatus.Success) :+ CalculatorStatus.Failure
+      val statusesRev = Seq.fill(3)(CalculatorStatus.Failure) :+ CalculatorStatus.Success
       val failCounts = Seq.fill(4)(4)
+      val failCountsRev = Seq.fill(4)(2)
       val metricResults = testValues.map(
-        _.foldLeft[MetricCalculator](new EqualStringColumnsMetricCalculator())((m, v) => m.increment(v))
+        _.foldLeft[MetricCalculator](new EqualStringColumnsMetricCalculator(false))((m, v) => m.increment(v))
+      )
+      val metricResultsRev = testValues.map(
+        _.foldLeft[MetricCalculator](new EqualStringColumnsMetricCalculator(true))((m, v) => m.increment(v))
       )
       (metricResults zip results).foreach(v => v._1.result()(MetricName.ColumnEq.entryName)._1 shouldEqual v._2)
+      (metricResultsRev zip results).foreach(v => v._1.result()(MetricName.ColumnEq.entryName)._1 shouldEqual v._2)
       (metricResults zip statuses).foreach(v => v._1.getStatus shouldEqual v._2)
+      (metricResultsRev zip statusesRev).foreach(v => v._1.getStatus shouldEqual v._2)
       (metricResults zip failCounts).foreach(v => v._1.getFailCounter shouldEqual v._2)
+      (metricResultsRev zip failCountsRev).foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
 
     "return zero values when applied to empty sequence" in {
       val values = Seq.empty
       val metricResult = values.foldLeft[MetricCalculator](
-        new EqualStringColumnsMetricCalculator())((m, v) => m.increment(v)).result()
+        new EqualStringColumnsMetricCalculator(false))((m, v) => m.increment(v)).result()
 
       metricResult(MetricName.ColumnEq.entryName)._1 shouldEqual 0
     }
@@ -132,17 +140,33 @@ class MultiColumnMetricsSpec extends AnyWordSpec with Matchers {
     )
     val results = Seq(3, 1)
     val failCounts = Seq(1, 3)
+    val failCountsRev = Seq(3, 4)
 
     "return correct metric value and fail status and counts for sequence of two columns with dates" in {
       val metricResults = values.map(
-        _.foldLeft[MetricCalculator](new DayDistanceMetricCalculator(dateFormat, threshold))((m, v) => m.increment(v))
+        _.foldLeft[MetricCalculator](
+          new DayDistanceMetricCalculator(dateFormat, threshold, false)
+        )((m, v) => m.increment(v))
+      )
+      val metricResultsRev = values.map(
+        _.foldLeft[MetricCalculator](
+          new DayDistanceMetricCalculator(dateFormat, threshold, true)
+        )((m, v) => m.increment(v))
       )
 
       (metricResults zip results).foreach { t =>
         t._1.result()(MetricName.DayDistance.entryName)._1 shouldEqual t._2
       }
+      (metricResultsRev zip results).foreach { t =>
+        t._1.result()(MetricName.DayDistance.entryName)._1 shouldEqual t._2
+      }
       metricResults.foreach(_.getStatus shouldEqual CalculatorStatus.Failure)
+      metricResultsRev.zip(Seq(CalculatorStatus.Success, CalculatorStatus.Failure))
+        .foreach(t => t._1.getStatus shouldEqual t._2)
       (metricResults zip failCounts).foreach { t =>
+        t._1.getFailCounter shouldEqual t._2
+      }
+      (metricResultsRev zip failCountsRev).foreach { t =>
         t._1.getFailCounter shouldEqual t._2
       }
     }
@@ -150,7 +174,7 @@ class MultiColumnMetricsSpec extends AnyWordSpec with Matchers {
     "return zero when applied to an empty sequence" in {
       val values = Seq.empty
       val metricResult = values.foldLeft[MetricCalculator](
-        new DayDistanceMetricCalculator(dateFormat, threshold))((m, v) => m.increment(v)).result()
+        new DayDistanceMetricCalculator(dateFormat, threshold, false))((m, v) => m.increment(v)).result()
       metricResult(MetricName.DayDistance.entryName)._1 shouldEqual 0
     }
 
@@ -159,29 +183,34 @@ class MultiColumnMetricsSpec extends AnyWordSpec with Matchers {
         Seq(Seq("foo"), Seq("bar")),
         Seq(Seq("foo", "bar", "baz"), Seq("qux", "lux", "fux"))
       )
-      values.foreach { s =>
-        s.foldLeft[MetricCalculator](new DayDistanceMetricCalculator(dateFormat, threshold)) {
-          (m, v) =>
-            val mc = m.increment(v)
-            mc.getStatus shouldEqual CalculatorStatus.Error
-            mc
+      values.foreach { s => Seq(false, true).map { reversed =>
+          s.foldLeft[MetricCalculator](new DayDistanceMetricCalculator(dateFormat, threshold, reversed)) {
+            (m, v) =>
+              val mc = m.increment(v)
+              mc.getStatus shouldEqual CalculatorStatus.Error
+              mc
+          }
         }
       }
     }
   }
 
   "LevenshteinDistanceMetric" must {
-    val paramList: Seq[(Double, Boolean)] = Seq((3, false), (0.501, true), (0.751, true), (2, false))
-    val results = Seq(2, 2, 6, 2)
-    val statuses = Seq.fill(3)(CalculatorStatus.Success) :+ CalculatorStatus.Failure
-    val failCounts = Seq(4, 4, 0, 4)
+    val paramList: Seq[(Double, Boolean, Boolean)] = Seq(
+      (3, false, false), (0.501, true, false), (0.751, true, false), (2, false, false),
+      (3, false, true), (0.501, true, true), (0.751, true, true), (2, false, true),
+    )
+    val results = Seq(2, 2, 6, 2, 2, 2, 6, 2)
+    val statuses =
+      Seq.fill(3)(CalculatorStatus.Success) ++ Seq.fill(4)(CalculatorStatus.Failure) :+ CalculatorStatus.Success
+    val failCounts = Seq(4, 4, 0, 4, 2, 2, 6, 2)
 
     "return correct metric value for sequence of two columns" in {
       val values = (testValues, paramList, results).zipped.toList
         .zip((statuses, failCounts).zipped.toList).map(x => (x._1._1, x._1._2, x._1._3, x._2._1, x._2._2))
       val metricResults = values.map(t => (
         t._1.foldLeft[MetricCalculator](
-          new LevenshteinDistanceMetricCalculator(t._2._1, t._2._2)
+          new LevenshteinDistanceMetricCalculator(t._2._1, t._2._2, t._2._3)
         )((m, v) => m.increment(v)),
         t._2, t._3, t._4, t._5
       ))
@@ -193,7 +222,7 @@ class MultiColumnMetricsSpec extends AnyWordSpec with Matchers {
     "return zero when applied to an empty sequence" in {
       val values = Seq.empty
       val metricResult = values.foldLeft[MetricCalculator](
-        new LevenshteinDistanceMetricCalculator(paramList.head._1, paramList.head._2)
+        new LevenshteinDistanceMetricCalculator(paramList.head._1, paramList.head._2, false)
       )((m, v) => m.increment(v)).result()
       metricResult(MetricName.LevenshteinDistance.entryName)._1 shouldEqual 0
     }
@@ -203,12 +232,15 @@ class MultiColumnMetricsSpec extends AnyWordSpec with Matchers {
         Seq(Seq("foo"), Seq("bar")),
         Seq(Seq("foo", "bar", "baz"), Seq("qux", "lux", "fux"))
       )
-      values.foreach { s =>
-        s.foldLeft[MetricCalculator](new LevenshteinDistanceMetricCalculator(paramList.head._1, paramList.head._2)) {
-          (m, v) =>
-            val mc = m.increment(v)
-            mc.getStatus shouldEqual CalculatorStatus.Error
-            mc
+      values.foreach { s => Seq(false, true).map { reversed =>
+          s.foldLeft[MetricCalculator](
+            new LevenshteinDistanceMetricCalculator(paramList.head._1, paramList.head._2, reversed)
+          ) {
+            (m, v) =>
+              val mc = m.increment(v)
+              mc.getStatus shouldEqual CalculatorStatus.Error
+              mc
+          }
         }
       }
     }
@@ -216,7 +248,7 @@ class MultiColumnMetricsSpec extends AnyWordSpec with Matchers {
     "return error calculator status when result is normalized and threshold > 1" in {
       val params = (3, true)
       testValues.head.foldLeft[MetricCalculator](
-        new LevenshteinDistanceMetricCalculator(params._1, params._2)
+        new LevenshteinDistanceMetricCalculator(params._1, params._2, false)
       ){ (m, v) =>
         val mc = m.increment(v)
         mc.getStatus shouldEqual CalculatorStatus.Error

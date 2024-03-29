@@ -55,7 +55,7 @@ object AlgebirdMetrics {
           )
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Provided value cannot be casted to string"
+          "Provided value cannot be cast to string"
         )
       }
     }
@@ -131,7 +131,7 @@ object AlgebirdMetrics {
           )
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Provided value cannot be casted to string"
+          "Provided value cannot be cast to string"
         )
       }
     }
@@ -199,7 +199,7 @@ object AlgebirdMetrics {
           )
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Provided value cannot be casted to string"
+          "Provided value cannot be cast to string"
         )
       }
     }

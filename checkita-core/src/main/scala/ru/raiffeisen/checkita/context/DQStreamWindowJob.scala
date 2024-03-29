@@ -42,6 +42,8 @@ import scala.util.Try
  * @param jobId           Implicit job ID
  * @param spark           Implicit spark session object
  * @param fs              Implicit hadoop file system object
+ * @param dumpSize        Implicit value of maximum number of metric failures (or errors) to be collected (per metric).
+ *                        Used to prevent OOM errors.
  */
 final case class DQStreamWindowJob(jobConfig: JobConfig,
                                    settings: AppSettings,
@@ -57,7 +59,8 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
                                   )(implicit val jobId: String,
                                     val spark: SparkSession,
                                     val fs: FileSystem,
-                                    val buffer: ProcessorBuffer) extends Thread with DQJob {
+                                    val buffer: ProcessorBuffer,
+                                    val dumpSize: Int) extends Thread with DQJob {
 
   private implicit val streamConfig: StreamConfig = settings.streamConfig
   private val processedSources: Map[String, Source] = sources.filter(src => metricsBySources.contains(src.id))

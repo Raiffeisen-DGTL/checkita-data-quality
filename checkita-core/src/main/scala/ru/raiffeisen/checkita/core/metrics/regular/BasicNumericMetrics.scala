@@ -3,7 +3,7 @@ package ru.raiffeisen.checkita.core.metrics.regular
 import org.isarnproject.sketches.TDigest
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.Casting.{tryToDouble, tryToLong}
-import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName}
+import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName, ReversibleCalculator}
 
 import scala.util.Try
 
@@ -48,7 +48,7 @@ object BasicNumericMetrics {
           tdigest + v, accuracyError, targetSideNumber, failCount
         )
         case None    => copyWithError(CalculatorStatus.Failure,
-          "Provided value cannot be casted to a number"
+          "Provided value cannot be cast to a number"
         )
       }
     }
@@ -196,7 +196,7 @@ object BasicNumericMetrics {
         sum + doubleValues.sum,
         failCount + values.size - doubleValues.size,
         CalculatorStatus.Failure,
-        "Some of the provided values cannot be casted to number"
+        "Some of the provided values cannot be cast to number"
       )
     }
 
@@ -248,7 +248,7 @@ object BasicNumericMetrics {
         case Some(v) => StdAvgNumericValueCalculator(sum + v, sqSum + (v * v), cnt + 1, failCount)
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Provided value cannot be casted to number"
+          "Provided value cannot be cast to number"
         )
       }
     }
@@ -291,28 +291,63 @@ object BasicNumericMetrics {
                                                    precision: Int,
                                                    scale: Int,
                                                    compareRule: String,
+                                                   protected val reversed: Boolean,
                                                    protected val failCount: Long = 0,
                                                    protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                                   protected val failMsg: String = "OK") extends MetricCalculator {
+                                                   protected val failMsg: String = "OK")
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(precision: Int, scale: Int, compareRule: String) = this(0, precision, scale, compareRule)
-    
+    def this(precision: Int, scale: Int, compareRule: String, reversed: Boolean) =
+      this(0, precision, scale, compareRule, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that numeric values which do not meet provided precision
+     * and scale criteria are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val rowCnt = values.count(compareFunc)
       if (rowCnt == values.length) NumberFormattedValuesMetricCalculator(
-        cnt + rowCnt, precision, scale, compareRule, failCount
+        cnt + rowCnt, precision, scale, compareRule, reversed, failCount
       )
       else NumberFormattedValuesMetricCalculator(
         cnt + rowCnt,
         precision,
         scale,
         compareRule,
+        reversed,
         failCount + values.length - rowCnt,
         CalculatorStatus.Failure,
         "Some of the provided values could not be cast to number which meets given" + 
           s"precision and scale criteria of $criteriaStringRepr"
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that numeric values which DO meet provided precision
+     * and scale criteria are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowCnt = values.count(compareFunc)
+      if (rowCnt > 0) NumberFormattedValuesMetricCalculator(
+        cnt + rowCnt,
+        precision,
+        scale,
+        compareRule,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        "Some of the provided values CAN be cast to number which meets given" +
+          s"precision and scale criteria of $criteriaStringRepr"
+      ) else NumberFormattedValuesMetricCalculator(cnt, precision, scale, compareRule, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -328,6 +363,7 @@ object BasicNumericMetrics {
         this.precision,
         this.scale,
         this.compareRule,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -349,29 +385,58 @@ object BasicNumericMetrics {
   }
 
   /**
-   * Calculates amount of element that can be casted to numerical (double format)
+   * Calculates amount of element that can be cast to numerical (double format)
    * @param cnt Current count of numeric elements
    *
    * @return result map with keys: "CASTED_NUMBER"
    */
   case class NumberCastValuesMetricCalculator(cnt: Long,
+                                              protected val reversed: Boolean,
                                               protected val failCount: Long = 0,
                                               protected val status: CalculatorStatus = CalculatorStatus.Success,
                                               protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this() = this(0)
-    
+    def this(reversed: Boolean) = this(0, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that values which cannot be cast to number
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val rowCnt = values.flatMap(tryToDouble).length
-      if (rowCnt == values.length) NumberCastValuesMetricCalculator(cnt + rowCnt, failCount)
+      if (rowCnt == values.length) NumberCastValuesMetricCalculator(cnt + rowCnt, reversed, failCount)
       else NumberCastValuesMetricCalculator(
         cnt + rowCnt,
+        reversed,
         failCount + values.length - rowCnt,
         CalculatorStatus.Failure,
-        "Some of the provided values cannot be casted to number."
+        "Some of the provided values cannot be cast to number."
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that values which CAN be cast to number
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowCnt = values.flatMap(tryToDouble).length
+      if (rowCnt > 0) NumberCastValuesMetricCalculator(
+        cnt + rowCnt,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        "Some of the provided values CAN be cast to number"
+      ) else NumberCastValuesMetricCalculator(cnt, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -384,6 +449,7 @@ object BasicNumericMetrics {
       val that = m2.asInstanceOf[NumberCastValuesMetricCalculator]
       NumberCastValuesMetricCalculator(
         this.cnt + that.cnt,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -399,27 +465,58 @@ object BasicNumericMetrics {
    */
   case class NumberInDomainValuesMetricCalculator(cnt: Long,
                                                   domain: Set[Double],
+                                                  protected val reversed: Boolean,
                                                   protected val failCount: Long = 0,
                                                   protected val status: CalculatorStatus = CalculatorStatus.Success,
                                                   protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(domain: Set[Double]) = this(0, domain)
-    
+    def this(domain: Set[Double], reversed: Boolean) = this(0, domain, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that numeric values which are outside of the provided domain
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val rowCnt = values.flatMap(tryToDouble).count(domain.contains)
       if (rowCnt == values.length) NumberInDomainValuesMetricCalculator(
-        cnt + rowCnt, domain, failCount
+        cnt + rowCnt, domain, reversed, failCount
       )
       else NumberInDomainValuesMetricCalculator(
         cnt + rowCnt,
         domain,
+        reversed,
         failCount + values.length - rowCnt,
         CalculatorStatus.Failure,
-        s"Some of the provided values are not in the provided domain of ${domain.mkString("[", ",", "]")}"
+        s"Some of the provided numeric values are not in the provided domain of ${domain.mkString("[", ",", "]")}"
       )
     }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that numeric values which are IN the provided domain
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowCnt = values.flatMap(tryToDouble).count(domain.contains)
+      if (rowCnt > 0) NumberInDomainValuesMetricCalculator(
+        cnt + rowCnt,
+        domain,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        s"Some of the provided numeric values are IN the provided domain of ${domain.mkString("[", ",", "]")}"
+      ) else NumberInDomainValuesMetricCalculator(cnt, domain, reversed, failCount)
+    }
+
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
@@ -432,6 +529,7 @@ object BasicNumericMetrics {
       NumberInDomainValuesMetricCalculator(
         this.cnt + that.cnt,
         this.domain,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -447,27 +545,59 @@ object BasicNumericMetrics {
    */
   case class NumberOutDomainValuesMetricCalculator(cnt: Double,
                                                    domain: Set[Double],
+                                                   protected val reversed: Boolean,
                                                    protected val failCount: Long = 0,
                                                    protected val status: CalculatorStatus = CalculatorStatus.Success,
                                                    protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(domain: Set[Double]) = this(0, domain)
-    
+    def this(domain: Set[Double], reversed: Boolean) = this(0, domain, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that numeric values which are IN the provided domain
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       // takes into account non-number values also. these values are removed from sequence during flatMap operation
       val rowCnt = values.length - values.flatMap(tryToDouble).count(domain.contains)
       if (rowCnt == values.length) NumberOutDomainValuesMetricCalculator(
-        cnt + rowCnt, domain, failCount
+        cnt + rowCnt, domain, reversed, failCount
       )
       else NumberOutDomainValuesMetricCalculator(
         cnt + rowCnt,
         domain,
+        reversed,
         failCount + values.length - rowCnt,
         CalculatorStatus.Failure,
-        s"Some of the provided values are IN the provided domain of ${domain.mkString("[", ",", "]")}"
+        s"Some of the provided numeric values are IN the provided domain of ${domain.mkString("[", ",", "]")}"
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that numeric values which are outside of the provided domain
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      // takes into account non-number values also. these values are removed from sequence during flatMap operation
+      val rowCnt = values.length - values.flatMap(tryToDouble).count(domain.contains)
+      if (rowCnt > 0) NumberOutDomainValuesMetricCalculator(
+        cnt + rowCnt,
+        domain,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        s"Some of the provided numeric values are outside of the provided domain of ${domain.mkString("[", ",", "]")}"
+      )
+      else NumberOutDomainValuesMetricCalculator(cnt, domain, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -481,6 +611,7 @@ object BasicNumericMetrics {
       NumberOutDomainValuesMetricCalculator(
         this.cnt + that.cnt,
         this.domain,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -497,26 +628,57 @@ object BasicNumericMetrics {
    */
   case class NumberValuesMetricCalculator(cnt: Long,
                                           compareValue: Double,
+                                          protected val reversed: Boolean,
                                           protected val failCount: Long = 0,
                                           protected val status: CalculatorStatus = CalculatorStatus.Success,
                                           protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(compareValue: Double) = this(0, compareValue)
-    
+    def this(compareValue: Double, reversed: Boolean) = this(0, compareValue, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that numeric values which are not equal to provided value
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val rowCnt = values.flatMap(tryToDouble).count(_ == compareValue)
       if (rowCnt == values.length) NumberValuesMetricCalculator(
-        cnt=cnt + rowCnt, compareValue, failCount
+        cnt + rowCnt, compareValue, reversed, failCount
       )
       else NumberValuesMetricCalculator(
         cnt + rowCnt,
         compareValue,
+        reversed,
         failCount + values.length - rowCnt,
         CalculatorStatus.Failure,
-        s"Some of the provided values are not equal to requested number value of '$compareValue'"
+        s"Some of the provided values do not equal to requested number value of '$compareValue'"
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that numeric values which DO equal to provided value
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowCnt = values.flatMap(tryToDouble).count(_ == compareValue)
+      if (rowCnt > 0) NumberValuesMetricCalculator(
+        cnt + rowCnt,
+        compareValue,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        s"Some of the provided values DO equal to requested number value of '$compareValue'"
+      )
+      else NumberValuesMetricCalculator(cnt, compareValue, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -530,6 +692,7 @@ object BasicNumericMetrics {
       NumberValuesMetricCalculator(
         this.cnt + that.cnt,
         this.compareValue,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -547,27 +710,60 @@ object BasicNumericMetrics {
   case class NumberLessThanMetricCalculator(cnt: Long,
                                             compareValue: Double,
                                             includeBound: Boolean,
+                                            protected val reversed: Boolean,
                                             protected val failCount: Long = 0,
                                             protected val status: CalculatorStatus = CalculatorStatus.Success,
                                             protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(compareValue: Double, includeBound: Boolean) = this(0, compareValue, includeBound)
-    
+    def this(compareValue: Double, includeBound: Boolean, reversed: Boolean) =
+      this(0, compareValue, includeBound, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that numeric values which are greater than provided compareValue
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val rowCnt = values.count(compareFunc)
       if (rowCnt == values.length) NumberLessThanMetricCalculator(
-        cnt + rowCnt, compareValue, includeBound, failCount
+        cnt + rowCnt, compareValue, includeBound, reversed, failCount
       )
       else NumberLessThanMetricCalculator(
         cnt + rowCnt,
         compareValue,
         includeBound,
+        reversed,
         failCount + values.length - rowCnt,
         CalculatorStatus.Failure,
-        s"Some of the provided values do not met numeric criteria of '${if (includeBound) "<=" else "<"}$compareValue'"
+        s"Some of the provided values do not meet numeric criteria of '${if (includeBound) "<=" else "<"}$compareValue'"
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that numeric values which are lower than provided compareValue
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowCnt = values.count(compareFunc)
+      if (rowCnt > 0) NumberLessThanMetricCalculator(
+        cnt + rowCnt,
+        compareValue,
+        includeBound,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        s"Some of the provided values DO meet numeric criteria of '${if (includeBound) "<=" else "<"}$compareValue'"
+      )
+      else NumberLessThanMetricCalculator(cnt, compareValue, includeBound, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -582,6 +778,7 @@ object BasicNumericMetrics {
         this.cnt + that.cnt,
         this.compareValue,
         this.includeBound,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -603,27 +800,59 @@ object BasicNumericMetrics {
   case class NumberGreaterThanMetricCalculator(cnt: Long,
                                                compareValue: Double,
                                                includeBound: Boolean,
+                                               protected val reversed: Boolean,
                                                protected val failCount: Long = 0,
                                                protected val status: CalculatorStatus = CalculatorStatus.Success,
                                                protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(compareValue: Double, includeBound: Boolean) = this(0, compareValue, includeBound)
-    
+    def this(compareValue: Double, includeBound: Boolean, reversed: Boolean) =
+      this(0, compareValue, includeBound, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that numeric values which are lower than provided compareValue
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val rowCnt = values.count(compareFunc)
       if (rowCnt == values.length) NumberGreaterThanMetricCalculator(
-        cnt + rowCnt, compareValue, includeBound, failCount
+        cnt + rowCnt, compareValue, includeBound, reversed, failCount
       )
       else NumberGreaterThanMetricCalculator(
         cnt + rowCnt,
         compareValue,
         includeBound,
+        reversed,
         failCount + values.length - rowCnt,
         CalculatorStatus.Failure,
-        s"Some of the provided values do not met numeric criteria of '${if (includeBound) ">=" else ">"}$compareValue'"
+        s"Some of the provided values do not meet numeric criteria of '${if (includeBound) ">=" else ">"}$compareValue'"
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that numeric values which are greater than provided compareValue
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowCnt = values.count(compareFunc)
+      if (rowCnt > 0) NumberGreaterThanMetricCalculator(
+        cnt + rowCnt,
+        compareValue,
+        includeBound,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        s"Some of the provided values DO meet numeric criteria of '${if (includeBound) ">=" else ">"}$compareValue'"
+      ) else NumberGreaterThanMetricCalculator(cnt, compareValue, includeBound, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -638,6 +867,7 @@ object BasicNumericMetrics {
         this.cnt + that.cnt,
         this.compareValue,
         this.includeBound,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -661,28 +891,62 @@ object BasicNumericMetrics {
                                            lowerCompareValue: Double,
                                            upperCompareValue: Double,
                                            includeBound: Boolean,
+                                           protected val reversed: Boolean,
                                            protected val failCount: Long = 0,
                                            protected val status: CalculatorStatus = CalculatorStatus.Success,
                                            protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(lowerCompareValue: Double, upperCompareValue: Double, includeBound: Boolean) = 
-      this(0, lowerCompareValue, upperCompareValue, includeBound)
+    def this(lowerCompareValue: Double, upperCompareValue: Double, includeBound: Boolean, reversed: Boolean) =
+      this(0, lowerCompareValue, upperCompareValue, includeBound, reversed)
 
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that numeric values which are outside of provided interval
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val rowCnt = values.count(compareFunc)
       if (rowCnt == values.length) NumberBetweenMetricCalculator(
-        cnt + rowCnt, lowerCompareValue, upperCompareValue, includeBound, failCount
+        cnt + rowCnt, lowerCompareValue, upperCompareValue, includeBound, reversed, failCount
       )
       else NumberBetweenMetricCalculator(
         cnt + rowCnt,
         lowerCompareValue,
         upperCompareValue,
         includeBound,
+        reversed,
         failCount + values.length - rowCnt,
         CalculatorStatus.Failure,
-        s"Some of the provided values do not met numeric criteria of '$criteriaStringRepr'"
+        s"Some of the provided values do not meet numeric criteria of '$criteriaStringRepr'"
+      )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that numeric values which are inside of the provided interval
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowCnt = values.count(compareFunc)
+      if (rowCnt > 0) NumberBetweenMetricCalculator(
+        cnt + rowCnt,
+        lowerCompareValue,
+        upperCompareValue,
+        includeBound,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        s"Some of the provided values DO meet numeric criteria of '$criteriaStringRepr'"
+      ) else NumberBetweenMetricCalculator(
+        cnt, lowerCompareValue, upperCompareValue, includeBound, reversed, failCount
       )
     }
 
@@ -699,6 +963,7 @@ object BasicNumericMetrics {
         this.lowerCompareValue,
         this.upperCompareValue,
         this.includeBound,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -727,28 +992,62 @@ object BasicNumericMetrics {
                                               lowerCompareValue: Double,
                                               upperCompareValue: Double,
                                               includeBound: Boolean,
+                                              protected val reversed: Boolean,
                                               protected val failCount: Long = 0,
                                               protected val status: CalculatorStatus = CalculatorStatus.Success,
                                               protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(lowerCompareValue: Double, upperCompareValue: Double, includeBound: Boolean) =
-      this(0, lowerCompareValue, upperCompareValue, includeBound)
-    
+    def this(lowerCompareValue: Double, upperCompareValue: Double, includeBound: Boolean, reversed: Boolean) =
+      this(0, lowerCompareValue, upperCompareValue, includeBound, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that numeric values which are inside of provided interval
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val rowCnt = values.count(compareFunc)
       if (rowCnt == values.length) NumberNotBetweenMetricCalculator(
-        cnt + rowCnt, lowerCompareValue, upperCompareValue, includeBound, failCount
+        cnt + rowCnt, lowerCompareValue, upperCompareValue, includeBound, reversed, failCount
       )
       else NumberNotBetweenMetricCalculator(
         cnt + rowCnt,
         lowerCompareValue,
         upperCompareValue,
         includeBound,
+        reversed,
         failCount + values.length - rowCnt,
         CalculatorStatus.Failure,
-        s"Some of the provided values do not met numeric criteria of '$criteriaStringRepr'"
+        s"Some of the provided values do not meet numeric criteria of '$criteriaStringRepr'"
+      )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that numeric values which are outside of the provided interval
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowCnt = values.count(compareFunc)
+      if (rowCnt > 0) NumberNotBetweenMetricCalculator(
+        cnt + rowCnt,
+        lowerCompareValue,
+        upperCompareValue,
+        includeBound,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        s"Some of the provided values DO meet numeric criteria of '$criteriaStringRepr'"
+      ) else NumberNotBetweenMetricCalculator(
+        cnt, lowerCompareValue, upperCompareValue, includeBound, reversed, failCount
       )
     }
 
@@ -765,6 +1064,7 @@ object BasicNumericMetrics {
         this.lowerCompareValue,
         this.upperCompareValue,
         this.includeBound,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -810,7 +1110,7 @@ object BasicNumericMetrics {
         )
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Provided value cannot be casted to a number"
+          "Provided value cannot be cast to a number"
         )
       }
     }
