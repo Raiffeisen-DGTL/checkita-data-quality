@@ -2,7 +2,7 @@ package ru.raiffeisen.checkita.core.metrics.regular
 
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.Casting.{seqToString, tryToDate, tryToDouble, tryToString}
-import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName}
+import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName, ReversibleCalculator}
 
 import scala.util.Try
 
@@ -111,28 +111,61 @@ object BasicStringMetrics {
    */
   case class RegexMatchMetricCalculator(cnt: Long,
                                         regex: String,
+                                        protected val reversed: Boolean,
                                         protected val failCount: Long = 0,
                                         protected val status: CalculatorStatus = CalculatorStatus.Success,
                                         protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(regex: String) = this(0, regex)
-    
+    def this(regex: String, reversed: Boolean) = this(0, regex, reversed)
+
+    private val matchCounter: Seq[Any] => Int = v => v.count(elem => tryToString(elem) match {
+      case Some(x) => x.matches(regex)
+      case None => false
+    })
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that strings values which failed to match regex pattern
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
-      val matchCnt: Int = values.count(elem => tryToString(elem) match {
-        case Some(x) => x.matches(regex)
-        case None => false
-      })
+      val matchCnt: Int = matchCounter(values)
       if (matchCnt == values.length) 
-        RegexMatchMetricCalculator(cnt + matchCnt, regex, failCount)
+        RegexMatchMetricCalculator(cnt + matchCnt, regex, reversed, failCount)
       else RegexMatchMetricCalculator(
         cnt + matchCnt,
         regex,
+        reversed,
         failCount + values.length - matchCnt,
         CalculatorStatus.Failure,
-        "Some of the values failed to match regex pattern."
+        s"Some of the values failed to match regex pattern '$regex'."
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that strings values which DO match regex pattern
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val matchCnt: Int = matchCounter(values)
+      if (matchCnt > 0) RegexMatchMetricCalculator(
+        cnt + matchCnt,
+        regex,
+        reversed,
+        failCount + matchCnt,
+        CalculatorStatus.Failure,
+        s"Some of the values DO match regex pattern '$regex'."
+      )
+      else RegexMatchMetricCalculator(cnt, regex, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -145,7 +178,8 @@ object BasicStringMetrics {
       val that = m2.asInstanceOf[RegexMatchMetricCalculator]
       RegexMatchMetricCalculator(
         this.cnt + that.cnt,
-        regex,
+        this.regex,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -164,28 +198,61 @@ object BasicStringMetrics {
    */
   case class RegexMismatchMetricCalculator(cnt: Long,
                                            regex: String,
+                                           protected val reversed: Boolean,
                                            protected val failCount: Long = 0,
                                            protected val status: CalculatorStatus = CalculatorStatus.Success,
                                            protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(regex: String) = this(0, regex)
-    
+    def this(regex: String, reversed: Boolean) = this(0, regex, reversed)
+
+    private val mismatchCounter: Seq[Any] => Int = v => v.count(elem => tryToString(elem) match {
+      case Some(x) => !x.matches(regex)
+      case None => true
+    })
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that strings values which DO match regex pattern
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
-      val mismatchCnt: Int = values.count(elem => tryToString(elem) match {
-        case Some(x) => !x.matches(regex)
-        case None => true
-      })
+      val mismatchCnt: Int = mismatchCounter(values)
       if (mismatchCnt == values.length)
-        RegexMismatchMetricCalculator(cnt + mismatchCnt, regex, failCount)
+        RegexMismatchMetricCalculator(cnt + mismatchCnt, regex, reversed, failCount)
       else RegexMismatchMetricCalculator(
         cnt + mismatchCnt,
         regex,
+        reversed,
         failCount + values.length - mismatchCnt,
         CalculatorStatus.Failure,
-        "Some of the values failed to mismatch regex pattern."
+        s"Some of the values DO match regex pattern '$regex'."
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that strings values which failed to match regex pattern
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val mismatchCnt: Int = mismatchCounter(values)
+      if (mismatchCnt > 0) RegexMismatchMetricCalculator(
+        cnt + mismatchCnt,
+        regex,
+        reversed,
+        failCount + mismatchCnt,
+        CalculatorStatus.Failure,
+        s"Some of the values failed to match regex pattern '$regex'."
+      )
+      else RegexMismatchMetricCalculator(cnt, regex, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -198,7 +265,8 @@ object BasicStringMetrics {
       val that = m2.asInstanceOf[RegexMismatchMetricCalculator]
       RegexMismatchMetricCalculator(
         this.cnt + that.cnt,
-        regex,
+        this.regex,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -209,35 +277,65 @@ object BasicStringMetrics {
   /**
    * Calculates amount of null values in processed elements
    *
-   * Important! This metric has a reversed status behaviour: it fails when nulls are found.
-   *
-   * @param cnt Current amount of null values
+   * @param cnt      Current amount of null values
+   * @param reversed Boolean flag indicating whether error collection logic should be direct or reversed.
    * @return result map with keys: "NULL_VALUES"
    */
   case class NullValuesMetricCalculator(cnt: Long,
+                                        protected val reversed: Boolean,
                                         protected val failCount: Long = 0,
                                         protected val status: CalculatorStatus = CalculatorStatus.Success,
                                         protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this() = this(0)
-    
+    def this(reversed: Boolean) = this(0, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that any non-null values are considered
+     * as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+      val null_cnt = values.count(_ == null) // count nulls over all columns provided
+      if (null_cnt < values.size) {
+        NullValuesMetricCalculator(
+          cnt + null_cnt,
+          reversed,
+          failCount + (values.size - null_cnt),
+          CalculatorStatus.Failure,
+          s"There are ${values.size - null_cnt} non-null values found within processed values."
+        )
+      } else NullValuesMetricCalculator(cnt + null_cnt, reversed, failCount)
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that any null values are considered
+     * as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
       val null_cnt = values.count(_ == null) // count nulls over all columns provided
       if (null_cnt > 0) {
         NullValuesMetricCalculator(
           cnt + null_cnt,
+          reversed,
           failCount + null_cnt,
           CalculatorStatus.Failure,
-          s"There are $null_cnt nulls are found within processed values."
+          s"There are $null_cnt null values found within processed values."
         )
-      } else NullValuesMetricCalculator(cnt, failCount)
+      } else NullValuesMetricCalculator(cnt, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
-    
+
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.NullValues.entryName -> (cnt.toDouble, None))
 
@@ -245,6 +343,7 @@ object BasicStringMetrics {
       val that = m2.asInstanceOf[NullValuesMetricCalculator]
       NullValuesMetricCalculator(
         this.cnt + that.cnt,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -255,28 +354,85 @@ object BasicStringMetrics {
   /**
    * Calculates completeness of values in the specified column
    *
-   * @param nullCnt  Current amount of null values
-   * @param cellCnt  Current amount of cells
+   * @param nullCnt             Current amount of null values.
+   * @param cellCnt             Current amount of cells.
    * @param includeEmptyStrings Flag which sets whether empty strings are considered in addition to null values.
+   * @param reversed            Boolean flag indicating whether error collection logic should be direct or reversed.
    * @return result map with keys: "COMPLETENESS"
    */
   case class CompletenessMetricCalculator(nullCnt: Long,
                                           cellCnt: Long,
                                           includeEmptyStrings: Boolean,
+                                          protected val reversed: Boolean,
                                           protected val failCount: Long = 0,
                                           protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                          protected val failMsg: String = "OK") extends MetricCalculator {
+                                          protected val failMsg: String = "OK")
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(includeEmptyStrings: Boolean) = this(0, 0, includeEmptyStrings)
-    
+    def this(includeEmptyStrings: Boolean, reversed: Boolean) = this(0, 0, includeEmptyStrings, reversed)
+
+    private val nullCounter: Seq[Any] => Long = v => v.count {
+      case null => true
+      case v: String if v == "" && includeEmptyStrings => true
+      case _ => false
+    }
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that any non-null
+     * (or non-empty if `includeEmptyStrings` is `true`) values are considered
+     * as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
-      val rowNullCnt = values.count {
-        case null => true
-        case v: String if v == "" && includeEmptyStrings => true
-        case _ => false
-      }
-      CompletenessMetricCalculator(nullCnt + rowNullCnt, cellCnt + values.length, includeEmptyStrings, failCount)
+      val rowNullCnt = nullCounter(values)
+      if (rowNullCnt < values.size) {
+        val failMsg = if (includeEmptyStrings)
+          s"There are ${values.size - rowNullCnt} non-null or non-empty values found within processed values."
+        else s"There are ${values.size - rowNullCnt} non-null values found within processed values."
+        CompletenessMetricCalculator(
+          nullCnt + rowNullCnt,
+          cellCnt + values.size,
+          includeEmptyStrings,
+          reversed,
+          failCount + (values.size - rowNullCnt),
+          CalculatorStatus.Failure,
+          failMsg
+        )
+      } else CompletenessMetricCalculator(
+        nullCnt + rowNullCnt,
+        cellCnt + values.size,
+        includeEmptyStrings,
+        reversed,
+        failCount
+      )
+    }
+
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowNullCnt = nullCounter(values)
+      if (rowNullCnt > 0) {
+        val failMsg = if (includeEmptyStrings)
+          s"There are $rowNullCnt null or empty values found within processed values."
+        else s"There are $rowNullCnt null values found within processed values."
+        CompletenessMetricCalculator(
+          nullCnt + rowNullCnt,
+          cellCnt + values.size,
+          includeEmptyStrings,
+          reversed,
+          failCount + rowNullCnt,
+          CalculatorStatus.Failure,
+          failMsg
+        )
+      } else CompletenessMetricCalculator(
+        nullCnt,
+        cellCnt + values.size,
+        includeEmptyStrings,
+        reversed,
+        failCount
+      )
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -291,6 +447,7 @@ object BasicStringMetrics {
         this.nullCnt + that.nullCnt,
         this.cellCnt + that.cellCnt,
         this.includeEmptyStrings,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -299,23 +456,55 @@ object BasicStringMetrics {
   }
 
   /**
-   * Calculates amount of empty strings in processed elements
+   * Calculates amount of empty strings in processed elements.
    *
-   * Important! This metric has a reversed status behaviour: it fails when empty strings are found.
-   *
-   * @param cnt Current amount of empty strings
+   * @param cnt      Current amount of empty strings.
+   * @param reversed Boolean flag indicating whether error collection logic should be direct or reversed.
    * @return result map with keys: "EMPTY_VALUES"
    */
   case class EmptyStringValuesMetricCalculator(cnt: Long,
+                                               protected val reversed: Boolean,
                                                protected val failCount: Long = 0,
                                                protected val status: CalculatorStatus = CalculatorStatus.Success,
                                                protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this() = this(0)
-    
+    def this(reversed: Boolean) = this(0, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that any non-empty string values are considered
+     * as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+      val rowEmptyStrCount = values.count {
+        case v: String if v == "" => true
+        case _ => false
+      }
+      if (rowEmptyStrCount < values.size) {
+        EmptyStringValuesMetricCalculator(
+          cnt + rowEmptyStrCount,
+          reversed,
+          failCount + (values.size - rowEmptyStrCount),
+          CalculatorStatus.Failure,
+          s"There are ${values.size - rowEmptyStrCount} non-empty strings found within processed values."
+        )
+      } else EmptyStringValuesMetricCalculator(cnt + rowEmptyStrCount, reversed, failCount)
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that any empty string values are considered
+     * as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
       val rowEmptyStrCount = values.count {
         case v: String if v == "" => true
         case _ => false
@@ -323,11 +512,12 @@ object BasicStringMetrics {
       if (rowEmptyStrCount > 0) {
         EmptyStringValuesMetricCalculator(
           cnt + rowEmptyStrCount,
+          reversed,
           failCount + rowEmptyStrCount,
           CalculatorStatus.Failure,
-          s"There are $rowEmptyStrCount empty strings are found within processed values."
+          s"There are $rowEmptyStrCount empty strings found within processed values."
         )
-      } else EmptyStringValuesMetricCalculator(cnt, failCount)
+      } else EmptyStringValuesMetricCalculator(cnt, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -340,6 +530,7 @@ object BasicStringMetrics {
       val that = m2.asInstanceOf[EmptyStringValuesMetricCalculator]
       EmptyStringValuesMetricCalculator(
         this.cnt + that.cnt,
+        reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -496,26 +687,55 @@ object BasicStringMetrics {
    */
   case class DateFormattedValuesMetricCalculator(cnt: Long,
                                                  dateFormat: String,
+                                                 protected val reversed: Boolean,
                                                  protected val failCount: Long = 0,
                                                  protected val status: CalculatorStatus = CalculatorStatus.Success,
                                                  protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(dateFormat: String) = this(0, dateFormat)
-    
+    def this(dateFormat: String, reversed: Boolean) = this(0, dateFormat, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that strings values which cannot be cast to date with given format
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val formatMatchCnt = values.count(checkDate)
       if (formatMatchCnt == values.length) DateFormattedValuesMetricCalculator(
-        cnt + formatMatchCnt, dateFormat, failCount
-      )
-      else DateFormattedValuesMetricCalculator(
+        cnt + formatMatchCnt, dateFormat, reversed, failCount
+      ) else DateFormattedValuesMetricCalculator(
         cnt + formatMatchCnt,
         dateFormat,
+        reversed,
         failCount + values.length - formatMatchCnt,
         CalculatorStatus.Failure,
-        s"Some of the provided values cannot be casted to date with given format of '$dateFormat'."
+        s"Some of the provided values cannot be cast to date with given format of '$dateFormat'."
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that strings values which CAN be cast to date with given format
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val formatMatchCnt = values.count(checkDate)
+      if (formatMatchCnt > 0) DateFormattedValuesMetricCalculator(
+        cnt + formatMatchCnt,
+        dateFormat,
+        reversed,
+        failCount + formatMatchCnt,
+        CalculatorStatus.Failure,
+        s"Some of the provided values CAN be cast to date with given format of '$dateFormat'."
+      ) else DateFormattedValuesMetricCalculator(cnt, dateFormat, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -529,6 +749,7 @@ object BasicStringMetrics {
       DateFormattedValuesMetricCalculator(
         this.cnt + that.cnt,
         this.dateFormat,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -554,27 +775,58 @@ object BasicStringMetrics {
   case class StringLengthValuesMetricCalculator(cnt: Long,
                                                 length: Int,
                                                 compareRule: String,
+                                                protected val reversed: Boolean,
                                                 protected val failCount: Long = 0,
                                                 protected val status: CalculatorStatus = CalculatorStatus.Success,
                                                 protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(length: Int, compareRule: String) = this(0, length, compareRule)
-    
+    def this(length: Int, compareRule: String, reversed: Boolean) = this(0, length, compareRule, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that strings values which length doesn't meet provided criteria
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val rowCnt = values.flatMap(tryToString).map(_.length).count(compareFunc)
-      if (rowCnt == values.length) StringLengthValuesMetricCalculator(
-        cnt + rowCnt, length, compareRule, failCount
-      )
-      else StringLengthValuesMetricCalculator(
+      if (rowCnt == values.size) StringLengthValuesMetricCalculator(
+        cnt + rowCnt, length, compareRule, reversed, failCount
+      ) else StringLengthValuesMetricCalculator(
         cnt + rowCnt,
         length,
         compareRule,
-        failCount + values.length - rowCnt,
+        reversed,
+        failCount + values.size - rowCnt,
         CalculatorStatus.Failure,
-        s"Some of the provided values do not meet string length criteria '$criteriaStringRepr'"
+        s"There are ${values.size - rowCnt} values found that do not meet string length criteria '$criteriaStringRepr'"
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that strings values which length DOES meet provided criteria
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowCnt = values.flatMap(tryToString).map(_.length).count(compareFunc)
+      if (rowCnt > 0) StringLengthValuesMetricCalculator(
+        cnt + rowCnt,
+        length,
+        compareRule,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        s"There are $rowCnt values found that DO meet string length criteria '$criteriaStringRepr'"
+      )
+      else StringLengthValuesMetricCalculator(cnt, length, compareRule, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -589,6 +841,7 @@ object BasicStringMetrics {
         this.cnt + that.cnt,
         this.length,
         this.compareRule,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -621,26 +874,56 @@ object BasicStringMetrics {
    */
   case class StringInDomainValuesMetricCalculator(cnt: Long,
                                                   domain: Set[String],
+                                                  protected val reversed: Boolean,
                                                   protected val failCount: Long = 0,
                                                   protected val status: CalculatorStatus = CalculatorStatus.Success,
                                                   protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(domain: Set[String]) = this(0, domain)
-    
+    def this(domain: Set[String], reversed: Boolean) = this(0, domain, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that strings values which are outside of provided domain
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val rowCnt = values.flatMap(tryToString).count(domain.contains)
       if (rowCnt == values.length) StringInDomainValuesMetricCalculator(
-        cnt=cnt + rowCnt, domain, failCount
-      )
-      else StringInDomainValuesMetricCalculator(
+        cnt=cnt + rowCnt, domain, reversed, failCount
+      ) else StringInDomainValuesMetricCalculator(
         cnt + rowCnt,
         domain,
+        reversed,
         failCount + values.length - rowCnt,
         CalculatorStatus.Failure,
         s"Some of the provided values are not in the given domain of ${domain.mkString("[", ",", "]")}"
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that strings values which are within provided domain
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowCnt = values.flatMap(tryToString).count(domain.contains)
+      if (rowCnt > 0) StringInDomainValuesMetricCalculator(
+        cnt=cnt + rowCnt,
+        domain,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        s"Some of the provided values are IN the given domain of ${domain.mkString("[", ",", "]")}"
+      )
+      else StringInDomainValuesMetricCalculator(cnt, domain, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -654,6 +937,7 @@ object BasicStringMetrics {
       StringInDomainValuesMetricCalculator(
         this.cnt + that.cnt,
         this.domain,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -670,26 +954,56 @@ object BasicStringMetrics {
    */
   case class StringOutDomainValuesMetricCalculator(cnt: Long,
                                                    domain: Set[String],
+                                                   protected val reversed: Boolean,
                                                    protected val failCount: Long = 0,
                                                    protected val status: CalculatorStatus = CalculatorStatus.Success,
                                                    protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(domain: Set[String]) = this(0, domain)
-    
+    def this(domain: Set[String], reversed: Boolean) = this(0, domain, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that strings values which are within of provided domain
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val rowCnt = values.flatMap(tryToString).count(x => !domain.contains(x))
       if (rowCnt == values.length) StringOutDomainValuesMetricCalculator(
-        cnt=cnt + rowCnt, domain, failCount
+        cnt=cnt + rowCnt, domain, reversed, failCount
       )
       else StringOutDomainValuesMetricCalculator(
         cnt + rowCnt,
         domain,
+        reversed,
         failCount + values.length - rowCnt,
         CalculatorStatus.Failure,
         s"Some of the provided values are IN the given domain of ${domain.mkString("[", ",", "]")}"
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that strings values which outside of provided domain
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowCnt = values.flatMap(tryToString).count(x => !domain.contains(x))
+      if (rowCnt > 0) StringOutDomainValuesMetricCalculator(
+        cnt=cnt + rowCnt,
+        domain,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        s"Some of the provided values are not in the given domain of ${domain.mkString("[", ",", "]")}"
+      ) else StringOutDomainValuesMetricCalculator(cnt, domain, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -702,7 +1016,8 @@ object BasicStringMetrics {
       val that = m2.asInstanceOf[StringOutDomainValuesMetricCalculator]
       StringOutDomainValuesMetricCalculator(
         this.cnt + that.cnt,
-        domain,
+        this.domain,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -720,26 +1035,57 @@ object BasicStringMetrics {
    */
   case class StringValuesMetricCalculator(cnt: Long,
                                           compareValue: String,
+                                          protected val reversed: Boolean,
                                           protected val failCount: Long = 0,
                                           protected val status: CalculatorStatus = CalculatorStatus.Success,
                                           protected val failMsg: String = "OK")
-    extends MetricCalculator {
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(compareValue: String) = this(0, compareValue)
-    
+    def this(compareValue: String, reversed: Boolean) = this(0, compareValue, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that strings values which are not equal to provided value
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val rowCnt = values.flatMap(tryToString).count(_ == compareValue)
       if (rowCnt == values.length) StringValuesMetricCalculator(
-        cnt=cnt + rowCnt, compareValue, failCount
+        cnt=cnt + rowCnt, compareValue, reversed, failCount
       )
       else StringValuesMetricCalculator(
         cnt + rowCnt,
         compareValue,
+        reversed,
         failCount + values.length - rowCnt,
         CalculatorStatus.Failure,
-        s"Some of the provided values are not equal to requested string value of '$compareValue'"
+        s"Some of the provided values do not equal to requested string value of '$compareValue'"
       )
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that strings values which are equal to provided value
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val rowCnt = values.flatMap(tryToString).count(_ == compareValue)
+      if (rowCnt > 0) StringValuesMetricCalculator(
+        cnt=cnt + rowCnt,
+        compareValue,
+        reversed,
+        failCount + rowCnt,
+        CalculatorStatus.Failure,
+        s"Some of the provided values DO equal to requested string value of '$compareValue'"
+      )
+      else StringValuesMetricCalculator(cnt, compareValue, reversed, failCount)
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -752,7 +1098,8 @@ object BasicStringMetrics {
       val that = m2.asInstanceOf[StringValuesMetricCalculator]
       StringValuesMetricCalculator(
         this.cnt + that.cnt,
-        compareValue,
+        this.compareValue,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg

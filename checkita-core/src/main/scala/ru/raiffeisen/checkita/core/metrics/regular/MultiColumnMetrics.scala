@@ -3,7 +3,7 @@ package ru.raiffeisen.checkita.core.metrics.regular
 import org.apache.commons.text.similarity.LevenshteinDistance
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.Casting.{tryToDate, tryToDouble, tryToString}
-import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName}
+import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName, ReversibleCalculator}
 
 import java.time.temporal.ChronoUnit.DAYS
 
@@ -48,7 +48,7 @@ object MultiColumnMetrics {
           CovarianceMetricCalculator(lm, rm, cm, newN, failCount)
         case (None, _) | (_, None) => copyWithError(
           CalculatorStatus.Failure,
-          "Some of the provided values cannot be casted to number"
+          "Some of the provided values cannot be cast to number"
         )
       }
     }
@@ -63,7 +63,7 @@ object MultiColumnMetrics {
         MetricName.CovarianceBessel.entryName -> (coMoment / (n - 1), None)
       )
     } else {
-      val msg = Some("Metric calculation failed due to some of the processed values cannot be casted to number.")
+      val msg = Some("Metric calculation failed due to some of the processed values cannot be cast to number.")
       Map(
         MetricName.CoMoment.entryName -> (Double.NaN, msg),
         MetricName.Covariance.entryName -> (Double.NaN, msg),
@@ -92,21 +92,50 @@ object MultiColumnMetrics {
    * @return result map with keys: "COLUMN_EQ"
    */
   case class EqualStringColumnsMetricCalculator(cnt: Int,
+                                                protected val reversed: Boolean,
                                                 protected val failCount: Long = 0,
                                                 protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                                protected val failMsg: String = "OK") extends MetricCalculator {
+                                                protected val failMsg: String = "OK")
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this() = this(0)
-    
+    def this(reversed: Boolean) = this(0, reversed)
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that rows where string values in requested columns are not equal
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
     protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
       val valuesStr = values.flatMap(tryToString)
       
       if (values.length == valuesStr.length) {
-        if (valuesStr.distinct.length == 1) EqualStringColumnsMetricCalculator(cnt + 1, failCount)
-        else copyWithError(CalculatorStatus.Failure, "Provided values are not equal")
+        if (valuesStr.distinct.length == 1) EqualStringColumnsMetricCalculator(cnt + 1, reversed, failCount)
+        else copyWithError(CalculatorStatus.Failure, "Provided values are not equal.")
       }
-      else copyWithError(CalculatorStatus.Failure, "Some of the provided values cannot be casted to string")
+      else copyWithError(CalculatorStatus.Failure, "Some of the provided values cannot be cast to string.")
+    }
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that rows where string values in requested columns ARE equal
+     * are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+      val valuesStr = values.flatMap(tryToString)
+
+      if (values.length == valuesStr.length) {
+        if (valuesStr.distinct.length == 1) EqualStringColumnsMetricCalculator(
+          cnt + 1, reversed, failCount + 1, CalculatorStatus.Failure, "Provided values ARE equal.")
+        else EqualStringColumnsMetricCalculator(cnt, reversed, failCount)
+      }
+      else copyWithError(CalculatorStatus.Failure, "Some of the provided values cannot be cast to string.")
     }
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
@@ -119,6 +148,7 @@ object MultiColumnMetrics {
       val that = m2.asInstanceOf[EqualStringColumnsMetricCalculator]
       EqualStringColumnsMetricCalculator(
         this.cnt + that.cnt,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -137,33 +167,80 @@ object MultiColumnMetrics {
   case class DayDistanceMetricCalculator(cnt: Double,
                                          dateFormat: String,
                                          threshold: Int,
+                                         protected val reversed: Boolean,
                                          protected val failCount: Long = 0,
                                          protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                         protected val failMsg: String = "OK") extends MetricCalculator {
+                                         protected val failMsg: String = "OK")
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(dateFormat: String, threshold: Int) = this(0, dateFormat, threshold)
-    
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    def this(dateFormat: String, threshold: Int, reversed: Boolean) = this(0, dateFormat, threshold, reversed)
+
+    /**
+     * Common logic for incrementing metric calculator (applies to both direct and reversed error collection logic).
+     *
+     * @param values               values to process
+     * @param incrementedOutput    Instance of metric calculator with incremented counter.
+     * @param notIncrementedOutput Instance of metric calculator for case when counter is not incremented.
+     * @return Updated calculator or throws an exception
+     */
+    private def incrementer(values: Seq[Any],
+                            incrementedOutput: MetricCalculator,
+                            notIncrementedOutput: MetricCalculator): MetricCalculator = {
       assert(values.length == 2, "dayDistance metric works with two columns only!")
       val dates = for {
         firstDate <- tryToDate(values.head, dateFormat)
         secondDate <- tryToDate(values.tail.head, dateFormat)
       } yield (firstDate, secondDate)
-      
+
       dates.map {
         case (firstDate, secondDate) =>
-          if (Math.abs(DAYS.between(firstDate, secondDate)) < threshold)
-            DayDistanceMetricCalculator(cnt + 1, dateFormat, threshold, failCount)
-          else copyWithError(
-            CalculatorStatus.Failure,
-            s"Distance between two dates is greater than or equal to given threshold of '$threshold'"
-          )
+          if (Math.abs(DAYS.between(firstDate, secondDate)) < threshold) incrementedOutput
+          else notIncrementedOutput
       }.getOrElse(copyWithError(
         CalculatorStatus.Failure,
-        s"Some of the provided values cannot be casted to date with given format of '$dateFormat'."
+        s"Some of the provided values cannot be cast to date with given format of '$dateFormat'."
       ))
     }
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that rows where date distance between two dates is greater than or
+     * equal to provided threshold are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = incrementer(
+      values,
+      DayDistanceMetricCalculator(cnt + 1, dateFormat, threshold, reversed, failCount),
+      copyWithError(
+        CalculatorStatus.Failure,
+        s"Distance between two dates is greater than or equal to given threshold of '$threshold'"
+      )
+    )
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that rows where date distance between two dates is less than
+     * provided threshold are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = incrementer(
+      values,
+      DayDistanceMetricCalculator(
+        cnt + 1,
+        dateFormat,
+        threshold,
+        reversed,
+        failCount + 1,
+        CalculatorStatus.Failure,
+        s"Distance between two dates lower than given threshold of '$threshold'"
+      ),
+      DayDistanceMetricCalculator(cnt, dateFormat, threshold, reversed, failCount)
+    )
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
@@ -177,6 +254,7 @@ object MultiColumnMetrics {
         this.cnt + that.cnt,
         this.dateFormat,
         this.threshold,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg
@@ -194,14 +272,26 @@ object MultiColumnMetrics {
   case class LevenshteinDistanceMetricCalculator(cnt: Double,
                                                  threshold: Double,
                                                  normalize: Boolean,
+                                                 protected val reversed: Boolean,
                                                  protected val failCount: Long = 0,
                                                  protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                                 protected val failMsg: String = "OK") extends MetricCalculator {
+                                                 protected val failMsg: String = "OK")
+    extends MetricCalculator with ReversibleCalculator {
 
     // axillary constructor to init metric calculator:
-    def this(threshold: Double, normalize: Boolean) = this(0, threshold, normalize)
-    
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    def this(threshold: Double, normalize: Boolean, reversed: Boolean) = this(0, threshold, normalize, reversed)
+
+    /**
+     * Common logic for incrementing metric calculator (applies to both direct and reversed error collection logic).
+     *
+     * @param values               values to process
+     * @param incrementedOutput    Instance of metric calculator with incremented counter.
+     * @param notIncrementedOutput Instance of metric calculator for case when counter is not incremented.
+     * @return Updated calculator or throws an exception
+     */
+    private def incrementer(values: Seq[Any],
+                            incrementedOutput: MetricCalculator,
+                            notIncrementedOutput: MetricCalculator): MetricCalculator = {
       assert(values.length == 2, "levenshteinDistance metric works with two columns only!")
       if (normalize) assert(
         0 <= threshold && threshold <= 1,
@@ -215,16 +305,52 @@ object MultiColumnMetrics {
       stringValues.map {
         case (x, y) =>
           val levDist = getLevenshteinDistance(x, y)
-          if (levDist < threshold) LevenshteinDistanceMetricCalculator(cnt + 1, threshold, normalize, failCount)
-          else copyWithError(
-            CalculatorStatus.Failure, 
-            s"Levenshtein distance for given values is grater than or equal to given threshold of '$threshold'"
-          )
+          if (levDist < threshold) incrementedOutput
+          else notIncrementedOutput
       }.getOrElse(copyWithError(
         CalculatorStatus.Failure,
-        "Some of the provided values cannot be casted to string"
+        "Some of the provided values cannot be cast to string"
       ))
     }
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that rows where levenshtein distance between two string values
+     * is greater than or equal to the provided threshold are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = incrementer(
+      values,
+      LevenshteinDistanceMetricCalculator(cnt + 1, threshold, normalize, reversed, failCount),
+      copyWithError(
+        CalculatorStatus.Failure,
+        s"Levenshtein distance for given values is grater than or equal to given threshold of '$threshold'"
+      )
+    )
+
+    /**
+     * Increment metric calculator with REVERSED error collection logic. May throw an exception.
+     * Reversed error collection logic implies that rows where levenshtein distance between two string values
+     * is lower than the provided threshold are considered as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = incrementer(
+      values,
+      LevenshteinDistanceMetricCalculator(
+        cnt + 1,
+        threshold,
+        normalize,
+        reversed,
+        failCount + 1,
+        CalculatorStatus.Failure,
+        s"Levenshtein distance for given values is lower than given threshold of '$threshold'"
+      ),
+      LevenshteinDistanceMetricCalculator(cnt, threshold, normalize, reversed, failCount)
+    )
 
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
@@ -238,6 +364,7 @@ object MultiColumnMetrics {
         this.cnt + that.cnt,
         this.threshold,
         this.normalize,
+        this.reversed,
         this.failCount + that.getFailCounter,
         this.status,
         this.failMsg

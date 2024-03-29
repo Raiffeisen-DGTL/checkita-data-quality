@@ -186,18 +186,21 @@ object MetricStreamProcessor extends MetricProcessor with Logging {
 
   /**
    * Processes calculator results and accumulated errors once stream window state is finalized.
-   * @param gc Final map of grouped metric calculators for stream window
-   * @param errors Final sequence of metric errors accumulated for stream window
+   *
+   * @param gc          Final map of grouped metric calculators for stream window
+   * @param errors      Final sequence of metric errors accumulated for stream window
    * @param windowStart Window start datetime (string in format 'yyyy-MM-dd HH:mm:ss')
-   * @param streamId Id of the stream source for which results are processed.
-   * @param streamKeys Stream source key fields.
+   * @param streamId    Id of the stream source for which results are processed.
+   * @param streamKeys  Stream source key fields.
+   * @param dumpSize    Implicit value of maximum number of metric failures (or errors) to be collected (per metric).
+   *                    Used to prevent OOM errors.
    * @return Map of metricId to a sequence of metric results for this metricId (some metrics yield multiple results).
    */
   def processWindowResults(gc: GroupedCalculators,
                            errors: Seq[AccumulatedErrors],
                            windowStart: String,
                            streamId: String,
-                           streamKeys: Seq[String]): Result[MetricResults] = Try {
+                           streamKeys: Seq[String])(implicit dumpSize: Int): Result[MetricResults] = Try {
     buildResults(gc, processMetricErrors(errors), streamId, streamKeys)
   }.toResult(preMsg = s"Unable to process metrics for stream $streamId at window $windowStart due to following error:")
 }

@@ -167,13 +167,14 @@ jobConfig: {
       regexMatch: [
         {
           id: "table_source1_inn_regex", description: "Regex match for inn column", source: "table_source_1",
-          columns: ["inn"], params: {regex: """^\d{10}$"""}
+          columns: ["inn"], params: {regex: """^\d{10}$"""}, reversed: true
         }
       ]
       stringInDomain: [
         {
           id: "orc_data_segment_domain", source: "hdfs_orc_source",
           columns: ["segment"], params: {domain: ["FI", "MID", "SME", "INTL", "CIB"]}
+          reversed: true
         }
       ]
       topN: [
