@@ -4,29 +4,30 @@ import eu.timepit.refined.types.string.NonEmptyString
 import org.json4s.jackson.Serialization.write
 import ru.raiffeisen.checkita.config.RefinedTypes._
 import ru.raiffeisen.checkita.config.jobconf.MetricParams._
-import ru.raiffeisen.checkita.core.dfmetrics.BasicStringMetrics._
-import ru.raiffeisen.checkita.core.dfmetrics.{DFMetricCalculator, DFRegularMetric}
 import ru.raiffeisen.checkita.core.metrics.regular.AlgebirdMetrics._
 import ru.raiffeisen.checkita.core.metrics.regular.BasicNumericMetrics._
 import ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics._
 import ru.raiffeisen.checkita.core.metrics.regular.FileMetrics._
 import ru.raiffeisen.checkita.core.metrics.regular.MultiColumnMetrics._
-import ru.raiffeisen.checkita.core.metrics.{ComposedMetric, MetricCalculator, MetricName, RegularMetric}
+import ru.raiffeisen.checkita.core.metrics._
 import ru.raiffeisen.checkita.utils.Common.{getFieldsMap, jsonFormats}
 
 
 object Metrics {
 
-  /** Base class for all metrics configurations. All metrics are described as DQ entities.
-    */
+  /**
+   * Base class for all metrics configurations. All metrics are described as DQ entities.
+   */
   sealed abstract class MetricConfig extends JobConfigEntity {
     val metricId: String = id.value // actual ID value after validation.
   }
 
-  /** Base class for all regular metric configurations (except row count metric). All regular metrics must have a
-    * reference to source ID over which the metric is being calculated. In addition, column metrics must have non-empty
-    * sequence of columns over which the metric is being calculated.
-    */
+  /**
+   * Base class for all regular metric configurations (except row count metric). All regular metrics must have a
+   * reference to source ID over which the metric is being calculated. In addition, column metrics must have non-empty
+   * sequence of columns over which the metric is being calculated.
+   * Metric error collection logic might be reversed provided with corresponding boolean flag set to `true`.
+   */
   sealed abstract class RegularMetricConfig extends MetricConfig with RegularMetric {
     val source: NonEmptyString
 
@@ -69,16 +70,12 @@ object Metrics {
   }
 
   /** Composed metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param formula
-    *   Formula to calculate composed metric
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param formula     Formula to calculate composed metric
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class ComposedMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -91,16 +88,12 @@ object Metrics {
   }
 
   /** Row count metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class RowCountMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -114,18 +107,13 @@ object Metrics {
   }
 
   /** Duplicate values column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class DuplicateValuesMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -139,18 +127,13 @@ object Metrics {
   }
 
   /** Distinct values column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class DistinctValuesMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -164,20 +147,14 @@ object Metrics {
   }
 
   /** Approximate distinct values column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class ApproxDistinctValuesMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -193,105 +170,85 @@ object Metrics {
   }
 
   /** Null values column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   *                    When reversed is set to `true` then any non-null values are considered as metric failure.
+   *                    Otherwise, null values are collected as metric failure.
+   */
   final case class NullValuesMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig with DFRegularMetric {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = true
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName                 = MetricName.NullValues
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new NullValuesMetricCalculator()
-
-    override def initDFMetricCalculator: DFMetricCalculator =
-      DFNullValuesMetricCalculator(id.value, columns.value)
+    def initMetricCalculator: ReversibleMetricCalculator = new NullValuesMetricCalculator(reversed)
   }
 
   /** Empty values column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class EmptyValuesMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = true
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName                 = MetricName.EmptyValues
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new EmptyStringValuesMetricCalculator()
+    def initMetricCalculator: ReversibleMetricCalculator = new EmptyStringValuesMetricCalculator(reversed)
   }
 
   /** Completeness column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class CompletenessMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: CompletenessParams = CompletenessParams(),
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig with DFRegularMetric {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = true
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.Completeness
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new CompletenessMetricCalculator(params.includeEmptyStrings)
-
-    override def initDFMetricCalculator: DFMetricCalculator =
-      DFCompletenessMetricCalculator(id.value, columns.value, params.includeEmptyStrings)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new CompletenessMetricCalculator(params.includeEmptyStrings, reversed)
   }
 
   /** Sequence completeness column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class SequenceCompletenessMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -307,20 +264,14 @@ object Metrics {
   }
 
   /** Sequence completeness column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class ApproxSequenceCompletenessMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -336,18 +287,13 @@ object Metrics {
   }
 
   /** Min string column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class MinStringMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -361,46 +307,33 @@ object Metrics {
   }
 
   /** Max string column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class MaxStringMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig with DFRegularMetric {
+  ) extends AnyColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.MaxString
     val paramString: Option[String]            = None
     def initMetricCalculator: MetricCalculator = new MaxStringValueMetricCalculator()
-
-    override def initDFMetricCalculator: DFMetricCalculator =
-      DFMaxStringValueMetricCalculator(id.value, columns.value)
   }
 
   /** Average string column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class AvgStringMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -414,257 +347,217 @@ object Metrics {
   }
 
   /** String length column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class StringLengthMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: StringLengthParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.StringLength
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new StringLengthValuesMetricCalculator(params.length.value, params.compareRule.toString.toLowerCase)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new StringLengthValuesMetricCalculator(params.length.value, params.compareRule.toString.toLowerCase, reversed)
   }
 
   /** String in domain column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class StringInDomainMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: StringDomainParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig with DFRegularMetric {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.StringInDomain
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new StringInDomainValuesMetricCalculator(params.domain.value.toSet)
-
-    override def initDFMetricCalculator: DFMetricCalculator =
-      DFStringInDomainValuesMetricCalculator(id.value, columns.value, params.domain.value.toSet)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new StringInDomainValuesMetricCalculator(params.domain.value.toSet, reversed)
   }
 
   /** String out domain column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class StringOutDomainMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: StringDomainParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.StringOutDomain
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new StringOutDomainValuesMetricCalculator(params.domain.value.toSet)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new StringOutDomainValuesMetricCalculator(params.domain.value.toSet, reversed)
   }
 
   /** String values column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class StringValuesMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: StringValuesParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.StringValues
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new StringValuesMetricCalculator(params.compareValue.value)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new StringValuesMetricCalculator(params.compareValue.value, reversed)
   }
 
   /** Regex match column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class RegexMatchMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: RegexParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig with DFRegularMetric {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName                 = MetricName.RegexMatch
     val paramString: Option[String]            = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator = new RegexMatchMetricCalculator(params.regex.value)
-
-    override def initDFMetricCalculator: DFMetricCalculator =
-      DFRegexMatchCalculator(id.value, columns.value, params.regex.value)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new RegexMatchMetricCalculator(params.regex.value, reversed)
   }
 
   /** Regex mismatch column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class RegexMismatchMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: RegexParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName                 = MetricName.RegexMismatch
     val paramString: Option[String]            = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator = new RegexMismatchMetricCalculator(params.regex.value)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new RegexMismatchMetricCalculator(params.regex.value, reversed)
   }
 
   /** Formatted date column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class FormattedDateMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: FormattedDateParams = FormattedDateParams(),
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.FormattedDate
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new DateFormattedValuesMetricCalculator(params.dateFormat.pattern)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new DateFormattedValuesMetricCalculator(params.dateFormat.pattern, reversed)
   }
 
   /** Formatted number column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class FormattedNumberMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: FormattedNumberParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.FormattedNumber
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator = new NumberFormattedValuesMetricCalculator(
+    def initMetricCalculator: ReversibleMetricCalculator = new NumberFormattedValuesMetricCalculator(
       params.precision.value,
       params.scale.value,
-      params.compareRule.toString.toLowerCase
+      params.compareRule.toString.toLowerCase,
+      reversed
     )
   }
 
   /** Min number column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class MinNumberMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -678,18 +571,13 @@ object Metrics {
   }
 
   /** Max number column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class MaxNumberMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -703,18 +591,13 @@ object Metrics {
   }
 
   /** Sum number column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class SumNumberMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -728,18 +611,13 @@ object Metrics {
   }
 
   /** Average number column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class AvgNumberMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -753,18 +631,13 @@ object Metrics {
   }
 
   /** Standard deviation number column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class StdNumberMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -778,248 +651,214 @@ object Metrics {
   }
 
   /** Casted number column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class CastedNumberMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName                 = MetricName.CastedNumber
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new NumberCastValuesMetricCalculator()
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new NumberCastValuesMetricCalculator(reversed)
   }
 
   /** Number in domain column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class NumberInDomainMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: NumberDomainParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberInDomain
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new NumberInDomainValuesMetricCalculator(params.domain.value.toSet)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new NumberInDomainValuesMetricCalculator(params.domain.value.toSet, reversed)
   }
 
   /** Number out domain column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class NumberOutDomainMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: NumberDomainParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberOutDomain
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new NumberOutDomainValuesMetricCalculator(params.domain.value.toSet)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new NumberOutDomainValuesMetricCalculator(params.domain.value.toSet, reversed)
   }
 
   /** Number less than column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class NumberLessThanMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: NumberCompareParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberLessThan
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new NumberLessThanMetricCalculator(params.compareValue, params.includeBound)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new NumberLessThanMetricCalculator(params.compareValue, params.includeBound, reversed)
   }
 
   /** Number greater than column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class NumberGreaterThanMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: NumberCompareParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberGreaterThan
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new NumberGreaterThanMetricCalculator(params.compareValue, params.includeBound)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new NumberGreaterThanMetricCalculator(params.compareValue, params.includeBound, reversed)
   }
 
   /** Number between column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class NumberBetweenMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: NumberIntervalParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberBetween
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new NumberBetweenMetricCalculator(params.lowerCompareValue, params.upperCompareValue, params.includeBound)
+    def initMetricCalculator: ReversibleMetricCalculator = new NumberBetweenMetricCalculator(
+      params.lowerCompareValue, params.upperCompareValue, params.includeBound, reversed
+    )
   }
 
   /** Number not between column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class NumberNotBetweenMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: NumberIntervalParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberNotBetween
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new NumberNotBetweenMetricCalculator(params.lowerCompareValue, params.upperCompareValue, params.includeBound)
+    def initMetricCalculator: ReversibleMetricCalculator = new NumberNotBetweenMetricCalculator(
+      params.lowerCompareValue, params.upperCompareValue, params.includeBound, reversed
+    )
   }
 
   /** Number values column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class NumberValuesMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: NonEmptyStringSeq,
       params: NumberValuesParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends AnyColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberValues
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new NumberValuesMetricCalculator(params.compareValue)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new NumberValuesMetricCalculator(params.compareValue, reversed)
   }
 
   /** TDigest Median value column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class MedianValueMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -1035,20 +874,14 @@ object Metrics {
   }
 
   /** TDigest First quantile column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class FirstQuantileMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -1064,20 +897,14 @@ object Metrics {
   }
 
   /** TDigest Third quantile column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class ThirdQuantileMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -1093,20 +920,14 @@ object Metrics {
   }
 
   /** TDigest Get quantile column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class GetQuantileMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -1122,20 +943,14 @@ object Metrics {
   }
 
   /** TDigest Get percentile column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class GetPercentileMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -1151,101 +966,85 @@ object Metrics {
   }
 
   /** Column equality metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class ColumnEqMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: MultiElemStringSeq,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends MultiColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends MultiColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName                 = MetricName.ColumnEq
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new EqualStringColumnsMetricCalculator()
+    def initMetricCalculator: ReversibleMetricCalculator = new EqualStringColumnsMetricCalculator(reversed)
   }
 
   /** Day distance column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class DayDistanceMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: DoubleElemStringSeq,
       params: DayDistanceParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends DoubleColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends DoubleColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.DayDistance
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new DayDistanceMetricCalculator(params.dateFormat.pattern, params.threshold.value)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new DayDistanceMetricCalculator(params.dateFormat.pattern, params.threshold.value, reversed)
   }
 
   /** Levenshtein distance column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
   final case class LevenshteinDistanceMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
       source: NonEmptyString,
       columns: DoubleElemStringSeq,
       params: LevenshteinDistanceParams,
-      metadata: Seq[SparkParam] = Seq.empty
-  ) extends DoubleColumnRegularMetricConfig {
+      metadata: Seq[SparkParam] = Seq.empty,
+      reversed: Boolean = false
+  ) extends DoubleColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.LevenshteinDistance
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new LevenshteinDistanceMetricCalculator(params.threshold, params.normalize)
+    def initMetricCalculator: ReversibleMetricCalculator =
+      new LevenshteinDistanceMetricCalculator(params.threshold, params.normalize, reversed)
   }
 
   /** Co-moment column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class CoMomentMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -1259,18 +1058,13 @@ object Metrics {
   }
 
   /** Covariance column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class CovarianceMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -1284,18 +1078,13 @@ object Metrics {
   }
 
   /** Covariance Bessel column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class CovarianceBesselMetricConfig(
       id: ID,
       description: Option[NonEmptyString],
@@ -1309,20 +1098,14 @@ object Metrics {
   }
 
   /** TopN column metric configuration
-    *
-    * @param id
-    *   Metric ID
-    * @param description
-    *   Metric description
-    * @param source
-    *   Source ID over which metric is being calculated
-    * @param columns
-    *   Sequence of columns which are used for metric calculation
-    * @param params
-    *   Metric parameters
-    * @param metadata
-    *   List of metadata parameters specific to this metric
-    */
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   */
   final case class TopNMetricConfig(
       id: ID,
       description: Option[NonEmptyString],

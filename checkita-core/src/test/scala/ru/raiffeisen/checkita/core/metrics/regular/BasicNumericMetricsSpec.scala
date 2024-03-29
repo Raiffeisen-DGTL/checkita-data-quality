@@ -206,8 +206,10 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
 
   "NumberFormattedValuesMetricCalculator" must {
     val paramsList = Seq(
-      (Map("precision" -> 5, "scale" -> 3, "compareRule" -> "inbound"), 4, 21),
-      (Map("precision" -> 5, "scale" -> 3, "compareRule" -> "outbound"), 18, 7)
+      (Map("precision" -> 5, "scale" -> 3, "compareRule" -> "inbound", "reversed" -> false), 4, 21),
+      (Map("precision" -> 5, "scale" -> 3, "compareRule" -> "inbound", "reversed" -> true), 4, 4),
+      (Map("precision" -> 5, "scale" -> 3, "compareRule" -> "outbound", "reversed" -> false), 18, 7),
+      (Map("precision" -> 5, "scale" -> 3, "compareRule" -> "outbound", "reversed" -> true), 18, 18)
     ) // map expected result vs parameters and fail counts
 
     val values = Seq(
@@ -225,11 +227,12 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
         values <- typedValues
         precision <- params.get("precision").map(_.asInstanceOf[Int])
         scale <- params.get("scale").map(_.asInstanceOf[Int])
+        reversed <- params.get("reversed").map(_.asInstanceOf[Boolean])
         compareRule <- params.get("compareRule").map(_.asInstanceOf[String])
       } yield (
-        values.foldLeft[MetricCalculator](new NumberFormattedValuesMetricCalculator(precision, scale, compareRule))(
-          (m, v) => m.increment(Seq(v))
-        ),
+        values.foldLeft[MetricCalculator](
+          new NumberFormattedValuesMetricCalculator(precision, scale, compareRule, reversed)
+        )((m, v) => m.increment(Seq(v))),
         result,
         failCount
       )
@@ -250,11 +253,12 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
         values <- typedValues
         precision <- params.get("precision").map(_.asInstanceOf[Int])
         scale <- params.get("scale").map(_.asInstanceOf[Int])
+        reversed <- params.get("reversed").map(_.asInstanceOf[Boolean])
         compareRule <- params.get("compareRule").map(_.asInstanceOf[String])
       } yield (
-        values.foldLeft[MetricCalculator](new NumberFormattedValuesMetricCalculator(precision, scale, compareRule))(
-          (m, v) => m.increment(v)
-        ),
+        values.foldLeft[MetricCalculator](
+          new NumberFormattedValuesMetricCalculator(precision, scale, compareRule, reversed)
+        )((m, v) => m.increment(v)),
         result,
         failCount
       )
@@ -268,21 +272,24 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
       val precision = paramsList.head._1("precision").asInstanceOf[Int]
       val scale = paramsList.head._1("scale").asInstanceOf[Int]
       val compareRule = paramsList.head._1("compareRule").asInstanceOf[String]
+      val reversed = paramsList.head._1("reversed").asInstanceOf[Boolean]
       
       val metricResult = emptyValues.foldLeft[MetricCalculator](
-        new NumberFormattedValuesMetricCalculator(precision, scale, compareRule)
+        new NumberFormattedValuesMetricCalculator(precision, scale, compareRule, reversed)
       )((m, v) => m.increment(v))
       
       metricResult.result()(MetricName.FormattedNumber.entryName)._1 shouldEqual 0
     }
 
-    "return zero when applied to string sequence which values are not convertable to numbers" in {
+    "return zero when applied to string sequence which values are not convertible to numbers" in {
       val strValues = Seq("foo", "bar", "baz")
       val precision = paramsList.head._1("precision").asInstanceOf[Int]
       val scale = paramsList.head._1("scale").asInstanceOf[Int]
       val compareRule = paramsList.head._1("compareRule").asInstanceOf[String]
+      val reversed = paramsList.head._1("reversed").asInstanceOf[Boolean]
+
       val metricResult = strValues.foldLeft[MetricCalculator](
-        new NumberFormattedValuesMetricCalculator(precision, scale, compareRule)
+        new NumberFormattedValuesMetricCalculator(precision, scale, compareRule, reversed)
       )((m, v) => m.increment(Seq(v)))
       metricResult.result()(MetricName.FormattedNumber.entryName)._1 shouldEqual 0
     }
@@ -290,27 +297,43 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
 
   "NumberCastValuesMetricCalculator" must {
 
-    "return correct metric value and fail counts for single column sequence" in {
+    "return correct metric value and fail counts for single column sequence [direct error collection]" in {
       val values = testSingleColSeq(3)
-      val metricResult = values.foldLeft[MetricCalculator](new NumberCastValuesMetricCalculator())(
+      val metricResult = values.foldLeft[MetricCalculator](new NumberCastValuesMetricCalculator(false))(
         (m, v) => m.increment(Seq(v))
       )
       metricResult.result()(MetricName.CastedNumber.entryName)._1 shouldEqual 9
       metricResult.getFailCounter shouldEqual 6
     }
+    "return correct metric value and fail counts for single column sequence [reversed error collection]" in {
+      val values = testSingleColSeq(3)
+      val metricResult = values.foldLeft[MetricCalculator](new NumberCastValuesMetricCalculator(true))(
+        (m, v) => m.increment(Seq(v))
+      )
+      metricResult.result()(MetricName.CastedNumber.entryName)._1 shouldEqual 9
+      metricResult.getFailCounter shouldEqual 9
+    }
 
-    "return correct metric value and fail counts for multi column sequence" in {
+    "return correct metric value and fail counts for multi column sequence [direct error collection]" in {
       val values = testMultiColSeq(3)
-      val metricResult = values.foldLeft[MetricCalculator](new NumberCastValuesMetricCalculator())(
+      val metricResult = values.foldLeft[MetricCalculator](new NumberCastValuesMetricCalculator(false))(
         (m, v) => m.increment(v)
       )
       metricResult.result()(MetricName.CastedNumber.entryName)._1 shouldEqual 9
       metricResult.getFailCounter shouldEqual 6
     }
+    "return correct metric value and fail counts for multi column sequence [reversed error collection]" in {
+      val values = testMultiColSeq(3)
+      val metricResult = values.foldLeft[MetricCalculator](new NumberCastValuesMetricCalculator(true))(
+        (m, v) => m.increment(v)
+      )
+      metricResult.result()(MetricName.CastedNumber.entryName)._1 shouldEqual 9
+      metricResult.getFailCounter shouldEqual 9
+    }
 
     "return zero when applied to empty sequence" in {
       val values = Seq.empty
-      val metricResult = values.foldLeft[MetricCalculator](new NumberCastValuesMetricCalculator())(
+      val metricResult = values.foldLeft[MetricCalculator](new NumberCastValuesMetricCalculator(false))(
         (m, v) => m.increment(v)
       )
       metricResult.result()(MetricName.CastedNumber.entryName)._1 shouldEqual 0
@@ -321,45 +344,75 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     val domain = Seq(1, 2, 3, 4, 5).map(_.asInstanceOf[Double]).toSet
     val results = Seq(8, 4, 5, 5)
     val failCounts = Seq(7, 11, 10, 10)
+    val failCountsRev = Seq(8, 4, 5, 5)
 
     "return correct metric value for single column sequence" in {
       val values = testSingleColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberInDomainValuesMetricCalculator(domain))(
-          (m, v) => m.increment(Seq(v))).result()(MetricName.NumberInDomain.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](new NumberInDomainValuesMetricCalculator(domain, reversed))(
+            (m, v) => m.increment(Seq(v))).result()(MetricName.NumberInDomain.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for single column sequence" in {
+    "return correct fail counts for single column sequence [direct error collection]" in {
       val values = testSingleColSeq zip failCounts
       val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberInDomainValuesMetricCalculator(domain))((m, v) => m.increment(Seq(v))),
+        t._1.foldLeft[MetricCalculator](new NumberInDomainValuesMetricCalculator(domain, false))(
+          (m, v) => m.increment(Seq(v))
+        ),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail counts for single column sequence [reversed error collection]" in {
+      val values = testSingleColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](new NumberInDomainValuesMetricCalculator(domain, true))(
+          (m, v) => m.increment(Seq(v))
+        ),
         t._2
       ))
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
     "return correct metric value for multi column sequence" in {
       val values = testMultiColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberInDomainValuesMetricCalculator(domain))(
-          (m, v) => m.increment(v)).result()(MetricName.NumberInDomain.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](new NumberInDomainValuesMetricCalculator(domain, reversed))(
+            (m, v) => m.increment(v)).result()(MetricName.NumberInDomain.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for multi column sequence" in {
+    "return correct fail counts for multi column sequence [direct error collection]" in {
       val values = testMultiColSeq zip failCounts
       val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberInDomainValuesMetricCalculator(domain))((m, v) => m.increment(v)),
+        t._1.foldLeft[MetricCalculator](new NumberInDomainValuesMetricCalculator(domain, false))(
+          (m, v) => m.increment(v)
+        ),
         t._2
       ))
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
-
+    "return correct fail counts for multi column sequence [reversed error collection]" in {
+      val values = testMultiColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](new NumberInDomainValuesMetricCalculator(domain, true))(
+          (m, v) => m.increment(v)
+        ),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
     "return zero when applied to empty sequence" in {
       val values = Seq.empty
-      val metricResult = values.foldLeft[MetricCalculator](new NumberInDomainValuesMetricCalculator(domain))(
+      val metricResult = values.foldLeft[MetricCalculator](new NumberInDomainValuesMetricCalculator(domain, false))(
         (m, v) => m.increment(v)
       )
       metricResult.result()(MetricName.NumberInDomain.entryName)._1 shouldEqual 0
@@ -370,20 +423,33 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     val domain = Seq(1, 2, 3, 4, 5).map(_.asInstanceOf[Double]).toSet
     val results = Seq(7, 11, 10, 10)
     val failCounts = Seq(8, 4, 5, 5)
+    val failCountsRev = Seq(7, 11, 10, 10)
 
     "return correct metric value for single column sequence" in {
       val values = testSingleColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberOutDomainValuesMetricCalculator(domain))(
-          (m, v) => m.increment(Seq(v))).result()(MetricName.NumberOutDomain.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](new NumberOutDomainValuesMetricCalculator(domain, reversed))(
+            (m, v) => m.increment(Seq(v))).result()(MetricName.NumberOutDomain.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for single column sequence" in {
+    "return correct fail counts for single column sequence [direct error collection]" in {
       val values = testSingleColSeq zip failCounts
       val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberOutDomainValuesMetricCalculator(domain))(
+        t._1.foldLeft[MetricCalculator](new NumberOutDomainValuesMetricCalculator(domain, false))(
+          (m, v) => m.increment(Seq(v))),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail counts for single column sequence [reversed error collection]" in {
+      val values = testSingleColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](new NumberOutDomainValuesMetricCalculator(domain, true))(
           (m, v) => m.increment(Seq(v))),
         t._2
       ))
@@ -391,24 +457,35 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     }
     "return correct metric value for multi column sequence" in {
       val values = testMultiColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberOutDomainValuesMetricCalculator(domain))(
-          (m, v) => m.increment(v)).result()(MetricName.NumberOutDomain.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](new NumberOutDomainValuesMetricCalculator(domain, reversed))(
+            (m, v) => m.increment(v)).result()(MetricName.NumberOutDomain.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for multi column sequence" in {
+    "return correct fail counts for multi column sequence [direct error collection]" in {
       val values = testMultiColSeq zip failCounts
       val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberOutDomainValuesMetricCalculator(domain))((m, v) => m.increment(v)),
+        t._1.foldLeft[MetricCalculator](new NumberOutDomainValuesMetricCalculator(domain, false))((m, v) => m.increment(v)),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail counts for multi column sequence [reversed error collection]" in {
+      val values = testMultiColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](new NumberOutDomainValuesMetricCalculator(domain, true))((m, v) => m.increment(v)),
         t._2
       ))
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
     "return zero when applied to empty sequence" in {
       val values = Seq.empty
-      val metricResult = values.foldLeft[MetricCalculator](new NumberOutDomainValuesMetricCalculator(domain))(
+      val metricResult = values.foldLeft[MetricCalculator](new NumberOutDomainValuesMetricCalculator(domain, false))(
         (m, v) => m.increment(v)
       )
       metricResult.result()(MetricName.NumberOutDomain.entryName)._1 shouldEqual 0
@@ -419,44 +496,75 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     val compareValue = 3
     val results = Seq(2, 1, 1, 2)
     val failCounts = Seq(13, 14, 14, 13)
+    val failCountsRev = Seq(2, 1, 1, 2)
 
     "return correct metric value for single column sequence" in {
       val values = testSingleColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberValuesMetricCalculator(compareValue))(
-          (m, v) => m.increment(Seq(v))).result()(MetricName.NumberValues.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](new NumberValuesMetricCalculator(compareValue, reversed))(
+            (m, v) => m.increment(Seq(v))).result()(MetricName.NumberValues.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for single column sequence" in {
+    "return correct fail counts for single column sequence [direct error collection]" in {
       val values = testSingleColSeq zip failCounts
       val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberValuesMetricCalculator(compareValue))((m, v) => m.increment(Seq(v))),
+        t._1.foldLeft[MetricCalculator](new NumberValuesMetricCalculator(compareValue, false))(
+          (m, v) => m.increment(Seq(v))
+        ),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail counts for single column sequence [reversed error collection]" in {
+      val values = testSingleColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](new NumberValuesMetricCalculator(compareValue, true))(
+          (m, v) => m.increment(Seq(v))
+        ),
         t._2
       ))
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
     "return correct metric value for multi column sequence" in {
       val values = testMultiColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberValuesMetricCalculator(compareValue))(
-          (m, v) => m.increment(v)).result()(MetricName.NumberValues.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](new NumberValuesMetricCalculator(compareValue, reversed))(
+            (m, v) => m.increment(v)).result()(MetricName.NumberValues.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for multi column sequence" in {
+    "return correct fail counts for multi column sequence [direct error collection]" in {
       val values = testMultiColSeq zip failCounts
       val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberValuesMetricCalculator(compareValue))((m, v) => m.increment(v)),
+        t._1.foldLeft[MetricCalculator](new NumberValuesMetricCalculator(compareValue, false))(
+          (m, v) => m.increment(v)
+        ),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail counts for multi column sequence [reversed error collection]" in {
+      val values = testMultiColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](new NumberValuesMetricCalculator(compareValue, true))(
+          (m, v) => m.increment(v)
+        ),
         t._2
       ))
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
     "return zero when applied to empty sequence" in {
       val values = Seq.empty
-      val metricResult = values.foldLeft[MetricCalculator](new NumberValuesMetricCalculator(compareValue))(
+      val metricResult = values.foldLeft[MetricCalculator](new NumberValuesMetricCalculator(compareValue, false))(
         (m, v) => m.increment(v)
       )
       metricResult.result()(MetricName.NumberValues.entryName)._1 shouldEqual 0
@@ -468,20 +576,33 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     val includeBound = true
     val results = Seq(7, 4, 5, 4)
     val failCounts = Seq(8, 11, 10, 11)
+    val failCountsRev = Seq(7, 4, 5, 4)
 
     "return correct metric value for single column sequence" in {
       val values = testSingleColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberLessThanMetricCalculator(compareValue, includeBound))(
-          (m, v) => m.increment(Seq(v))).result()(MetricName.NumberLessThan.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](new NumberLessThanMetricCalculator(compareValue, includeBound, reversed))(
+            (m, v) => m.increment(Seq(v))).result()(MetricName.NumberLessThan.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for single column sequence" in {
+    "return correct fail counts for single column sequence [direct error collection]" in {
       val values = testSingleColSeq zip failCounts
       val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberLessThanMetricCalculator(compareValue, includeBound))(
+        t._1.foldLeft[MetricCalculator](new NumberLessThanMetricCalculator(compareValue, includeBound, false))(
+          (m, v) => m.increment(Seq(v))),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail counts for single column sequence [reversed error collection]" in {
+      val values = testSingleColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](new NumberLessThanMetricCalculator(compareValue, includeBound, true))(
           (m, v) => m.increment(Seq(v))),
         t._2
       ))
@@ -489,17 +610,29 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     }
     "return correct metric value for multi column sequence" in {
       val values = testMultiColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberLessThanMetricCalculator(compareValue, includeBound))(
-          (m, v) => m.increment(v)).result()(MetricName.NumberLessThan.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](new NumberLessThanMetricCalculator(compareValue, includeBound, reversed))(
+            (m, v) => m.increment(v)).result()(MetricName.NumberLessThan.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for multi column sequence" in {
+    "return correct fail counts for multi column sequence [direct error collection]" in {
       val values = testMultiColSeq zip failCounts
       val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberLessThanMetricCalculator(compareValue, includeBound))(
+        t._1.foldLeft[MetricCalculator](new NumberLessThanMetricCalculator(compareValue, includeBound, false))(
+          (m, v) => m.increment(v)),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail counts for multi column sequence [reversed error collection]" in {
+      val values = testMultiColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](new NumberLessThanMetricCalculator(compareValue, includeBound, true))(
           (m, v) => m.increment(v)),
         t._2
       ))
@@ -507,9 +640,9 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     }
     "return zero when applied to empty sequence" in {
       val values = Seq.empty
-      val metricResult = values.foldLeft[MetricCalculator](new NumberLessThanMetricCalculator(compareValue, includeBound))(
-        (m, v) => m.increment(v)
-      )
+      val metricResult = values.foldLeft[MetricCalculator](
+        new NumberLessThanMetricCalculator(compareValue, includeBound, false)
+      )((m, v) => m.increment(v))
       metricResult.result()(MetricName.NumberLessThan.entryName)._1 shouldEqual 0
     }
   }
@@ -519,20 +652,33 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     val includeBound = false
     val results = Seq(8, 11, 10, 5)
     val failCounts = Seq(7, 4, 5, 10)
+    val failCountsRev = Seq(8, 11, 10, 5)
 
     "return correct metric value for single column sequence" in {
       val values = testSingleColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberGreaterThanMetricCalculator(compareValue, includeBound))(
-          (m, v) => m.increment(Seq(v))).result()(MetricName.NumberGreaterThan.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](new NumberGreaterThanMetricCalculator(compareValue, includeBound, reversed))(
+            (m, v) => m.increment(Seq(v))).result()(MetricName.NumberGreaterThan.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for single column sequence" in {
+    "return correct fail counts for single column sequence [direct error collection]" in {
       val values = testSingleColSeq zip failCounts
       val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberGreaterThanMetricCalculator(compareValue, includeBound))(
+        t._1.foldLeft[MetricCalculator](new NumberGreaterThanMetricCalculator(compareValue, includeBound, false))(
+          (m, v) => m.increment(Seq(v))),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail counts for single column sequence [reversed error collection]" in {
+      val values = testSingleColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](new NumberGreaterThanMetricCalculator(compareValue, includeBound, true))(
           (m, v) => m.increment(Seq(v))),
         t._2
       ))
@@ -540,17 +686,29 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     }
     "return correct metric value for multi column sequence" in {
       val values = testMultiColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberGreaterThanMetricCalculator(compareValue, includeBound))(
-          (m, v) => m.increment(v)).result()(MetricName.NumberGreaterThan.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](new NumberGreaterThanMetricCalculator(compareValue, includeBound, reversed))(
+            (m, v) => m.increment(v)).result()(MetricName.NumberGreaterThan.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail count for multi column sequence" in {
+    "return correct fail count for multi column sequence [direct error collection]" in {
       val values = testMultiColSeq zip failCounts
       val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new NumberGreaterThanMetricCalculator(compareValue, includeBound))(
+        t._1.foldLeft[MetricCalculator](new NumberGreaterThanMetricCalculator(compareValue, includeBound, false))(
+          (m, v) => m.increment(v)),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail count for multi column sequence [reversed error collection]" in {
+      val values = testMultiColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](new NumberGreaterThanMetricCalculator(compareValue, includeBound, true))(
           (m, v) => m.increment(v)),
         t._2
       ))
@@ -558,9 +716,9 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     }
     "return zero when applied to empty sequence" in {
       val values = Seq.empty
-      val metricResult = values.foldLeft[MetricCalculator](new NumberGreaterThanMetricCalculator(compareValue, includeBound))(
-        (m, v) => m.increment(v)
-      )
+      val metricResult = values.foldLeft[MetricCalculator](
+        new NumberGreaterThanMetricCalculator(compareValue, includeBound, false)
+      )((m, v) => m.increment(v))
       metricResult.result()(MetricName.NumberGreaterThan.entryName)._1 shouldEqual 0
     }
   }
@@ -571,22 +729,36 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     val includeBound = true
     val results = Seq(7, 5, 3, 5)
     val failCounts = Seq(8, 10, 12, 10)
+    val failCountsRev = Seq(7, 5, 3, 5)
 
     "return correct metric value for single column sequence" in {
       val values = testSingleColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](
-          new NumberBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound)
-        )((m, v) => m.increment(Seq(v))).result()(MetricName.NumberBetween.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](
+            new NumberBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, reversed)
+          )((m, v) => m.increment(Seq(v))).result()(MetricName.NumberBetween.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for single column sequence" in {
+    "return correct fail counts for single column sequence [direct error collection]" in {
       val values = testSingleColSeq zip failCounts
       val metricResults = values.map(t => (
         t._1.foldLeft[MetricCalculator](
-          new NumberBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound)
+          new NumberBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, false)
+        )((m, v) => m.increment(Seq(v))),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail counts for single column sequence [reversed error collection]" in {
+      val values = testSingleColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](
+          new NumberBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, true)
         )((m, v) => m.increment(Seq(v))),
         t._2
       ))
@@ -594,19 +766,32 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     }
     "return correct metric value for multi column sequence" in {
       val values = testMultiColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](
-          new NumberBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound)
-        )((m, v) => m.increment(v)).result()(MetricName.NumberBetween.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](
+            new NumberBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, reversed)
+          )((m, v) => m.increment(v)).result()(MetricName.NumberBetween.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for multi column sequence" in {
+    "return correct fail counts for multi column sequence [direct error collection]" in {
       val values = testMultiColSeq zip failCounts
       val metricResults = values.map(t => (
         t._1.foldLeft[MetricCalculator](
-          new NumberBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound)
+          new NumberBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, false)
+        )((m, v) => m.increment(v)),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail counts for multi column sequence [reversed error collection]" in {
+      val values = testMultiColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](
+          new NumberBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, true)
         )((m, v) => m.increment(v)),
         t._2
       ))
@@ -615,7 +800,7 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     "return zero when applied to empty sequence" in {
       val values = Seq.empty
       val metricResult = values.foldLeft[MetricCalculator](
-        new NumberBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound)
+        new NumberBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, false)
       )((m, v) => m.increment(v))
       metricResult.result()(MetricName.NumberBetween.entryName)._1 shouldEqual 0
     }
@@ -627,22 +812,36 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     val includeBound = true
     val results = Seq(8, 4, 9, 4)
     val failCounts = Seq(7, 11, 6, 11)
+    val failCountsRev = Seq(8, 4, 9, 4)
 
     "return correct metric value for single column sequence" in {
       val values = testSingleColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](
-          new NumberNotBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound)
-        )((m, v) => m.increment(Seq(v))).result()(MetricName.NumberNotBetween.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](
+            new NumberNotBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, reversed)
+          )((m, v) => m.increment(Seq(v))).result()(MetricName.NumberNotBetween.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for single column sequence" in {
+    "return correct fail counts for single column sequence [direct error collection]" in {
       val values = testSingleColSeq zip failCounts
       val metricResults = values.map(t => (
         t._1.foldLeft[MetricCalculator](
-          new NumberNotBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound)
+          new NumberNotBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, false)
+        )((m, v) => m.increment(Seq(v))),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail counts for single column sequence [reversed error collection]" in {
+      val values = testSingleColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](
+          new NumberNotBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, true)
         )((m, v) => m.increment(Seq(v))),
         t._2
       ))
@@ -650,19 +849,32 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     }
     "return correct metric value for multi column sequence" in {
       val values = testMultiColSeq zip results
-      val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](
-          new NumberNotBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound)
-        )((m, v) => m.increment(v)).result()(MetricName.NumberNotBetween.entryName)._1,
-        t._2
-      ))
+      val metricResults = for {
+        reversed <- Seq(false, true)
+        metricResult <- values.map(t => (
+          t._1.foldLeft[MetricCalculator](
+            new NumberNotBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, reversed)
+          )((m, v) => m.increment(v)).result()(MetricName.NumberNotBetween.entryName)._1,
+          t._2
+        ))
+      } yield metricResult
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
-    "return correct fail counts for multi column sequence" in {
+    "return correct fail counts for multi column sequence [direct error collection]" in {
       val values = testMultiColSeq zip failCounts
       val metricResults = values.map(t => (
         t._1.foldLeft[MetricCalculator](
-          new NumberNotBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound)
+          new NumberNotBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, false)
+        )((m, v) => m.increment(v)),
+        t._2
+      ))
+      metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+    }
+    "return correct fail counts for multi column sequence [reversed error collection]" in {
+      val values = testMultiColSeq zip failCountsRev
+      val metricResults = values.map(t => (
+        t._1.foldLeft[MetricCalculator](
+          new NumberNotBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, true)
         )((m, v) => m.increment(v)),
         t._2
       ))
@@ -671,7 +883,7 @@ class BasicNumericMetricsSpec extends AnyWordSpec with Matchers {
     "return zero when applied to empty sequence" in {
       val values = Seq.empty
       val metricResult = values.foldLeft[MetricCalculator](
-        new NumberNotBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound)
+        new NumberNotBetweenMetricCalculator(lowerCompareValue, upperCompareValue, includeBound, false)
       )((m, v) => m.increment(v))
       metricResult.result()(MetricName.NumberNotBetween.entryName)._1 shouldEqual 0
     }

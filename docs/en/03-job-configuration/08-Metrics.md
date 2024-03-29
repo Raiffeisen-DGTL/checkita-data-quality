@@ -30,8 +30,24 @@ All regular metrics are defined using following common parameters:
 * `metadata` - *Optional*. List of user-defined metadata parameters specific to this metric where each parameter
   is a string in format: `param.name=param.value`.
 
-Additionally, some regular metrics have a logical condition that needs to be met when calculating metric increment per
-each individual row. If metric condition is not met, then `Failure` status is returned for this particular row of data.
+#### Reversible Metrics
+
+Some regular metrics have a logical condition that needs to be met when calculating metric increment per
+each individual row. These metrics can ***fail*** if this condition is not met. What is more importantly,
+is that in some situations it is quite desirable that metric will ***fail*** when its condition IS met.
+
+In order to support such functionality, we made error collection logic for regular metrics with condition
+to be reversible. This means, that you can choose whether metric fails, when its condition is met or vice versa.
+This is controlled via additional boolean parameter called `reversed`. This parameter is optional and
+is set to `false` for most of the regular metrics with condition.
+
+Further, regular metrics with condition will be called ***reversible metrics*** due to fact that error
+collection logic for them can be reversed. Thus, if `reversed` parameter is set to `false` and metric 
+condition is not met, then `Failure` status is returned for this particular row of data. In case if
+`reversed` parameter is set to `true` metric will fail when its condition IS met.
+
+Regular metrics that do not have logical condition can also fail, but their failure logic is not reversible.
+
 Scenario when metric can yield `Failure` status are explicitly described for each metric below.
 See [Status Model used in Results](../02-general-concepts/03-StatusModel.md) chapter for more information on status model.
 
@@ -41,6 +57,8 @@ Calculates number of rows in the source. This is the only metric for which colum
 specified as it is not required to compute number of rows. Metric definition does not require additional parameters:
 `params` should not be set.
 
+Metric is not reversible and cannot fail (might only return `Error` status in case of some runtime exception).
+
 All row count metrics are defined in `rowCount` subsection.
 
 ### Distinct Values Metric
@@ -48,6 +66,8 @@ All row count metrics are defined in `rowCount` subsection.
 Counts number of unique values in provided columns. When applied to multiple columns, total
 number of unique values in these columns is returned. Metric definition does not require additional parameters:
 `params` should not be set.
+
+Metric is not reversible and cannot fail (might only return `Error` status in case of some runtime exception).
 
 All distinct values metrics are defined in `distinctValues` subsection.
 
@@ -63,6 +83,8 @@ Calculates number of unique values approximately, using
 
 **This metric works with only one column.**
 
+Metric is not reversible and fails only if provided value cannot be cast to String.
+
 All approximate distinct values metrics are defined in `approximateDistinctValues` subsection. 
 Additional parameters can be supplied:
 
@@ -74,9 +96,13 @@ Counts number of null values in the specified columns. When applied to multiple 
 number of null values in these columns is returned. Metric definition does not require additional parameters:
 `params` should not be set.
 
-All distinct values metrics are defined in `nullValues` subsection.
+Metric is reversible. **By default, `reversed` parameter is set to `true`, 
+i.e. error collection logic is reversed by default.** 
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in the 
+specified columns are NON-null. For reversed error collection logic (default one), metric increment returns `Failure`
+status when some values in the specified columns are null. 
 
-Metric increment returns `Failure` status for rows where some values in the specified columns are null.
+All distinct values metrics are defined in `nullValues` subsection.
 
 ### Empty Values Metric
 
@@ -84,20 +110,32 @@ Counts number of empty values in the specified columns (i.e. empty string values
 total number of empty values in these columns is returned. Metric definition does not require additional parameters:
 `params` should not be set.
 
-All distinct values metrics are defined in `emptyValues` subsection.
+Metric is reversible. **By default, `reversed` parameter is set to `true`,
+i.e. error collection logic is reversed by default.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in the
+specified columns are non-empty. For reversed error collection logic (default one), metric increment returns `Failure`
+status when some values in the specified columns are empty.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns are empty.
+All distinct values metrics are defined in `emptyValues` subsection.
 
 ### Completeness Metric
 
 Calculates the measure of completeness in the specified columns: `(values_count - null_count) / values_count`.
 When applied to multiple columns, total number of values and total number of nulls are used in the equation above.
 
-All completeness metrics are defined in `completeness` subsection.
 Additional parameters can be supplied:
 
 * `includeEmptyStrings` - *Optional, default is `false`*. Boolean parameter indicating whether empty string values
   should be considered as nulls.
+
+Metric is reversible. **By default, `reversed` parameter is set to `true`,
+i.e. error collection logic is reversed by default.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in the
+specified columns are non-noll (or non-empty if `includeEmptyStrings` is set to `true`). 
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values 
+in the specified columns are null (or empty if `includeEmptyStrings` is set to `true`).
+
+All completeness metrics are defined in `completeness` subsection.
 
 ### Sequence Completeness Metric
 
@@ -118,10 +156,13 @@ Where:
 * `max_value` - the maximum value in the sequence;
 * `increment` - sequence step, default is 1.
 
-All sequence completeness metrics are defined in `sequenceCompleteness` subsection.
 Additional parameters can be supplied:
 
 * `incremet` - *Optional, default is `1`*. Sequence increment step.
+
+Metric is not reversible and fails only if provided column value cannot be cast to number.
+
+All sequence completeness metrics are defined in `sequenceCompleteness` subsection.
 
 ### Approximate Sequence Completeness Metric
 
@@ -132,11 +173,14 @@ actual number of elements in the sequence is determined approximately using HLL 
 
 **This metric works with only one column.**
 
-All approximate sequence completeness metrics are defined in `approximateSequenceCompleteness` subsection.
 Additional parameters can be supplied:
 
 * `incremet` - *Optional, default is `1`*. Sequence increment step.
 * `accuracyError` - *Optional, default is `0.01`*. Accuracy error for estimating number of unique values.
+
+Metric is not reversible and fails only if provided column value cannot be cast to number.
+
+All approximate sequence completeness metrics are defined in `approximateSequenceCompleteness` subsection.
 
 ### Minimum String Metric
 
@@ -153,100 +197,116 @@ to string and, therefore, minimum string length cannot be computed.
 Calculates the maximum string length in the values of the specified columns.
 Metric definition does not require additional parameters: `params` should not be set.
 
-All maximum string metrics are defined in `maxString` subsection.
+Metric is not reversible. Metric increment returns `Failure` status for rows where all values in the specified 
+columns cannot be cast to string and, therefore, maximum string length cannot be computed.
 
-Metric increment returns `Failure` status for rows where all values in the specified columns are not castable
-to string and, therefore, maximum string length cannot be computed.
+All maximum string metrics are defined in `maxString` subsection.
 
 ### Average String Metric
 
 Calculates the average string length in the values of the specified columns.
 Metric definition does not require additional parameters: `params` should not be set.
 
-All average string metrics are defined in `avgString` subsection.
+Metric is not reversible. Metric increment returns `Failure` status for rows where all values in the specified
+columns cannot be cast to string and, therefore, average string length cannot be computed.
 
-Metric increment returns `Failure` status for rows where all values in the specified columns are not castable
-to string and, therefore, average string length cannot be computed.
+All average string metrics are defined in `avgString` subsection.
 
 ### String Length Metric
 
 Calculate number of values that meet the defined string length criteria.
-
-All string length metrics are defined in `stringLength` subsection.
 Additional parameters should be supplied:
 
 * `length` - *Required*. Required string length threshold.
 * `compareRule` - *Required*. Comparison rule used to compare actual value string length with threshold one.
     * Following comparison rules are supported: `eq` (==), `lt` (<), `lte` (<=), `gt` (>), `gte` (>=).
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not meet defined string
-length criteria.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in 
+the specified columns do not meet defined string length criteria.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns DO meet defined string length criteria.
+
+All string length metrics are defined in `stringLength` subsection.
 
 ### String In Domain Metric
 
 Counts number of values which fall into specified set of allowed values.
-
-All string in domain metrics are defined in `stringInDomain` subsection.
 Additional parameters should be supplied:
 
 * `domain` - *Required*. List of allowed values.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not fall into set of 
-allowed values.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in 
+the specified columns do not fall into set of allowed values.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns ARE IN set of allowed values.
+
+All string in domain metrics are defined in `stringInDomain` subsection.
 
 ### String Out Domain Metric
 
 Counts number of values which do **not** fall into specified set of avoided values.
-
-All string out domain metrics are defined in `stringOutDomain` subsection.
 Additional parameters should be supplied:
 
 * `domain` - *Required*. List of avoided values.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns **do fall into** set of
-avoided values.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns are in set of allowed values.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns DO NOT fall into set of allowed values.
+
+All string out domain metrics are defined in `stringOutDomain` subsection.
 
 ### String Values Metric
 
 Counts number of values that are equal to the value given in metric definition.
-
-All string values metrics are defined in `stringValues` subsection.
 Additional parameters should be supplied:
 
 * `compareValue` - *Required*. String value to compare with.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not match defined
-compare value.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns do not equal to defined compare value.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns DO equal to defined compare value.
+
+All string values metrics are defined in `stringValues` subsection.
 
 ### Regex Match
 
 Calculates number of values that match the defined regular expression.
-
-All regex match metrics are defined in `regexMatch` subsection.
 Additional parameters should be supplied:
 
 * `regex` - *Required*. Regular expression to match.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not match defined
-regular expression.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns do not match defined regular expression.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns DO match defined regular expression.
+
+All regex match metrics are defined in `regexMatch` subsection.
 
 ### Regex Mismatch
 
 Calculates number of values that do **not** match the defined regular expression.
-
-All regex mismatch metrics are defined in `regexMismatch` subsection.
 Additional parameters should be supplied:
 
 * `regex` - *Required*. Regular expression that values should **not** match.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns **do match** defined
-regular expression.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns DO match defined regular expression.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns do not match defined regular expression.
+
+All regex mismatch metrics are defined in `regexMismatch` subsection.
 
 ### Formatted Date Metric
 
 Counts number of values which have the specified datetime format.
-
-All formatted date metrics are defined in `formattedDate` subsection.
 Additional parameters can be supplied:
 
 * `dateFormat` - *Optional, default is `yyyy-MM-dd'T'HH:mm:ss.SSSZ`*. Target datetime format. 
@@ -257,14 +317,17 @@ Additional parameters can be supplied:
 > therefore,  metric will return the total number of non-empty cells. 
 > Accordingly, the datetime format does not need to be specified.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not conform to defined
-datetime format.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns do not conform to defined datetime format.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns DO conform to defined datetime format.
+
+All formatted date metrics are defined in `formattedDate` subsection.
 
 ### Formatted Number Metric
 
 Counts number of values which are numeric and number format satisfy defined number format criteria.
-
-All formatted date metrics are defined in `formattedNumber` subsection.
 Additional parameters should be supplied:
 
 * `precision` - *Required*. The total number of digits in the value (excluding the decimal separator).
@@ -275,38 +338,43 @@ Additional parameters should be supplied:
     * `outbound` - the value must be outside the specified format: 
       actual precision and scale of the value are strictly greater than given ones.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not satisfy defined
-number format criteria.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns do not satisfy defined number format criteria.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns DO meet defined number format criteria.
+
+All formatted date metrics are defined in `formattedNumber` subsection.
 
 ### Minimum Number Metric
 
 Finds minimum number from the values in the specified columns.
 Metric definition does not require additional parameters: `params` should not be set.
 
-All minimum number metrics are defined in `minNumber` subsection.
+Metrics is not reversible and increment returns `Failure` status for rows where all values in the specified columns 
+cannot be cast to number and, therefore, minimum number cannot be computed.
 
-Metric increment returns `Failure` status for rows where all values in the specified columns are not castable
-to number and, therefore, minimum number cannot be computed.
+All minimum number metrics are defined in `minNumber` subsection.
 
 ### Maximum Number Metric
 
 Finds maximum number from the values in the specified columns.
 Metric definition does not require additional parameters: `params` should not be set.
 
-All maximum number metrics are defined in `maxNumber` subsection.
+Metrics is not reversible and increment returns `Failure` status for rows where all values in the specified columns
+cannot be cast to number and, therefore, maximum number cannot be computed.
 
-Metric increment returns `Failure` status for rows where all values in the specified columns are not castable
-to number and, therefore, maximum number cannot be computed.
+All maximum number metrics are defined in `maxNumber` subsection.
 
 ### Sum Number Metric
 
 Finds sum of the values in the specified columns.
 Metric definition does not require additional parameters: `params` should not be set.
 
-All sum number metrics are defined in `sumNumber` subsection.
+Metrics is not reversible and increment returns `Failure` status for rows where some values in the specified columns 
+cannot be cast to number.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns are not castable
-to number.
+All sum number metrics are defined in `sumNumber` subsection.
 
 ### Average Number Metric
 
@@ -315,10 +383,10 @@ Metric definition does not require additional parameters: `params` should not be
 
 **This metric works with only one column.**
 
-All average number metrics are defined in `avgNumber` subsection.
+Metric is not reversible and metric increment returns `Failure` status for rows where value in the specified column
+cannot be cast to number.
 
-Metric increment returns `Failure` status for rows where value in the specified column is not castable
-to number.
+All average number metrics are defined in `avgNumber` subsection.
 
 ### Standard Deviation Number Metric
 
@@ -327,110 +395,134 @@ Metric definition does not require additional parameters: `params` should not be
 
 **This metric works with only one column.**
 
-All average number metrics are defined in `stdNumber` subsection.
+Metric is not reversible and metric increment returns `Failure` status for rows where value in the specified column 
+cannot be cast to number.
 
-Metric increment returns `Failure` status for rows where value in the specified column is not castable
-to number.
+All average number metrics are defined in `stdNumber` subsection.
 
 ### Casted Number Metric
 
 Counts number of values which string value can be converted to a number (double).
 Metric definition does not require additional parameters: `params` should not be set.
 
-All sum number metrics are defined in `castedNumber` subsection.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns cannot be cast to number.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns CAN be cast to number.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns are not castable
-to number.
+All sum number metrics are defined in `castedNumber` subsection.
 
 ### Number In Domain Metric
 
 Counts number of values which being cast to number (double) fall into specified set of allowed numbers.
-
-All number in domain metrics are defined in `numberInDomain` subsection.
 Additional parameters should be supplied:
 
 * `domain` - *Required*. List of allowed numbers.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not fall into set of
-allowed numbers.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns do not fall into set of allowed numbers.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns ARE IN set of allowed numbers.
+
+All number in domain metrics are defined in `numberInDomain` subsection.
 
 ### Number Out Domain Metric
 
 Counts number of values which being cast to number (double) do **not** fall into specified set of avoided numbers.
-
-All number out domain metrics are defined in `numberOutDomain` subsection.
 Additional parameters should be supplied:
 
 * `domain` - *Required*. List of avoided numbers.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns **do fall into** set of
-avoided numbers.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns are in set of allowed numbers.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns do not fall into set of allowed numbers.
+
+All number out domain metrics are defined in `numberOutDomain` subsection.
 
 ### Number Less Than Metric
 
 Counts number of values which being cast to number (double) are less than (or equal to) the specified value.
-
-All number less than metrics are defined in `numberLessThan` subsection.
 Additional parameters should be supplied:
 
 * `compareValue` - *Required*. Number to compare with.
 * `includeBound` - *Optional, default is `false`*. Specifies whether to include `compareValue` in the range for comparison.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not satisfy the 
-comparison criteria.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns do not satisfy the comparison criteria.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns DO MEET the comparison criteria.
+
+All number less than metrics are defined in `numberLessThan` subsection.
 
 ### Number Greater Than Metric
 
 Counts number of values which being cast to number (double) are greater than (or equal to) the specified value.
-
-All number greater than metrics are defined in `numberGreaterThan` subsection.
 Additional parameters should be supplied:
 
 * `compareValue` - *Required*. Number to compare with.
 * `includeBound` - *Optional, default is `false`*. Specifies whether to include `compareValue` in the range for comparison.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not satisfy the
-comparison criteria.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns do not satisfy the comparison criteria.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns DO MEET the comparison criteria.
+
+All number greater than metrics are defined in `numberGreaterThan` subsection.
 
 ### Number Between Metric
 
 Counts number of values which being cast to number (double) are within the given interval.
-
-All number between metrics are defined in `numberBetween` subsection.
 Additional parameters should be supplied:
 
 * `lowerCompareValue` - *Required*. The lower bound of the interval.
 * `upperCompareValue` - *Required*. The upper bound of the interval.
 * `includeBound` - *Optional, default is `false`*. Specifies whether to include interval bounds in the range for comparison.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not satisfy the
-comparison criteria.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns do not satisfy the comparison criteria.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns DO MEET the comparison criteria.
+
+All number between metrics are defined in `numberBetween` subsection.
 
 ### Number Not Between Metric
 
 Counts number of values which being cast to number (double) are outside the given interval.
-
-All number between metrics are defined in `numberNotBetween` subsection.
 Additional parameters should be supplied:
 
 * `lowerCompareValue` - *Required*. The lower bound of the interval.
 * `upperCompareValue` - *Required*. The upper bound of the interval.
 * `includeBound` - *Optional, default is `false`*. Specifies whether to include interval bounds in the range for comparison.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not satisfy the
-comparison criteria.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns do not satisfy the comparison criteria.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns DO MEET the comparison criteria.
+
+All number between metrics are defined in `numberNotBetween` subsection.
 
 ### Number Values Metric
 
 Counts number of values which being cast to number (double) are equal to the number given in metric definition.
-
-All number values metrics are defined in `numberValues` subsection.
 Additional parameters should be supplied:
 
 * `compareValue` - *Required*. Number value to compare with.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not match defined
-compare value.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns do not equal to defined compare value.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns DO equal to defined compare value.
+
+All number values metrics are defined in `numberValues` subsection.
 
 ### Median Value Metric
 
@@ -438,15 +530,14 @@ Calculates median value of the values in the specified column. Metric calculator
 [TDigest](https://github.com/isarn/isarn-sketches) library for computation of median value.
 
 **This metric works with only one column.**
-
-All median value metrics are defined in `medianValue` subsection.
 Additional parameters can be supplied:
 
 * `accuracyError` - *Optional, default is `0.01`*. Accuracy error for calculation of median value.
 
+Metric is not reversible and metric increment returns `Failure` status for rows where value in the specified column
+cannot be cast to number.
 
-Metric increment returns `Failure` status for rows where value in the specified column is not castable
-to number.
+All median value metrics are defined in `medianValue` subsection.
 
 ### First Quantile Metric
 
@@ -454,14 +545,14 @@ Calculates first quantile for the values in the specified column. Metric calcula
 [TDigest](https://github.com/isarn/isarn-sketches) library for computation of first quantile.
 
 **This metric works with only one column.**
-
-All median value metrics are defined in `firstQuantile` subsection.
 Additional parameters can be supplied:
 
 * `accuracyError` - *Optional, default is `0.01`*. Accuracy error for calculation of first quantile value.
 
-Metric increment returns `Failure` status for rows where value in the specified column is not castable
-to number.
+Metric is not reversible and metric increment returns `Failure` status for rows where value in the specified column
+cannot be cast to number.
+
+All median value metrics are defined in `firstQuantile` subsection.
 
 ### Third Quantile Metric
 
@@ -469,14 +560,14 @@ Calculates third quantile for the values in the specified column. Metric calcula
 [TDigest](https://github.com/isarn/isarn-sketches) library for computation of third quantile.
 
 **This metric works with only one column.**
-
-All third value metrics are defined in `thirdQuantile` subsection.
 Additional parameters can be supplied:
 
 * `accuracyError` - *Optional, default is `0.01`*. Accuracy error for calculation of third value.
 
-Metric increment returns `Failure` status for rows where value in the specified column is not castable
-to number.
+Metric is not reversible and metric increment returns `Failure` status for rows where value in the specified column
+cannot be cast to number.
+
+All third value metrics are defined in `thirdQuantile` subsection.
 
 ### Get Quantile Metric
 
@@ -484,15 +575,15 @@ Calculates an arbitrary quantile for the values in the specified column. Metric 
 [TDigest](https://github.com/isarn/isarn-sketches) library for computation of quantile.
 
 **This metric works with only one column.**
-
-All get quantile metrics are defined in `getQuantile` subsection.
 Additional parameters should be supplied:
 
 * `accuracyError` - *Optional, default is `0.01`*. Accuracy error for calculation of quantile value.
 * `target` - *Required*. A number in the interval `[0, 1]` corresponding to the quantile that need to be caclulated.
 
-Metric increment returns `Failure` status for rows where value in the specified column is not castable
-to number.
+Metric is not reversible and metric increment returns `Failure` status for rows where value in the specified column
+cannot be cast to number.
+
+All get quantile metrics are defined in `getQuantile` subsection.
 
 ### Get Percentile Metric
 
@@ -501,16 +592,16 @@ This metric is inverse of [Get Quantile Metric](#get-quantile-metric). It calcul
 Metric calculator uses [TDigest](https://github.com/isarn/isarn-sketches) library for computation of percentile value.
 
 **This metric works with only one column.**
-
-All get percentile metrics are defined in `getPercentile` subsection.
 Additional parameters should be supplied:
 
 * `accuracyError` - *Optional, default is `0.01`*. Accuracy error for calculation of percentile.
 * `target` - *Required*. The number from the set of values in the column, for which percentile
   is determined.
 
-Metric increment returns `Failure` status for rows where value in the specified column is not castable
-to number.
+Metric is not reversible and metric increment returns `Failure` status for rows where value in the specified column
+cannot be cast to number.
+
+All get percentile metrics are defined in `getPercentile` subsection.
 
 ### Column Equality Metric
 
@@ -519,10 +610,13 @@ Metric definition does not require additional parameters: `params` should not be
 
 **This metric works with at least two columns.**
 
-All column equality metrics are defined in `columnEq` subsection.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns cannot be cast to string or are not equal
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns cannot be cast to string or ARE equal.
 
-Metric increment returns `Failure` status for rows where some values in the specified column are not castable to string
-or when they are not equal.
+All column equality metrics are defined in `columnEq` subsection.
 
 ### Day Distance Metric
 
@@ -530,8 +624,6 @@ Calculates the number of rows where difference between date in two columns expre
 (strictly less) than the specified threshold value.
 
 **This metric works with exactly two columns.**
-
-All day distance metrics are defined in `dayDistance` subsection.
 Additional parameters should be supplied:
 
 * `threshold` - *Required*. Maximum allowed difference between two dates in days
@@ -544,8 +636,15 @@ Additional parameters should be supplied:
 > therefore,  metric will return the total number of non-empty cells.
 > Accordingly, the datetime format does not need to be specified.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns do not conform to 
-the specified datetime format or when date difference in days is greater than or equal to specified threshold.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns do not conform to the specified datetime format or when date difference in days 
+is greater than or equal to specified threshold.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns do not conform to the specified datetime format or when date difference in days
+is lower than specified threshold.
+
+All day distance metrics are defined in `dayDistance` subsection.
 
 ### Levenshtein Distance Metric
 
@@ -553,8 +652,6 @@ Calculates number of rows where Levenshtein distance between string values in th
 (strictly less) specified threshold.
 
 **This metric works with exactly two columns.**
-
-All levenshtein distance metrics are defined in `levenshteinDistance` subsection.
 Additional parameters should be supplied:
 
 * `threshold` - *Required*. Maximum allowed Levenshtein distance.
@@ -563,8 +660,14 @@ Additional parameters should be supplied:
 
 > **IMPORTANT**. If Levenshtein distance is normalized then threshold value must be in range `[0, 1]`.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns are not castable to string
-or when Levenshtein distance is greater than or equal to specified threshold.
+Metric is reversible. **By default, `reversed` parameter is set to `false`.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in
+the specified columns cannot be cast to string or when Levenshtein distance is greater than or equal to 
+specified threshold.
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns cannot be cast to string or when Levenshtein distance is lower than specified threshold.
+
+All levenshtein distance metrics are defined in `levenshteinDistance` subsection.
 
 ### CoMoment Metric
 
@@ -576,7 +679,10 @@ Metric definition does not require additional parameters: `params` should not be
 > **IMPORTANT**. For the metric to be calculated, values in the specified columns must not be empty or null and 
 > also can be cast to number (double). If at least one corrupt value is found, then metric calculator returns NaN value.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns cannot be cast to number.
+Metric is not reversible and metric increment returns `Failure` status for rows where some values in the specified 
+columns cannot be cast to number.
+
+All co-moment metrics are defined in `coMoment` subsection.
 
 ### Covariance Metric
 
@@ -588,7 +694,10 @@ Metric definition does not require additional parameters: `params` should not be
 > **IMPORTANT**. For the metric to be calculated, values in the specified columns must not be empty or null and
 > also can be cast to number (double). If at least one corrupt value is found, then metric calculator returns NaN value.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns cannot be cast to number.
+Metric is not reversible and metric increment returns `Failure` status for rows where some values in the specified 
+columns cannot be cast to number.
+
+All covariance metrics are defined in `covariance` subsection.
 
 ### Covariance Bessel Metric
 
@@ -600,7 +709,10 @@ Metric definition does not require additional parameters: `params` should not be
 > **IMPORTANT**. For the metric to be calculated, values in the specified columns must not be empty or null and
 > also can be cast to number (double). If at least one corrupt value is found, then metric calculator returns NaN value.
 
-Metric increment returns `Failure` status for rows where some values in the specified columns cannot be cast to number.
+Metric is not reversible and metric increment returns `Failure` status for rows where some values in the specified 
+columns cannot be cast to number.
+
+All covariance metrics are defined in `covarianceBessel` subsection.
 
 ### Top N Metric
 
@@ -610,11 +722,15 @@ which implements abstract algebra methods for Scala.
 
 **This metric works with only one column.**
 
-All top N metrics are defined in `topN` subsection.
 Additional parameters can be supplied:
 
 * `targetNumber` - *Optional, default is `10`*. Number N of values to search.
 * `maxCapacity` - *Optional, default is `100`*. Maximum container size for storing top values.
+
+Metric is not reversible and metric increment returns `Failure` status for rows where some values in the specified
+columns cannot be cast to string.
+
+All top N metrics are defined in `topN` subsection.
 
 ## Composed Metrics
 
@@ -675,13 +791,14 @@ jobConfig: {
       regexMatch: [
         {
           id: "table_source1_inn_regex", description: "Regex match for inn column", source: "table_source_1",
-          columns: ["inn"], params: {regex: """^\d{10}$"""}
+          columns: ["inn"], params: {regex: """^\d{10}$"""}, reversed: true
         }
       ]
       stringInDomain: [
         {
           id: "orc_data_segment_domain", source: "hdfs_orc_source",
           columns: ["segment"], params: {domain: ["FI", "MID", "SME", "INTL", "CIB"]}
+          reversed: true
         }
       ]
       topN: [

@@ -24,12 +24,10 @@ trait MetricProcessor {
    * Creates Spark collection accumulator of required type to collect metric errors and registers it.
    *
    * @param spark    Implicit Spark Session object
-   * @param dumpSize Implicit value of maximum number of metric failure (or errors) to be collected.
    * @return Registered metric errors accumulator
    */
-  protected def getAndRegisterErrorAccumulator(implicit spark: SparkSession,
-                                               dumpSize: Int): LimitedCollectionAccumulator[AccType] = {
-    val acc = new LimitedCollectionAccumulator[AccType](dumpSize)
+  protected def getAndRegisterErrorAccumulator(implicit spark: SparkSession): CollectionAccumulator[AccType] = {
+    val acc = new CollectionAccumulator[AccType]
     spark.sparkContext.register(acc)
     acc
   }
@@ -148,10 +146,13 @@ trait MetricProcessor {
    * Processes accumulated metric errors and builds
    * map of metricID to all metric errors with corresponding row data
    *
-   * @param errors Sequence of accumulated metric errors
+   * @param errors   Sequence of accumulated metric errors
+   * @param dumpSize Implicit value of maximum number of metric failures (or errors) to be collected (per metric).
+   *                 Used to prevent OOM errors.
    * @return Map(metricId -> all metric errors)
    */
-  protected def processMetricErrors(errors: Seq[AccumulatedErrors]): Map[String, MetricErrors] = {
+  protected def processMetricErrors(errors: Seq[AccumulatedErrors])
+                                   (implicit dumpSize: Int): Map[String, MetricErrors] = {
     errors.flatMap { err =>
       err.metricStatues.map { s =>
         val errorRow = ErrorRow(s.status, s.message, err.rowData)
@@ -159,7 +160,8 @@ trait MetricProcessor {
       }
     }.groupBy(_._1).mapValues { t =>
       val columns = t.head._2
-      val errors = Seq(t.map(_._3): _*) // convert to immutable collection
+      // take maximum dumpSize errors and convert to immutable collection:
+      val errors = Seq(t.map(_._3).take(dumpSize): _*)
       MetricErrors(columns, errors)
     }
   }
