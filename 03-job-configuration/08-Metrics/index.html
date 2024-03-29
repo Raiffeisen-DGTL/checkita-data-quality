@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.14">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.15">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.10ba22f1.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e359304.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -1007,6 +1007,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#reversible-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reversible Metrics
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#row-count-metric" class="md-nav__link">
     <span class="md-ellipsis">
       Row Count Metric
@@ -1716,19 +1725,32 @@ compositions. These metrics are called <code>composed</code> accordingly.</p>
 <li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this metric where each parameter
   is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
-<p>Additionally, some regular metrics have a logical condition that needs to be met when calculating metric increment per
-each individual row. If metric condition is not met, then <code>Failure</code> status is returned for this particular row of data.
-Scenario when metric can yield <code>Failure</code> status are explicitly described for each metric below.
+<h4 id="reversible-metrics">Reversible Metrics</h4>
+<p>Some regular metrics have a logical condition that needs to be met when calculating metric increment per
+each individual row. These metrics can <strong><em>fail</em></strong> if this condition is not met. What is more importantly,
+is that in some situations it is quite desirable that metric will <strong><em>fail</em></strong> when its condition IS met.</p>
+<p>In order to support such functionality, we made error collection logic for regular metrics with condition
+to be reversible. This means, that you can choose whether metric fails, when its condition is met or vice versa.
+This is controlled via additional boolean parameter called <code>reversed</code>. This parameter is optional and
+is set to <code>false</code> for most of the regular metrics with condition.</p>
+<p>Further, regular metrics with condition will be called <strong><em>reversible metrics</em></strong> due to fact that error
+collection logic for them can be reversed. Thus, if <code>reversed</code> parameter is set to <code>false</code> and metric 
+condition is not met, then <code>Failure</code> status is returned for this particular row of data. In case if
+<code>reversed</code> parameter is set to <code>true</code> metric will fail when its condition IS met.</p>
+<p>Regular metrics that do not have logical condition can also fail, but their failure logic is not reversible.</p>
+<p>Scenario when metric can yield <code>Failure</code> status are explicitly described for each metric below.
 See <a href="../../02-general-concepts/03-StatusModel/">Status Model used in Results</a> chapter for more information on status model.</p>
 <h3 id="row-count-metric">Row Count Metric</h3>
 <p>Calculates number of rows in the source. This is the only metric for which columns list should not be
 specified as it is not required to compute number of rows. Metric definition does not require additional parameters:
 <code>params</code> should not be set.</p>
+<p>Metric is not reversible and cannot fail (might only return <code>Error</code> status in case of some runtime exception).</p>
 <p>All row count metrics are defined in <code>rowCount</code> subsection.</p>
 <h3 id="distinct-values-metric">Distinct Values Metric</h3>
 <p>Counts number of unique values in provided columns. When applied to multiple columns, total
 number of unique values in these columns is returned. Metric definition does not require additional parameters:
 <code>params</code> should not be set.</p>
+<p>Metric is not reversible and cannot fail (might only return <code>Error</code> status in case of some runtime exception).</p>
 <p>All distinct values metrics are defined in <code>distinctValues</code> subsection.</p>
 <blockquote>
 <p><strong>IMPORTANT</strong>. Calculation of exact number of unique values required O(N) memory. Therefore, to prevent OOM errors
@@ -1740,6 +1762,7 @@ to estimate number of unique values.</p>
 <p>Calculates number of unique values approximately, using 
 <a href="https://twitter.github.io/algebird/datatypes/approx/hyperloglog.html">HyperLogLog</a> algorithm.</p>
 <p><strong>This metric works with only one column.</strong></p>
+<p>Metric is not reversible and fails only if provided value cannot be cast to String.</p>
 <p>All approximate distinct values metrics are defined in <code>approximateDistinctValues</code> subsection. 
 Additional parameters can be supplied:</p>
 <ul>
@@ -1749,23 +1772,37 @@ Additional parameters can be supplied:</p>
 <p>Counts number of null values in the specified columns. When applied to multiple columns, total
 number of null values in these columns is returned. Metric definition does not require additional parameters:
 <code>params</code> should not be set.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>true</code>, 
+i.e. error collection logic is reversed by default.</strong> 
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in the 
+specified columns are NON-null. For reversed error collection logic (default one), metric increment returns <code>Failure</code>
+status when some values in the specified columns are null. </p>
 <p>All distinct values metrics are defined in <code>nullValues</code> subsection.</p>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns are null.</p>
 <h3 id="empty-values-metric">Empty Values Metric</h3>
 <p>Counts number of empty values in the specified columns (i.e. empty string values). When applied to multiple columns,
 total number of empty values in these columns is returned. Metric definition does not require additional parameters:
 <code>params</code> should not be set.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>true</code>,
+i.e. error collection logic is reversed by default.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in the
+specified columns are non-empty. For reversed error collection logic (default one), metric increment returns <code>Failure</code>
+status when some values in the specified columns are empty.</p>
 <p>All distinct values metrics are defined in <code>emptyValues</code> subsection.</p>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns are empty.</p>
 <h3 id="completeness-metric">Completeness Metric</h3>
 <p>Calculates the measure of completeness in the specified columns: <code>(values_count - null_count) / values_count</code>.
 When applied to multiple columns, total number of values and total number of nulls are used in the equation above.</p>
-<p>All completeness metrics are defined in <code>completeness</code> subsection.
-Additional parameters can be supplied:</p>
+<p>Additional parameters can be supplied:</p>
 <ul>
 <li><code>includeEmptyStrings</code> - <em>Optional, default is <code>false</code></em>. Boolean parameter indicating whether empty string values
   should be considered as nulls.</li>
 </ul>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>true</code>,
+i.e. error collection logic is reversed by default.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in the
+specified columns are non-noll (or non-empty if <code>includeEmptyStrings</code> is set to <code>true</code>). 
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values 
+in the specified columns are null (or empty if <code>includeEmptyStrings</code> is set to <code>true</code>).</p>
+<p>All completeness metrics are defined in <code>completeness</code> subsection.</p>
 <h3 id="sequence-completeness-metric">Sequence Completeness Metric</h3>
 <p>Calculates measure of completeness of an incremental sequence of integers. In other words, it looks for the missing 
 elements in the sequence and returns the relation: <code>actual number of elements / required number of elements</code>.</p>
@@ -1780,23 +1817,25 @@ Where:
 * <code>min_value</code> - the minimum value in the sequence;
 * <code>max_value</code> - the maximum value in the sequence;
 * <code>increment</code> - sequence step, default is 1.</p>
-<p>All sequence completeness metrics are defined in <code>sequenceCompleteness</code> subsection.
-Additional parameters can be supplied:</p>
+<p>Additional parameters can be supplied:</p>
 <ul>
 <li><code>incremet</code> - <em>Optional, default is <code>1</code></em>. Sequence increment step.</li>
 </ul>
+<p>Metric is not reversible and fails only if provided column value cannot be cast to number.</p>
+<p>All sequence completeness metrics are defined in <code>sequenceCompleteness</code> subsection.</p>
 <h3 id="approximate-sequence-completeness-metric">Approximate Sequence Completeness Metric</h3>
 <p>Calculates the measure of completeness of an incremental sequence of integers <strong><em>approximately</em></strong> using 
 the <a href="https://twitter.github.io/algebird/datatypes/approx/hyperloglog.html">HyperLogLog</a> algorithm. Works in the same 
 way is <a href="#sequence-completeness-metric">Sequence Completeness Metric</a> with only difference, that
 actual number of elements in the sequence is determined approximately using HLL algorithm.</p>
 <p><strong>This metric works with only one column.</strong></p>
-<p>All approximate sequence completeness metrics are defined in <code>approximateSequenceCompleteness</code> subsection.
-Additional parameters can be supplied:</p>
+<p>Additional parameters can be supplied:</p>
 <ul>
 <li><code>incremet</code> - <em>Optional, default is <code>1</code></em>. Sequence increment step.</li>
 <li><code>accuracyError</code> - <em>Optional, default is <code>0.01</code></em>. Accuracy error for estimating number of unique values.</li>
 </ul>
+<p>Metric is not reversible and fails only if provided column value cannot be cast to number.</p>
+<p>All approximate sequence completeness metrics are defined in <code>approximateSequenceCompleteness</code> subsection.</p>
 <h3 id="minimum-string-metric">Minimum String Metric</h3>
 <p>Calculates the minimum string length in the values of the specified columns. 
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
@@ -1806,18 +1845,17 @@ to string and, therefore, minimum string length cannot be computed.</p>
 <h3 id="maximum-string-metric">Maximum String Metric</h3>
 <p>Calculates the maximum string length in the values of the specified columns.
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
+<p>Metric is not reversible. Metric increment returns <code>Failure</code> status for rows where all values in the specified 
+columns cannot be cast to string and, therefore, maximum string length cannot be computed.</p>
 <p>All maximum string metrics are defined in <code>maxString</code> subsection.</p>
-<p>Metric increment returns <code>Failure</code> status for rows where all values in the specified columns are not castable
-to string and, therefore, maximum string length cannot be computed.</p>
 <h3 id="average-string-metric">Average String Metric</h3>
 <p>Calculates the average string length in the values of the specified columns.
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
+<p>Metric is not reversible. Metric increment returns <code>Failure</code> status for rows where all values in the specified
+columns cannot be cast to string and, therefore, average string length cannot be computed.</p>
 <p>All average string metrics are defined in <code>avgString</code> subsection.</p>
-<p>Metric increment returns <code>Failure</code> status for rows where all values in the specified columns are not castable
-to string and, therefore, average string length cannot be computed.</p>
 <h3 id="string-length-metric">String Length Metric</h3>
-<p>Calculate number of values that meet the defined string length criteria.</p>
-<p>All string length metrics are defined in <code>stringLength</code> subsection.
+<p>Calculate number of values that meet the defined string length criteria.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>length</code> - <em>Required</em>. Required string length threshold.</li>
@@ -1826,56 +1864,74 @@ Additional parameters should be supplied:</p>
 </ul>
 </li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not meet defined string
-length criteria.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in 
+the specified columns do not meet defined string length criteria.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns DO meet defined string length criteria.</p>
+<p>All string length metrics are defined in <code>stringLength</code> subsection.</p>
 <h3 id="string-in-domain-metric">String In Domain Metric</h3>
-<p>Counts number of values which fall into specified set of allowed values.</p>
-<p>All string in domain metrics are defined in <code>stringInDomain</code> subsection.
+<p>Counts number of values which fall into specified set of allowed values.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>domain</code> - <em>Required</em>. List of allowed values.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not fall into set of 
-allowed values.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in 
+the specified columns do not fall into set of allowed values.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns ARE IN set of allowed values.</p>
+<p>All string in domain metrics are defined in <code>stringInDomain</code> subsection.</p>
 <h3 id="string-out-domain-metric">String Out Domain Metric</h3>
-<p>Counts number of values which do <strong>not</strong> fall into specified set of avoided values.</p>
-<p>All string out domain metrics are defined in <code>stringOutDomain</code> subsection.
+<p>Counts number of values which do <strong>not</strong> fall into specified set of avoided values.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>domain</code> - <em>Required</em>. List of avoided values.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns <strong>do fall into</strong> set of
-avoided values.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns are in set of allowed values.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns DO NOT fall into set of allowed values.</p>
+<p>All string out domain metrics are defined in <code>stringOutDomain</code> subsection.</p>
 <h3 id="string-values-metric">String Values Metric</h3>
-<p>Counts number of values that are equal to the value given in metric definition.</p>
-<p>All string values metrics are defined in <code>stringValues</code> subsection.
+<p>Counts number of values that are equal to the value given in metric definition.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>compareValue</code> - <em>Required</em>. String value to compare with.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not match defined
-compare value.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns do not equal to defined compare value.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns DO equal to defined compare value.</p>
+<p>All string values metrics are defined in <code>stringValues</code> subsection.</p>
 <h3 id="regex-match">Regex Match</h3>
-<p>Calculates number of values that match the defined regular expression.</p>
-<p>All regex match metrics are defined in <code>regexMatch</code> subsection.
+<p>Calculates number of values that match the defined regular expression.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>regex</code> - <em>Required</em>. Regular expression to match.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not match defined
-regular expression.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns do not match defined regular expression.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns DO match defined regular expression.</p>
+<p>All regex match metrics are defined in <code>regexMatch</code> subsection.</p>
 <h3 id="regex-mismatch">Regex Mismatch</h3>
-<p>Calculates number of values that do <strong>not</strong> match the defined regular expression.</p>
-<p>All regex mismatch metrics are defined in <code>regexMismatch</code> subsection.
+<p>Calculates number of values that do <strong>not</strong> match the defined regular expression.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>regex</code> - <em>Required</em>. Regular expression that values should <strong>not</strong> match.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns <strong>do match</strong> defined
-regular expression.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns DO match defined regular expression.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns do not match defined regular expression.</p>
+<p>All regex mismatch metrics are defined in <code>regexMismatch</code> subsection.</p>
 <h3 id="formatted-date-metric">Formatted Date Metric</h3>
-<p>Counts number of values which have the specified datetime format.</p>
-<p>All formatted date metrics are defined in <code>formattedDate</code> subsection.
+<p>Counts number of values which have the specified datetime format.
 Additional parameters can be supplied:</p>
 <ul>
 <li><code>dateFormat</code> - <em>Optional, default is <code>yyyy-MM-dd'T'HH:mm:ss.SSSZ</code></em>. Target datetime format. 
@@ -1887,11 +1943,14 @@ Additional parameters can be supplied:</p>
 therefore,  metric will return the total number of non-empty cells. 
 Accordingly, the datetime format does not need to be specified.</p>
 </blockquote>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not conform to defined
-datetime format.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns do not conform to defined datetime format.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns DO conform to defined datetime format.</p>
+<p>All formatted date metrics are defined in <code>formattedDate</code> subsection.</p>
 <h3 id="formatted-number-metric">Formatted Number Metric</h3>
-<p>Counts number of values which are numeric and number format satisfy defined number format criteria.</p>
-<p>All formatted date metrics are defined in <code>formattedNumber</code> subsection.
+<p>Counts number of values which are numeric and number format satisfy defined number format criteria.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>precision</code> - <em>Required</em>. The total number of digits in the value (excluding the decimal separator).</li>
@@ -1904,186 +1963,216 @@ Additional parameters should be supplied:</p>
 </ul>
 </li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not satisfy defined
-number format criteria.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns do not satisfy defined number format criteria.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns DO meet defined number format criteria.</p>
+<p>All formatted date metrics are defined in <code>formattedNumber</code> subsection.</p>
 <h3 id="minimum-number-metric">Minimum Number Metric</h3>
 <p>Finds minimum number from the values in the specified columns.
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
+<p>Metrics is not reversible and increment returns <code>Failure</code> status for rows where all values in the specified columns 
+cannot be cast to number and, therefore, minimum number cannot be computed.</p>
 <p>All minimum number metrics are defined in <code>minNumber</code> subsection.</p>
-<p>Metric increment returns <code>Failure</code> status for rows where all values in the specified columns are not castable
-to number and, therefore, minimum number cannot be computed.</p>
 <h3 id="maximum-number-metric">Maximum Number Metric</h3>
 <p>Finds maximum number from the values in the specified columns.
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
+<p>Metrics is not reversible and increment returns <code>Failure</code> status for rows where all values in the specified columns
+cannot be cast to number and, therefore, maximum number cannot be computed.</p>
 <p>All maximum number metrics are defined in <code>maxNumber</code> subsection.</p>
-<p>Metric increment returns <code>Failure</code> status for rows where all values in the specified columns are not castable
-to number and, therefore, maximum number cannot be computed.</p>
 <h3 id="sum-number-metric">Sum Number Metric</h3>
 <p>Finds sum of the values in the specified columns.
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
+<p>Metrics is not reversible and increment returns <code>Failure</code> status for rows where some values in the specified columns 
+cannot be cast to number.</p>
 <p>All sum number metrics are defined in <code>sumNumber</code> subsection.</p>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns are not castable
-to number.</p>
 <h3 id="average-number-metric">Average Number Metric</h3>
 <p>Finds average of the values in the specified column.
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
 <p><strong>This metric works with only one column.</strong></p>
+<p>Metric is not reversible and metric increment returns <code>Failure</code> status for rows where value in the specified column
+cannot be cast to number.</p>
 <p>All average number metrics are defined in <code>avgNumber</code> subsection.</p>
-<p>Metric increment returns <code>Failure</code> status for rows where value in the specified column is not castable
-to number.</p>
 <h3 id="standard-deviation-number-metric">Standard Deviation Number Metric</h3>
 <p>Finds standard deviation for the values in the specified column.
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
 <p><strong>This metric works with only one column.</strong></p>
+<p>Metric is not reversible and metric increment returns <code>Failure</code> status for rows where value in the specified column 
+cannot be cast to number.</p>
 <p>All average number metrics are defined in <code>stdNumber</code> subsection.</p>
-<p>Metric increment returns <code>Failure</code> status for rows where value in the specified column is not castable
-to number.</p>
 <h3 id="casted-number-metric">Casted Number Metric</h3>
 <p>Counts number of values which string value can be converted to a number (double).
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns cannot be cast to number.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns CAN be cast to number.</p>
 <p>All sum number metrics are defined in <code>castedNumber</code> subsection.</p>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns are not castable
-to number.</p>
 <h3 id="number-in-domain-metric">Number In Domain Metric</h3>
-<p>Counts number of values which being cast to number (double) fall into specified set of allowed numbers.</p>
-<p>All number in domain metrics are defined in <code>numberInDomain</code> subsection.
+<p>Counts number of values which being cast to number (double) fall into specified set of allowed numbers.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>domain</code> - <em>Required</em>. List of allowed numbers.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not fall into set of
-allowed numbers.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns do not fall into set of allowed numbers.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns ARE IN set of allowed numbers.</p>
+<p>All number in domain metrics are defined in <code>numberInDomain</code> subsection.</p>
 <h3 id="number-out-domain-metric">Number Out Domain Metric</h3>
-<p>Counts number of values which being cast to number (double) do <strong>not</strong> fall into specified set of avoided numbers.</p>
-<p>All number out domain metrics are defined in <code>numberOutDomain</code> subsection.
+<p>Counts number of values which being cast to number (double) do <strong>not</strong> fall into specified set of avoided numbers.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>domain</code> - <em>Required</em>. List of avoided numbers.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns <strong>do fall into</strong> set of
-avoided numbers.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns are in set of allowed numbers.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns do not fall into set of allowed numbers.</p>
+<p>All number out domain metrics are defined in <code>numberOutDomain</code> subsection.</p>
 <h3 id="number-less-than-metric">Number Less Than Metric</h3>
-<p>Counts number of values which being cast to number (double) are less than (or equal to) the specified value.</p>
-<p>All number less than metrics are defined in <code>numberLessThan</code> subsection.
+<p>Counts number of values which being cast to number (double) are less than (or equal to) the specified value.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>compareValue</code> - <em>Required</em>. Number to compare with.</li>
 <li><code>includeBound</code> - <em>Optional, default is <code>false</code></em>. Specifies whether to include <code>compareValue</code> in the range for comparison.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not satisfy the 
-comparison criteria.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns do not satisfy the comparison criteria.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns DO MEET the comparison criteria.</p>
+<p>All number less than metrics are defined in <code>numberLessThan</code> subsection.</p>
 <h3 id="number-greater-than-metric">Number Greater Than Metric</h3>
-<p>Counts number of values which being cast to number (double) are greater than (or equal to) the specified value.</p>
-<p>All number greater than metrics are defined in <code>numberGreaterThan</code> subsection.
+<p>Counts number of values which being cast to number (double) are greater than (or equal to) the specified value.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>compareValue</code> - <em>Required</em>. Number to compare with.</li>
 <li><code>includeBound</code> - <em>Optional, default is <code>false</code></em>. Specifies whether to include <code>compareValue</code> in the range for comparison.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not satisfy the
-comparison criteria.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns do not satisfy the comparison criteria.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns DO MEET the comparison criteria.</p>
+<p>All number greater than metrics are defined in <code>numberGreaterThan</code> subsection.</p>
 <h3 id="number-between-metric">Number Between Metric</h3>
-<p>Counts number of values which being cast to number (double) are within the given interval.</p>
-<p>All number between metrics are defined in <code>numberBetween</code> subsection.
+<p>Counts number of values which being cast to number (double) are within the given interval.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>lowerCompareValue</code> - <em>Required</em>. The lower bound of the interval.</li>
 <li><code>upperCompareValue</code> - <em>Required</em>. The upper bound of the interval.</li>
 <li><code>includeBound</code> - <em>Optional, default is <code>false</code></em>. Specifies whether to include interval bounds in the range for comparison.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not satisfy the
-comparison criteria.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns do not satisfy the comparison criteria.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns DO MEET the comparison criteria.</p>
+<p>All number between metrics are defined in <code>numberBetween</code> subsection.</p>
 <h3 id="number-not-between-metric">Number Not Between Metric</h3>
-<p>Counts number of values which being cast to number (double) are outside the given interval.</p>
-<p>All number between metrics are defined in <code>numberNotBetween</code> subsection.
+<p>Counts number of values which being cast to number (double) are outside the given interval.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>lowerCompareValue</code> - <em>Required</em>. The lower bound of the interval.</li>
 <li><code>upperCompareValue</code> - <em>Required</em>. The upper bound of the interval.</li>
 <li><code>includeBound</code> - <em>Optional, default is <code>false</code></em>. Specifies whether to include interval bounds in the range for comparison.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not satisfy the
-comparison criteria.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns do not satisfy the comparison criteria.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns DO MEET the comparison criteria.</p>
+<p>All number between metrics are defined in <code>numberNotBetween</code> subsection.</p>
 <h3 id="number-values-metric">Number Values Metric</h3>
-<p>Counts number of values which being cast to number (double) are equal to the number given in metric definition.</p>
-<p>All number values metrics are defined in <code>numberValues</code> subsection.
+<p>Counts number of values which being cast to number (double) are equal to the number given in metric definition.
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>compareValue</code> - <em>Required</em>. Number value to compare with.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not match defined
-compare value.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns do not equal to defined compare value.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns DO equal to defined compare value.</p>
+<p>All number values metrics are defined in <code>numberValues</code> subsection.</p>
 <h3 id="median-value-metric">Median Value Metric</h3>
 <p>Calculates median value of the values in the specified column. Metric calculator uses 
 <a href="https://github.com/isarn/isarn-sketches">TDigest</a> library for computation of median value.</p>
-<p><strong>This metric works with only one column.</strong></p>
-<p>All median value metrics are defined in <code>medianValue</code> subsection.
+<p><strong>This metric works with only one column.</strong>
 Additional parameters can be supplied:</p>
 <ul>
 <li><code>accuracyError</code> - <em>Optional, default is <code>0.01</code></em>. Accuracy error for calculation of median value.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where value in the specified column is not castable
-to number.</p>
+<p>Metric is not reversible and metric increment returns <code>Failure</code> status for rows where value in the specified column
+cannot be cast to number.</p>
+<p>All median value metrics are defined in <code>medianValue</code> subsection.</p>
 <h3 id="first-quantile-metric">First Quantile Metric</h3>
 <p>Calculates first quantile for the values in the specified column. Metric calculator uses
 <a href="https://github.com/isarn/isarn-sketches">TDigest</a> library for computation of first quantile.</p>
-<p><strong>This metric works with only one column.</strong></p>
-<p>All median value metrics are defined in <code>firstQuantile</code> subsection.
+<p><strong>This metric works with only one column.</strong>
 Additional parameters can be supplied:</p>
 <ul>
 <li><code>accuracyError</code> - <em>Optional, default is <code>0.01</code></em>. Accuracy error for calculation of first quantile value.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where value in the specified column is not castable
-to number.</p>
+<p>Metric is not reversible and metric increment returns <code>Failure</code> status for rows where value in the specified column
+cannot be cast to number.</p>
+<p>All median value metrics are defined in <code>firstQuantile</code> subsection.</p>
 <h3 id="third-quantile-metric">Third Quantile Metric</h3>
 <p>Calculates third quantile for the values in the specified column. Metric calculator uses
 <a href="https://github.com/isarn/isarn-sketches">TDigest</a> library for computation of third quantile.</p>
-<p><strong>This metric works with only one column.</strong></p>
-<p>All third value metrics are defined in <code>thirdQuantile</code> subsection.
+<p><strong>This metric works with only one column.</strong>
 Additional parameters can be supplied:</p>
 <ul>
 <li><code>accuracyError</code> - <em>Optional, default is <code>0.01</code></em>. Accuracy error for calculation of third value.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where value in the specified column is not castable
-to number.</p>
+<p>Metric is not reversible and metric increment returns <code>Failure</code> status for rows where value in the specified column
+cannot be cast to number.</p>
+<p>All third value metrics are defined in <code>thirdQuantile</code> subsection.</p>
 <h3 id="get-quantile-metric">Get Quantile Metric</h3>
 <p>Calculates an arbitrary quantile for the values in the specified column. Metric calculator uses
 <a href="https://github.com/isarn/isarn-sketches">TDigest</a> library for computation of quantile.</p>
-<p><strong>This metric works with only one column.</strong></p>
-<p>All get quantile metrics are defined in <code>getQuantile</code> subsection.
+<p><strong>This metric works with only one column.</strong>
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>accuracyError</code> - <em>Optional, default is <code>0.01</code></em>. Accuracy error for calculation of quantile value.</li>
 <li><code>target</code> - <em>Required</em>. A number in the interval <code>[0, 1]</code> corresponding to the quantile that need to be caclulated.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where value in the specified column is not castable
-to number.</p>
+<p>Metric is not reversible and metric increment returns <code>Failure</code> status for rows where value in the specified column
+cannot be cast to number.</p>
+<p>All get quantile metrics are defined in <code>getQuantile</code> subsection.</p>
 <h3 id="get-percentile-metric">Get Percentile Metric</h3>
 <p>This metric is inverse of <a href="#get-quantile-metric">Get Quantile Metric</a>. It calculates a percentile value
 (quantile in %) which corresponds to the specified number from the set of values in the column.
 Metric calculator uses <a href="https://github.com/isarn/isarn-sketches">TDigest</a> library for computation of percentile value.</p>
-<p><strong>This metric works with only one column.</strong></p>
-<p>All get percentile metrics are defined in <code>getPercentile</code> subsection.
+<p><strong>This metric works with only one column.</strong>
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>accuracyError</code> - <em>Optional, default is <code>0.01</code></em>. Accuracy error for calculation of percentile.</li>
 <li><code>target</code> - <em>Required</em>. The number from the set of values in the column, for which percentile
   is determined.</li>
 </ul>
-<p>Metric increment returns <code>Failure</code> status for rows where value in the specified column is not castable
-to number.</p>
+<p>Metric is not reversible and metric increment returns <code>Failure</code> status for rows where value in the specified column
+cannot be cast to number.</p>
+<p>All get percentile metrics are defined in <code>getPercentile</code> subsection.</p>
 <h3 id="column-equality-metric">Column Equality Metric</h3>
 <p>Calculates the number of rows where values in the specified columns are equal to each other.
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
 <p><strong>This metric works with at least two columns.</strong></p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns cannot be cast to string or are not equal
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns cannot be cast to string or ARE equal.</p>
 <p>All column equality metrics are defined in <code>columnEq</code> subsection.</p>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified column are not castable to string
-or when they are not equal.</p>
 <h3 id="day-distance-metric">Day Distance Metric</h3>
 <p>Calculates the number of rows where difference between date in two columns expressed in terms of days is less
 (strictly less) than the specified threshold value.</p>
-<p><strong>This metric works with exactly two columns.</strong></p>
-<p>All day distance metrics are defined in <code>dayDistance</code> subsection.
+<p><strong>This metric works with exactly two columns.</strong>
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>threshold</code> - <em>Required</em>. Maximum allowed difference between two dates in days
@@ -2097,13 +2186,18 @@ Additional parameters should be supplied:</p>
 therefore,  metric will return the total number of non-empty cells.
 Accordingly, the datetime format does not need to be specified.</p>
 </blockquote>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns do not conform to 
-the specified datetime format or when date difference in days is greater than or equal to specified threshold.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns do not conform to the specified datetime format or when date difference in days 
+is greater than or equal to specified threshold.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns do not conform to the specified datetime format or when date difference in days
+is lower than specified threshold.</p>
+<p>All day distance metrics are defined in <code>dayDistance</code> subsection.</p>
 <h3 id="levenshtein-distance-metric">Levenshtein Distance Metric</h3>
 <p>Calculates number of rows where Levenshtein distance between string values in the provided columns is less than
 (strictly less) specified threshold.</p>
-<p><strong>This metric works with exactly two columns.</strong></p>
-<p>All levenshtein distance metrics are defined in <code>levenshteinDistance</code> subsection.
+<p><strong>This metric works with exactly two columns.</strong>
 Additional parameters should be supplied:</p>
 <ul>
 <li><code>threshold</code> - <em>Required</em>. Maximum allowed Levenshtein distance.</li>
@@ -2113,8 +2207,13 @@ Additional parameters should be supplied:</p>
 <blockquote>
 <p><strong>IMPORTANT</strong>. If Levenshtein distance is normalized then threshold value must be in range <code>[0, 1]</code>.</p>
 </blockquote>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns are not castable to string
-or when Levenshtein distance is greater than or equal to specified threshold.</p>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>false</code>.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in
+the specified columns cannot be cast to string or when Levenshtein distance is greater than or equal to 
+specified threshold.
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns cannot be cast to string or when Levenshtein distance is lower than specified threshold.</p>
+<p>All levenshtein distance metrics are defined in <code>levenshteinDistance</code> subsection.</p>
 <h3 id="comoment-metric">CoMoment Metric</h3>
 <p>Calculates the covariance moment of the values in two columns (co-moment).
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
@@ -2123,7 +2222,9 @@ Metric definition does not require additional parameters: <code>params</code> sh
 <p><strong>IMPORTANT</strong>. For the metric to be calculated, values in the specified columns must not be empty or null and 
 also can be cast to number (double). If at least one corrupt value is found, then metric calculator returns NaN value.</p>
 </blockquote>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns cannot be cast to number.</p>
+<p>Metric is not reversible and metric increment returns <code>Failure</code> status for rows where some values in the specified 
+columns cannot be cast to number.</p>
+<p>All co-moment metrics are defined in <code>coMoment</code> subsection.</p>
 <h3 id="covariance-metric">Covariance Metric</h3>
 <p>Calculates the covariance of the values in two columns.
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
@@ -2132,7 +2233,9 @@ Metric definition does not require additional parameters: <code>params</code> sh
 <p><strong>IMPORTANT</strong>. For the metric to be calculated, values in the specified columns must not be empty or null and
 also can be cast to number (double). If at least one corrupt value is found, then metric calculator returns NaN value.</p>
 </blockquote>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns cannot be cast to number.</p>
+<p>Metric is not reversible and metric increment returns <code>Failure</code> status for rows where some values in the specified 
+columns cannot be cast to number.</p>
+<p>All covariance metrics are defined in <code>covariance</code> subsection.</p>
 <h3 id="covariance-bessel-metric">Covariance Bessel Metric</h3>
 <p>Calculates the covariance of the values in two columns with the Bessel correction.
 Metric definition does not require additional parameters: <code>params</code> should not be set.</p>
@@ -2141,18 +2244,22 @@ Metric definition does not require additional parameters: <code>params</code> sh
 <p><strong>IMPORTANT</strong>. For the metric to be calculated, values in the specified columns must not be empty or null and
 also can be cast to number (double). If at least one corrupt value is found, then metric calculator returns NaN value.</p>
 </blockquote>
-<p>Metric increment returns <code>Failure</code> status for rows where some values in the specified columns cannot be cast to number.</p>
+<p>Metric is not reversible and metric increment returns <code>Failure</code> status for rows where some values in the specified 
+columns cannot be cast to number.</p>
+<p>All covariance metrics are defined in <code>covarianceBessel</code> subsection.</p>
 <h3 id="top-n-metric">Top N Metric</h3>
 <p>This is a specific metric that calculates approximate N most frequently occurring values in a column.
 The metric calculator uses <a href="https://github.com/twitter/algebird">Twitter Algebird</a> library,
 which implements abstract algebra methods for Scala.</p>
 <p><strong>This metric works with only one column.</strong></p>
-<p>All top N metrics are defined in <code>topN</code> subsection.
-Additional parameters can be supplied:</p>
+<p>Additional parameters can be supplied:</p>
 <ul>
 <li><code>targetNumber</code> - <em>Optional, default is <code>10</code></em>. Number N of values to search.</li>
 <li><code>maxCapacity</code> - <em>Optional, default is <code>100</code></em>. Maximum container size for storing top values.</li>
 </ul>
+<p>Metric is not reversible and metric increment returns <code>Failure</code> status for rows where some values in the specified
+columns cannot be cast to string.</p>
+<p>All top N metrics are defined in <code>topN</code> subsection.</p>
 <h2 id="composed-metrics">Composed Metrics</h2>
 <p>Composed metrics are defined using a formula (specified in the <code>formula</code> field) for their calculation. 
 As composed metric are intended for using other metric results to compute a derivative result then, these metrics
@@ -2205,36 +2312,37 @@ Composed metrics are listed in the separate subsection.</p>
 </span><span id="__span-0-33">      regexMatch: [
 </span><span id="__span-0-34">        {
 </span><span id="__span-0-35">          id: &quot;table_source1_inn_regex&quot;, description: &quot;Regex match for inn column&quot;, source: &quot;table_source_1&quot;,
-</span><span id="__span-0-36">          columns: [&quot;inn&quot;], params: {regex: &quot;&quot;&quot;^\d{10}$&quot;&quot;&quot;}
+</span><span id="__span-0-36">          columns: [&quot;inn&quot;], params: {regex: &quot;&quot;&quot;^\d{10}$&quot;&quot;&quot;}, reversed: true
 </span><span id="__span-0-37">        }
 </span><span id="__span-0-38">      ]
 </span><span id="__span-0-39">      stringInDomain: [
 </span><span id="__span-0-40">        {
 </span><span id="__span-0-41">          id: &quot;orc_data_segment_domain&quot;, source: &quot;hdfs_orc_source&quot;,
 </span><span id="__span-0-42">          columns: [&quot;segment&quot;], params: {domain: [&quot;FI&quot;, &quot;MID&quot;, &quot;SME&quot;, &quot;INTL&quot;, &quot;CIB&quot;]}
-</span><span id="__span-0-43">        }
-</span><span id="__span-0-44">      ]
-</span><span id="__span-0-45">      topN: [
-</span><span id="__span-0-46">        {
-</span><span id="__span-0-47">          id: &quot;filterVS_top3_currency&quot;, description: &quot;Top 3 currency in filterVS&quot;, source: &quot;filterVS&quot;,
-</span><span id="__span-0-48">          columns: [&quot;id&quot;], params: {targetNumber: 3, maxCapacity: 10}
-</span><span id="__span-0-49">        }
-</span><span id="__span-0-50">      ],
-</span><span id="__span-0-51">      levenshteinDistance: [
-</span><span id="__span-0-52">        {
-</span><span id="__span-0-53">          id: &quot;lvnstDist&quot;, source: &quot;table_source_2&quot;, columns: [&quot;col1&quot;, &quot;col2&quot;],
-</span><span id="__span-0-54">          params: {normalize: true, threshold: 0.3}
-</span><span id="__span-0-55">        }
-</span><span id="__span-0-56">      ]
-</span><span id="__span-0-57">    }
-</span><span id="__span-0-58">    composed: [
-</span><span id="__span-0-59">      {
-</span><span id="__span-0-60">        id: &quot;pct_of_null&quot;, description: &quot;Percent of null values in hive_table1&quot;,
-</span><span id="__span-0-61">        formula: &quot;100 * {{ hive_table_nulls }} ^ 2 / ( {{ hive_table_row_cnt }} + 1)&quot;
-</span><span id="__span-0-62">      }
-</span><span id="__span-0-63">    ]
-</span><span id="__span-0-64">  }
-</span><span id="__span-0-65">}
+</span><span id="__span-0-43">          reversed: true
+</span><span id="__span-0-44">        }
+</span><span id="__span-0-45">      ]
+</span><span id="__span-0-46">      topN: [
+</span><span id="__span-0-47">        {
+</span><span id="__span-0-48">          id: &quot;filterVS_top3_currency&quot;, description: &quot;Top 3 currency in filterVS&quot;, source: &quot;filterVS&quot;,
+</span><span id="__span-0-49">          columns: [&quot;id&quot;], params: {targetNumber: 3, maxCapacity: 10}
+</span><span id="__span-0-50">        }
+</span><span id="__span-0-51">      ],
+</span><span id="__span-0-52">      levenshteinDistance: [
+</span><span id="__span-0-53">        {
+</span><span id="__span-0-54">          id: &quot;lvnstDist&quot;, source: &quot;table_source_2&quot;, columns: [&quot;col1&quot;, &quot;col2&quot;],
+</span><span id="__span-0-55">          params: {normalize: true, threshold: 0.3}
+</span><span id="__span-0-56">        }
+</span><span id="__span-0-57">      ]
+</span><span id="__span-0-58">    }
+</span><span id="__span-0-59">    composed: [
+</span><span id="__span-0-60">      {
+</span><span id="__span-0-61">        id: &quot;pct_of_null&quot;, description: &quot;Percent of null values in hive_table1&quot;,
+</span><span id="__span-0-62">        formula: &quot;100 * {{ hive_table_nulls }} ^ 2 / ( {{ hive_table_row_cnt }} + 1)&quot;
+</span><span id="__span-0-63">      }
+</span><span id="__span-0-64">    ]
+</span><span id="__span-0-65">  }
+</span><span id="__span-0-66">}
 </span></code></pre></div>
 
 

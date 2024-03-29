@@ -229,6 +229,14 @@
                         <span class="separator"></span>
                         <a class="trait" href="RegularMetric.html" title="Base class for source metric."></a>
                         <a href="RegularMetric.html" title="Base class for source metric.">RegularMetric</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
+                        <a class="trait" href="ReversibleCalculator.html" title="Trait to be mixed in to metric calculator to support reversal of error collection logic."></a>
+                        <a href="ReversibleCalculator.html" title="Trait to be mixed in to metric calculator to support reversal of error collection logic.">ReversibleCalculator</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
+                        <a class="trait" href="ReversibleMetric.html" title="Trait to be mixed in to reversible metric definitions (configurations)."></a>
+                        <a href="ReversibleMetric.html" title="Trait to be mixed in to reversible metric definitions (configurations).">ReversibleMetric</a>
                       </li>
               </ul>
             </div>
@@ -376,6 +384,43 @@ The concrete implementation of metric processor differs for batch and streaming 
       </span>
       
       <p class="shortcomment cmt">Base class for source metric.</p><div class="fullcomment"><div class="comment cmt"><p>Base class for source metric. All source metrics should have defined following:</p><ul><li>metric ID</li><li>metric name</li><li>source ID over which metric is calculated</li><li>columns used for metric calculation</li><li>method to init metric calculator
+</li></ul></div></div>
+    </li><li name="ru.raiffeisen.checkita.core.metrics.ReversibleCalculator" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="ReversibleCalculatorextendsAnyRef"></a><a id="ReversibleCalculator:ReversibleCalculator"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleCalculator.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="Trait to be mixed in to metric calculator to support reversal of error collection logic." href="ReversibleCalculator.html"><span class="name">ReversibleCalculator</span></a><span class="result"> extends <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Trait to be mixed in to metric calculator to support reversal of error collection logic.</p><div class="fullcomment"><div class="comment cmt"><p>Trait to be mixed in to metric calculator to support reversal of error collection logic.</p><ul><li>Reversible metric calculators can collect metric errors either in direct or in reversed mode depending
+    on provided boolean flag.
+</li></ul></div></div>
+    </li><li name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="ReversibleMetricextendsAnyRef"></a><a id="ReversibleMetric:ReversibleMetric"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="Trait to be mixed in to reversible metric definitions (configurations)." href="ReversibleMetric.html"><span class="name">ReversibleMetric</span></a><span class="result"> extends <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Trait to be mixed in to reversible metric definitions (configurations).</p><div class="fullcomment"><div class="comment cmt"><p>Trait to be mixed in to reversible metric definitions (configurations).</p><ul><li>Reversible metrics must defined boolean flag indicating whether error collection
+    logic for metric is direct or reversed.</li><li>Initialization of metric calculator must return instance of reversible metric calculator
+    (one that supports error collection logic reversal).
 </li></ul></div></div>
     </li></ol>
             </div>

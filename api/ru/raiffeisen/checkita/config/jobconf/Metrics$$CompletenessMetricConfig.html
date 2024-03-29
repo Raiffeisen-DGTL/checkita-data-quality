@@ -404,23 +404,17 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">CompletenessMetricConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="source">source: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="columns">columns: <a href="../RefinedTypes$.html#NonEmptyStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.NonEmpty]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq">NonEmptyStringSeq</a></span>, <span name="params">params: <a href="MetricParams$$CompletenessParams.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.MetricParams.CompletenessParams">CompletenessParams</a> = <span class="symbol"><span class="name"><a href="../../../../index.html">CompletenessParams()</a></span></span></span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Metrics$$AnyColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig">AnyColumnRegularMetricConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">CompletenessMetricConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="source">source: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="columns">columns: <a href="../RefinedTypes$.html#NonEmptyStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.NonEmpty]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq">NonEmptyStringSeq</a></span>, <span name="params">params: <a href="MetricParams$$CompletenessParams.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.MetricParams.CompletenessParams">CompletenessParams</a> = <span class="symbol"><span class="name"><a href="../../../../index.html">CompletenessParams()</a></span></span></span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="reversed">reversed: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>)</span><span class="result"> extends <a href="Metrics$$AnyColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig">AnyColumnRegularMetricConfig</a> with <a href="../../core/metrics/ReversibleMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric">ReversibleMetric</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Completeness column metric configuration
-</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>
-  Metric ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>
-  Metric description</p></dd><dt class="param">source</dt><dd class="cmt"><p>
-  Source ID over which metric is being calculated</p></dd><dt class="param">columns</dt><dd class="cmt"><p>
-  Sequence of columns which are used for metric calculation</p></dd><dt class="param">params</dt><dd class="cmt"><p>
-  Metric parameters</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>
-  List of metadata parameters specific to this metric</p></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Metric ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Metric description</p></dd><dt class="param">source</dt><dd class="cmt"><p>Source ID over which metric is being calculated</p></dd><dt class="param">columns</dt><dd class="cmt"><p>Sequence of columns which are used for metric calculation</p></dd><dt class="param">params</dt><dd class="cmt"><p>Metric parameters</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this metric</p></dd><dt class="param">reversed</dt><dd class="cmt"><p>Boolean flag indicating whether error collection logic should be reversed for this metric</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Metrics$$AnyColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig">AnyColumnRegularMetricConfig</a>, <a href="Metrics$$RegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegularMetricConfig">RegularMetricConfig</a>, <a href="../../core/metrics/RegularMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.RegularMetric">RegularMetric</a>, <a href="Metrics$$MetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MetricConfig">MetricConfig</a>, <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../../core/metrics/ReversibleMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric">ReversibleMetric</a>, <a href="Metrics$$AnyColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig">AnyColumnRegularMetricConfig</a>, <a href="Metrics$$RegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegularMetricConfig">RegularMetricConfig</a>, <a href="../../core/metrics/RegularMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.RegularMetric">RegularMetric</a>, <a href="Metrics$$MetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MetricConfig">MetricConfig</a>, <span class="extype" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity">JobConfigEntity</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -446,7 +440,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig"><span>CompletenessMetricConfig</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig"><span>AnyColumnRegularMetricConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegularMetricConfig"><span>RegularMetricConfig</span></li><li class="in" name="ru.raiffeisen.checkita.core.metrics.RegularMetric"><span>RegularMetric</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MetricConfig"><span>MetricConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity"><span>JobConfigEntity</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig"><span>CompletenessMetricConfig</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric"><span>ReversibleMetric</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig"><span>AnyColumnRegularMetricConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegularMetricConfig"><span>RegularMetricConfig</span></li><li class="in" name="ru.raiffeisen.checkita.core.metrics.RegularMetric"><span>RegularMetric</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MetricConfig"><span>MetricConfig</span></li><li class="in" name="ru.raiffeisen.checkita.config.jobconf.JobConfigEntity"><span>JobConfigEntity</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -467,9 +461,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],source:eu.timepit.refined.types.string.NonEmptyString,columns:ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq,params:ru.raiffeisen.checkita.config.jobconf.MetricParams.CompletenessParams,metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]):ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig"></a><a id="&lt;init&gt;:CompletenessMetricConfig"></a>
+      <a id="&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],source:eu.timepit.refined.types.string.NonEmptyString,columns:ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq,params:ru.raiffeisen.checkita.config.jobconf.MetricParams.CompletenessParams,metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam],reversed:Boolean):ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig"></a><a id="&lt;init&gt;:CompletenessMetricConfig"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Metrics$$CompletenessMetricConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],source:eu.timepit.refined.types.string.NonEmptyString,columns:ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq,params:ru.raiffeisen.checkita.config.jobconf.MetricParams.CompletenessParams,metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam]):ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Metrics$$CompletenessMetricConfig.html#&lt;init&gt;(id:ru.raiffeisen.checkita.config.RefinedTypes.ID,description:Option[eu.timepit.refined.types.string.NonEmptyString],source:eu.timepit.refined.types.string.NonEmptyString,columns:ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq,params:ru.raiffeisen.checkita.config.jobconf.MetricParams.CompletenessParams,metadata:Seq[ru.raiffeisen.checkita.config.RefinedTypes.SparkParam],reversed:Boolean):ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -478,20 +472,33 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">CompletenessMetricConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="source">source: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="columns">columns: <a href="../RefinedTypes$.html#NonEmptyStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.NonEmpty]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq">NonEmptyStringSeq</a></span>, <span name="params">params: <a href="MetricParams$$CompletenessParams.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.MetricParams.CompletenessParams">CompletenessParams</a> = <span class="symbol"><span class="name"><a href="../../../../index.html">CompletenessParams()</a></span></span></span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
+        <span class="name">CompletenessMetricConfig</span><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="source">source: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="columns">columns: <a href="../RefinedTypes$.html#NonEmptyStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.NonEmpty]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.NonEmptyStringSeq">NonEmptyStringSeq</a></span>, <span name="params">params: <a href="MetricParams$$CompletenessParams.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.MetricParams.CompletenessParams">CompletenessParams</a> = <span class="symbol"><span class="name"><a href="../../../../index.html">CompletenessParams()</a></span></span></span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="reversed">reversed: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>
-  Metric ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>
-  Metric description</p></dd><dt class="param">source</dt><dd class="cmt"><p>
-  Source ID over which metric is being calculated</p></dd><dt class="param">columns</dt><dd class="cmt"><p>
-  Sequence of columns which are used for metric calculation</p></dd><dt class="param">params</dt><dd class="cmt"><p>
-  Metric parameters</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>
-  List of metadata parameters specific to this metric</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Metric ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Metric description</p></dd><dt class="param">source</dt><dd class="cmt"><p>Source ID over which metric is being calculated</p></dd><dt class="param">columns</dt><dd class="cmt"><p>Sequence of columns which are used for metric calculation</p></dd><dt class="param">params</dt><dd class="cmt"><p>Metric parameters</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this metric</p></dd><dt class="param">reversed</dt><dd class="cmt"><p>Boolean flag indicating whether error collection logic should be reversed for this metric</p></dd></dl></div>
     </li></ol>
             </div>
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric.ReversibleMetricCalculator" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ReversibleMetricCalculator=ru.raiffeisen.checkita.core.metrics.MetricCalculatorwithru.raiffeisen.checkita.core.metrics.ReversibleCalculator"></a><a id="ReversibleMetricCalculator:ReversibleMetricCalculator"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Metrics$$CompletenessMetricConfig.html#ReversibleMetricCalculator=ru.raiffeisen.checkita.core.metrics.MetricCalculatorwithru.raiffeisen.checkita.core.metrics.ReversibleCalculator" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ReversibleMetricCalculator</span><span class="result alias"> = <a href="../../core/metrics/MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a> with <a href="../../core/metrics/ReversibleCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleCalculator">ReversibleCalculator</a></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../core/metrics/ReversibleMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric">ReversibleMetric</a></dd></dl></div>
+    </li></ol>
+            </div>
 
         
 
@@ -692,9 +699,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig">CompletenessMetricConfig</a> → JobConfigEntity</dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig#initMetricCalculator" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="initMetricCalculator:ru.raiffeisen.checkita.core.metrics.MetricCalculator"></a><a id="initMetricCalculator:MetricCalculator"></a>
+      <a id="initMetricCalculator:CompletenessMetricConfig.this.ReversibleMetricCalculator"></a><a id="initMetricCalculator:ReversibleMetricCalculator"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Metrics$$CompletenessMetricConfig.html#initMetricCalculator:ru.raiffeisen.checkita.core.metrics.MetricCalculator" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Metrics$$CompletenessMetricConfig.html#initMetricCalculator:CompletenessMetricConfig.this.ReversibleMetricCalculator" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -703,10 +710,10 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">initMetricCalculator</span><span class="result">: <a href="../../core/metrics/MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a></span>
+        <span class="name">initMetricCalculator</span><span class="result">: <a href="#ReversibleMetricCalculator=ru.raiffeisen.checkita.core.metrics.MetricCalculatorwithru.raiffeisen.checkita.core.metrics.ReversibleCalculator" class="extmbr" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig.ReversibleMetricCalculator">ReversibleMetricCalculator</a></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig">CompletenessMetricConfig</a> → <a href="../../core/metrics/RegularMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.RegularMetric">RegularMetric</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig">CompletenessMetricConfig</a> → <a href="../../core/metrics/ReversibleMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric">ReversibleMetric</a> → <a href="../../core/metrics/RegularMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.RegularMetric">RegularMetric</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -905,6 +912,22 @@
       </span>
       
       
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig#reversed" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reversed:Boolean"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Metrics$$CompletenessMetricConfig.html#reversed:Boolean" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">reversed</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig">CompletenessMetricConfig</a> → <a href="../../core/metrics/ReversibleMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric">ReversibleMetric</a></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig#source" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="source:eu.timepit.refined.types.string.NonEmptyString"></a><a id="source:NonEmptyString"></a>
       <span class="permalink">
@@ -1019,6 +1042,8 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric">
+              <h3>Inherited from <a href="../../core/metrics/ReversibleMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric">ReversibleMetric</a></h3>
             </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig">
               <h3>Inherited from <a href="Metrics$$AnyColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig">AnyColumnRegularMetricConfig</a></h3>
             </div><div class="parent" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegularMetricConfig">

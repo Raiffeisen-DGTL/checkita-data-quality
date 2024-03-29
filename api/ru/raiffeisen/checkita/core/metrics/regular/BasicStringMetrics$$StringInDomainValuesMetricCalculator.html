@@ -205,8 +205,8 @@
                         <a href="BasicStringMetrics$$DuplicateValuesMetricCalculator.html" title="Calculates number of duplicate values for given column or tuple of columns.">DuplicateValuesMetricCalculator</a>
                       </li><li class="current-entities indented7">
                         <span class="separator"></span>
-                        <a class="class" href="BasicStringMetrics$$EmptyStringValuesMetricCalculator.html" title="Calculates amount of empty strings in processed elements"></a>
-                        <a href="BasicStringMetrics$$EmptyStringValuesMetricCalculator.html" title="Calculates amount of empty strings in processed elements">EmptyStringValuesMetricCalculator</a>
+                        <a class="class" href="BasicStringMetrics$$EmptyStringValuesMetricCalculator.html" title="Calculates amount of empty strings in processed elements."></a>
+                        <a href="BasicStringMetrics$$EmptyStringValuesMetricCalculator.html" title="Calculates amount of empty strings in processed elements.">EmptyStringValuesMetricCalculator</a>
                       </li><li class="current-entities indented7">
                         <span class="separator"></span>
                         <a class="class" href="BasicStringMetrics$$MaxStringValueMetricCalculator.html" title="Calculates maximal length of processed elements"></a>
@@ -266,7 +266,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">StringInDomainValuesMetricCalculator</span><span class="params">(<span name="cnt">cnt: <span class="extype" name="scala.Long">Long</span></span>, <span name="domain">domain: <span class="extype" name="scala.Predef.Set">Set</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="failCount">failCount: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>, <span name="status">status: <a href="../../CalculatorStatus.html" class="extype" name="ru.raiffeisen.checkita.core.CalculatorStatus">CalculatorStatus</a> = <span class="symbol"><span class="name"><a href="../../../../../index.html">CalculatorStatus.Success</a></span></span></span>, <span name="failMsg">failMsg: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;OK&quot;</span></span>)</span><span class="result"> extends <a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">StringInDomainValuesMetricCalculator</span><span class="params">(<span name="cnt">cnt: <span class="extype" name="scala.Long">Long</span></span>, <span name="domain">domain: <span class="extype" name="scala.Predef.Set">Set</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="reversed">reversed: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="failCount">failCount: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>, <span name="status">status: <a href="../../CalculatorStatus.html" class="extype" name="ru.raiffeisen.checkita.core.CalculatorStatus">CalculatorStatus</a> = <span class="symbol"><span class="name"><a href="../../../../../index.html">CalculatorStatus.Success</a></span></span></span>, <span name="failMsg">failMsg: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;OK&quot;</span></span>)</span><span class="result"> extends <a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a> with <a href="../ReversibleCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleCalculator">ReversibleCalculator</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -276,7 +276,7 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a>, <a href="../../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../ReversibleCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleCalculator">ReversibleCalculator</a>, <a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a>, <a href="../../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -302,7 +302,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator"><span>StringInDomainValuesMetricCalculator</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator"><span>MetricCalculator</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator"><span>StringInDomainValuesMetricCalculator</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="ru.raiffeisen.checkita.core.metrics.ReversibleCalculator"><span>ReversibleCalculator</span></li><li class="in" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator"><span>MetricCalculator</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -323,9 +323,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(domain:Set[String]):ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator"></a><a id="&lt;init&gt;:StringInDomainValuesMetricCalculator"></a>
+      <a id="&lt;init&gt;(domain:Set[String],reversed:Boolean):ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator"></a><a id="&lt;init&gt;:StringInDomainValuesMetricCalculator"></a>
       <span class="permalink">
-      <a href="../../../../../../ru/raiffeisen/checkita/core/metrics/regular/BasicStringMetrics$$StringInDomainValuesMetricCalculator.html#&lt;init&gt;(domain:Set[String]):ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator" title="Permalink">
+      <a href="../../../../../../ru/raiffeisen/checkita/core/metrics/regular/BasicStringMetrics$$StringInDomainValuesMetricCalculator.html#&lt;init&gt;(domain:Set[String],reversed:Boolean):ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -334,14 +334,14 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">StringInDomainValuesMetricCalculator</span><span class="params">(<span name="domain">domain: <span class="extype" name="scala.Predef.Set">Set</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span>
+        <span class="name">StringInDomainValuesMetricCalculator</span><span class="params">(<span name="domain">domain: <span class="extype" name="scala.Predef.Set">Set</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="reversed">reversed: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span>
       </span>
       
       
     </li><li name="ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(cnt:Long,domain:Set[String],failCount:Long,status:ru.raiffeisen.checkita.core.CalculatorStatus,failMsg:String):ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator"></a><a id="&lt;init&gt;:StringInDomainValuesMetricCalculator"></a>
+      <a id="&lt;init&gt;(cnt:Long,domain:Set[String],reversed:Boolean,failCount:Long,status:ru.raiffeisen.checkita.core.CalculatorStatus,failMsg:String):ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator"></a><a id="&lt;init&gt;:StringInDomainValuesMetricCalculator"></a>
       <span class="permalink">
-      <a href="../../../../../../ru/raiffeisen/checkita/core/metrics/regular/BasicStringMetrics$$StringInDomainValuesMetricCalculator.html#&lt;init&gt;(cnt:Long,domain:Set[String],failCount:Long,status:ru.raiffeisen.checkita.core.CalculatorStatus,failMsg:String):ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator" title="Permalink">
+      <a href="../../../../../../ru/raiffeisen/checkita/core/metrics/regular/BasicStringMetrics$$StringInDomainValuesMetricCalculator.html#&lt;init&gt;(cnt:Long,domain:Set[String],reversed:Boolean,failCount:Long,status:ru.raiffeisen.checkita.core.CalculatorStatus,failMsg:String):ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -350,7 +350,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">StringInDomainValuesMetricCalculator</span><span class="params">(<span name="cnt">cnt: <span class="extype" name="scala.Long">Long</span></span>, <span name="domain">domain: <span class="extype" name="scala.Predef.Set">Set</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="failCount">failCount: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>, <span name="status">status: <a href="../../CalculatorStatus.html" class="extype" name="ru.raiffeisen.checkita.core.CalculatorStatus">CalculatorStatus</a> = <span class="symbol"><span class="name"><a href="../../../../../index.html">CalculatorStatus.Success</a></span></span></span>, <span name="failMsg">failMsg: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;OK&quot;</span></span>)</span>
+        <span class="name">StringInDomainValuesMetricCalculator</span><span class="params">(<span name="cnt">cnt: <span class="extype" name="scala.Long">Long</span></span>, <span name="domain">domain: <span class="extype" name="scala.Predef.Set">Set</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="reversed">reversed: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="failCount">failCount: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>, <span name="status">status: <a href="../../CalculatorStatus.html" class="extype" name="ru.raiffeisen.checkita.core.CalculatorStatus">CalculatorStatus</a> = <span class="symbol"><span class="name"><a href="../../../../../index.html">CalculatorStatus.Success</a></span></span></span>, <span name="failMsg">failMsg: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;OK&quot;</span></span>)</span>
       </span>
       
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">cnt</dt><dd class="cmt"><p>Current count of filtered elements</p></dd><dt class="param">domain</dt><dd class="cmt"><p>Set of strings that represents the requested domain</p></dd></dl></div>
@@ -637,7 +637,7 @@
       </span>
       
       <p class="shortcomment cmt">Gets current metric calculator status</p><div class="fullcomment"><div class="comment cmt"><p>Gets current metric calculator status</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Calculator status</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a></dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.core.metrics.MetricCalculator#increment" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="ru.raiffeisen.checkita.core.metrics.ReversibleCalculator#increment" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="increment(values:Seq[Any]):ru.raiffeisen.checkita.core.metrics.MetricCalculator"></a><a id="increment(Seq[Any]):MetricCalculator"></a>
       <span class="permalink">
       <a href="../../../../../../ru/raiffeisen/checkita/core/metrics/regular/BasicStringMetrics$$StringInDomainValuesMetricCalculator.html#increment(values:Seq[Any]):ru.raiffeisen.checkita.core.metrics.MetricCalculator" title="Permalink">
@@ -652,7 +652,10 @@
         <span class="name">increment</span><span class="params">(<span name="values">values: <a href="../../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Any">Any</span>]</span>)</span><span class="result">: <a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a></span>
       </span>
       
-      <p class="shortcomment cmt">Safely updates metric calculator</p><div class="fullcomment"><div class="comment cmt"><p>Safely updates metric calculator</p></div><dl class="paramcmts block"><dt class="param">values</dt><dd class="cmt"><p>values to process</p></dd><dt>returns</dt><dd class="cmt"><p>updated calculator</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a></dd></dl></div>
+      <p class="shortcomment cmt">Safely updates metric calculator with respect to
+specified error collection logic (direct or reversed).</p><div class="fullcomment"><div class="comment cmt"><p>Safely updates metric calculator with respect to
+specified error collection logic (direct or reversed).
+</p></div><dl class="paramcmts block"><dt class="param">values</dt><dd class="cmt"><p>values to process</p></dd><dt>returns</dt><dd class="cmt"><p>updated calculator</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../ReversibleCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleCalculator">ReversibleCalculator</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -757,6 +760,22 @@
       </span>
       
       <p class="shortcomment cmt">Gets results of calculator in the current state</p><div class="fullcomment"><div class="comment cmt"><p>Gets results of calculator in the current state</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Map of (result_name -&gt; (result, additionalResults))</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator">StringInDomainValuesMetricCalculator</a> → <a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator#reversed" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reversed:Boolean"></a>
+      <span class="permalink">
+      <a href="../../../../../../ru/raiffeisen/checkita/core/metrics/regular/BasicStringMetrics$$StringInDomainValuesMetricCalculator.html#reversed:Boolean" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">reversed</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator">StringInDomainValuesMetricCalculator</a> → <a href="../ReversibleCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleCalculator">ReversibleCalculator</a></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator#status" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="status:ru.raiffeisen.checkita.core.CalculatorStatus"></a><a id="status:CalculatorStatus"></a>
       <span class="permalink">
@@ -804,7 +823,29 @@
         <span class="name">tryToIncrement</span><span class="params">(<span name="values">values: <a href="../../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Any">Any</span>]</span>)</span><span class="result">: <a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a></span>
       </span>
       
-      <p class="shortcomment cmt">Increment metric calculator.</p><div class="fullcomment"><div class="comment cmt"><p>Increment metric calculator. May throw an exception.</p></div><dl class="paramcmts block"><dt class="param">values</dt><dd class="cmt"><p>values to process</p></dd><dt>returns</dt><dd class="cmt"><p>updated calculator or throws an exception</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator">StringInDomainValuesMetricCalculator</a> → <a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a></dd></dl></div>
+      <p class="shortcomment cmt">Increment metric calculator.</p><div class="fullcomment"><div class="comment cmt"><p>Increment metric calculator. May throw an exception.
+Direct error collection logic implies that strings values which are outside of provided domain
+are considered as metric failure and are collected.
+</p></div><dl class="paramcmts block"><dt class="param">values</dt><dd class="cmt"><p>values to process</p></dd><dt>returns</dt><dd class="cmt"><p>updated calculator or throws an exception</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator">StringInDomainValuesMetricCalculator</a> → <a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator#tryToIncrementReversed" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="tryToIncrementReversed(values:Seq[Any]):ru.raiffeisen.checkita.core.metrics.MetricCalculator"></a><a id="tryToIncrementReversed(Seq[Any]):MetricCalculator"></a>
+      <span class="permalink">
+      <a href="../../../../../../ru/raiffeisen/checkita/core/metrics/regular/BasicStringMetrics$$StringInDomainValuesMetricCalculator.html#tryToIncrementReversed(values:Seq[Any]):ru.raiffeisen.checkita.core.metrics.MetricCalculator" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">tryToIncrementReversed</span><span class="params">(<span name="values">values: <a href="../../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Any">Any</span>]</span>)</span><span class="result">: <a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Increment metric calculator with REVERSED error collection logic.</p><div class="fullcomment"><div class="comment cmt"><p>Increment metric calculator with REVERSED error collection logic. May throw an exception.
+Reversed error collection logic implies that strings values which are within provided domain
+are considered as metric failure and are collected.
+</p></div><dl class="paramcmts block"><dt class="param">values</dt><dd class="cmt"><p>values to process</p></dd><dt>returns</dt><dd class="cmt"><p>updated calculator or throws an exception</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics.StringInDomainValuesMetricCalculator">StringInDomainValuesMetricCalculator</a> → <a href="../ReversibleCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleCalculator">ReversibleCalculator</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
@@ -891,6 +932,8 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="ru.raiffeisen.checkita.core.metrics.ReversibleCalculator">
+              <h3>Inherited from <a href="../ReversibleCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleCalculator">ReversibleCalculator</a></h3>
             </div><div class="parent" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">
               <h3>Inherited from <a href="../MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a></h3>
             </div><div class="parent" name="scala.AnyRef">

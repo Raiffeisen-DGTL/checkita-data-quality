@@ -213,6 +213,14 @@
                         <span class="separator"></span>
                         <a class="trait" href="RegularMetric.html" title="Base class for source metric."></a>
                         <a href="RegularMetric.html" title="Base class for source metric.">RegularMetric</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
+                        <a class="trait" href="ReversibleCalculator.html" title="Trait to be mixed in to metric calculator to support reversal of error collection logic."></a>
+                        <a href="ReversibleCalculator.html" title="Trait to be mixed in to metric calculator to support reversal of error collection logic.">ReversibleCalculator</a>
+                      </li><li class="current-entities indented5">
+                        <span class="separator"></span>
+                        <a class="trait" href="ReversibleMetric.html" title="Trait to be mixed in to reversible metric definitions (configurations)."></a>
+                        <a href="ReversibleMetric.html" title="Trait to be mixed in to reversible metric definitions (configurations).">ReversibleMetric</a>
                       </li>
               </ul>
             </div>
@@ -710,9 +718,9 @@ and builds a sequence of metric errors that will be added to error accumulator.<
               
         </dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.core.metrics.MetricProcessor#processMetricErrors" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="processMetricErrors(errors:Seq[ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors]):Map[String,ru.raiffeisen.checkita.core.metrics.ErrorCollection.MetricErrors]"></a><a id="processMetricErrors(Seq[AccumulatedErrors]):Map[String,MetricErrors]"></a>
+      <a id="processMetricErrors(errors:Seq[ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors])(implicitdumpSize:Int):Map[String,ru.raiffeisen.checkita.core.metrics.ErrorCollection.MetricErrors]"></a><a id="processMetricErrors(Seq[AccumulatedErrors])(Int):Map[String,MetricErrors]"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/MetricBatchProcessor$.html#processMetricErrors(errors:Seq[ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors]):Map[String,ru.raiffeisen.checkita.core.metrics.ErrorCollection.MetricErrors]" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/MetricBatchProcessor$.html#processMetricErrors(errors:Seq[ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors])(implicitdumpSize:Int):Map[String,ru.raiffeisen.checkita.core.metrics.ErrorCollection.MetricErrors]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -721,14 +729,15 @@ and builds a sequence of metric errors that will be added to error accumulator.<
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">processMetricErrors</span><span class="params">(<span name="errors">errors: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="ErrorCollection$$AccumulatedErrors.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors">AccumulatedErrors</a>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="ErrorCollection$$MetricErrors.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ErrorCollection.MetricErrors">MetricErrors</a>]</span>
+        <span class="name">processMetricErrors</span><span class="params">(<span name="errors">errors: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="ErrorCollection$$AccumulatedErrors.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors">AccumulatedErrors</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="dumpSize">dumpSize: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="ErrorCollection$$MetricErrors.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ErrorCollection.MetricErrors">MetricErrors</a>]</span>
       </span>
       
       <p class="shortcomment cmt">Processes accumulated metric errors and builds
 map of metricID to all metric errors with corresponding row data
 </p><div class="fullcomment"><div class="comment cmt"><p>Processes accumulated metric errors and builds
 map of metricID to all metric errors with corresponding row data
-</p></div><dl class="paramcmts block"><dt class="param">errors</dt><dd class="cmt"><p>Sequence of accumulated metric errors</p></dd><dt>returns</dt><dd class="cmt"><p>Map(metricId -&gt; all metric errors)</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="MetricProcessor.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricProcessor">MetricProcessor</a></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">errors</dt><dd class="cmt"><p>Sequence of accumulated metric errors</p></dd><dt class="param">dumpSize</dt><dd class="cmt"><p>Implicit value of maximum number of metric failures (or errors) to be collected (per metric).
+                Used to prevent OOM errors.</p></dd><dt>returns</dt><dd class="cmt"><p>Map(metricId -&gt; all metric errors)</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="MetricProcessor.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricProcessor">MetricProcessor</a></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.core.metrics.MetricBatchProcessor#processRegularMetrics" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="processRegularMetrics(source:ru.raiffeisen.checkita.core.Source,sourceMetrics:Seq[ru.raiffeisen.checkita.core.metrics.RegularMetric])(implicitspark:org.apache.spark.sql.SparkSession,implicitdumpSize:Int,implicitcaseSensitive:Boolean):ru.raiffeisen.checkita.utils.ResultUtils.Result[ru.raiffeisen.checkita.core.metrics.MetricProcessor.MetricResults]"></a><a id="processRegularMetrics(Source,Seq[RegularMetric])(SparkSession,Int,Boolean):Result[MetricResults]"></a>
       <span class="permalink">

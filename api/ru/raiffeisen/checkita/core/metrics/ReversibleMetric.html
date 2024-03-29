@@ -211,16 +211,16 @@
                         <a href="MetricStreamProcessor$.html" title="">MetricStreamProcessor</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
-                        <a class="trait" href="" title="Base class for source metric."></a>
-                        <a href="" title="Base class for source metric.">RegularMetric</a>
+                        <a class="trait" href="RegularMetric.html" title="Base class for source metric."></a>
+                        <a href="RegularMetric.html" title="Base class for source metric.">RegularMetric</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
                         <a class="trait" href="ReversibleCalculator.html" title="Trait to be mixed in to metric calculator to support reversal of error collection logic."></a>
                         <a href="ReversibleCalculator.html" title="Trait to be mixed in to metric calculator to support reversal of error collection logic.">ReversibleCalculator</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
-                        <a class="trait" href="ReversibleMetric.html" title="Trait to be mixed in to reversible metric definitions (configurations)."></a>
-                        <a href="ReversibleMetric.html" title="Trait to be mixed in to reversible metric definitions (configurations).">ReversibleMetric</a>
+                        <a class="trait" href="" title="Trait to be mixed in to reversible metric definitions (configurations)."></a>
+                        <a href="" title="Trait to be mixed in to reversible metric definitions (configurations).">ReversibleMetric</a>
                       </li>
               </ul>
             </div>
@@ -230,8 +230,8 @@
       <div id="definition">
         <div class="big-circle trait">t</div>
         <p id="owner"><a href="../../../../index.html" class="extype" name="ru">ru</a>.<a href="../../../index.html" class="extype" name="ru.raiffeisen">raiffeisen</a>.<a href="../../index.html" class="extype" name="ru.raiffeisen.checkita">checkita</a>.<a href="../index.html" class="extype" name="ru.raiffeisen.checkita.core">core</a>.<a href="index.html" class="extype" name="ru.raiffeisen.checkita.core.metrics">metrics</a></p>
-        <h1>RegularMetric<span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html" title="Permalink">
+        <h1>ReversibleMetric<span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
@@ -244,22 +244,24 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">RegularMetric</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">ReversibleMetric</span><span class="result"> extends <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base class for source metric. All source metrics should have defined following:</p><ul><li>metric ID</li><li>metric name</li><li>source ID over which metric is calculated</li><li>columns used for metric calculation</li><li>method to init metric calculator
-</li></ul></div><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Trait to be mixed in to reversible metric definitions (configurations).</p><ul><li>Reversible metrics must defined boolean flag indicating whether error collection
+    logic for metric is direct or reversed.</li><li>Initialization of metric calculator must return instance of reversible metric calculator
+    (one that supports error collection logic reversal).
+</li></ul></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric">ReversibleMetric</a> with <a href="RegularMetric.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.RegularMetric">RegularMetric</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
             <span class="toggle">
               Known Subclasses
             </span>
-            <div class="subClasses hiddenContent"><a href="../../config/jobconf/Metrics$$AnyColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AnyColumnRegularMetricConfig">AnyColumnRegularMetricConfig</a>, <a href="../../config/jobconf/Metrics$$ApproxDistinctValuesMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.ApproxDistinctValuesMetricConfig">ApproxDistinctValuesMetricConfig</a>, <a href="../../config/jobconf/Metrics$$ApproxSequenceCompletenessMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.ApproxSequenceCompletenessMetricConfig">ApproxSequenceCompletenessMetricConfig</a>, <a href="../../config/jobconf/Metrics$$AvgNumberMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AvgNumberMetricConfig">AvgNumberMetricConfig</a>, <a href="../../config/jobconf/Metrics$$AvgStringMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.AvgStringMetricConfig">AvgStringMetricConfig</a>, <a href="../../config/jobconf/Metrics$$CastedNumberMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CastedNumberMetricConfig">CastedNumberMetricConfig</a>, <a href="../../config/jobconf/Metrics$$CoMomentMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CoMomentMetricConfig">CoMomentMetricConfig</a>, <a href="../../config/jobconf/Metrics$$ColumnEqMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.ColumnEqMetricConfig">ColumnEqMetricConfig</a>, <a href="../../config/jobconf/Metrics$$CompletenessMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig">CompletenessMetricConfig</a>, <a href="../../config/jobconf/Metrics$$CovarianceBesselMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CovarianceBesselMetricConfig">CovarianceBesselMetricConfig</a>, <a href="../../config/jobconf/Metrics$$CovarianceMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CovarianceMetricConfig">CovarianceMetricConfig</a>, <a href="../../config/jobconf/Metrics$$DayDistanceMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.DayDistanceMetricConfig">DayDistanceMetricConfig</a>, <a href="../../config/jobconf/Metrics$$DistinctValuesMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.DistinctValuesMetricConfig">DistinctValuesMetricConfig</a>, <a href="../../config/jobconf/Metrics$$DoubleColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.DoubleColumnRegularMetricConfig">DoubleColumnRegularMetricConfig</a>, <a href="../../config/jobconf/Metrics$$DuplicateValuesMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.DuplicateValuesMetricConfig">DuplicateValuesMetricConfig</a>, <a href="../../config/jobconf/Metrics$$EmptyValuesMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.EmptyValuesMetricConfig">EmptyValuesMetricConfig</a>, <a href="../../config/jobconf/Metrics$$FirstQuantileMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.FirstQuantileMetricConfig">FirstQuantileMetricConfig</a>, <a href="../../config/jobconf/Metrics$$FormattedDateMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedDateMetricConfig">FormattedDateMetricConfig</a>, <a href="../../config/jobconf/Metrics$$FormattedNumberMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig">FormattedNumberMetricConfig</a>, <a href="../../config/jobconf/Metrics$$GetPercentileMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.GetPercentileMetricConfig">GetPercentileMetricConfig</a>, <a href="../../config/jobconf/Metrics$$GetQuantileMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.GetQuantileMetricConfig">GetQuantileMetricConfig</a>, <a href="../../config/jobconf/Metrics$$LevenshteinDistanceMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.LevenshteinDistanceMetricConfig">LevenshteinDistanceMetricConfig</a>, <a href="../../config/jobconf/Metrics$$MaxNumberMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MaxNumberMetricConfig">MaxNumberMetricConfig</a>, <a href="../../config/jobconf/Metrics$$MaxStringMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MaxStringMetricConfig">MaxStringMetricConfig</a>, <a href="../../config/jobconf/Metrics$$MedianValueMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MedianValueMetricConfig">MedianValueMetricConfig</a>, <a href="../../config/jobconf/Metrics$$MinNumberMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MinNumberMetricConfig">MinNumberMetricConfig</a>, <a href="../../config/jobconf/Metrics$$MinStringMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MinStringMetricConfig">MinStringMetricConfig</a>, <a href="../../config/jobconf/Metrics$$MultiColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.MultiColumnRegularMetricConfig">MultiColumnRegularMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NullValuesMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NullValuesMetricConfig">NullValuesMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberBetweenMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberBetweenMetricConfig">NumberBetweenMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberGreaterThanMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberGreaterThanMetricConfig">NumberGreaterThanMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberInDomainMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberInDomainMetricConfig">NumberInDomainMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberLessThanMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberLessThanMetricConfig">NumberLessThanMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberNotBetweenMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberNotBetweenMetricConfig">NumberNotBetweenMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberOutDomainMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberOutDomainMetricConfig">NumberOutDomainMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberValuesMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberValuesMetricConfig">NumberValuesMetricConfig</a>, <a href="../../config/jobconf/Metrics$$RegexMatchMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegexMatchMetricConfig">RegexMatchMetricConfig</a>, <a href="../../config/jobconf/Metrics$$RegexMismatchMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegexMismatchMetricConfig">RegexMismatchMetricConfig</a>, <a href="../../config/jobconf/Metrics$$RegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegularMetricConfig">RegularMetricConfig</a>, <a href="../../config/jobconf/Metrics$$RowCountMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RowCountMetricConfig">RowCountMetricConfig</a>, <a href="../../config/jobconf/Metrics$$SequenceCompletenessMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.SequenceCompletenessMetricConfig">SequenceCompletenessMetricConfig</a>, <a href="../../config/jobconf/Metrics$$SingleColumnRegularMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.SingleColumnRegularMetricConfig">SingleColumnRegularMetricConfig</a>, <a href="../../config/jobconf/Metrics$$StdNumberMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.StdNumberMetricConfig">StdNumberMetricConfig</a>, <a href="../../config/jobconf/Metrics$$StringInDomainMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.StringInDomainMetricConfig">StringInDomainMetricConfig</a>, <a href="../../config/jobconf/Metrics$$StringLengthMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.StringLengthMetricConfig">StringLengthMetricConfig</a>, <a href="../../config/jobconf/Metrics$$StringOutDomainMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.StringOutDomainMetricConfig">StringOutDomainMetricConfig</a>, <a href="../../config/jobconf/Metrics$$StringValuesMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.StringValuesMetricConfig">StringValuesMetricConfig</a>, <a href="../../config/jobconf/Metrics$$SumNumberMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.SumNumberMetricConfig">SumNumberMetricConfig</a>, <a href="../../config/jobconf/Metrics$$ThirdQuantileMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.ThirdQuantileMetricConfig">ThirdQuantileMetricConfig</a>, <a href="../../config/jobconf/Metrics$$TopNMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.TopNMetricConfig">TopNMetricConfig</a></div>
+            <div class="subClasses hiddenContent"><a href="../../config/jobconf/Metrics$$CastedNumberMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CastedNumberMetricConfig">CastedNumberMetricConfig</a>, <a href="../../config/jobconf/Metrics$$ColumnEqMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.ColumnEqMetricConfig">ColumnEqMetricConfig</a>, <a href="../../config/jobconf/Metrics$$CompletenessMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.CompletenessMetricConfig">CompletenessMetricConfig</a>, <a href="../../config/jobconf/Metrics$$DayDistanceMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.DayDistanceMetricConfig">DayDistanceMetricConfig</a>, <a href="../../config/jobconf/Metrics$$EmptyValuesMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.EmptyValuesMetricConfig">EmptyValuesMetricConfig</a>, <a href="../../config/jobconf/Metrics$$FormattedDateMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedDateMetricConfig">FormattedDateMetricConfig</a>, <a href="../../config/jobconf/Metrics$$FormattedNumberMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.FormattedNumberMetricConfig">FormattedNumberMetricConfig</a>, <a href="../../config/jobconf/Metrics$$LevenshteinDistanceMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.LevenshteinDistanceMetricConfig">LevenshteinDistanceMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NullValuesMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NullValuesMetricConfig">NullValuesMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberBetweenMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberBetweenMetricConfig">NumberBetweenMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberGreaterThanMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberGreaterThanMetricConfig">NumberGreaterThanMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberInDomainMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberInDomainMetricConfig">NumberInDomainMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberLessThanMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberLessThanMetricConfig">NumberLessThanMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberNotBetweenMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberNotBetweenMetricConfig">NumberNotBetweenMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberOutDomainMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberOutDomainMetricConfig">NumberOutDomainMetricConfig</a>, <a href="../../config/jobconf/Metrics$$NumberValuesMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.NumberValuesMetricConfig">NumberValuesMetricConfig</a>, <a href="../../config/jobconf/Metrics$$RegexMatchMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegexMatchMetricConfig">RegexMatchMetricConfig</a>, <a href="../../config/jobconf/Metrics$$RegexMismatchMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.RegexMismatchMetricConfig">RegexMismatchMetricConfig</a>, <a href="../../config/jobconf/Metrics$$StringInDomainMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.StringInDomainMetricConfig">StringInDomainMetricConfig</a>, <a href="../../config/jobconf/Metrics$$StringLengthMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.StringLengthMetricConfig">StringLengthMetricConfig</a>, <a href="../../config/jobconf/Metrics$$StringOutDomainMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.StringOutDomainMetricConfig">StringOutDomainMetricConfig</a>, <a href="../../config/jobconf/Metrics$$StringValuesMetricConfig.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Metrics.StringValuesMetricConfig">StringValuesMetricConfig</a></div>
           </div></div>
         
 
@@ -285,7 +287,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.core.metrics.RegularMetric"><span>RegularMetric</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric"><span>ReversibleMetric</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -305,14 +307,33 @@
         <div id="allMembers">
         
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric.ReversibleMetricCalculator" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ReversibleMetricCalculator=ru.raiffeisen.checkita.core.metrics.MetricCalculatorwithru.raiffeisen.checkita.core.metrics.ReversibleCalculator"></a><a id="ReversibleMetricCalculator:(ReversibleMetric.this)#ReversibleMetricCalculator"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#ReversibleMetricCalculator=ru.raiffeisen.checkita.core.metrics.MetricCalculatorwithru.raiffeisen.checkita.core.metrics.ReversibleCalculator" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ReversibleMetricCalculator</span><span class="result alias"> = <a href="MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a> with <a href="ReversibleCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleCalculator">ReversibleCalculator</a></span>
+      </span>
+      
+      
+    </li></ol>
+            </div>
 
         <div class="values members">
               <h3>Abstract Value Members</h3>
-              <ol><li name="ru.raiffeisen.checkita.core.metrics.RegularMetric#initMetricCalculator" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="initMetricCalculator:ru.raiffeisen.checkita.core.metrics.MetricCalculator"></a><a id="initMetricCalculator:MetricCalculator"></a>
+              <ol><li name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric#initMetricCalculator" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="initMetricCalculator:ReversibleMetric.this.ReversibleMetricCalculator"></a><a id="initMetricCalculator:(ReversibleMetric.this)#ReversibleMetricCalculator"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#initMetricCalculator:ru.raiffeisen.checkita.core.metrics.MetricCalculator" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#initMetricCalculator:ReversibleMetric.this.ReversibleMetricCalculator" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -321,14 +342,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">initMetricCalculator</span><span class="result">: <a href="MetricCalculator.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricCalculator">MetricCalculator</a></span>
+        <span class="name">initMetricCalculator</span><span class="result">: (<a href="" class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric">ReversibleMetric</a>.this)#<span class="extype" name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric.ReversibleMetricCalculator">ReversibleMetricCalculator</span></span>
       </span>
       
       
-    </li><li name="ru.raiffeisen.checkita.core.metrics.RegularMetric#metricColumns" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="metricColumns:Seq[String]"></a>
+    </li><li name="ru.raiffeisen.checkita.core.metrics.ReversibleMetric#reversed" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="reversed:Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#metricColumns:Seq[String]" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#reversed:Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -337,55 +358,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">metricColumns</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>
-      </span>
-      
-      
-    </li><li name="ru.raiffeisen.checkita.core.metrics.RegularMetric#metricId" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="metricId:String"></a>
-      <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#metricId:String" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">metricId</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      
-      
-    </li><li name="ru.raiffeisen.checkita.core.metrics.RegularMetric#metricName" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="metricName:ru.raiffeisen.checkita.core.metrics.MetricName"></a><a id="metricName:MetricName"></a>
-      <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#metricName:ru.raiffeisen.checkita.core.metrics.MetricName" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">metricName</span><span class="result">: <a href="MetricName.html" class="extype" name="ru.raiffeisen.checkita.core.metrics.MetricName">MetricName</a></span>
-      </span>
-      
-      
-    </li><li name="ru.raiffeisen.checkita.core.metrics.RegularMetric#metricSource" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="metricSource:String"></a>
-      <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#metricSource:String" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">metricSource</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">reversed</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       
       
@@ -398,7 +371,7 @@
                 <li name="scala.AnyRef#!=" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a><a id="!=(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#!=(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#!=(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -414,7 +387,7 @@
     </li><li name="scala.AnyRef###" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html###():Int" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html###():Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -430,7 +403,7 @@
     </li><li name="scala.AnyRef#==" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a><a id="==(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#==(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#==(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -446,7 +419,7 @@
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#asInstanceOf[T0]:T0" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#asInstanceOf[T0]:T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -462,7 +435,7 @@
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#clone():Object" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#clone():Object" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -486,7 +459,7 @@
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#eq(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#eq(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -502,7 +475,7 @@
     </li><li name="scala.AnyRef#equals" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="equals(x$1:Any):Boolean"></a><a id="equals(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#equals(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#equals(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -518,7 +491,7 @@
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#finalize():Unit" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#finalize():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -540,7 +513,7 @@
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#getClass():Class[_]" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#getClass():Class[_]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -559,7 +532,7 @@
     </li><li name="scala.AnyRef#hashCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#hashCode():Int" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#hashCode():Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -578,7 +551,7 @@
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#isInstanceOf[T0]:Boolean" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#isInstanceOf[T0]:Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -594,7 +567,7 @@
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#ne(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#ne(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -610,7 +583,7 @@
     </li><li name="scala.AnyRef#notify" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#notify():Unit" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#notify():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -629,7 +602,7 @@
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#notifyAll():Unit" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#notifyAll():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -648,7 +621,7 @@
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -664,7 +637,7 @@
     </li><li name="scala.AnyRef#toString" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#toString():String" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#toString():String" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -680,7 +653,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#wait():Unit" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#wait():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -702,7 +675,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long,x$2:Int):Unit"></a><a id="wait(Long,Int):Unit"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -724,7 +697,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long):Unit"></a><a id="wait(Long):Unit"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/RegularMetric.html#wait(x$1:Long):Unit" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/core/metrics/ReversibleMetric.html#wait(x$1:Long):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -755,11 +728,7 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
