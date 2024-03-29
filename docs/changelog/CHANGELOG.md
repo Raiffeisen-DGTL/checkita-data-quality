@@ -1,3 +1,16 @@
+## [1.5.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.4.2...v1.5.0) (2024-03-29)
+
+
+### Bug Fixes
+
+* implement custom Spark collection accumulator to limit total number of collected errors ([#35](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/35)) ([f36e09f](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/f36e09ffa59ac6d51f8235be26f1a85c0f5f4ddf))
+* update JobConfig and added test for config encryptor ([#34](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/34)) ([bc8bfd8](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/bc8bfd8f52d20d0c78adf449afdcfac550febf32))
+
+
+### Features
+
+* added functionality to reverse error collection logic for regular metrics with conditional criteria ([#36](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/36)) ([9244377](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/92443771af22d0a835a6cd1f04a5ea99a40ae200))
+
 ## [1.4.2](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.4.1...v1.4.2) (2024-03-20)
 
 
