@@ -1,5 +1,8 @@
 package ru.raiffeisen.checkita.core.metrics
 
+import ru.raiffeisen.checkita.core.metrics.df.{DFMetricCalculator, ReversibleDFCalculator}
+import ru.raiffeisen.checkita.core.metrics.rdd.{RDDMetricCalculator, ReversibleRDDCalculator}
+
 /**
  * Trait to be mixed in to reversible metric definitions (configurations).
  *
@@ -10,7 +13,9 @@ package ru.raiffeisen.checkita.core.metrics
  *     (one that supports error collection logic reversal).
  */
 trait ReversibleMetric { this: RegularMetric =>
-  type ReversibleMetricCalculator = MetricCalculator with ReversibleCalculator
+  type ReversibleRDDMetricCalculator = RDDMetricCalculator with ReversibleRDDCalculator
+  type ReversibleDFMetricCalculator = DFMetricCalculator with ReversibleDFCalculator
   val reversed: Boolean
-  override def initMetricCalculator: ReversibleMetricCalculator
+  override def initRDDMetricCalculator: ReversibleRDDMetricCalculator
+//  override def initDFMetricCalculator: ReversibleDFMetricCalculator
 }

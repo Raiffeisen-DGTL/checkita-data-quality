@@ -1,21 +1,20 @@
-package ru.raiffeisen.checkita.core.metrics
+package ru.raiffeisen.checkita.core.metrics.rdd
 
-import org.apache.spark.sql.{DataFrame, Row, SparkSession}
+import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.util.CollectionAccumulator
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.Results.{MetricCalculatorResult, ResultType}
 import ru.raiffeisen.checkita.core.metrics.ErrorCollection._
-import ru.raiffeisen.checkita.core.metrics.composed.ComposedMetricCalculator
-import ru.raiffeisen.checkita.core.metrics.regular.AlgebirdMetrics.TopKMetricCalculator
-
-import scala.annotation.tailrec
+import ru.raiffeisen.checkita.core.metrics.rdd.regular.AlgebirdRDDMetrics.TopKRDDMetricCalculator
+import ru.raiffeisen.checkita.core.metrics.{BasicMetricProcessor, RegularMetric}
 
 /**
  * Base functionality for regular metric processor.
  * The concrete implementation of metric processor differs for batch and streaming applications.
  */
-trait MetricProcessor {
-  import MetricProcessor._
+trait RDDMetricProcessor extends BasicMetricProcessor {
+  import BasicMetricProcessor._
+  import RDDMetricProcessor._
 
   /** Type in which metric errors are collected */
   type AccType
@@ -31,24 +30,6 @@ trait MetricProcessor {
     spark.sparkContext.register(acc)
     acc
   }
-
-  /**
-   * Builds map column name -> column index for given dataframe
-   *
-   * @param df Spark Dataframe
-   * @return Map(column name -> column index)
-   */
-  protected def getColumnIndexMap(df: DataFrame): Map[String, Int] =
-    df.schema.fieldNames.map(s => s -> df.schema.fieldIndex(s)).toMap
-
-  /**
-   * Builds map column index -> column name for given dataframe
-   *
-   * @param df Spark Dataframe
-   * @return Map(column index -> column name)
-   */
-  protected def getColumnNamesMap(df: DataFrame): Map[Int, String] =
-    df.schema.fieldNames.map(s => df.schema.fieldIndex(s) -> s).toMap
 
   /**
    * Build grouped calculator collection. Main idea here is following:
@@ -75,7 +56,7 @@ trait MetricProcessor {
    */
   protected def getGroupedCalculators(groupedMetrics: GroupedMetrics): GroupedCalculators = groupedMetrics.map {
     case (columns, metrics) =>
-      columns -> metrics.map(m => (m, m.initMetricCalculator)).groupBy(_._2).mapValues(_.map(_._1)).toSeq
+      columns -> metrics.map(m => (m, m.initRDDMetricCalculator)).groupBy(_._2).mapValues(_.map(_._1)).toSeq
   }
 
   /**
@@ -91,7 +72,7 @@ trait MetricProcessor {
     gc.map { c =>
       val columnValues: Seq[Any] = c._1.map(columnIndexes).map(row.get)
       val incrementedCalculators = c._2.map {
-        case (calc: MetricCalculator, metrics: Seq[RegularMetric]) => (calc.increment(columnValues), metrics)
+        case (calc: RDDMetricCalculator, metrics: Seq[RegularMetric]) => (calc.increment(columnValues), metrics)
       }
       (c._1, incrementedCalculators)
     }
@@ -127,9 +108,9 @@ trait MetricProcessor {
                                                 sourceKeyIds: Seq[Int])
                                                (implicit dumpSize: Int): Seq[AccumulatedErrors] =
     gc.toSeq.flatMap {
-      case (columns: Seq[String], calculators: Seq[(MetricCalculator, Seq[RegularMetric])]) =>
+      case (columns: Seq[String], calculators: Seq[(RDDMetricCalculator, Seq[RegularMetric])]) =>
         val statuses: Seq[MetricStatus] = calculators.flatMap {
-          case (calculator: MetricCalculator, metrics: Seq[RegularMetric]) =>
+          case (calculator: RDDMetricCalculator, metrics: Seq[RegularMetric]) =>
             if (calculator.getStatus != CalculatorStatus.Success && calculator.getFailCounter <= dumpSize) {
               metrics.map(m => MetricStatus(m.metricId, calculator.getStatus, calculator.getFailMessage))
             } else Seq.empty[MetricStatus]
@@ -184,11 +165,11 @@ trait MetricProcessor {
                              metricErrors: Map[String, MetricErrors],
                              sourceId: String,
                              sourceKeys: Seq[String]): MetricResults = groupedCalculators.toSeq.flatMap {
-    case (columns: Seq[String], calculators: Seq[(MetricCalculator, Seq[RegularMetric])]) =>
+    case (columns: Seq[String], calculators: Seq[(RDDMetricCalculator, Seq[RegularMetric])]) =>
       calculators.flatMap {
-        case (calculator: MetricCalculator, metrics: Seq[RegularMetric]) =>
+        case (calculator: RDDMetricCalculator, metrics: Seq[RegularMetric]) =>
           metrics.map { metric =>
-            if (calculator.isInstanceOf[TopKMetricCalculator])
+            if (calculator.isInstanceOf[TopKRDDMetricCalculator])
               metric.metricId -> calculator.result().toSeq.map { r =>
                 MetricCalculatorResult(
                   metric.metricId,
@@ -220,7 +201,7 @@ trait MetricProcessor {
       }
   }.toMap
 }
-object MetricProcessor {
+object RDDMetricProcessor {
   /**
    * Type alias for grouped metrics:
    * maps Seq(columns) to Seq(metric)
@@ -232,48 +213,5 @@ object MetricProcessor {
    * maps Seq(columns) to Seq(calculator, Seq(metric)).
    * Metrics that have the same calculator are grouped together.
    */
-  type GroupedCalculators = Map[Seq[String], Seq[(MetricCalculator, Seq[RegularMetric])]]
-
-  /**
-   * Type alias for calculated metric results in form of:
-   *  - Map of metricId to a sequence of metric results for this metricId (some metrics yield multiple results).
-   */
-  type MetricResults = Map[String, Seq[MetricCalculatorResult]]
-
-  /**
-   * Process all composed metrics given already calculated metrics.
-   *
-   * @note TopN metric cannot be used in composed metric calculation and will be filtered out.
-   * @param composedMetrics Sequence of composed metrics to process
-   * @param computedMetrics Sequence of computed metric results
-   * @return
-   */
-  def processComposedMetrics(composedMetrics: Seq[ComposedMetric],
-                             computedMetrics: Seq[MetricCalculatorResult]): MetricResults = {
-
-
-    /**
-     * Iterates over composed metric sequence and computes then.
-     * Idea here is that previously computed composed metrics can be used as input for the next ones.
-     *
-     * @param composed Sequence of composed metrics to calculate
-     * @param computed Sequence of already computed metrics (both source and composed ones)
-     * @param results  Sequence of processed composed metrics
-     * @return Sequence of composed metric results
-     */
-    @tailrec
-    def loop(composed: Seq[ComposedMetric],
-             computed: Seq[MetricCalculatorResult],
-             results: Seq[MetricCalculatorResult] = Seq.empty): Seq[MetricCalculatorResult] = {
-      if (composed.isEmpty) results
-      else {
-        val calculator = ComposedMetricCalculator(computed)
-        val processedMetric = calculator.run(composed.head)
-        loop(composed.tail, computed :+ processedMetric, results :+ processedMetric)
-      }
-    }
-
-    loop(composedMetrics, computedMetrics.filterNot(_.metricName.startsWith(MetricName.TopN.entryName)))
-      .groupBy(_.metricId)
-  }
+  type GroupedCalculators = Map[Seq[String], Seq[(RDDMetricCalculator, Seq[RegularMetric])]]
 }

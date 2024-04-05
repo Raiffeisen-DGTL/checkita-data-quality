@@ -10,8 +10,8 @@ import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, Regu
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.core.Source
-import ru.raiffeisen.checkita.core.metrics.MetricBatchProcessor.processRegularMetrics
-import ru.raiffeisen.checkita.core.metrics.MetricProcessor.MetricResults
+import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricBatchProcessor.processRegularMetrics
+import ru.raiffeisen.checkita.core.metrics.BasicMetricProcessor.MetricResults
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
 import ru.raiffeisen.checkita.storage.Models.ResultSet

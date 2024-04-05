@@ -1,11 +1,11 @@
-package ru.raiffeisen.checkita.core
+package ru.raiffeisen.checkita.core.metrics.rdd
 
 import org.apache.spark.sql.Row
 
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
-import java.time.{LocalDate, LocalDateTime, LocalTime, ZoneOffset}
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalDateTime, LocalTime, ZoneOffset}
 import scala.annotation.tailrec
 import scala.util.Try
 

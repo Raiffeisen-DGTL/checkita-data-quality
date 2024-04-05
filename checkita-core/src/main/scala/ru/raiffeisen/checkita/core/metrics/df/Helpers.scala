@@ -1,6 +1,6 @@
-package ru.raiffeisen.checkita.core.dfmetrics
+package ru.raiffeisen.checkita.core.metrics.df
 
-import enumeratum.{EnumEntry, Enum}
+import enumeratum.{Enum, EnumEntry}
 
 import scala.collection.immutable
 

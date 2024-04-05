@@ -1,8 +1,8 @@
-package ru.raiffeisen.checkita.core.dfmetrics.functions
+package ru.raiffeisen.checkita.core.metrics.df.functions
 
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.expressions.aggregate.{Collect, ImperativeAggregate}
+import org.apache.spark.sql.catalyst.expressions.{Expression, ExpressionDescription}
 import org.apache.spark.sql.catalyst.util.GenericArrayData
 import org.apache.spark.sql.types.DataType
 
@@ -23,11 +23,14 @@ import scala.collection.mutable.ArrayBuffer
     The function is non-deterministic because the order of collected results depends
     on the order of the rows which may be non-deterministic after a shuffle.
   """,
-  group = "agg_funcs")
-case class CollectListWithLimit(child: Expression,
-                                limit: Int = -1,
-                                mutableAggBufferOffset: Int = 0,
-                                inputAggBufferOffset: Int = 0) extends Collect[mutable.ArrayBuffer[Any]] {
+  group = "agg_funcs"
+)
+case class CollectListWithLimit(
+    child: Expression,
+    limit: Int = -1,
+    mutableAggBufferOffset: Int = 0,
+    inputAggBufferOffset: Int = 0
+) extends Collect[mutable.ArrayBuffer[Any]] {
 
   def this(child: Expression) = this(child, -1, 0, 0)
 

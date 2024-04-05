@@ -34,4 +34,20 @@ object Common {
   implicit val storage: Option[DqStorageManager] = settings.storageConfig.map(config =>
     DqStorageManager(DqStorageConnection(config))
   )
+
+  implicit class Tuple4Ops[T1, T2, T3, T4](value: (Seq[T1], Seq[T2], Seq[T3], Seq[T4])) {
+    def zipped: Seq[(T1, T2, T3, T4)] = (value._1, value._2, value._3).zipped.toSeq.zip(value._4).map {
+      case (t, v) => (t._1, t._2, t._3, v)
+    }
+  }
+
+  implicit class Tuple5Ops[T1, T2, T3, T4, T5](value: (Seq[T1], Seq[T2], Seq[T3], Seq[T4], Seq[T5])) {
+    def zipped: Seq[(T1, T2, T3, T4, T5)] = (
+      (value._1, value._2, value._3).zipped.toSeq,
+      value._4,
+      value._5
+    ).zipped.toSeq.map {
+      case (t, v4, v5) => (t._1, t._2, t._3, v4, v5)
+    }
+  }
 }

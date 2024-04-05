@@ -1,5 +1,8 @@
 package ru.raiffeisen.checkita.core.metrics
 
+import ru.raiffeisen.checkita.core.metrics.df.DFMetricCalculator
+import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
+
 /**
  * Base class for source metric. All source metrics should have defined following:
  *   - metric ID
@@ -14,5 +17,6 @@ trait RegularMetric extends Serializable {
   val metricSource: String
   val metricColumns: Seq[String]
 
-  def initMetricCalculator: MetricCalculator
+  def initRDDMetricCalculator: RDDMetricCalculator
+//  def initDFMetricCalculator: DFMetricCalculator
 }

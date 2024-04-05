@@ -4,9 +4,10 @@ import org.apache.spark.sql.{Column, DataFrame, Row}
 import org.apache.spark.sql.functions.col
 import ru.raiffeisen.checkita.core.Results.{MetricCalculatorResult, ResultType}
 import ru.raiffeisen.checkita.core.{CalculatorStatus, Source}
-import ru.raiffeisen.checkita.core.dfmetrics.Helpers._
+import ru.raiffeisen.checkita.core.metrics.df.Helpers._
+import ru.raiffeisen.checkita.core.metrics.BasicMetricProcessor.MetricResults
 import ru.raiffeisen.checkita.core.metrics.ErrorCollection.{ErrorRow, MetricErrors}
-import ru.raiffeisen.checkita.core.metrics.MetricProcessor.MetricResults
+import ru.raiffeisen.checkita.core.metrics.df.DFMetricCalculator
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import scala.collection.mutable
@@ -62,7 +63,7 @@ object MetricProcessor {
       )
     }
 
-    val aggregationColumns: Seq[Column] = metricCalculators.values.flatMap(c => Seq(c.result, c.errors)).toSeq
+    val aggregationColumns: Seq[Column] = metricCalculators.values.flatMap(c => Seq(c.result, c.errors())).toSeq
 
     val processedDf = df.select(aggregationColumns: _*)
 

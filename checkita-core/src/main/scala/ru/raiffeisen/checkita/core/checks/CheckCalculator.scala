@@ -5,7 +5,7 @@ import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.Results.{CheckCalculatorResult, MetricCalculatorResult, ResultType}
-import ru.raiffeisen.checkita.core.metrics.MetricProcessor.MetricResults
+import ru.raiffeisen.checkita.core.metrics.BasicMetricProcessor.MetricResults
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
 
 import scala.util.{Failure, Success, Try}

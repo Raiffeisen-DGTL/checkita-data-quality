@@ -1,4 +1,4 @@
-package ru.raiffeisen.checkita.core.metrics
+package ru.raiffeisen.checkita.core.metrics.rdd
 
 import ru.raiffeisen.checkita.core.CalculatorStatus
 
@@ -10,7 +10,7 @@ import scala.util.{Failure, Success, Try}
  *   - Reversible metric calculators can collect metric errors either in direct or in reversed mode depending
  *     on provided boolean flag.
  */
-trait ReversibleCalculator { this: MetricCalculator =>
+trait ReversibleRDDCalculator { this: RDDMetricCalculator =>
   protected val reversed: Boolean
 
   /**
@@ -19,7 +19,7 @@ trait ReversibleCalculator { this: MetricCalculator =>
    * @param values values to process
    * @return updated calculator or throws an exception
    */
-  protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator
+  protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator
 
   /**
    * Safely updates metric calculator with respect to
@@ -28,8 +28,8 @@ trait ReversibleCalculator { this: MetricCalculator =>
    * @param values values to process
    * @return updated calculator
    */
-  override def increment(values: Seq[Any]): MetricCalculator = {
-    val incrementFunc: Seq[Any] => MetricCalculator =
+  override def increment(values: Seq[Any]): RDDMetricCalculator = {
+    val incrementFunc: Seq[Any] => RDDMetricCalculator =
       v => if (reversed) tryToIncrementReversed(v) else tryToIncrement(v)
 
     Try(incrementFunc(values)) match {
