@@ -96,10 +96,9 @@ abstract class DFMetricCalculator {
    * @return Spark expression that will yield double metric calculator result
    */
   def result: Column = coalesce(
-    resultAggregateFunction(resultExpr).cast(DoubleType).as(resultCol),
+    resultAggregateFunction(resultExpr).cast(DoubleType),
     emptyValue
-  )
-  // todo: might need null to NaN conversion in order to be compliant with RDD metrics.
+  ).as(resultCol)
 
   /**
    * Final metric errors aggregation expression.

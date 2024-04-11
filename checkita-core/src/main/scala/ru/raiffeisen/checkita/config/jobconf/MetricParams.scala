@@ -144,7 +144,7 @@ object MetricParams {
    */
   final case class TDigestGeqQuantileParams(
                                              accuracyError: AccuracyDouble = 0.005,
-                                             target: AccuracyDouble
+                                             target: PercentileDouble
                                            ) extends Params
 
   /**

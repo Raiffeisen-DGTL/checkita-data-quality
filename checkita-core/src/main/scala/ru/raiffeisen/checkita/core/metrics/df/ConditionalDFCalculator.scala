@@ -5,7 +5,7 @@ import org.apache.spark.sql.functions.{lit, sum, when}
 import org.apache.spark.sql.types.DoubleType
 
 /**
- * Abstract class for all conditional DF metric calculators:
+ * Abstract class for all conditional DF metric calculators.
  * Thus, conditional calculator has a condition defined.
  * When this condition is met for particular column value,
  * then metric value is incremented by one.

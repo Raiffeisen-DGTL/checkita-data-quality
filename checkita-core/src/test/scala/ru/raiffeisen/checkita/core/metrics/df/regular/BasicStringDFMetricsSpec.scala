@@ -1,6 +1,6 @@
 package ru.raiffeisen.checkita.core.metrics.df.regular
 
-import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
+import org.apache.spark.sql.types._
 import org.apache.spark.sql.{DataFrame, Row}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -8,16 +8,12 @@ import ru.raiffeisen.checkita.Common._
 import ru.raiffeisen.checkita.core.metrics.df.DFMetricCalculator
 import ru.raiffeisen.checkita.core.metrics.df.regular.BasicStringDFMetrics._
 
-import scala.collection.mutable
 
+class BasicStringDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsTestUtils {
 
-class BasicStringDFMetricsSpec extends AnyWordSpec with Matchers {
-  implicit val dumpSize: Int = 100
-  implicit val keyFields: Seq[String] = Seq.empty
-  private val sc = spark.sparkContext
-
-  private val singleCols: Seq[String] = Seq("c1")
-  private val multiCols: Seq[String] = Seq("c1", "c2", "c3")
+  private val seqTypes: Seq[DataType] = Seq(StringType, StringType, DoubleType, StringType)
+  private val testSingleColSchemas = getSingleColSchema(seqTypes)
+  private val testMultiColSchemas = getMultiColSchema(seqTypes)
 
   private val testSingleColSeq = Seq(
     Seq("Gpi2C7", "DgXDiA", "Gpi2C7", "Gpi2C7", "M66yO0", "M66yO0", "M66yO0", "xTOn6x", "xTOn6x", "3xGSz0", "3xGSz0", "Gpi2C7"),
@@ -26,38 +22,8 @@ class BasicStringDFMetricsSpec extends AnyWordSpec with Matchers {
     Seq("4", "3.14", "foo", "3.0", "-25.321", "bar", "[12, 35]", "true", "4", "3", "-25.321", "3123dasd")
   )
 
-  private val testSingleColSchemas = Seq(
-    StructType(Seq(StructField("c1", StringType, nullable = true))),
-    StructType(Seq(StructField("c1", StringType, nullable = true))),
-    StructType(Seq(StructField("c1", DoubleType, nullable = true))),
-    StructType(Seq(StructField("c1", StringType, nullable = true)))
-  )
-
   private val testMultiColSeq = testSingleColSeq.map(
     s => (0 to 3).map(c => (0 to 2).map(r => c*3 + r)).map(_.map(s(_)))
-  )
-
-  private val testMultiColSchemas = Seq(
-    StructType(Seq(
-      StructField("c1", StringType, nullable = true),
-      StructField("c2", StringType, nullable = true),
-      StructField("c3", StringType, nullable = true)
-    )),
-    StructType(Seq(
-      StructField("c1", StringType, nullable = true),
-      StructField("c2", StringType, nullable = true),
-      StructField("c3", StringType, nullable = true)
-    )),
-    StructType(Seq(
-      StructField("c1", DoubleType, nullable = true),
-      StructField("c2", DoubleType, nullable = true),
-      StructField("c3", DoubleType, nullable = true)
-    )),
-    StructType(Seq(
-      StructField("c1", StringType, nullable = true),
-      StructField("c2", StringType, nullable = true),
-      StructField("c3", StringType, nullable = true)
-    ))
   )
 
   private val nullIndices = Set(3, 7, 9)
@@ -72,49 +38,6 @@ class BasicStringDFMetricsSpec extends AnyWordSpec with Matchers {
   })
   private val nullMultiColSeq = nullSingleColSeq.map(s => (0 to 3).map(c => (0 to 2).map(r => c*3 + r)).map(_.map(s(_))))
   private val emptyMultiColSeq = emptySingleColSeq.map(s => (0 to 3).map(c => (0 to 2).map(r => c*3 + r)).map(_.map(s(_))))
-
-  private def getTestDataFrames(testData: Seq[Seq[Any]], schemas: Seq[StructType]): Seq[DataFrame] =
-    testData.zip(schemas).map {
-      case (data, schema) =>
-        val rowData = data.map {
-          case s: Seq[_] => Row(s: _*)
-          case v => Row(v)
-        }
-        spark.createDataFrame(sc.parallelize(rowData), schema)
-    }
-
-  def runDFMetricCalc(df: DataFrame,
-                      calculator: DFMetricCalculator): (Double, Int) = {
-    val metDf = df.select(calculator.result, calculator.errors())
-//    metDf.explain()
-    val processed = metDf.collect.head
-    val result = processed.getDouble(0)
-    val errors = processed.getAs[mutable.WrappedArray[mutable.WrappedArray[String]]](1)
-    (result, errors.size)
-  }
-
-  def testMetric(dataFrames: Seq[DataFrame],
-                 mId: String,
-                 metCols: Seq[String],
-                 results: Seq[Double],
-                 failCounts: Seq[Int],
-                 paramSeq: Seq[Map[String, Any]],
-                 fCalc: (String, Seq[String], Map[String, Any]) => DFMetricCalculator): Unit = {
-
-    val zipped: Seq[(DataFrame, Map[String, Any], Double, Int)] = (dataFrames, paramSeq, results, failCounts).zipped
-
-    zipped.foreach {
-      case (df, params, res, fc) =>
-//        println(s"Testing '$mId' metric. isMultiSeq = ${metCols.size > 1}. Params = $params, Expected: result = $res; failCount = $fc")
-        val calculator = fCalc(mId, metCols, params)
-        val (result, errorsNum) = runDFMetricCalc(df, calculator)
-
-        if (res.isNaN) result.isNaN shouldEqual true
-        else result shouldEqual res
-
-        errorsNum shouldEqual fc
-    }
-  }
 
   private val emptyDF = spark.createDataFrame(sc.emptyRDD[Row], testSingleColSchemas.head)
   private val testSingleColDFs: Seq[DataFrame] = getTestDataFrames(testSingleColSeq, testSingleColSchemas)

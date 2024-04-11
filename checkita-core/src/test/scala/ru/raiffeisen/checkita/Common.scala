@@ -2,6 +2,7 @@ package ru.raiffeisen.checkita
 
 import org.apache.hadoop.fs.FileSystem
 import org.apache.logging.log4j.Level
+import org.apache.spark.SparkContext
 import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.storage.Connections.DqStorageConnection
@@ -10,6 +11,7 @@ import ru.raiffeisen.checkita.utils.SparkUtils.{makeFileSystem, makeSparkSession
 
 object Common {
   implicit val jobId: String = "earthquakes_base_job"
+  implicit val dumpSize: Int = 1000
   implicit val settings: AppSettings = AppSettings.build(
     getClass.getResource("/test_application.conf").getPath,
     Some("2023-09-25"),
@@ -26,6 +28,7 @@ object Common {
     case Right(spark) => spark
     case Left(e) => throw new RuntimeException(e.mkString("\n"))
   }
+  val sc: SparkContext = spark.sparkContext
   spark.sparkContext.setLogLevel("WARN")
   implicit val fs: FileSystem = makeFileSystem(spark) match {
     case Right(fs) => fs

@@ -19,6 +19,7 @@ object RefinedTypes {
   type PositiveInt = Int Refined Positive
   type FixedShortColumn = String Refined MatchesRegex[W.`"""^[^\\n\\r\\t:]+:\\d+$"""`.T]
   type AccuracyDouble = Double Refined Interval.OpenClosed[W.`0.0`.T, W.`1.0`.T]
+  type PercentileDouble = Double Refined Interval.Closed[W.`0.0`.T, W.`1.0`.T]
   type RegexPattern = String Refined Regex
 
   /**

@@ -170,7 +170,7 @@ object BasicStringDFMetrics {
                                            protected val reversed: Boolean)
     extends ConditionalDFCalculator {
 
-    val metricName: MetricName = MetricName.NullValues
+    val metricName: MetricName = MetricName.EmptyValues
 
     /**
      * For direct error collection logic any non-empty value is considered as metric failure.

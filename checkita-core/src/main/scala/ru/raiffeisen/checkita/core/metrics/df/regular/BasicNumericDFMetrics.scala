@@ -4,9 +4,161 @@ import org.apache.spark.sql.Column
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
 import ru.raiffeisen.checkita.core.metrics.MetricName
+import ru.raiffeisen.checkita.core.metrics.df.functions.api.{check_number_format, tdigest_percentile}
 import ru.raiffeisen.checkita.core.metrics.df.{ConditionalDFCalculator, DFMetricCalculator}
 
 object BasicNumericDFMetrics {
+
+  /**
+   * Base class for all metrics thad compute percentiles based on T-Digest.
+   */
+  abstract class PercentileDFCalculator extends DFMetricCalculator {
+
+    val accuracyError: Double
+    val target: Double
+    val isDirect: Boolean
+
+    assert(columns.size == 1, "TDigest metrics work for single column only!")
+
+    /**
+     * Metric error message for cases when column value cannot be cast to number (double).
+     *
+     * @return Metric increment failure message.
+     */
+    def errorMessage: String = "Provided value cannot be cast to a number."
+
+    /**
+     * Retrieves number from requested column of row.
+     *
+     * @return Spark row-level expression yielding numeric result.
+     */
+    protected def resultExpr: Column = col(columns.head).cast(DoubleType)
+
+    /**
+     * If casting value to DoubleType yields null, then it is a signal that value
+     * is not a number. Thus, percentile computation can't be
+     * incremented for this row. This is a metric increment failure.
+     */
+    protected def errorConditionExpr: Column = resultExpr.isNull
+
+    /**
+     * Use custom aggregation function to find percentile value based on T-Digest.
+     */
+    protected val resultAggregateFunction: Column => Column =
+      rowValue => tdigest_percentile(rowValue, target, accuracyError, isDirect)
+  }
+
+  /**
+   * Calculates median value for provided elements
+   *
+   * Works for single column only!
+   *
+   * @param metricId      Id of the metric.
+   * @param columns       Sequence of columns which are used for metric calculation
+   * @param accuracyError Required level of calculation accuracy
+   */
+  case class MedianValueDFMetricCalculator(metricId: String,
+                                           columns: Seq[String],
+                                           accuracyError: Double) extends PercentileDFCalculator {
+
+    override val target: Double = 0.5
+    override val isDirect: Boolean = false
+    override val metricName: MetricName = MetricName.MedianValue
+    /**
+     * Value which is returned when metric result is null.
+     */
+    override protected val emptyValue: Column = lit(Double.NaN)
+  }
+
+  /**
+   * Calculates first quantile for provided elements
+   *
+   * Works for single column only!
+   *
+   * @param metricId      Id of the metric.
+   * @param columns       Sequence of columns which are used for metric calculation
+   * @param accuracyError Required level of calculation accuracy
+   */
+  case class FirstQuantileDFMetricCalculator(metricId: String,
+                                             columns: Seq[String],
+                                             accuracyError: Double) extends PercentileDFCalculator {
+
+    override val target: Double = 0.25
+    override val isDirect: Boolean = false
+    override val metricName: MetricName = MetricName.FirstQuantile
+    /**
+     * Value which is returned when metric result is null.
+     */
+    override protected val emptyValue: Column = lit(Double.NaN)
+  }
+
+  /**
+   * Calculates third quantile for provided elements
+   *
+   * Works for single column only!
+   *
+   * @param metricId      Id of the metric.
+   * @param columns       Sequence of columns which are used for metric calculation
+   * @param accuracyError Required level of calculation accuracy
+   */
+  case class ThirdQuantileDFMetricCalculator(metricId: String,
+                                             columns: Seq[String],
+                                             accuracyError: Double) extends PercentileDFCalculator {
+
+    override val target: Double = 0.75
+    override val isDirect: Boolean = false
+    override val metricName: MetricName = MetricName.ThirdQuantile
+    /**
+     * Value which is returned when metric result is null.
+     */
+    override protected val emptyValue: Column = lit(Double.NaN)
+  }
+
+  /**
+   * Calculates arbitrary percentile for provided elements
+   *
+   * Works for single column only!
+   *
+   * @param metricId      Id of the metric.
+   * @param columns       Sequence of columns which are used for metric calculation
+   * @param accuracyError Required level of calculation accuracy
+   * @param target        Percentage value for which percentile value is determined.
+   */
+  case class GetQuantileDFMetricCalculator(metricId: String,
+                                           columns: Seq[String],
+                                           accuracyError: Double,
+                                           target: Double) extends PercentileDFCalculator {
+
+    override val isDirect: Boolean = false
+    override val metricName: MetricName = MetricName.GetQuantile
+    /**
+     * Value which is returned when metric result is null.
+     */
+    override protected val emptyValue: Column = lit(Double.NaN)
+  }
+
+  /**
+   * Calculates percentage value for given percentile value out of provided elements
+   *
+   * Works for single column only!
+   *
+   * @param metricId      Id of the metric.
+   * @param columns       Sequence of columns which are used for metric calculation
+   * @param accuracyError Required level of calculation accuracy
+   * @param target        Percentile value from set of column values.
+   */
+  case class GetPercentileDFMetricCalculator(metricId: String,
+                                             columns: Seq[String],
+                                             accuracyError: Double,
+                                             target: Double) extends PercentileDFCalculator {
+
+    override val isDirect: Boolean = true
+    override val metricName: MetricName = MetricName.GetPercentile
+    /**
+     * Value which is returned when metric result is null.
+     */
+    override protected val emptyValue: Column = lit(0).cast(DoubleType)
+  }
 
   /**
    * Calculates minimal numeric value for provided elements
@@ -129,7 +281,7 @@ object BasicNumericDFMetrics {
      */
     protected def resultExpr: Column =
       if (columns.size == 1) col(columns.head).cast(DoubleType)
-      else columns.map(c => col(c).cast(DoubleType)).foldLeft(lit(0))(_ + _)
+      else columns.map(c => coalesce(col(c).cast(DoubleType), lit(0))).foldLeft(lit(0))(_ + _)
 
     /**
      * When some of the values in processed columns cannot be cast to DoubleType
@@ -248,7 +400,6 @@ object BasicNumericDFMetrics {
     protected val resultAggregateFunction: Column => Column = stddev_pop
   }
 
-  // todo: maybe this calculator is a candidate for a custom Spark function.
   /**
    * Calculates amount of elements that fit (or do not fit) provided Decimal format: Decimal(precision, scale)
    *
@@ -288,36 +439,40 @@ object BasicNumericDFMetrics {
       else "Some of the provided values could not be cast to number which meets given" +
         s"precision and scale criteria of $criteriaStringRepr"
 
-    /**
-     * Returns expression that gets string representation of a number and then
-     * retrieves number of digits out of it.
-     * @param colName Column name to apply expression to.
-     * @return Spark expression yielding precision of number
-     */
-    private def getPrecision(colName: String): Column = length(
-      regexp_replace(col(colName).cast(DoubleType).cast(StringType), "[\\.-]", "")
+    override def metricCondExpr(colName: String): Column = check_number_format(
+      col(colName).cast(DoubleType), precision, scale, compareRule == "outbound"
     )
 
-    /**
-     * Returns expression that gets string representation of a number and then
-     * retrieves number of digits after dot.
-     * @param colName Column name to apply expression to.
-     * @return Spark expression yielding scale of number.
-     */
-    private def getScale(colName: String): Column = length(
-      split(col(colName).cast(DoubleType).cast(StringType), "\\.").getItem(1)
-    )
+//    /**
+//     * Returns expression that gets string representation of a number and then
+//     * retrieves number of digits out of it.
+//     * @param colName Column name to apply expression to.
+//     * @return Spark expression yielding precision of number
+//     */
+//    private def getPrecision(colName: String): Column = length(
+//      regexp_replace(col(colName).cast(DoubleType).cast(StringType), "[\\.-]", "")
+//    )
+//
+//    /**
+//     * Returns expression that gets string representation of a number and then
+//     * retrieves number of digits after dot.
+//     * @param colName Column name to apply expression to.
+//     * @return Spark expression yielding scale of number.
+//     */
+//    private def getScale(colName: String): Column = length(
+//      split(col(colName).cast(DoubleType).cast(StringType), "\\.").getItem(1)
+//    )
 
-    /**
-     * Create spark expression which checks if number meets precision and scale criterion.
-     *
-     * @param colName Column to which the metric condition is applied
-     */
-    override def metricCondExpr(colName: String): Column = compareRule match {
-      case "inbound" => getPrecision(colName) <= lit(precision) && getScale(colName) <= lit(scale)
-      case "outbound" => getPrecision(colName) > lit(precision) && getScale(colName) > lit(scale)
-      case s => throw new IllegalArgumentException(s"Unknown compare rule for FORMATTED_NUMBER metric: '$s'")
-    }
+//    /**
+//     * Create spark expression which checks if number meets precision and scale criterion.
+//     *
+//     * @param colName Column to which the metric condition is applied
+//     */
+//    override def metricCondExpr(colName: String): Column = compareRule match {
+//      case "inbound" => getPrecision(colName) <= lit(precision) && getScale(colName) <= lit(scale)
+//      case "outbound" => getPrecision(colName) > lit(precision) && getScale(colName) > lit(scale)
+//      case s => throw new IllegalArgumentException(s"Unknown compare rule for FORMATTED_NUMBER metric: '$s'")
+//    }
   }
 
   /**
@@ -425,7 +580,8 @@ object BasicNumericDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column = !col(colName).cast(DoubleType).isInCollection(domain)
+    override def metricCondExpr(colName: String): Column =
+      !coalesce(col(colName).cast(DoubleType).isInCollection(domain), lit(false))
   }
 
   /**
@@ -466,6 +622,10 @@ object BasicNumericDFMetrics {
   }
 
 
+  /**
+   * Trait to be mixed to Number comparison metrics: defines standard error message for
+   * these types of metrics.
+   */
   trait NumberCriteriaRepr { this: ConditionalDFCalculator =>
 
     val criteriaRepr: String
@@ -557,12 +717,12 @@ object BasicNumericDFMetrics {
    * @param includeBound      Flag which sets whether compareValue is included or excluded from the interval
    * @param reversed          Boolean flag indicating whether error collection logic should be reversed for this metric
    */
-  case class NumberBetweenThanDFMetricCalculator(metricId: String,
-                                                 columns: Seq[String],
-                                                 lowerCompareValue: Double,
-                                                 upperCompareValue: Double,
-                                                 includeBound: Boolean,
-                                                 protected val reversed: Boolean)
+  case class NumberBetweenDFMetricCalculator(metricId: String,
+                                             columns: Seq[String],
+                                             lowerCompareValue: Double,
+                                             upperCompareValue: Double,
+                                             includeBound: Boolean,
+                                             protected val reversed: Boolean)
     extends ConditionalDFCalculator with NumberCriteriaRepr {
 
     override val metricName: MetricName = MetricName.NumberBetween
@@ -598,12 +758,12 @@ object BasicNumericDFMetrics {
    * @param includeBound      Flag which sets whether compareValue is included or excluded from the interval
    * @param reversed          Boolean flag indicating whether error collection logic should be reversed for this metric
    */
-  case class NumberNotBetweenThanDFMetricCalculator(metricId: String,
-                                                 columns: Seq[String],
-                                                 lowerCompareValue: Double,
-                                                 upperCompareValue: Double,
-                                                 includeBound: Boolean,
-                                                 protected val reversed: Boolean)
+  case class NumberNotBetweenDFMetricCalculator(metricId: String,
+                                                columns: Seq[String],
+                                                lowerCompareValue: Double,
+                                                upperCompareValue: Double,
+                                                includeBound: Boolean,
+                                                protected val reversed: Boolean)
     extends ConditionalDFCalculator with NumberCriteriaRepr {
 
     override val metricName: MetricName = MetricName.NumberNotBetween

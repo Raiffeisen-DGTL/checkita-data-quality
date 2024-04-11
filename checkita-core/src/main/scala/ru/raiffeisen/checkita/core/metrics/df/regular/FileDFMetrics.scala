@@ -6,7 +6,7 @@ import org.apache.spark.sql.types.DoubleType
 import ru.raiffeisen.checkita.core.metrics.MetricName
 import ru.raiffeisen.checkita.core.metrics.df.DFMetricCalculator
 
-class FileDFMetrics {
+object FileDFMetrics {
 
   case class RowCountDFMetricCalculator(metricId: String) extends DFMetricCalculator {
     val metricName: MetricName = MetricName.RowCount

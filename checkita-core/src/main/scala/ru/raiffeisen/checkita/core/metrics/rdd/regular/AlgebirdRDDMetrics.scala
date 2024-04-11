@@ -13,6 +13,28 @@ import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
  */
 object AlgebirdRDDMetrics {
 
+  /*
+  HLL accuracy is limited to a value that correspond to bits number of 30 or less.
+  This is done to prevent integer overflow when computing HLL monoid size.
+
+  bits vs size vs accuracy table:
+
+  bits | size  | error
+  9      512     0.0460
+  10     1024    0.0325
+  11     2048    0.0230
+  12     4096    0.0163
+  13     8192    0.0115
+  14     16384   0.0081
+  15     32768   0.0057
+  16     65536   0.0041
+  17     131072  0.0029
+  18     262144  0.0020
+  19     524288  0.0014
+  20     1048576 0.0010
+ */
+
+
   /**
    * Calculates number of distinct values in processed elements
    *
@@ -33,8 +55,6 @@ object AlgebirdRDDMetrics {
     extends RDDMetricCalculator {
 
     // Auxiliary constrictor to init metric calculator:
-    // Accuracy is limited to a value that correspond to bits number of 30 or less.
-    // This is done to prevent integer overflow when computing HLL monoid size.
     def this(accuracyError: Double) = this(
       new HyperLogLogMonoid(HyperLogLog.bitsForError(math.max(accuracyError, 0.00003174))).zero,
       HyperLogLog.bitsForError(math.max(accuracyError, 0.00003174)),
@@ -107,8 +127,8 @@ object AlgebirdRDDMetrics {
     
     // axillary constructor to initiate HyperLogLog monoid:
     def this(accuracyError: Double, increment: Long) = this(
-      new HyperLogLogMonoid(HyperLogLog.bitsForError(accuracyError)).zero,
-      HyperLogLog.bitsForError(accuracyError),
+      new HyperLogLogMonoid(HyperLogLog.bitsForError(math.max(accuracyError, 0.00003174))).zero,
+      HyperLogLog.bitsForError(math.max(accuracyError, 0.00003174)),
       Long.MaxValue,
       Long.MinValue,
       accuracyError,
@@ -132,7 +152,7 @@ object AlgebirdRDDMetrics {
           )
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Provided value cannot be cast to string"
+          "Provided value cannot be cast to Long"
         )
       }
     }
@@ -174,12 +194,12 @@ object AlgebirdRDDMetrics {
    * @return result map with keys: "TOP_N_{index}"
    */
   case class TopKRDDMetricCalculator(list: SpaceSaver[String],
-                                  maxCapacity: Int,
-                                  targetNumber: Int,
-                                  rowCount: Int,
-                                  protected val failCount: Long = 0,
-                                  protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                  protected val failMsg: String = "OK")
+                                     maxCapacity: Int,
+                                     targetNumber: Int,
+                                     rowCount: Int,
+                                     protected val failCount: Long = 0,
+                                     protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                     protected val failMsg: String = "OK")
     extends RDDMetricCalculator {
     
     // axillary constructor to initiate empty SpaceSaver:
