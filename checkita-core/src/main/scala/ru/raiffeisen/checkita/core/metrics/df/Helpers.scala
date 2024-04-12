@@ -10,6 +10,8 @@ object Helpers {
   object DFMetricOutput extends Enum[DFMetricOutput] {
     case object Result extends DFMetricOutput("result")
     case object Errors extends DFMetricOutput("errors")
+    case object GroupResult extends DFMetricOutput("groupResult")
+    case object GroupErrors extends DFMetricOutput("groupErrors")
     override val values: immutable.IndexedSeq[DFMetricOutput] = findValues
   }
 

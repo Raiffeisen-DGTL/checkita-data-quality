@@ -74,7 +74,7 @@ abstract class DFMetricCalculator {
    * @param windowTsCol Name of column that stores window start time (used in streaming dq applications).
    * @return Spark expression that will yield array of row data for column related to this metric calculator.
    */
-  private def rowDataExpr(keyFields: Seq[String], windowTsCol: Option[String]): Column = {
+  protected def rowDataExpr(keyFields: Seq[String], windowTsCol: Option[String]): Column = {
     val allColumns = windowTsCol.toSeq ++ withKeyFields(columns, keyFields)
     array(allColumns.map(c => coalesce(col(c).cast(StringType), lit(""))): _*)
   }
@@ -86,7 +86,7 @@ abstract class DFMetricCalculator {
    *                (source keyFields + metric columns + window start time column for streaming applications)
    * @return Spark expression that will yield row data in case of metric error.
    */
-  private def errorExpr(rowData: Column): Column =
+  protected def errorExpr(rowData: Column): Column =
     when(errorConditionExpr, rowData).otherwise(typedlit[Option[Array[String]]](None))
 
 

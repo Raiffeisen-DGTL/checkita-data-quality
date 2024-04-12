@@ -7,7 +7,6 @@ import org.apache.spark.sql.catalyst.util.GenericArrayData
 import org.apache.spark.sql.types.DataType
 
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 
 @ExpressionDescription(
   usage = """
@@ -38,9 +37,9 @@ case class CollectListWithLimit(
 
   override protected lazy val bufferElementType: DataType = child.dataType
 
-  override def createAggregationBuffer(): ArrayBuffer[Any] = mutable.ArrayBuffer.empty
+  override def createAggregationBuffer(): mutable.ArrayBuffer[Any] = mutable.ArrayBuffer.empty
 
-  override def eval(buffer: ArrayBuffer[Any]): Any = new GenericArrayData(buffer.toArray)
+  override def eval(buffer: mutable.ArrayBuffer[Any]): Any = new GenericArrayData(buffer.toArray)
 
   override def withNewMutableAggBufferOffset(newMutableAggBufferOffset: Int): ImperativeAggregate =
     copy(mutableAggBufferOffset = newMutableAggBufferOffset)

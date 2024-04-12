@@ -20,6 +20,11 @@ object api {
   def collect_list_limit(columnName: String, limit: Int): Column = collect_list_limit(new Column(columnName), limit)
   def collect_list_limit(columnName: String): Column = collect_list_limit(new Column(columnName))
 
+  def merge_list_limit(c: Column, limit: Int): Column = withAggregateFunction(MergeListWithLimit(c.expr, limit))
+  def merge_list_limit(c: Column): Column = withAggregateFunction(MergeListWithLimit(c.expr))
+  def merge_list_limit(columnName: String, limit: Int): Column = merge_list_limit(new Column(columnName), limit)
+  def merge_list_limit(columnName: String): Column = merge_list_limit(new Column(columnName))
+
   def check_number_format(number: Column, precision: Column, scale: Column, isOutbound: Column): Column =
     withExpr(CheckNumberFormat(number.expr, precision.expr, scale.expr, isOutbound.expr))
   def check_number_format(number: Column, precision: Int, scale: Int, isOutbound: Boolean): Column =
