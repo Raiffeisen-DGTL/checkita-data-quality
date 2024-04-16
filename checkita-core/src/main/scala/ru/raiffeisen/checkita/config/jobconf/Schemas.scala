@@ -94,15 +94,18 @@ object Schemas {
   /**
    * Avro schema configuration
    *
-   * @param id          Schema ID
-   * @param description Schema description
-   * @param schema      Path to Avro schema file (.avsc)
-   * @param metadata    List of metadata parameters specific to this schema
+   * @param id               Schema ID
+   * @param description      Schema description
+   * @param schema           Path to Avro schema file (.avsc)
+   * @param validateDefaults Boolean flag enabling or disabling default values validation in Avro schema.
+   *                         Default: `false`.
+   * @param metadata         List of metadata parameters specific to this schema
    */
   final case class AvroSchemaConfig(
                                      id: ID,
                                      description: Option[NonEmptyString],
                                      schema: URI,
+                                     validateDefaults: Boolean = false,
                                      metadata: Seq[SparkParam] = Seq.empty
                                    ) extends SchemaConfig
 

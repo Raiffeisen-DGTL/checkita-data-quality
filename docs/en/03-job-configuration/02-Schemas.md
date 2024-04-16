@@ -4,7 +4,7 @@ Schemas are used in Data Quality jobs for two purposes:
 
 * Provide explicit schema when reading sources without embedded schemas such as delimited or fixed width text files.
 * Provide reference schema to validate actual source schema. Schemas are used in `schemaMatch` load checks.
-  See [Schema Match Check](05-LoadChecks.md#schema-match-check).
+  See [Schema Match Check](07-LoadChecks.md#schema-match-check).
 
 Schemas are set in `schemas` section of job configuration and can be defined in different formats as described below.
 Format in which schema is defined is set in `kind` field and defines what other fields are need to be provided.
@@ -36,7 +36,7 @@ Thus, delimited definition contains following parameters:
 
 Fixed-full kind of schema definition is used to provide schemas for read fixed-width text files. The key difference from
 other schema definitions is that columns widths are also provided which is crucial information for parsing fixed-width
-files. This kind of schemas may also be used for reading delimited files and for reference in `schemaMatch` load checks.
+files. This kind of schema may also be used for reading delimited files and for reference in `schemaMatch` load checks.
 Using this type of configuration, only flat schemas can be defined (nested columns are not allowed).
 
 Fixed-fill schema definition contains following parameters:
@@ -55,7 +55,7 @@ Fixed-fill schema definition contains following parameters:
 
 Fixed-short kind of schema definition provides a more compact syntax for defining schemas used for reading fixed-width
 files. The columns are defined by their name and width only. *Subsequently, all columns will have StringType.*
-This kind of schemas may also be used for reading delimited files and for reference in `schemaMatch` load checks.
+This kind of schema may also be used for reading delimited files and for reference in `schemaMatch` load checks.
 Using this type of configuration, only flat schemas can be defined (nested columns are not allowed).
 
 Fixed-short schema definition contains following parameters:
@@ -80,6 +80,10 @@ In order to read schema from avro file it is required to supply following parame
 * `id` - *Required*. Schema ID;
 * `description` - *Optional*. Schema description;
 * `schema` - *Required*. Path to avro schema file `.avsc` to read schema from.
+* `validateDefaults` - *Optional, , default is `false`*. Boolean flag enabling or disabling default values
+  validation in Avro schema.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this schema where each parameter
+  is a string in format:`param.name=param.value`.
 
 ## Hive Schema Configuration
 

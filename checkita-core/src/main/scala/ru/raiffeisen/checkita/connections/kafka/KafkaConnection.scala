@@ -74,13 +74,18 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
 
   /**
    * Decodes kafka message key and value columns given their format.
-   * @param colName Name of the column to decode (either 'key' or 'value')
-   * @param format Column format to parse
-   * @param schemaId Schema ID used to parse column of JSON or XML format
-   * @param schemas Map of all explicitly defined schemas (schemaId -> SourceSchema)
+   *
+   * @param colName      Name of the column to decode (either 'key' or 'value')
+   * @param format       Column format to parse
+   * @param schemaId     Schema ID used to parse column of JSON or XML format
+   * @param withSchemaId Boolean flag indication whether kafka message has Confluent wire format.
+   * @param schemas      Map of all explicitly defined schemas (schemaId -> SourceSchema)
    * @return Decoded column
    */
-  private def decodeColumn(colName: String, format: KafkaTopicFormat, schemaId: Option[String])
+  private def decodeColumn(colName: String,
+                           format: KafkaTopicFormat,
+                           schemaId: Option[String],
+                           withSchemaId: Boolean = false)
                           (implicit schemas: Map[String, SourceSchema]): Column = {
 
     val schemaGetter = (formatStr: String) => {
@@ -92,15 +97,18 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
       )
     }
 
+    val binaryColumn: Column = if (withSchemaId) substring(col(colName), 6, Int.MaxValue) else col(colName)
+
     format match {
-      case KafkaTopicFormat.String => col(colName).cast(StringType).as(colName)
+      case KafkaTopicFormat.Binary => binaryColumn
+      case KafkaTopicFormat.String => binaryColumn.cast(StringType).as(colName)
       case KafkaTopicFormat.Json =>
-        from_json(col(colName).cast(StringType), schemaGetter("JSON").schema).alias(colName)
+        from_json(binaryColumn.cast(StringType), schemaGetter("JSON").schema).alias(colName)
       case KafkaTopicFormat.Xml =>
-        from_json(xmlToJson(col(colName).cast(StringType)), schemaGetter("XML").schema).alias(colName)
+        from_json(xmlToJson(binaryColumn.cast(StringType)), schemaGetter("XML").schema).alias(colName)
       case KafkaTopicFormat.Avro =>
         // intentionally use deprecated method to support compatibility with Spark 2.4.x versions.
-        from_avro(col(colName), schemaGetter("AVRO").toAvroSchema).alias(colName)
+        from_avro(binaryColumn, schemaGetter("AVRO").toAvroSchema).alias(colName)
       case other => throw new IllegalArgumentException(
         s"Wrong kafka topic message format for column '$colName': ${other.toString}"
       )
@@ -143,7 +151,9 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
     val rawDF = spark.read.format("kafka").options(allOptions).load()
 
     val keyColumn = decodeColumn("key", sourceConfig.keyFormat, sourceConfig.keySchema.map(_.value))
-    val valueColumn = decodeColumn("value", sourceConfig.valueFormat, sourceConfig.valueSchema.map(_.value))
+    val valueColumn = decodeColumn(
+      "value", sourceConfig.valueFormat, sourceConfig.valueSchema.map(_.value), sourceConfig.subtractSchemaId
+    )
 
     rawDF.select(keyColumn, valueColumn)
   }
@@ -170,7 +180,9 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
     val rawStream = spark.readStream.format("kafka").options(allOptions).load()
 
     val keyColumn = decodeColumn("key", sourceConfig.keyFormat, sourceConfig.keySchema.map(_.value))
-    val valueColumn = decodeColumn("value", sourceConfig.valueFormat, sourceConfig.valueSchema.map(_.value))
+    val valueColumn = decodeColumn(
+      "value", sourceConfig.valueFormat, sourceConfig.valueSchema.map(_.value), sourceConfig.subtractSchemaId
+    )
 
     rawStream.select(keyColumn, valueColumn, col("timestamp")).prepareStream(sourceConfig.windowBy)
   }

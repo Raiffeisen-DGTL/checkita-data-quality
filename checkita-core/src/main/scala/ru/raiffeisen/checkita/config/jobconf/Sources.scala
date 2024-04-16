@@ -89,31 +89,35 @@ object Sources {
   /**
    * Kafka source configuration
    *
-   * @param id              Source ID
-   * @param description     Source description
-   * @param connection      Connection ID (must be a Kafka Connection)
-   * @param topics          Sequence of topics to read
-   * @param topicPattern    Pattern that defined topics to read
-   * @param startingOffsets Json-string defining starting offsets.
-   *                        If none is set, then "earliest" is used in batch jobs and "latest is used in streaming jobs.
-   * @param endingOffsets   Json-string defining ending offset. Applicable only to batch jobs.
-   *                        If none is set then "latest" is used.
-   * @param windowBy        Source of timestamp used to build windows. Applicable only for streaming jobs!
-   *                        Default: processingTime - uses current timestamp at the moment when Spark processes row.
-   *                        Other options are:
+   * @param id               Source ID
+   * @param description      Source description
+   * @param connection       Connection ID (must be a Kafka Connection)
+   * @param topics           Sequence of topics to read
+   * @param topicPattern     Pattern that defined topics to read
+   * @param startingOffsets  Json-string defining starting offsets.
+   *                         If none is set, then "earliest" is used in batch jobs and "latest is used in streaming jobs.
+   * @param endingOffsets    Json-string defining ending offset. Applicable only to batch jobs.
+   *                         If none is set then "latest" is used.
+   * @param windowBy         Source of timestamp used to build windows. Applicable only for streaming jobs!
+   *                         Default: processingTime - uses current timestamp at the moment when Spark processes row.
+   *                         Other options are:
    *                          - eventTime - uses Kafka message creation timestamp.
    *                          - customTime(columnName) - uses arbitrary user-defined column from kafka message
    *                            (column must be of TimestampType)
-   * @param keyFormat       Message key format. Default: string.
-   * @param valueFormat     Message value format. Default: string.
-   * @param keySchema       Schema ID. Used to parse message key. Ignored when keyFormat is string.
-   *                        Mandatory for other formats.
-   * @param valueSchema     Schema ID. Used to parse message value. Ignored when valueFormat is string.
-   *                        Mandatory for other formats.
-   *                        Used to parse kafka message value.
-   * @param options         Sequence of additional Kafka options
-   * @param keyFields       Sequence of key fields (columns that identify data row)
-   * @param metadata        List of metadata parameters specific to this source
+   * @param keyFormat        Message key format. Default: string.
+   * @param valueFormat      Message value format. Default: string.
+   * @param keySchema        Schema ID. Used to parse message key. Ignored when keyFormat is string.
+   *                         Mandatory for other formats.
+   * @param valueSchema      Schema ID. Used to parse message value. Ignored when valueFormat is string.
+   *                         Mandatory for other formats.
+   *                         Used to parse kafka message value.
+   * @param subtractSchemaId Boolean flag indicating whether a kafka message schema ID encoded into its value, i.e.
+   *                         [1 Magic Byte] + [4 Schema ID Bytes] + [Message Value Binary Data].
+   *                         If set to `true`, then first five bytes are subtracted before value parsing.
+   *                         Default: `false`
+   * @param options          Sequence of additional Kafka options
+   * @param keyFields        Sequence of key fields (columns that identify data row)
+   * @param metadata         List of metadata parameters specific to this source
    */
   final case class KafkaSourceConfig(
                                       id: ID,
@@ -128,6 +132,7 @@ object Sources {
                                       valueFormat: KafkaTopicFormat = KafkaTopicFormat.String,
                                       keySchema: Option[ID] = None,
                                       valueSchema: Option[ID] = None,
+                                      subtractSchemaId: Boolean = false,
                                       options: Seq[SparkParam] = Seq.empty,
                                       keyFields: Seq[NonEmptyString] = Seq.empty,
                                       metadata: Seq[SparkParam] = Seq.empty

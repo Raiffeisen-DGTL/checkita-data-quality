@@ -123,8 +123,8 @@ object VirtualSourceReaders {
         s"Join virtual source must have two parent sources defined. Got following: " +
           parents.map(_.id).mkString("[", ",", "]")
       )
-      val leftSrc = parents.head.df
-      val rightSrc = parents.tail.head.df
+      val leftSrc = parents.head.df.as(parents.head.id)
+      val rightSrc = parents.tail.head.df.as(parents.tail.head.id)
 
       leftSrc.join(rightSrc, config.joinBy.value, config.joinType.toString.toLowerCase)
     }
@@ -220,8 +220,8 @@ object VirtualSourceReaders {
      */
     def getDataFrame(config: AggregateVirtualSourceConfig,
                      readMode: ReadMode)(implicit settings: AppSettings,
-                                                           spark: SparkSession,
-                                                           parentSources: Map[String, Source]): DataFrame = {
+                                         spark: SparkSession,
+                                         parentSources: Map[String, Source]): DataFrame = {
       val parents = getParents(config)
       require(parents.size == 1,
         s"Aggregate virtual source must have exactly one parent source. Got following: " +
