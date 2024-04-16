@@ -4,7 +4,6 @@ import org.apache.hadoop.fs.FileSystem
 import org.apache.logging.log4j.Level
 import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.{AppSettings, VersionInfo}
-import ru.raiffeisen.checkita.config.ConfigEncryptor
 import ru.raiffeisen.checkita.config.IO.readJobConfig
 import ru.raiffeisen.checkita.config.Parsers._
 import ru.raiffeisen.checkita.config.appconf.AppConfig
@@ -276,6 +275,34 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
   }
 
   /**
+   * Gets first virtual source for which we have all parent sources resolved.
+   * The goal is to resolve virtual sources in order different from
+   * the one they were defined in job configuration file.
+   *
+   * @param vs      Sequence of unresolved virtual sources
+   * @param parents Sequence of resolved parent sources
+   * @param idx     Index of virtual sources that being checked at current iteration
+   *                and will be returned of all its parents are resolved.
+   * @return First virtual source for which all parents are reserved
+   *         and the sequence of remaining virtual sources.
+   */
+  @tailrec
+  private def getNextVS(vs: Seq[VirtualSourceConfig],
+                        parents: Map[String, Source],
+                        idx: Int = 0): (VirtualSourceConfig, Seq[VirtualSourceConfig]) = {
+    if (idx == vs.size) throw new NoSuchElementException(
+      "Unable to find virtual source with all resolved parents. " +
+        s"Currently resolved parents are: ${parents.keys.mkString("[", ",", "]")}. " +
+        s"The list of remaining unresolved virtual sources is: ${vs.map(_.id.value).mkString("[", ",", "]")}."
+    )
+    else {
+      val checkedVs = vs(idx)
+      if (checkedVs.parents.forall(parents.contains)) checkedVs -> vs.zipWithIndex.filter(_._2 != idx).map(_._1)
+      else getNextVS(vs, parents, idx + 1)
+    }
+  }
+
+  /**
    * Recursively reads all virtual sources, thus previously read virtual source can be used as a parent for next one.
    * @note Also executes logging side effects.
    * @param virtualSources Sequence of virtual sources configurations (defined in order they need to be processed)
@@ -284,30 +311,34 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    * @return Either a map of all (regular + virtual) sources (sourceId -> Source) or a list of reading errors.
    */
   @tailrec
-  private def readVirtualSources(virtualSources: Seq[VirtualSourceConfig],
+  private def readVirtualSources(virtualSources: Result[Seq[VirtualSourceConfig]],
                                  parentSources: Result[Map[String, Source]],
-                                 readAsStream: Boolean = false): Result[Map[String, Source]] =
-    if (virtualSources.isEmpty) parentSources else {
-      val newSource = parentSources.flatMap{ parents =>
-        val curVsConfig = virtualSources.head
-        log.info(s"$virtualSourceStage Reading virtual source '${curVsConfig.id.value}'...")
-        val newSrc = (if (readAsStream) curVsConfig.readStream(parents) else curVsConfig.read(parents))
-          .tap(_ => log.info(s"$virtualSourceStage Success!")) // immediate logging of success state
-          .tap(s => log.debug(s.df.schema.treeString)) // debug source schema
-          .mapLeft(_.map(e => s"$virtualSourceStage $e")) // update error messages with running stage
-        // if persist is required and newSrc reading was successful, then DO persist dataframe:
-        curVsConfig.persist.foreach(sLvl => newSrc.foreach{ src =>
-          log.info(s"$virtualSourceStage Persisting virtual source '${curVsConfig.id.value}' to ${sLvl.toString}.")
-          src.df.persist(sLvl)
-        })
-        newSrc
-      }
-      readVirtualSources(
-        virtualSources.tail, 
-        parentSources.combine(newSource)((curSrc, newSrc) => curSrc + (newSrc.id -> newSrc)),
-        readAsStream
-      )
-    }
+                                 readAsStream: Boolean = false): Result[Map[String, Source]] = virtualSources match {
+    case Left(errors) => Left(errors)
+    case Right(vs) if vs.isEmpty => parentSources
+    case Right(vs) =>
+      val newAndRest = for {
+        parents <- parentSources
+        curVsAndRest <- Try(getNextVS(vs, parents)).toResult()
+        newSource <- {
+          log.info(s"$virtualSourceStage Reading virtual source '${curVsAndRest._1.id.value}'...")
+          (if (readAsStream) curVsAndRest._1.readStream(parents) else curVsAndRest._1.read(parents))
+            .tap(_ => log.info(s"$virtualSourceStage Success!")) // immediate logging of success state
+            .tap(s => log.debug(s.df.schema.treeString)) // debug source schema
+            .mapLeft(_.map(e => s"$virtualSourceStage $e")) // update error messages with running stage
+        }
+        _ <- Try(curVsAndRest._1.persist.foreach{ sLvl =>
+          log.info(s"$virtualSourceStage Persisting virtual source '${curVsAndRest._1.id.value}' to ${sLvl.toString}.")
+          newSource.df.persist(sLvl)
+        }).toResult()
+      } yield newSource -> curVsAndRest._2
+
+      val updatedVirtualSource = newAndRest.map(_._2)
+      val updatedParents = parentSources
+        .combine(newAndRest.map(_._1))((curSrc, newSrc) => curSrc + (newSrc.id -> newSrc))
+
+      readVirtualSources(updatedVirtualSource, updatedParents, readAsStream)
+  }
 
   /**
    * Fundamental Data Quality batch job builder: builds batch job provided with all job components.
@@ -419,7 +450,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     val regularSources = connections.combine(schemas)((c, s) => (c, s)).flatMap{
       case (conn, sch) => readSources(jobConfig.sources.map(_.getAllSources).getOrElse(Seq.empty), sch, conn)
     }
-    val allSources = readVirtualSources(jobConfig.virtualSources, regularSources)
+    val allSources = readVirtualSources(liftToResult(jobConfig.virtualSources), regularSources)
     
     val regularMetrics: Seq[RegularMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.regular).flatMap(_.getAllRegularMetrics)
     val composedMetrics: Seq[ComposedMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.composed)
@@ -467,7 +498,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       )
     }
 
-    val allSources = readVirtualSources(jobConfig.virtualStreams, regularSources, readAsStream = true)
+    val allSources = readVirtualSources(liftToResult(jobConfig.virtualStreams), regularSources, readAsStream = true)
 
     val regularMetrics: Seq[RegularMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.regular).flatMap(_.getAllRegularMetrics)
     val composedMetrics: Seq[ComposedMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.composed)

@@ -9,7 +9,7 @@ object Dependencies {
   val commonsText = "org.apache.commons" % "commons-text" % "1.10.0"
   val commonsMail = "org.apache.commons" % "commons-email" % "1.5"
   val commonsValidators = "commons-validator" % "commons-validator" % "1.8.0"
-  val mustache = "com.github.spullara.mustache.java" % "compiler" %"0.9.10"
+  val mustache = "com.github.spullara.mustache.java" % "compiler" % "0.9.10"
 
   // XML support in json4s published in a separate package,
   // and for latests Spark versions (starting from 3.4) using json4x-xml would
@@ -26,7 +26,7 @@ object Dependencies {
   // database drivers:
   val postgres = "org.postgresql" % "postgresql" % "42.5.4"
   val oracle = "com.oracle.database.jdbc" % "ojdbc8" % "23.2.0.0"
-  val sqlite = "org.xerial" % "sqlite-jdbc" % "3.42.0.0"
+  val sqlite = "org.xerial" % "sqlite-jdbc" % "3.45.2.0"
   val mysql = "mysql" % "mysql-connector-java" % "8.0.33"
   val mssql = "com.microsoft.sqlserver" % "mssql-jdbc" % "12.2.0.jre8"
   val mssqlJTDS = "net.sourceforge.jtds" % "jtds" % "1.3.1"

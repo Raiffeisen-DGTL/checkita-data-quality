@@ -184,6 +184,9 @@ parameters:
 * `valueFormat` - *Optional, default is `string`*. Format used to decode message value.
 * `keySchema` - Schema ID used to parse message key. If key format other than `string` then schema must be provided.
 * `valueSchema` - Schema ID used to parse message value. If value format other than `string` then schema must be provided.
+* `subtractSchemaId` - *Optional, default is `false`*. Boolean flag indicating whether a kafka message schema ID is
+  encoded into its value, i.e. `[1 Magic Byte] + [4 Schema ID Bytes] + [Message Value Binary Data]`.
+  If set to `true`, then first five bytes are subtracted before value parsing.
 * `options` - *Optional*. Additional Spark parameters related to reading messages from Kafka topics such as:
   `failOnDataLoss, kafkaConsumer.pollTimeoutMs, fetchOffset.numRetries, fetchOffset.retryIntervalMs, maxOffsetsPerTrigger`.
   Parameters are provided as a strings in format of `parameterName=parameterValue`.
@@ -194,7 +197,10 @@ parameters:
 * `metadata` - *Optional*. List of user-defined metadata parameters specific to this source where each parameter
   is a string in format: `param.name=param.value`.
 
-Currently, `string`, `xml`, `json` and `avro` formats are supported to decode message key and value.
+Currently, `binary`, `string`, `xml`, `json` and `avro` formats are supported to decode message key and value.
+Note, that when `binary` format is selected, then kafka key or value is not decoded but rather selected as is.
+Thus, it is up to user to use virtual sources capabilities to cast binary column into data types suitable for
+data quality checks.
 
 > *TIP*: In order to define JSON strings, they must be enclosed in triple quotes:
 > `"""{"name1": {"name2": "value2", "name3": "value3""}}"""`.

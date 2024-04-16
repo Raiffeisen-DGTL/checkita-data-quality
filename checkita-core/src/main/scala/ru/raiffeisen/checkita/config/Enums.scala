@@ -31,6 +31,7 @@ object Enums {
    */
   sealed trait KafkaTopicFormat extends EnumEntry
   object KafkaTopicFormat extends Enum[KafkaTopicFormat] {
+    case object Binary extends KafkaTopicFormat
     case object String extends KafkaTopicFormat
     case object Xml extends KafkaTopicFormat
     case object Json extends KafkaTopicFormat
