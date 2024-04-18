@@ -1,3 +1,10 @@
+## [1.6.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.5.0...v1.6.0) (2024-04-16)
+
+
+### Features
+
+* refactor kafka source API and enhance virtual sources resolving logic ([#37](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/37)) ([8ea9c23](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/8ea9c239b0c60c985a7ddc5eda8a3af4ab8c4171))
+
 ## [1.5.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.4.2...v1.5.0) (2024-03-29)
 
 

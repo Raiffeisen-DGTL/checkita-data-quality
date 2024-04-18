@@ -1,12 +1,14 @@
 # Virtual Sources Configuration
 
-Checkita framework supports creation of virtual (temporary) sources base on regular once (defined in `sources` section
+Checkita framework supports creation of virtual (temporary) sources based on regular once (defined in `sources` section
 of job configuration, as described in [Sources Configuration](03-Sources.md) chapter). Virtual sources are created by
 applying transformations to existing sources using Spark SQL API. Subsequently, metrics and checks can also be applied
 to virtual sources.
 
 It is also important to note, that virtual sources are created recursively, therefore, once virtual source is created
-it can be used to create another one in the same way as regular sources.
+it can be used to create another one in the same way as regular sources. The order in which virtual sources are defined 
+in job configuration file is not important. On the contrary, virtual sources are read in the order that correspond 
+to their dependencies on parent sources.
 
 The following types of virtual sources are supported:
 

@@ -171,7 +171,7 @@ object SchemaReaders {
      * @return Parsed schema
      */
     def tryToRead(config: AvroSchemaConfig)(implicit spark: SparkSession): SourceSchema = {
-      val schemaParser = new Parser()
+      val schemaParser = new Parser().setValidateDefaults(config.validateDefaults)
       val avroSchema = schemaParser.parse(new File(config.schema.value))
 
       val sparkSchema = SchemaConverters
