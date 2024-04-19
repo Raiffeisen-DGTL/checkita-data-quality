@@ -17,5 +17,5 @@ trait ReversibleMetric { this: RegularMetric =>
   type ReversibleDFMetricCalculator = DFMetricCalculator with ReversibleDFCalculator
   val reversed: Boolean
   override def initRDDMetricCalculator: ReversibleRDDMetricCalculator
-//  override def initDFMetricCalculator: ReversibleDFMetricCalculator
+  override def initDFMetricCalculator: ReversibleDFMetricCalculator
 }

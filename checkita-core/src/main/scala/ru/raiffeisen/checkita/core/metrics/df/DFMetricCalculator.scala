@@ -9,6 +9,9 @@ import ru.raiffeisen.checkita.core.metrics.df.functions.api._
 
 /**
  * Basic DF metric calculator
+ *
+ * @note DF Calculators are intendet to work with Batch applications only.
+ *       Hence, their functionality may be revised in future to support streaming applications as well.
  */
 abstract class DFMetricCalculator {
 
@@ -71,11 +74,10 @@ abstract class DFMetricCalculator {
    * row where metric error occurred.
    *
    * @param keyFields   Sequence of source/stream key fields.
-   * @param windowTsCol Name of column that stores window start time (used in streaming dq applications).
    * @return Spark expression that will yield array of row data for column related to this metric calculator.
    */
-  protected def rowDataExpr(keyFields: Seq[String], windowTsCol: Option[String]): Column = {
-    val allColumns = windowTsCol.toSeq ++ withKeyFields(columns, keyFields)
+  protected def rowDataExpr(keyFields: Seq[String]): Column = {
+    val allColumns = withKeyFields(columns, keyFields)
     array(allColumns.map(c => coalesce(col(c).cast(StringType), lit(""))): _*)
   }
 
@@ -105,16 +107,12 @@ abstract class DFMetricCalculator {
    * Collects all metric errors into an array column.
    * The size of array is limited by maximum allowed error dump size parameter.
    *
-   * @param windowTsCol   Name of column that stores window start time (used in streaming dq applications).
    * @param errorDumpSize Maximum allowed number of errors to be collected per single metric.
    * @param keyFields     Sequence of source/stream key fields.
    * @return Spark expression that will yield array of metric errors.
-   * @note For streaming applications, we need to collect metric errors in per-window basis.
-   *       Therefore, error row data has to contain window start time (first element of array).
    */
-  def errors(windowTsCol: Option[String] = None)
-            (implicit errorDumpSize: Int, keyFields: Seq[String]): Column = {
-    val rowData = rowDataExpr(keyFields, windowTsCol)
+  def errors(implicit errorDumpSize: Int, keyFields: Seq[String]): Column = {
+    val rowData = rowDataExpr(keyFields)
     collect_list_limit(errorExpr(rowData), errorDumpSize).as(errorsCol)
   }
 }

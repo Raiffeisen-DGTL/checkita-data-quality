@@ -37,7 +37,7 @@ trait DFMetricsTestUtils { this: AnyWordSpec with Matchers =>
 
   protected def runDFMetricCalc(df: DataFrame,
                                 calculator: DFMetricCalculator): (Double, Int) = {
-    val metDf = df.select(calculator.result, calculator.errors())
+    val metDf = df.select(calculator.result, calculator.errors)
 //    metDf.explain(true)
 //    metDf.show(truncate = false)
     val processed = metDf.collect.head

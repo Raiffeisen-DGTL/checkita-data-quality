@@ -18,5 +18,5 @@ trait RegularMetric extends Serializable {
   val metricColumns: Seq[String]
 
   def initRDDMetricCalculator: RDDMetricCalculator
-//  def initDFMetricCalculator: DFMetricCalculator
+  def initDFMetricCalculator: DFMetricCalculator
 }

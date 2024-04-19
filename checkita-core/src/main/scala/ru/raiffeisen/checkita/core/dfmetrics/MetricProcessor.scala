@@ -63,7 +63,7 @@ object MetricProcessor {
       )
     }
 
-    val aggregationColumns: Seq[Column] = metricCalculators.values.flatMap(c => Seq(c.result, c.errors())).toSeq
+    val aggregationColumns: Seq[Column] = metricCalculators.values.flatMap(c => Seq(c.result, c.errors)).toSeq
 
     val processedDf = df.select(aggregationColumns: _*)
 

@@ -11,6 +11,16 @@ import scala.collection.immutable
 object Enums {
 
   /**
+   * Metrics can be processed either with use of Spark RDD API or Spark DF API.
+   */
+  sealed trait MetricEngineAPI extends EnumEntry
+  object MetricEngineAPI extends Enum[MetricEngineAPI] {
+    case object DF extends MetricEngineAPI
+    case object RDD extends MetricEngineAPI
+    override val values: immutable.IndexedSeq[MetricEngineAPI] = findValues
+  }
+
+  /**
    * Allowed systems for use as data quality history storage
    */
   sealed trait DQStorageType extends EnumEntry

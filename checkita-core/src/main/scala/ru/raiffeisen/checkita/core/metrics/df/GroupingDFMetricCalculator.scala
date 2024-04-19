@@ -84,16 +84,14 @@ abstract class GroupingDFMetricCalculator extends DFMetricCalculator {
    * The main difference from one-pass DF-calculators is that error condition depends on
    * the intermediate group aggregation result rather than on individual row result.
    *
-   * @param windowTsCol   Name of column that stores window start time (used in streaming dq applications).
    * @param errorDumpSize Maximum allowed number of errors to be collected per single metric.
    * @param keyFields     Sequence of source/stream key fields.
    * @return Spark expression that will yield array of metric errors.
    * @note For streaming applications, we need to collect metric errors in per-window basis.
    *       Therefore, error row data has to contain window start time (first element of array).
    */
-  def groupErrors(windowTsCol: Option[String] = None)
-                 (implicit errorDumpSize: Int, keyFields: Seq[String]): Column = {
-    val rowData = rowDataExpr(keyFields, windowTsCol)
+  def groupErrors(implicit errorDumpSize: Int, keyFields: Seq[String]): Column = {
+    val rowData = rowDataExpr(keyFields)
     when(
       errorConditionExpr, groupErrorExpr(rowData, errorDumpSize)
     ).otherwise(typedlit[Option[Array[Array[String]]]](None)).as(groupErrorsCol)
@@ -124,18 +122,7 @@ abstract class GroupingDFMetricCalculator extends DFMetricCalculator {
    * @param errorDumpSize Maximum allowed number of errors to be collected per single metric.
    * @return Spark expression that will yield array of metric errors.
    */
-  def errors(implicit errorDumpSize: Int): Column =
+  override def errors(implicit errorDumpSize: Int, keyFields: Seq[String]): Column =
     merge_list_limit(col(groupErrorsCol), errorDumpSize).as(errorsCol)
-
-  /**
-   * Grouping calculators will have different API for collecting final array with error data.
-   * Therefore, an exception will be throw if this method is called.
-   */
-  override def errors(windowTsCol: Option[String])
-                     (implicit errorDumpSize: Int, keyFields: Seq[String]): Column =
-    throw new UnsupportedOperationException(
-      "Grouping dataframe metric calculator uses special API to merge per-group collected errors " +
-        "into final array of errors data. Use `errors` method with signature: `(errorDumpSize: Int) => Column`."
-    )
 
 }
