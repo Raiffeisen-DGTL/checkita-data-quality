@@ -1,6 +1,6 @@
 package ru.raiffeisen.checkita.core.metrics.df.regular
 
-import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.functions.{col, max, min, sum}
 import org.apache.spark.sql.types.{DataType, DoubleType, StringType}
 import org.apache.spark.sql.{DataFrame, Row}
 import org.scalatest.matchers.should.Matchers
@@ -16,12 +16,20 @@ class GroupingDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsTest
   private val seqTypes: Seq[DataType] = Seq(StringType, StringType, DoubleType, StringType)
   private val testSingleColSchemas = getSingleColSchema(seqTypes)
   private val testMultiColSchemas = getMultiColSchema(seqTypes)
+  private val testRangeSchema = getSingleColSchema(Seq.fill(4)(StringType))
 
   private val testSingleColSeq = Seq(
     Seq("Gpi2C7", "DgXDiA", "Gpi2C7", "Gpi2C7", "M66yO0", "M66yO0", "M66yO0", "xTOn6x", "xTOn6x", "3xGSz0", "3xGSz0", "Gpi2C7"),
     Seq("3.09", "3.09", "6.83", "3.09", "6.83", "3.09", "6.83", "7.28", "2.77", "6.83", "7.28", "2.77"),
     Seq(5.85, 5.85, 5.85, 8.32, 8.32, 7.24, 7.24, 7.24, 8.32, 9.15, 7.24, 5.85),
     Seq("4", "3.14", "foo", "3.0", "-25.321", "bar", "[12, 35]", "true", "4", "3", "-25.321", "3123dasd")
+  )
+
+  private val testRangesSeq = Seq(
+    Range.inclusive(1, 100).map(_.toString),
+    Range.inclusive(0, 96, 4).map(_.toString),
+    Range.inclusive(1, 1000000).map(_.toString),
+    Range.inclusive(0, 999996, 4).map(_.toString)
   )
 
   private val testMultiColSeq = testSingleColSeq.map(
@@ -35,11 +43,28 @@ class GroupingDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsTest
   })
   private val nullMultiColSeq = nullSingleColSeq.map(s => (0 to 3).map(c => (0 to 2).map(r => c*3 + r)).map(_.map(s(_))))
 
+  private val rangeNullIndices = Set(3, 7, 9, 11)
+  private val rangeEmptyIndices = Set(4, 8, 12, 16)
+
+  private val nullRangesSeq = testRangesSeq.map(s => s.zipWithIndex.map {
+    case (_, idx) if rangeNullIndices.contains(idx) => null
+    case (v, _) => v
+  })
+  private val emptyRangesSeq = nullRangesSeq.map(s => s.zipWithIndex.map {
+    case (_, idx) if rangeEmptyIndices.contains(idx) => ""
+    case (v, _) => v
+  })
+
+
   private val emptyDF = spark.createDataFrame(sc.emptyRDD[Row], testSingleColSchemas.head)
   private val testSingleColDFs: Seq[DataFrame] = getTestDataFrames(testSingleColSeq, testSingleColSchemas)
   private val testMultiColDFs: Seq[DataFrame] = getTestDataFrames(testMultiColSeq, testMultiColSchemas)
   private val nullSingleColDFs: Seq[DataFrame] = getTestDataFrames(nullSingleColSeq, testSingleColSchemas)
   private val nullMultiColDFs: Seq[DataFrame] = getTestDataFrames(nullMultiColSeq, testMultiColSchemas)
+
+  private val testRangeDFs: Seq[DataFrame] = getTestDataFrames(testRangesSeq, testRangeSchema)
+  private val nullRangeDFs: Seq[DataFrame] = getTestDataFrames(nullRangesSeq, testRangeSchema)
+  private val emptyRangeDFs: Seq[DataFrame] = getTestDataFrames(emptyRangesSeq, testRangeSchema)
 
 //  Seq(
 //    testSingleColDFs,
@@ -57,7 +82,7 @@ class GroupingDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsTest
       .agg(calculator.groupResult, calculator.groupErrors)
       .select(calculator.result, calculator.errors)
 
-    //    metDf.explain(true)
+    metDf.explain(true)
 //    metDf.show(truncate = false)
     val processed = metDf.collect.head
     val result = processed.getDouble(0)
@@ -148,6 +173,42 @@ class GroupingDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsTest
     }
     "return correct metric value and fail counts for multi column sequence with null values" in {
       testGroupingMetric(nullMultiColDFs, mId, multiCols, nullResultsMulti, nullFailCountsMulti, params, getCalc)
+    }
+    "return zero when applied to empty sequence" in {
+      testGroupingMetric(Seq(emptyDF), mId, singleCols, Seq(0.0), Seq(0), params, getCalc)
+    }
+  }
+
+  "SequenceCompletenessDFMetricCalculator" must {
+    val mId = "sequenceCompleteness"
+    val params: Seq[Map[String, Any]] = Seq(1, 4, 1, 4).map(i => Map("increment" -> i))
+
+    val results = Seq.fill(4)(1).map(_.toDouble)
+    val nullResults = Seq(0.96, 0.84, 0.999996, 0.999984)
+    val emptyResults = Seq(0.92, 0.68, 0.999992, 0.999968)
+
+    val failCounts = Seq.fill(4)(0)
+    val nullFailCounts = Seq.fill(4)(4)
+    val emptyFailCounts = Seq.fill(4)(8)
+
+    val getCalc: (String, Seq[String], Map[String, Any]) => GroupingDFMetricCalculator = (mId, cols, params) => {
+      val increment = params.getOrElse("increment", 1).asInstanceOf[Int]
+      SequenceCompletenessDFMetricCalculator(mId, cols, increment)
+    }
+
+    "return correct metric value and fail counts for single column sequence" in {
+      testGroupingMetric(testRangeDFs, mId, singleCols, results, failCounts, params, getCalc)
+    }
+    "return correct metric value and fail counts for single column sequence with null values" in {
+      testGroupingMetric(nullRangeDFs, mId, singleCols, nullResults, nullFailCounts, params, getCalc)
+    }
+    "return correct metric value and fail counts for single column sequence with null and empty values" in {
+      testGroupingMetric(emptyRangeDFs, mId, singleCols, emptyResults, emptyFailCounts, params, getCalc)
+    }
+    "throw an assertion error for multi column sequence" in {
+      an [AssertionError] should be thrownBy  testMetric(
+        testMultiColDFs, mId, multiCols, results, failCounts, params, getCalc
+      )
     }
     "return zero when applied to empty sequence" in {
       testGroupingMetric(Seq(emptyDF), mId, singleCols, Seq(0.0), Seq(0), params, getCalc)

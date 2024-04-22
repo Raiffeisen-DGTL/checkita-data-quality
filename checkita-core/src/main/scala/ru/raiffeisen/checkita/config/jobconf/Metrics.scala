@@ -282,7 +282,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: RDDMetricCalculator =
       new SequenceCompletenessRDDMetricCalculator(params.increment.value)
-    def initDFMetricCalculator: DFMetricCalculator = ???
+    def initDFMetricCalculator: DFMetricCalculator =
+      SequenceCompletenessDFMetricCalculator(metricId, metricColumns, params.increment.value)
   }
 
   /** Sequence completeness column metric configuration

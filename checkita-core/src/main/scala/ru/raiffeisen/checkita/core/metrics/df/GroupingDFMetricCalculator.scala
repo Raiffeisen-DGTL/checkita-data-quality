@@ -100,7 +100,7 @@ abstract class GroupingDFMetricCalculator extends DFMetricCalculator {
 
   /**
    * Function that aggregates intermediate metric per-group results into final metric value.
-   * For all grouping metrics it is just a summation.
+   * Default aggregation for grouping metrics it is just a summation.
    */
   protected val resultAggregateFunction: Column => Column = sum
 
