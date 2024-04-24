@@ -96,7 +96,8 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       s"  - aggregatedKafkaOutput:    ${settings.aggregatedKafkaOutput}",
       s"  - enableCaseSensitivity:    ${settings.enableCaseSensitivity}",
       s"  - errorDumpSize:            ${settings.errorDumpSize}",
-      s"  - outputRepartition:        ${settings.outputRepartition}"   
+      s"  - outputRepartition:        ${settings.outputRepartition}",
+      s"  - metricEngineAPI:          ${settings.metricEngineAPI.entryName}"
     )
     val logStorageConf = settings.storageConfig match {
       case Some(conf) => Seq(

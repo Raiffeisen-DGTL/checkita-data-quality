@@ -13,6 +13,9 @@ import ru.raiffeisen.checkita.utils.ResultUtils._
 import scala.collection.mutable
 import scala.util.Try
 
+/**
+ * Regular DF metrics processor. Works for batch applications only.
+ */
 object DFMetricProcessor extends BasicMetricProcessor {
   import BasicMetricProcessor._
 
@@ -22,12 +25,34 @@ object DFMetricProcessor extends BasicMetricProcessor {
    */
   type CalculatorResults = Map[String, (Seq[(Double, Option[String])], Seq[mutable.WrappedArray[String]])]
 
+  /**
+   * Runs all single-pass DF metric calculators.
+   *
+   * @param df          Source dataframe for which metrics are calculated.
+   * @param calculators Sequence of single-pass DF metric calculators to be run over this source.
+   * @param dumpSize    Implicit value of maximum number of metric failure (or errors) 
+   *                    to be collected per metric. Used to prevent OOM errors.
+   * @param keyFields   Source key fields.
+   * @return Spark DataFrame containing results of single-pass metric calculators.
+   */
   private def runSinglePassCalculators(df: DataFrame,
                                        calculators: Seq[DFMetricCalculator])
                                       (implicit dumpSize: Int,
                                        keyFields: Seq[String]): DataFrame =
     df.select(calculators.flatMap(c => Seq(c.result, c.errors)): _*)
 
+  /**
+   * Run grouping DF metric calculators that are applied to the same sequence of columns.
+   * Such grouping calculators can be run together.
+   *
+   * @param df           Source dataframe for which metrics are calculated.
+   * @param groupColumns Sequence of grouping columns.
+   * @param calculators  Sequence of grouping DF metric calculators to be run over this source.
+   * @param dumpSize     Implicit value of maximum number of metric failure (or errors) 
+   *                     to be collected per metric. Used to prevent OOM errors.
+   * @param keyFields    Source key fields.
+   * @return Spark DataFrame containing results of grouping metric calculators.
+   */
   private def runGroupingCalculators(df: DataFrame,
                                      groupColumns: Seq[String],
                                      calculators: Seq[GroupingDFMetricCalculator])
@@ -47,8 +72,17 @@ object DFMetricProcessor extends BasicMetricProcessor {
       .select(resultExpr: _*)
   }
 
+  /**
+   * Process Spark DataFrame containing DF metric calculators' results and retrieves those results for
+   * further finalization into MetricCalculatorResult instances.
+   *
+   * @param processedDF             Spark DataFrame contains DF metric calculators' results.
+   * @param calculatorResultColumns Map containing names of columns containing result 
+   *                                and errors for each of the processed metric.
+   * @return Map of metricId to metric calculator results and errors.
+   */
   private def getCalculatorResults(processedDF: DataFrame,
-                           calculatorResultColumns: Map[String, (String, String, Boolean)]): CalculatorResults = {
+                                   calculatorResultColumns: Map[String, (String, String, Boolean)]): CalculatorResults = {
 
     val processedColumnIndexes = getColumnIndexMap(processedDF)
     val resultColumns = processedColumnIndexes.filterKeys(
@@ -79,8 +113,16 @@ object DFMetricProcessor extends BasicMetricProcessor {
     }).toMap
   }
 
-
-
+  /**
+   * Builds final map of metric calculators results.
+   *
+   * @param results     Calculator results and errors.
+   * @param calculators DF metric calculators that were processed.
+   * @param sourceId    Source ID for which metrics were processed.
+   * @param keyFields   Source key fields.
+   * @return Map of metricId to a sequence of metric results for this metricId 
+   *         (some metrics yield multiple results).
+   */
   private def buildMetricResults(results: CalculatorResults,
                          calculators: Map[String, DFMetricCalculator],
                          sourceId: String)
@@ -173,15 +215,23 @@ object DFMetricProcessor extends BasicMetricProcessor {
     }
 
     val allCalculators = singlePassCalculators ++ groupedCalculators.values.flatten.toMap
+    // run single-pass calculators:
     val singlePassResultDF = runSinglePassCalculators(df, singlePassCalculators.values.toSeq)
+    // run all grouping calculators:
     val groupedResultsDFs = groupedCalculators.map{
       case (columns, groupCalculators) => runGroupingCalculators(df, columns, groupCalculators.values.toSeq)
     }.toSeq
+    
+    // Each of the processed dataframe will contain a single row with multiple columns containing
+    // metric result and collected errors.
+    // In order to retrieve all metric calculator results all dataframes are concatenated into a single one.
+    // As all dataframes contains single row, it is safe to use cross-join to concatenate them.
+    val joinedResultDF = groupedResultsDFs.foldLeft(singlePassResultDF)((resDF, curDF) => resDF.crossJoin(curDF))
+    
+    // retrieve calculator results from processed dataframe:
+    val metricResults = getCalculatorResults(joinedResultDF, calculatorResultColumns)
 
-    val metricResults = (groupedResultsDFs :+ singlePassResultDF).flatMap { processedDf =>
-      getCalculatorResults(processedDf, calculatorResultColumns)
-    }.toMap
-
+    // build final results:
     buildMetricResults(metricResults, allCalculators, source.id)
 
   }.toResult(preMsg = s"Unable to process metrics for source ${source.id} due to following error:")

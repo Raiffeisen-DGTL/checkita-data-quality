@@ -689,11 +689,11 @@ object BasicStringRDDMetrics {
    *         "FORMATTED_DATE"
    */
   case class FormattedDateRDDMetricCalculator(cnt: Long,
-                                                    dateFormat: String,
-                                                    protected val reversed: Boolean,
-                                                    protected val failCount: Long = 0,
-                                                    protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                                    protected val failMsg: String = "OK")
+                                              dateFormat: String,
+                                              protected val reversed: Boolean,
+                                              protected val failCount: Long = 0,
+                                              protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                              protected val failMsg: String = "OK")
     extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
