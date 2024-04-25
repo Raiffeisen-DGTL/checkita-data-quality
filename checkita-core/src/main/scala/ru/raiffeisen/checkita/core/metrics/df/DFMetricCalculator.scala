@@ -2,7 +2,7 @@ package ru.raiffeisen.checkita.core.metrics.df
 
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.{DoubleType, StringType}
+import org.apache.spark.sql.types.{ArrayType, DoubleType, StringType}
 import ru.raiffeisen.checkita.core.metrics.MetricName
 import ru.raiffeisen.checkita.core.metrics.df.Helpers._
 import ru.raiffeisen.checkita.core.metrics.df.functions.api._
@@ -89,7 +89,7 @@ abstract class DFMetricCalculator {
    * @return Spark expression that will yield row data in case of metric error.
    */
   protected def errorExpr(rowData: Column): Column =
-    when(errorConditionExpr, rowData).otherwise(typedlit[Option[Array[String]]](None))
+    when(errorConditionExpr, rowData).otherwise(lit(null).cast(ArrayType(StringType)))
 
 
   /**

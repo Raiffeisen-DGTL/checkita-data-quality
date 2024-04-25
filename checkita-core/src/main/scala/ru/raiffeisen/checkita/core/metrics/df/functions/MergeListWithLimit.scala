@@ -2,8 +2,6 @@ package ru.raiffeisen.checkita.core.metrics.df.functions
 
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.analysis.TypeCheckResult
-import org.apache.spark.sql.catalyst.analysis.TypeCheckResult.DataTypeMismatch
-import org.apache.spark.sql.catalyst.expressions.ExpectsInputTypes.{toSQLExpr, toSQLType}
 import org.apache.spark.sql.catalyst.expressions.aggregate.{Collect, ImperativeAggregate}
 import org.apache.spark.sql.catalyst.expressions.{Expression, ExpressionDescription, UnsafeArrayData}
 import org.apache.spark.sql.catalyst.util.GenericArrayData
@@ -45,15 +43,10 @@ case class MergeListWithLimit(
    */
   override def checkInputDataTypes(): TypeCheckResult = child.dataType match {
     case ArrayType(_, _) => TypeCheckResult.TypeCheckSuccess
-    case _ => DataTypeMismatch(
-      errorSubClass = "UNEXPECTED_INPUT_TYPE",
-      messageParameters = Map(
-        "paramIndex" -> "1",
-        "requiredType" -> toSQLType(ArrayType),
-        "inputSql" -> toSQLExpr(child),
-        "inputType" -> toSQLType(child.dataType)
-      )
-    )
+    case _ =>
+      val msg = s"argument 1 requires array<datatype> type, " +
+        s"however, '${child.sql}' is of ${child.dataType.catalogString} type."
+      TypeCheckResult.TypeCheckFailure(msg)
   }
 
   override protected def convertToBufferElement(value: Any): mutable.ArrayBuffer[Any] = {

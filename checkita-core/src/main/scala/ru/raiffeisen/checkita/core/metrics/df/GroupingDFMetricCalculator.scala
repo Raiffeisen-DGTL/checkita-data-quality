@@ -2,7 +2,7 @@ package ru.raiffeisen.checkita.core.metrics.df
 
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.functions.{coalesce, col, lit, sum, typedlit, when}
-import org.apache.spark.sql.types.DoubleType
+import org.apache.spark.sql.types.{ArrayType, DoubleType, StringType}
 import ru.raiffeisen.checkita.core.metrics.df.Helpers.{DFMetricOutput, addColumnSuffix}
 import ru.raiffeisen.checkita.core.metrics.df.functions.api.{collect_list_limit, merge_list_limit}
 
@@ -94,7 +94,7 @@ abstract class GroupingDFMetricCalculator extends DFMetricCalculator {
     val rowData = rowDataExpr(keyFields)
     when(
       errorConditionExpr, groupErrorExpr(rowData, errorDumpSize)
-    ).otherwise(typedlit[Option[Array[Array[String]]]](None)).as(groupErrorsCol)
+    ).otherwise(lit(null).cast(ArrayType(ArrayType(StringType)))).as(groupErrorsCol)
   }
 
 

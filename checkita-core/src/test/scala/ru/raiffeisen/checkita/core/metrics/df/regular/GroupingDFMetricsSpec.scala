@@ -82,7 +82,7 @@ class GroupingDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsTest
       .agg(calculator.groupResult, calculator.groupErrors)
       .select(calculator.result, calculator.errors)
 
-    metDf.explain(true)
+//    metDf.explain(true)
 //    metDf.show(truncate = false)
     val processed = metDf.collect.head
     val result = processed.getDouble(0)

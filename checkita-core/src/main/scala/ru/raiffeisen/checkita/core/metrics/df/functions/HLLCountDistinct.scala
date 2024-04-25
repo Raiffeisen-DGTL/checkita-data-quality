@@ -4,8 +4,6 @@ import com.twitter.algebird.{HLL, HyperLogLog, HyperLogLogMonoid}
 import org.apache.commons.lang3.SerializationUtils
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.analysis.TypeCheckResult
-import org.apache.spark.sql.catalyst.analysis.TypeCheckResult.DataTypeMismatch
-import org.apache.spark.sql.catalyst.expressions.ExpectsInputTypes.{toSQLExpr, toSQLType}
 import org.apache.spark.sql.catalyst.expressions.aggregate.{ImperativeAggregate, TypedImperativeAggregate}
 import org.apache.spark.sql.catalyst.expressions.{Expression, ExpressionDescription}
 import org.apache.spark.sql.catalyst.trees.BinaryLike
@@ -57,15 +55,12 @@ case class HLLCountDistinct(
    * Accuracy, on the other hand, must have a DoubleType.
    */
   override def checkInputDataTypes(): TypeCheckResult = {
-    if (accuracy.dataType != DoubleType) DataTypeMismatch(
-      errorSubClass = "UNEXPECTED_INPUT_TYPE",
-      messageParameters = Map(
-        "paramIndex" -> "2",
-        "requiredType" -> toSQLType(DoubleType),
-        "inputSql" -> toSQLExpr(accuracy),
-        "inputType" -> toSQLType(accuracy.dataType)
-      )
-    ) else TypeCheckResult.TypeCheckSuccess
+    if (accuracy.dataType != DoubleType) {
+      val msg = s"argument 2 requires ${DoubleType.simpleString} type, " +
+        s"however, '${accuracy.sql}' is of ${accuracy.dataType.catalogString} type."
+      TypeCheckResult.TypeCheckFailure(msg)
+
+    } else TypeCheckResult.TypeCheckSuccess
   }
 
   private lazy val hllAccuracy: Double = accuracy.eval().asInstanceOf[Double]
