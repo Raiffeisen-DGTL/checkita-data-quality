@@ -74,7 +74,7 @@ object MultiColumnRDDMetrics {
     
     override def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
       val that: CovarianceRDDMetricCalculator = m2.asInstanceOf[CovarianceRDDMetricCalculator]
-      CovarianceRDDMetricCalculator(
+      if (this.n == 0) that else CovarianceRDDMetricCalculator(
         (this.lMean * this.n + that.lMean * that.n) / (this.n + that.n),
         (this.rMean * this.n + that.rMean * that.n) / (this.n + that.n),
         this.coMoment + that.coMoment +
