@@ -216,17 +216,23 @@ object DFMetricProcessor extends BasicMetricProcessor {
 
     val allCalculators = singlePassCalculators ++ groupedCalculators.values.flatten.toMap
     // run single-pass calculators:
-    val singlePassResultDF = runSinglePassCalculators(df, singlePassCalculators.values.toSeq)
+    val singlePassResultDF = if (singlePassCalculators.isEmpty) Seq.empty
+      else Seq(runSinglePassCalculators(df, singlePassCalculators.values.toSeq))
     // run all grouping calculators:
     val groupedResultsDFs = groupedCalculators.map{
       case (columns, groupCalculators) => runGroupingCalculators(df, columns, groupCalculators.values.toSeq)
     }.toSeq
     
+    assert(
+      singlePassResultDF.nonEmpty || groupedResultsDFs.nonEmpty,
+      s"There are not calculators results produced for source '${source.id}''"
+    )
+    
     // Each of the processed dataframe will contain a single row with multiple columns containing
     // metric result and collected errors.
     // In order to retrieve all metric calculator results all dataframes are concatenated into a single one.
     // As all dataframes contains single row, it is safe to use cross-join to concatenate them.
-    val joinedResultDF = groupedResultsDFs.foldLeft(singlePassResultDF)((resDF, curDF) => resDF.crossJoin(curDF))
+    val joinedResultDF = (singlePassResultDF ++ groupedResultsDFs).reduce((resDF, curDF) => resDF.crossJoin(curDF))
     
     // retrieve calculator results from processed dataframe:
     val metricResults = getCalculatorResults(joinedResultDF, calculatorResultColumns)

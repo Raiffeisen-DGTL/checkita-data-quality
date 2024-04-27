@@ -1,5 +1,6 @@
 package ru.raiffeisen.checkita.utils
 
+import enumeratum.EnumEntry
 import eu.timepit.refined.api.Refined
 import org.apache.commons.io.FileUtils.openInputStream
 import org.apache.commons.io.IOUtils.toInputStream
@@ -50,12 +51,19 @@ object Common {
   def getFieldsMap[T <: Product with Serializable : TypeTag](obj: T): Map[String, Any] = {
     val fields = typeOf[T].members.collect {
       case m: MethodSymbol if m.isCaseAccessor => m.name.toString
-    }
-    obj.productIterator.toSeq.zip(fields).map{
-      case (v: Refined[_, _], k) => k -> v.value
-      case (v: DateFormat, k) => k -> v.pattern
-      case (v, k) => k -> v
-    }.toMap
+    }.toSet
+    obj.getClass.getDeclaredFields
+      .filter(f => fields.contains(f.getName))  // retain only fields that are case class fields.
+      .foldLeft(Map.empty[String, Any]){ (m, f) =>
+        f.setAccessible(true)
+        val value = f.get(obj).asInstanceOf[Any] match {
+          case v: Refined[_, _] => v.value
+          case v: DateFormat => v.pattern
+          case v: EnumEntry => v.toString
+          case v => v
+        }
+        m + (f.getName -> value)
+      }
   }
 
   /**
