@@ -42,9 +42,6 @@ class Tables(val profile: JdbcProfile) {
     def sourceId: Rep[String] = column[String]("source_id")
     def result: Rep[Double] = column[Double]("result")
     def additionalResult: Rep[Option[String]] = column[Option[String]]("additional_result")
-
-    def getUniqueCond(r: R): Rep[Boolean] =
-      jobId === r.jobId && metricId === r.metricId && referenceDate === r.referenceDate
   }
   
   sealed abstract class CheckResultTable[R <: CheckResult](tag: Tag, schema: Option[String], table: String)
@@ -80,6 +77,9 @@ class Tables(val profile: JdbcProfile) {
       referenceDate,
       executionDate
     ) <> (ResultMetricRegular.tupled, ResultMetricRegular.unapply)
+
+    def getUniqueCond(r: ResultMetricRegular): Rep[Boolean] =
+      jobId === r.jobId && metricId === r.metricId && metricName === r.metricName && referenceDate === r.referenceDate
   }
   
   class ResultMetricComposedTable(tag: Tag,schema: Option[String])
@@ -100,6 +100,9 @@ class Tables(val profile: JdbcProfile) {
       referenceDate,
       executionDate
     ) <> (ResultMetricComposed.tupled, ResultMetricComposed.unapply)
+
+    def getUniqueCond(r: ResultMetricComposed): Rep[Boolean] =
+      jobId === r.jobId && metricId === r.metricId && referenceDate === r.referenceDate
   }
 
   class ResultCheckTable(tag: Tag,schema: Option[String])

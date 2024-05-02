@@ -1,0 +1,45 @@
+ALTER TABLE "${defaultSchema}"."results_metric_regular" RENAME TO "results_metric_regular_backup";
+CREATE TABLE "${defaultSchema}"."results_metric_regular"
+(
+    "job_id"            VARCHAR(512)     NOT NULL,
+    "metric_id"         VARCHAR(512)     NOT NULL,
+    "metric_name"       VARCHAR(512)     NOT NULL,
+    "description"       CLOB,
+    "metadata"          CLOB,
+    "source_id"         VARCHAR(512)     NOT NULL,
+    "column_names"      CLOB,
+    "params"            CLOB,
+    "result"            DOUBLE PRECISION NOT NULL,
+    "additional_result" VARCHAR(2048),
+    "reference_date"    TIMESTAMP        NOT NULL,
+    "execution_date"    TIMESTAMP        NOT NULL,
+    UNIQUE ("job_id", "metric_id", "metric_name", "reference_date")
+);
+INSERT INTO "${defaultSchema}"."results_metric_regular" (
+    "job_id",
+    "metric_id",
+    "metric_name",
+    "description",
+    "metadata",
+    "source_id",
+    "column_names",
+    "params",
+    "result",
+    "additional_result",
+    "reference_date",
+    "execution_date"
+) SELECT "job_id",
+         "metric_id",
+         "metric_name",
+         "description",
+         "metadata",
+         "source_id",
+         "column_names",
+         "params",
+         "result",
+         "additional_result",
+         "reference_date",
+         "execution_date"
+FROM "${defaultSchema}"."results_metric_regular_backup";
+
+DROP TABLE "${defaultSchema}"."results_metric_regular_backup";

@@ -11,7 +11,7 @@ trait WindowParams {
   val windowSize: String
   val windowOffset: Option[String]
 
-  val windowString: Option[String] = rule match {
+  def windowString: Option[String] = rule match {
     case TrendCheckRule.Record =>
       val windowMsg = s" over $windowSize records back"
       val offsetMsg = windowOffset.map(n => s" with offset of $n records back").getOrElse("")

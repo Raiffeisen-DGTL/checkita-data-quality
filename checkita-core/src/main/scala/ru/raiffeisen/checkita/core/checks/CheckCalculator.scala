@@ -18,7 +18,7 @@ abstract class CheckCalculator {
   val baseMetric: String
   val compareMetric: Option[String]
   
-  protected val windowString: Option[String]
+  protected def windowString: Option[String]
   protected val notFoundErrMsg: String = 
     s"Check $checkId for metric '$baseMetric' cannot be run: metric results were not found."
 

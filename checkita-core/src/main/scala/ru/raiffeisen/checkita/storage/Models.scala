@@ -11,7 +11,8 @@ import java.sql.Timestamp
 
 object Models {
 
-  type UniqueResult = String :: String :: Timestamp :: HNil
+  type GeneralUniqueResult = String :: String :: Timestamp :: HNil
+  type RegularMetricUniqueResult = String :: String :: String :: Timestamp :: HNil
   type JobUniqueResult = String :: Timestamp :: HNil
 
   sealed abstract class DQEntity extends Product {
@@ -35,9 +36,6 @@ object Models {
     val additionalResult: Option[String]
     val referenceDate: Timestamp
     val executionDate: Timestamp
-    
-    val uniqueFields: UniqueResult = jobId :: metricId :: referenceDate :: HNil
-    val uniqueFieldNames: Seq[String] = Seq("jobId", "metricId", "referenceDate").map(camelToSnakeCase)
   }
 
   sealed abstract class CheckResult extends DQEntity with DescriptiveFields {
@@ -50,7 +48,7 @@ object Models {
     val referenceDate: Timestamp
     val executionDate: Timestamp
 
-    val uniqueFields: UniqueResult = jobId :: checkId :: referenceDate :: HNil
+    val uniqueFields: GeneralUniqueResult = jobId :: checkId :: referenceDate :: HNil
     val uniqueFieldNames: Seq[String] = Seq("jobId", "checkId", "referenceDate").map(camelToSnakeCase)
   }
 
@@ -67,6 +65,8 @@ object Models {
                                        referenceDate: Timestamp,
                                        executionDate: Timestamp) extends MetricResult {
     val entityType: String = "regularMetricResult"
+    val uniqueFields: RegularMetricUniqueResult = jobId :: metricId :: metricName :: referenceDate :: HNil
+    val uniqueFieldNames: Seq[String] = Seq("jobId", "metricId", "metricName", "referenceDate").map(camelToSnakeCase)
   }
 
   final case class ResultMetricComposed(jobId: String,
@@ -81,6 +81,8 @@ object Models {
                                         referenceDate: Timestamp,
                                         executionDate: Timestamp) extends MetricResult {
     val entityType: String = "composedMetricResult"
+    val uniqueFields: GeneralUniqueResult = jobId :: metricId :: referenceDate :: HNil
+    val uniqueFieldNames: Seq[String] = Seq("jobId", "metricId", "referenceDate").map(camelToSnakeCase)
   }
 
   final case class ResultCheck(jobId: String,
