@@ -112,11 +112,17 @@ object Serialization {
      * Sequence retain order in which were defined.
      * @return Sequence of tuples: fieldName -> fieldValue
      */
-    private def fieldsValues: Seq[(String, Any)] =
-      value.productIterator.toSeq.zip(getFields).map{
-        case (_, n) if dateReplacement.contains(n) => n -> dateReplacement(n)
-        case (v, n) => n -> v
-      }
+    private def fieldsValues: Seq[(String, Any)] = {
+      val fieldsSet = getFields.toSet
+      value.getClass.getDeclaredFields
+        .filter(f => fieldsSet.contains(f.getName))  // retain only fields that are case class fields.
+        .foldLeft(Seq.empty[(String, Any)]){ (s, f) =>
+          f.setAccessible(true)
+          val n = f.getName
+          val v = dateReplacement.getOrElse(n, f.get(value).asInstanceOf[Any])
+          s :+ (n -> v)
+        }
+    }
 
     /**
      * Serialize result entity into unified JSON string.
