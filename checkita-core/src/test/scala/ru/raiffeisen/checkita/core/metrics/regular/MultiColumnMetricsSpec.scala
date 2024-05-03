@@ -52,16 +52,28 @@ class MultiColumnMetricsSpec extends AnyWordSpec with Matchers {
         t.getFailCounter shouldEqual 0
       }
     }
-
-    "return NaN values when sequence contains non-number values" in {
-      val metricResults = Seq(testValues.head, testValues(3)).map(s => s.foldLeft[MetricCalculator](
+    
+    "return correct result and fail counts when sequence contains non-number values" in {
+      val results = (545.5746740000001, 181.8582246666667, 272.78733700000004)
+      val metricCalc = testValues(3).foldLeft[MetricCalculator](
+        new CovarianceMetricCalculator())((m, v) => m.increment(v))
+      val metricResult = metricCalc.result()
+      val metricFailCnt = metricCalc.getFailCounter
+      
+      metricResult(MetricName.CoMoment.entryName)._1 shouldEqual results._1
+      metricResult(MetricName.Covariance.entryName)._1 shouldEqual results._2
+      metricResult(MetricName.CovarianceBessel.entryName)._1 shouldEqual results._3
+      
+      metricFailCnt shouldEqual 3
+    }
+    
+    "return NaN values when sequence do not contain numeric values" in {
+      val metricResult = testValues.head.foldLeft[MetricCalculator](
         new CovarianceMetricCalculator())((m, v) => m.increment(v)).result()
-      )
-      metricResults.foreach { v =>
-        v(MetricName.CoMoment.entryName)._1.isNaN shouldEqual true
-        v(MetricName.Covariance.entryName)._1.isNaN shouldEqual true
-        v(MetricName.CovarianceBessel.entryName)._1.isNaN shouldEqual true
-      }
+      
+      metricResult(MetricName.CoMoment.entryName)._1.isNaN shouldEqual true
+      metricResult(MetricName.Covariance.entryName)._1.isNaN shouldEqual true
+      metricResult(MetricName.CovarianceBessel.entryName)._1.isNaN shouldEqual true
     }
 
     "return fail status and correct fail counts when sequence contains non-number values" in {

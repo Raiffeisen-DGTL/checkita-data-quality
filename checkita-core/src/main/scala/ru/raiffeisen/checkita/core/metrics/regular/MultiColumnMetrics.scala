@@ -56,24 +56,20 @@ object MultiColumnMetrics {
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
 
-    override def result(): Map[String, (Double, Option[String])] = if (failCount == 0 && n > 0) {
+    override def result(): Map[String, (Double, Option[String])] = {
+      val coMomentAdj = if (n > 0) coMoment else Double.NaN  // return NaN from empty calculator state
+      val covariance = if (n > 0) coMoment / n else Double.NaN
+      val covarianceBessel = if (n > 1) coMoment / (n - 1) else Double.NaN
       Map(
-        MetricName.CoMoment.entryName -> (coMoment, None),
-        MetricName.Covariance.entryName -> (coMoment / n, None),
-        MetricName.CovarianceBessel.entryName -> (coMoment / (n - 1), None)
-      )
-    } else {
-      val msg = Some("Metric calculation failed due to some of the processed values cannot be cast to number.")
-      Map(
-        MetricName.CoMoment.entryName -> (Double.NaN, msg),
-        MetricName.Covariance.entryName -> (Double.NaN, msg),
-        MetricName.CovarianceBessel.entryName -> (Double.NaN, msg)
+        MetricName.CoMoment.entryName -> (coMomentAdj, None),
+        MetricName.Covariance.entryName -> (covariance, None),
+        MetricName.CovarianceBessel.entryName -> (covarianceBessel, None)
       )
     }
-    
+
     override def merge(m2: MetricCalculator): MetricCalculator = {
       val that: CovarianceMetricCalculator = m2.asInstanceOf[CovarianceMetricCalculator]
-      CovarianceMetricCalculator(
+      if (this.n == 0) that else CovarianceMetricCalculator(
         (this.lMean * this.n + that.lMean * that.n) / (this.n + that.n),
         (this.rMean * this.n + that.rMean * that.n) / (this.n + that.n),
         this.coMoment + that.coMoment +
