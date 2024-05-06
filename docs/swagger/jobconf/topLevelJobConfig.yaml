@@ -1,0 +1,51 @@
+title: Job Configuration
+description: Checkita Data Quality Job Configuration
+type: object
+properties:
+  jobConfig:
+    type: object
+    description: |-
+      Object holding all Checkita Data Quality Job configuration sections.
+
+      ***Note that Checkita DQ job configuration is quite complex and framework has its
+      own validation mechanisms for job configurations. OpenAPI documentation 
+      represents merely job configuration structure and minimum requirements.***
+    properties:
+      jobId:
+        type: string
+        description: ID of data quality job.
+        example: your_first_dq_job
+      jobDescription:
+        type: string
+        description: Data quality job description.
+        default: ""
+        example: Description of your first dq job
+      jobMetadata:
+        type: array
+        description: Optional list of arbitrary user-defined metadata parameters specific to this job.
+        items:
+          type: string
+          description: Metadata parameter string in format of  `param.name=param.value`
+        default: []
+      connections:
+        $ref: 'connectionsConfig.yaml'
+      schemas:
+       $ref: 'schemasConfig.yaml'
+      # sources: 
+      #   $ref: 'sourcesConfig.yaml'
+      # streams:
+      #   $ref: 'streamsConfig.yaml'
+      # virtualSources:
+      #   $ref: 'virtualSourcesConfig.yaml'
+      # virtualStreams:
+      #   $ref: 'virtualStreamsConfig.yaml'
+      # loadChecks:
+      #   $ref: 'loadChecksConfig.yaml'
+      # metrics:
+      #   $ref: 'metricsConfig.yaml'
+      # checks:
+      #   $ref: 'checksConfig.yaml'
+      # targets:
+      #   $ref: 'targetsConfig.yaml'
+    required:
+      - jobId

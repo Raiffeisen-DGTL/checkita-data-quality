@@ -1,0 +1,16 @@
+title: fixedShort
+allOf:
+  - $ref: 'baseSchemaConfig.yaml'
+  - type: object
+    required:
+      - schema
+    properties:
+      schema:
+        type: array
+        description: List of schema columns
+        items:
+          type: string
+          description: |-
+            Column definition string in format `columnName:columnWidth`.
+            Type of columns is always a StringType.
+          example: column_one:5      
