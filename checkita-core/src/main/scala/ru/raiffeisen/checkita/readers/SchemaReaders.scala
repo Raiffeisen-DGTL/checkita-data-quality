@@ -1,10 +1,12 @@
 package ru.raiffeisen.checkita.readers
 
+import org.apache.avro.Schema
 import org.apache.avro.Schema.Parser
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.avro.SchemaConverters
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import ru.raiffeisen.checkita.config.jobconf.Schemas._
+import ru.raiffeisen.checkita.connections.schemaregistry.SchemaRegistryConnection
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.io.File
@@ -41,6 +43,61 @@ object SchemaReaders {
     def toAvroSchema: String = rawAvro.getOrElse(
       SchemaConverters.toAvroType(schema, nullable = false, recordName = id).toString
     )
+  }
+  
+  object SourceSchema {
+
+    /**
+     * Gets avro schema parser.
+     *
+     * @param validateDefaults Boolean flag enabling or disabling default values validation in Avro schema.
+     * @return Avro schema parser
+     */
+    private def getParser(validateDefaults: Boolean): Parser =
+      new Parser().setValidateDefaults(validateDefaults)
+
+    /**
+     * Builds SourceSchema instance from parsed avro schema.
+     *
+     * @param id         Schema ID
+     * @param avroSchema Parsed Avro schema
+     * @return SourceSchema instance
+     */
+    private def fromAvroSchema(id: String, avroSchema: Schema): SourceSchema = {
+      val sparkSchema = SchemaConverters
+        .toSqlType(avroSchema)
+        .dataType
+        .asInstanceOf[StructType]
+      SourceSchema(id, sparkSchema, rawAvro = Some(avroSchema.toString))
+    }
+
+    /**
+     * Construct SourceSchema from file with Avro schema.
+     *
+     * @param id               Schema ID
+     * @param schema           File with Avro schema (.avsc)
+     * @param validateDefaults Boolean flag enabling or disabling default values validation in Avro schema.
+     * @return SourceSchema instance
+     */
+    def parseAvro(id: String, schema: File, validateDefaults: Boolean): SourceSchema = {
+      val schemaParser = getParser(validateDefaults)
+      val avroSchema = schemaParser.parse(schema)
+      fromAvroSchema(id, avroSchema)
+    }
+
+    /**
+     * Construct SourceSchema from Avro schema string.
+     *
+     * @param id               Schema ID
+     * @param schema           Avro schema (string)
+     * @param validateDefaults Boolean flag enabling or disabling default values validation in Avro schema.
+     * @return SourceSchema instance
+     */
+    def parseAvro(id: String, schema: String, validateDefaults: Boolean): SourceSchema = {
+      val schemaParser = getParser(validateDefaults)
+      val avroSchema = schemaParser.parse(schema)
+      fromAvroSchema(id, avroSchema)
+    }
   }
 
   /**
@@ -170,19 +227,31 @@ object SchemaReaders {
      * @param spark    Implicit spark session object
      * @return Parsed schema
      */
-    def tryToRead(config: AvroSchemaConfig)(implicit spark: SparkSession): SourceSchema = {
-      val schemaParser = new Parser().setValidateDefaults(config.validateDefaults)
-      val avroSchema = schemaParser.parse(new File(config.schema.value))
-
-      val sparkSchema = SchemaConverters
-        .toSqlType(avroSchema)
-        .dataType
-        .asInstanceOf[StructType]
-
-      SourceSchema(config.id.value, sparkSchema, rawAvro = Some(avroSchema.toString))
-    }
+    def tryToRead(config: AvroSchemaConfig)(implicit spark: SparkSession): SourceSchema =
+      SourceSchema.parseAvro(config.id.value, new File(config.schema.value), config.validateDefaults)
   }
 
+  implicit object RegistrySchemaReader extends SchemaReader[RegistrySchemaConfig] {
+    /**
+     * Tries to read schema given the schema configuration
+     *
+     * @param config Schema configuration
+     * @param spark  Implicit spark session object
+     * @return Parsed schema
+     */
+    override def tryToRead(config: RegistrySchemaConfig)(implicit spark: SparkSession): SourceSchema = {
+      val conn = SchemaRegistryConnection(config)
+      val rawSchema = (config.schemaId, config.schemaSubject.map(_.value)) match {
+        case (Some(id), None) => conn.getSchemaById(id, config.version)
+        case (None, Some(subject)) => conn.getSchemaBySubject(subject, config.version)
+        case _ => throw new IllegalArgumentException(
+          "Schema can be read from registry either by its ID or by its subject but not both."
+        )
+      }
+      SourceSchema.parseAvro(config.id.value, rawSchema, config.validateDefaults)
+    }
+  }
+  
   /**
    * General schema reader: invokes read method from schema reader that matches provided schema configuration
    */
@@ -200,6 +269,7 @@ object SchemaReaders {
       case fixedSort: FixedShortSchemaConfig => FixedShortSchemaReader.tryToRead(fixedSort)
       case hive: HiveSchemaConfig => HiveSchemaReader.tryToRead(hive)
       case avro: AvroSchemaConfig => AvroSchemaReader.tryToRead(avro)
+      case registry: RegistrySchemaConfig => RegistrySchemaReader.tryToRead(registry)
       case other => throw new IllegalArgumentException(s"Unsupported schema type: '${other.getClass.getTypeName}'")
     }
   }

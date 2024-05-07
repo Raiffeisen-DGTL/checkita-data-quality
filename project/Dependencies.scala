@@ -45,6 +45,9 @@ object Dependencies {
   val flywayOracle = "org.flywaydb" % "flyway-database-oracle" % flywayVersion
   val flywayMSSQL = "org.flywaydb" % "flyway-sqlserver" % flywayVersion
 
+//  // Schema Registry:
+  val schemaRegistry = "io.confluent" % "kafka-schema-registry-client" % "7.6.0"
+  
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.15" % Test
   
   val checkita_core: Seq[ModuleID] = Seq(
@@ -74,6 +77,7 @@ object Dependencies {
     flywayMySQL,
     flywayOracle,
     flywayMSSQL,
+    schemaRegistry,
     scalaTest
   )
 

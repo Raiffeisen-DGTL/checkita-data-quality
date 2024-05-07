@@ -4,7 +4,8 @@ import eu.timepit.refined.api.Refined
 import eu.timepit.refined.collection.NonEmpty
 import eu.timepit.refined.types.string.NonEmptyString
 import org.apache.spark.sql.types.DataType
-import ru.raiffeisen.checkita.config.RefinedTypes.{FixedShortColumn, ID, PositiveInt, SparkParam, URI}
+import ru.raiffeisen.checkita.config.RefinedTypes.{FixedShortColumn, ID, NonEmptyURISeq, PositiveInt, SparkParam, URI}
+import ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionConfig
 
 object Schemas {
 
@@ -98,7 +99,6 @@ object Schemas {
    * @param description      Schema description
    * @param schema           Path to Avro schema file (.avsc)
    * @param validateDefaults Boolean flag enabling or disabling default values validation in Avro schema.
-   *                         Default: `false`.
    * @param metadata         List of metadata parameters specific to this schema
    */
   final case class AvroSchemaConfig(
@@ -128,5 +128,34 @@ object Schemas {
                                      excludeColumns: Seq[NonEmptyString] = Seq.empty,
                                      metadata: Seq[SparkParam] = Seq.empty
                                    ) extends SchemaConfig
+
+
+  /**
+   * Schema configuration that is used to read schema from
+   * Confluent Schema Registry.
+   *
+   * @param id               Schema ID
+   * @param description      Schema description
+   * @param baseUrls         List of urls to connect to Schema Registry
+   * @param schemaId         Schema ID to search in schema registry
+   * @param schemaSubject    Schema subject to search in schema registry 
+   * @param version          Schema version (by default latest available version is fetched)
+   * @param validateDefaults Boolean flag enabling or disabling default values validation in Avro schema.
+   * @param properties       List of additional connection properties: sequence of strings in format `key=value`.
+   * @param headers          List of additional HTML headers: sequence of strings in format `key=value`.
+   * @param metadata         List of metadata parameters specific to this schema
+   */
+  final case class RegistrySchemaConfig(
+                                         id: ID,
+                                         description: Option[NonEmptyString],
+                                         baseUrls: NonEmptyURISeq,
+                                         schemaId: Option[Int],
+                                         schemaSubject: Option[NonEmptyString],
+                                         version: Option[Int],
+                                         validateDefaults: Boolean = false,
+                                         properties: Seq[SparkParam] = Seq.empty,
+                                         headers: Seq[SparkParam] = Seq.empty,
+                                         metadata: Seq[SparkParam] = Seq.empty
+                                       ) extends SchemaConfig
 
 }
