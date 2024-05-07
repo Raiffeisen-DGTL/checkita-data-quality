@@ -18,6 +18,8 @@ scalacOptions ++= Seq(
   "-language:higherKinds"
 )
 
+resolvers += "Confluent IO" at "https://packages.confluent.io/maven/"
+
 lazy val `checkita-data-quality` = (project in file("."))
   .aggregate(`checkita-core`)
   .settings(publish / skip := true)
