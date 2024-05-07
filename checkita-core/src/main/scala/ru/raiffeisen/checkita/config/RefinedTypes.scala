@@ -35,7 +35,8 @@ object RefinedTypes {
   type SingleElemStringSeq = Seq[String] Refined Size[Equal[W.`1`.T]]
   type DoubleElemStringSeq = Seq[String] Refined Size[Equal[W.`2`.T]]
   type MultiElemStringSeq = Seq[String] Refined MinSize[W.`2`.T]
-
+  type NonEmptyURISeq = Seq[URI] Refined NonEmpty
+  
   /**
    * Refinements for double sequences:
    */

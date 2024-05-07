@@ -6,6 +6,7 @@ ThisBuild / organizationName := "Raiffeisen"
 ThisBuild / versionScheme    := Some("semver-spec")
 ThisBuild / publishTo        := publishRepo.value
 ThisBuild / credentials      += Credentials(Path.userHome / ".sbt" / ".credentials")
+ThisBuild / resolvers        += "Confluent IO" at "https://packages.confluent.io/maven/"
 
 scalacOptions ++= Seq(
   "-encoding", "UTF-8",

@@ -8,6 +8,7 @@ import ru.raiffeisen.checkita.config.jobconf.Checks._
 import ru.raiffeisen.checkita.config.jobconf.MetricParams.LevenshteinDistanceParams
 import ru.raiffeisen.checkita.config.jobconf.Sources._
 import ru.raiffeisen.checkita.config.Parsers.ExpressionParsingOps
+import ru.raiffeisen.checkita.config.jobconf.Schemas.RegistrySchemaConfig
 
 import javax.validation.ValidationException
 import scala.concurrent.duration.Duration
@@ -23,6 +24,36 @@ import ru.raiffeisen.checkita.config.Implicits._
  */
 object PreValidation {
 
+  /**
+   * Ensure that registry schema is fetched either by it ID or by its subject, but not both.
+   *
+   * @param s Parsed registry schema configuration
+   * @return Boolean validation result
+   */
+  private def registrySchemaValidation(s: RegistrySchemaConfig): Boolean =
+    (s.schemaId.nonEmpty && s.schemaSubject.isEmpty) || (s.schemaId.isEmpty && s.schemaSubject.nonEmpty)
+
+  /**
+   * Implicit RegistrySchema reader validation
+   */
+  implicit val validateRegistrySchemaReader: ConfigReader[RegistrySchemaConfig] =
+    deriveReader[RegistrySchemaConfig].ensure(
+      registrySchemaValidation,
+      _ => "Registry schema must be fetched from schema registry either by its ID or by its subject but not both."
+    )
+
+  /**
+   * Implicit RegistrySchema writer validation
+   */
+  implicit val validateRegistrySchemaWriter: ConfigWriter[RegistrySchemaConfig] =
+    deriveWriter[RegistrySchemaConfig].contramap[RegistrySchemaConfig]{ x =>
+      if (registrySchemaValidation(x)) x
+      else throw new ValidationException(
+        s"Error during writing ${x.toString}: " +
+          "registry schema must be fetched from schema registry either by its ID or by its subject but not both."
+      )
+    }
+  
   /**
    * Implicit StreamConfig reader validation
    */
