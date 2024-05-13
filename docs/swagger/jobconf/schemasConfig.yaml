@@ -1,0 +1,19 @@
+description: |-
+  Section holding all schemas configurations.
+type: array
+default: []
+items:
+  discriminator: 
+    propertyName: kind
+    mapping: 
+      delimited: 'schemas/delimitedSchemaConfig.yaml'
+      fixedFull: 'schemas/fixedFullSchemaConfig.yaml'
+      fixedShort: 'schemas/fixedShortSchemaConfig.yaml'
+      avro: 'schemas/avroSchemaConfig.yaml'
+      hive: 'schemas/hiveSchemaConfig.yaml'
+  oneOf:
+    - $ref: 'schemas/delimitedSchemaConfig.yaml'
+    - $ref: 'schemas/fixedFullSchemaConfig.yaml'
+    - $ref: 'schemas/fixedShortSchemaConfig.yaml'
+    - $ref: 'schemas/avroSchemaConfig.yaml'
+    - $ref: 'schemas/hiveSchemaConfig.yaml'

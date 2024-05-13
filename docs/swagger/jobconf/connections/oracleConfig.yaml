@@ -1,0 +1,22 @@
+allOf:
+  - $ref: 'baseConnectionConfig.yaml'
+  - type: object
+    description: Connection configuration to Oracle database
+    required:
+      - url
+    properties:
+      url:
+        type: string
+        description: |-
+          Connection URL. Should contain host, port and name of database. 
+          In addition, extra parameters can be supplied in connection URL if required. 
+          ***Connection protocol must not be specified.***
+        example: oracle.db.com:1521/public
+      username:
+        type: string
+        description: Username used to connect to Oracle database if required.
+        example: someUser
+      password:
+        type: string
+        description: Password used to connect to Oracle database if required.
+        example: somePassword!

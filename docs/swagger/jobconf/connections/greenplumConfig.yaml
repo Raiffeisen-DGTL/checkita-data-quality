@@ -1,0 +1,26 @@
+allOf:
+  - $ref: 'baseConnectionConfig.yaml'
+  - type: object
+    description: |-
+      Connection configuration to Greenplum database via Pivotal Greenplum Spark-connector.
+      Pivotal connector is not published in public repositories such as Maven Central. 
+      Therefore, this dependency is unmanaged and should be manually added to Spark application 
+      during submit (using 'spark.jars' configuration parameter).
+    required:
+      - url
+    properties:
+      url:
+        type: string
+        description: |-
+          Connection URL. Should contain host, port and name of database. 
+          In addition, extra parameters can be supplied in connection URL if required. 
+          ***Connection protocol must not be specified.***
+        example: greenplum.db.com:5432/public
+      username:
+        type: string
+        description: Username used to connect to Greenplum database if required.
+        example: someUser
+      password:
+        type: string
+        description: Password used to connect to Greenplum database if required.
+        example: somePassword!

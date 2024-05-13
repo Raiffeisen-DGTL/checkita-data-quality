@@ -1,0 +1,26 @@
+type: object
+required:
+  - id
+properties:
+  id:
+    type: string
+    description: Connection ID
+    example: some_connection
+  description:
+    type: string
+    description: Optional. Connection description
+    example: Connection to application database
+  parameters:
+    type: array
+    description: List of additional Spark parameters used to setup connection (if required).
+    items:
+      type: string
+      description: Spark parameter in format of `spark.param.name=spark.param.value`
+    default: [ ]
+  metadata:
+    type: array
+    description: Optional list of arbitrary user-defined metadata parameters specific to this connection.
+    items:
+      type: string
+      description: Metadata parameter string in format of  `param.name=param.value`
+    default: [ ]

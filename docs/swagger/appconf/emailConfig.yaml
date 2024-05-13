@@ -1,0 +1,45 @@
+description: |-
+  Section holding parameters defining connection to SMTP server which is used to send notifications via email.
+  If this section is missing then email notifications cannot be sent. 
+  If ones were configured in job configuration, then exception would be thrown at runtime.
+type: object
+properties:
+  host:
+    type: string
+    description: SMTP server host.
+    example: some.smtp.server
+  port:
+    type: integer
+    description: SMTP server port.
+    example: 25
+  address:
+    type: string
+    description: Email address to sent notification from.
+    example: checkita.dq.notification.bot@domain.com
+  name:
+    type: string
+    description: Name of the sender
+    example: Checkita DQ Notification Bot
+  sslOnConnect:
+    type: boolean
+    description: Boolean parameter indicating whether to use SSL on connect.
+    default: false
+    example: true
+  tlsEnabled:
+    type: boolean
+    description: Boolean parameter indicating whether to enable TLS.
+    default: false
+    example: true
+  username:
+    type: string
+    description: Username for connection to SMTP server (if required).
+    example: someUser
+  password:
+    type: string
+    description: Password for connection to SMTP server (if required).
+    example: somePassword
+required:
+  - host
+  - port
+  - address
+  - name

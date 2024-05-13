@@ -1,0 +1,23 @@
+description: |-
+  Section holding datetime format and time zone configurations used for string
+  representation of `referenceDate` and `executionDate`.
+  If this section is missing in configuration file then default values are used
+  for all parameters within.
+type: object
+properties:
+  timeZone:
+    type: string
+    description: Time zone in which string representation of reference date
+      and execution date are parsed and rendered
+    default: UTC
+    example: GMT+3
+  referenceDateFormat:
+    type: string
+    description: DateTime format used to parse and render reference date
+    default: yyyy-MM-dd'T'HH:mm:ss.SSS
+    example: yyyy-MM-dd
+  executionDateFormat:
+    type: string
+    description: DateTime format used to parse and render execution date
+    default: yyyy-MM-dd'T'HH:mm:ss.SSS
+    example: yyyy-MM-dd-HH-mm-ss

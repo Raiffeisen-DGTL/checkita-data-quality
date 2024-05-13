@@ -35,6 +35,7 @@ markdown_extensions:
       
 plugins:
   - search
+  - swagger-ui-tag
   - i18n:
       docs_structure: folder
       reconfigure_material: true
@@ -78,6 +79,7 @@ plugins:
                 - contribution/code-of-conduct.md
                 - contribution/contribution.md
             - Scala API Doc: api/index.html
+            - Swagger Doc: swagger/index.md
         - locale: ru
           name: Русский
           build: true
