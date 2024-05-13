@@ -53,7 +53,10 @@ object Implicits {
       s => TimeZone.getTimeZone(s).toZoneId,
       tz => TimeZone.getTimeZone(tz).getDisplayName
     )
-    
+
+  implicit val metricEnginAPIConverter: ConfigConvert[MetricEngineAPI] =
+    ConfigConvert[String].xmap[MetricEngineAPI](MetricEngineAPI.withNameInsensitive, _.toString.toLowerCase)
+
   implicit val dqStorageTypeConverter: ConfigConvert[DQStorageType] =
     ConfigConvert[String].xmap[DQStorageType](DQStorageType.withNameInsensitive, _.toString.toLowerCase)
     

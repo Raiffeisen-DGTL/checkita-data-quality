@@ -1,16 +1,17 @@
-package ru.raiffeisen.checkita.core.metrics.regular
+package ru.raiffeisen.checkita.core.metrics.rdd.regular
 
 import org.isarnproject.sketches.TDigest
 import ru.raiffeisen.checkita.core.CalculatorStatus
-import ru.raiffeisen.checkita.core.Casting.{tryToDouble, tryToLong}
-import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName, ReversibleCalculator}
+import ru.raiffeisen.checkita.core.metrics.rdd.Casting.{tryToDouble, tryToLong}
+import ru.raiffeisen.checkita.core.metrics.rdd.{RDDMetricCalculator, ReversibleRDDCalculator}
+import ru.raiffeisen.checkita.core.metrics.MetricName
 
 import scala.util.Try
 
 /**
  * Basic metrics that can be applied to numerical elements
  */
-object BasicNumericMetrics {
+object BasicNumericRDDMetrics {
 
   /**
    * Calculates percentiles, quantiles for provided elements with use of TDigest library
@@ -29,22 +30,22 @@ object BasicNumericMetrics {
    *         - "THIRD_QUANTILE"
    *         - "MEDIAN_VALUE"
    */
-  case class TDigestMetricCalculator(tdigest: TDigest,
-                                     accuracyError: Double,
-                                     targetSideNumber: Double,
-                                     protected val failCount: Long = 0,
-                                     protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                     protected val failMsg: String = "OK")
-    extends MetricCalculator {
+  case class TDigestRDDMetricCalculator(tdigest: TDigest,
+                                        accuracyError: Double,
+                                        targetSideNumber: Double,
+                                        protected val failCount: Long = 0,
+                                        protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                        protected val failMsg: String = "OK")
+    extends RDDMetricCalculator {
     
     // axillary constructor to initiate with empty TDigest object
     def this(accuracyError: Double, targetSideNumber: Double) =
       this(TDigest.empty(accuracyError), accuracyError, targetSideNumber)
 
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       assert(values.length == 1, "TDigest metrics work for single column only!")
       tryToDouble(values.head) match {
-        case Some(v) => TDigestMetricCalculator(
+        case Some(v) => TDigestRDDMetricCalculator(
           tdigest + v, accuracyError, targetSideNumber, failCount
         )
         case None    => copyWithError(CalculatorStatus.Failure,
@@ -53,7 +54,7 @@ object BasicNumericMetrics {
       }
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] = {
@@ -74,9 +75,9 @@ object BasicNumericMetrics {
       staticResults ++ parametrizedResults
     }
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[TDigestMetricCalculator]
-      TDigestMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[TDigestRDDMetricCalculator]
+      TDigestRDDMetricCalculator(
         this.tdigest ++ that.tdigest,
         this.accuracyError,
         this.targetSideNumber,
@@ -92,20 +93,20 @@ object BasicNumericMetrics {
    *
    * @return result map with keys: "MIN_NUMBER"
    */
-  case class MinNumericValueMetricCalculator(min: Double,
-                                             protected val failCount: Long = 0,
-                                             protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                             protected val failMsg: String = "OK")
-    extends MetricCalculator {
+  case class MinNumberRDDMetricCalculator(min: Double,
+                                          protected val failCount: Long = 0,
+                                          protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                          protected val failMsg: String = "OK")
+    extends RDDMetricCalculator {
 
     // axillary constructor to init metric calculator:
     def this() = this(Double.MaxValue)
     
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       // .min will throw "UnsupportedOperationException" when applied to empty sequence.
       val rowMinValue = Try(values.flatMap(tryToDouble).min).toOption
       rowMinValue match {
-        case Some(v) => MinNumericValueMetricCalculator(Math.min(v, min), failCount)
+        case Some(v) => MinNumberRDDMetricCalculator(Math.min(v, min), failCount)
         case None    => copyWithError(
           CalculatorStatus.Failure,
           "Couldn't compute minimum number out of provided values."
@@ -113,15 +114,15 @@ object BasicNumericMetrics {
       }
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.MinNumber.entryName -> (min, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[MinNumericValueMetricCalculator]
-      MinNumericValueMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[MinNumberRDDMetricCalculator]
+      MinNumberRDDMetricCalculator(
         Math.min(this.min, that.min),
         this.failCount + that.getFailCounter,
         this.status,
@@ -136,20 +137,20 @@ object BasicNumericMetrics {
    * @param max Current maximal value
    * @return result map with keys: "MAX_NUMBER"
    */
-  case class MaxNumericValueMetricCalculator(max: Double,
-                                             protected val failCount: Long = 0,
-                                             protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                             protected val failMsg: String = "OK")
-    extends MetricCalculator {
+  case class MaxNumberRDDMetricCalculator(max: Double,
+                                          protected val failCount: Long = 0,
+                                          protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                          protected val failMsg: String = "OK")
+    extends RDDMetricCalculator {
 
     // axillary constructor to init metric calculator:
     def this() = this(Double.MinValue)
     
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       // .max will throw "UnsupportedOperationException" when applied to empty sequence.
       val rowMaxValue = Try(values.flatMap(tryToDouble).max).toOption
       rowMaxValue match {
-        case Some(v) => MaxNumericValueMetricCalculator(Math.max(v, max), failCount)
+        case Some(v) => MaxNumberRDDMetricCalculator(Math.max(v, max), failCount)
         case None    => copyWithError(
           CalculatorStatus.Failure,
           "Couldn't compute maximum number out of provided values."
@@ -157,15 +158,15 @@ object BasicNumericMetrics {
       }
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
 
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.MaxNumber.entryName -> (max, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[MaxNumericValueMetricCalculator]
-      MaxNumericValueMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[MaxNumberRDDMetricCalculator]
+      MaxNumberRDDMetricCalculator(
         Math.max(this.max, that.max),
         this.failCount + that.getFailCounter,
         this.status,
@@ -180,19 +181,19 @@ object BasicNumericMetrics {
    *
    * @return result map with keys: "SUM_NUMBER"
    */
-  case class SumNumericValueMetricCalculator(sum: Double,
-                                             protected val failCount: Long = 0,
-                                             protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                             protected val failMsg: String = "OK")
-    extends MetricCalculator {
+  case class SumNumberRDDMetricCalculator(sum: Double,
+                                          protected val failCount: Long = 0,
+                                          protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                          protected val failMsg: String = "OK")
+    extends RDDMetricCalculator {
 
     // axillary constructor to init metric calculator:
     def this() = this(0)
     
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = { 
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       val doubleValues = values.flatMap(tryToDouble)
-      if (doubleValues.size == values.size) SumNumericValueMetricCalculator(sum + doubleValues.sum, failCount)
-      else SumNumericValueMetricCalculator(
+      if (doubleValues.size == values.size) SumNumberRDDMetricCalculator(sum + doubleValues.sum, failCount)
+      else SumNumberRDDMetricCalculator(
         sum + doubleValues.sum,
         failCount + values.size - doubleValues.size,
         CalculatorStatus.Failure,
@@ -200,15 +201,15 @@ object BasicNumericMetrics {
       )
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] = 
       Map(MetricName.SumNumber.entryName -> (sum, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[SumNumericValueMetricCalculator]
-      SumNumericValueMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[SumNumberRDDMetricCalculator]
+      SumNumberRDDMetricCalculator(
         this.sum + that.sum, 
         this.failCount + that.getFailCounter,
         this.status,
@@ -231,21 +232,21 @@ object BasicNumericMetrics {
    *   "STD_NUMBER"
    *   "AVG_NUMBER"
    */
-  case class StdAvgNumericValueCalculator(sum: Double,
-                                          sqSum: Double,
-                                          cnt: Long,
-                                          protected val failCount: Long = 0,
-                                          protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                          protected val failMsg: String = "OK")
-    extends MetricCalculator {
+  case class StdAvgNumberRDDMetricCalculator(sum: Double,
+                                             sqSum: Double,
+                                             cnt: Long,
+                                             protected val failCount: Long = 0,
+                                             protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                             protected val failMsg: String = "OK")
+    extends RDDMetricCalculator {
 
     // axillary constructor to init metric calculator:
     def this() = this(0, 0, 0)
     
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       assert(values.length == 1, "avgNumber and stdNumber metrics work for single column only!")
       tryToDouble(values.head) match {
-        case Some(v) => StdAvgNumericValueCalculator(sum + v, sqSum + (v * v), cnt + 1, failCount)
+        case Some(v) => StdAvgNumberRDDMetricCalculator(sum + v, sqSum + (v * v), cnt + 1, failCount)
         case None => copyWithError(
           CalculatorStatus.Failure,
           "Provided value cannot be cast to number"
@@ -253,7 +254,7 @@ object BasicNumericMetrics {
       }
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] = {
@@ -265,9 +266,9 @@ object BasicNumericMetrics {
       )
     }
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[StdAvgNumericValueCalculator]
-      StdAvgNumericValueCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[StdAvgNumberRDDMetricCalculator]
+      StdAvgNumberRDDMetricCalculator(
         this.sum + that.sum,
         this.sqSum + that.sqSum,
         this.cnt + that.cnt,
@@ -287,15 +288,15 @@ object BasicNumericMetrics {
    *                    within provided decimal format or to be outside of the provided precision and scale
    * @return result map with keys: "FORMATTED_NUMBER"
    */
-  case class NumberFormattedValuesMetricCalculator(cnt: Long,
-                                                   precision: Int,
-                                                   scale: Int,
-                                                   compareRule: String,
-                                                   protected val reversed: Boolean,
-                                                   protected val failCount: Long = 0,
-                                                   protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                                   protected val failMsg: String = "OK")
-    extends MetricCalculator with ReversibleCalculator {
+  case class FormattedNumberRDDMetricCalculator(cnt: Long,
+                                                precision: Int,
+                                                scale: Int,
+                                                compareRule: String,
+                                                protected val reversed: Boolean,
+                                                protected val failCount: Long = 0,
+                                                protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                                protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
     def this(precision: Int, scale: Int, compareRule: String, reversed: Boolean) =
@@ -309,12 +310,12 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.count(compareFunc)
-      if (rowCnt == values.length) NumberFormattedValuesMetricCalculator(
+      if (rowCnt == values.length) FormattedNumberRDDMetricCalculator(
         cnt + rowCnt, precision, scale, compareRule, reversed, failCount
       )
-      else NumberFormattedValuesMetricCalculator(
+      else FormattedNumberRDDMetricCalculator(
         cnt + rowCnt,
         precision,
         scale,
@@ -335,9 +336,9 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.count(compareFunc)
-      if (rowCnt > 0) NumberFormattedValuesMetricCalculator(
+      if (rowCnt > 0) FormattedNumberRDDMetricCalculator(
         cnt + rowCnt,
         precision,
         scale,
@@ -347,18 +348,18 @@ object BasicNumericMetrics {
         CalculatorStatus.Failure,
         "Some of the provided values CAN be cast to number which meets given" +
           s"precision and scale criteria of $criteriaStringRepr"
-      ) else NumberFormattedValuesMetricCalculator(cnt, precision, scale, compareRule, reversed, failCount)
+      ) else FormattedNumberRDDMetricCalculator(cnt, precision, scale, compareRule, reversed, failCount)
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.FormattedNumber.entryName -> (cnt.toDouble, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[NumberFormattedValuesMetricCalculator]
-      NumberFormattedValuesMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[FormattedNumberRDDMetricCalculator]
+      FormattedNumberRDDMetricCalculator(
         this.cnt + that.cnt,
         this.precision,
         this.scale,
@@ -390,12 +391,12 @@ object BasicNumericMetrics {
    *
    * @return result map with keys: "CASTED_NUMBER"
    */
-  case class NumberCastValuesMetricCalculator(cnt: Long,
-                                              protected val reversed: Boolean,
-                                              protected val failCount: Long = 0,
-                                              protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                              protected val failMsg: String = "OK")
-    extends MetricCalculator with ReversibleCalculator {
+  case class CastedNumberRDDMetricCalculator(cnt: Long,
+                                             protected val reversed: Boolean,
+                                             protected val failCount: Long = 0,
+                                             protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                             protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
     def this(reversed: Boolean) = this(0, reversed)
@@ -408,10 +409,10 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.flatMap(tryToDouble).length
-      if (rowCnt == values.length) NumberCastValuesMetricCalculator(cnt + rowCnt, reversed, failCount)
-      else NumberCastValuesMetricCalculator(
+      if (rowCnt == values.length) CastedNumberRDDMetricCalculator(cnt + rowCnt, reversed, failCount)
+      else CastedNumberRDDMetricCalculator(
         cnt + rowCnt,
         reversed,
         failCount + values.length - rowCnt,
@@ -428,26 +429,26 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.flatMap(tryToDouble).length
-      if (rowCnt > 0) NumberCastValuesMetricCalculator(
+      if (rowCnt > 0) CastedNumberRDDMetricCalculator(
         cnt + rowCnt,
         reversed,
         failCount + rowCnt,
         CalculatorStatus.Failure,
         "Some of the provided values CAN be cast to number"
-      ) else NumberCastValuesMetricCalculator(cnt, reversed, failCount)
+      ) else CastedNumberRDDMetricCalculator(cnt, reversed, failCount)
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.CastedNumber.entryName -> (cnt.toDouble, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[NumberCastValuesMetricCalculator]
-      NumberCastValuesMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[CastedNumberRDDMetricCalculator]
+      CastedNumberRDDMetricCalculator(
         this.cnt + that.cnt,
         this.reversed,
         this.failCount + that.getFailCounter,
@@ -463,13 +464,13 @@ object BasicNumericMetrics {
    * @param domain Set of element that represent requested domain
    * @return result map with keys: "NUMBER_IN_DOMAIN"
    */
-  case class NumberInDomainValuesMetricCalculator(cnt: Long,
-                                                  domain: Set[Double],
-                                                  protected val reversed: Boolean,
-                                                  protected val failCount: Long = 0,
-                                                  protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                                  protected val failMsg: String = "OK")
-    extends MetricCalculator with ReversibleCalculator {
+  case class NumberInDomainRDDMetricCalculator(cnt: Long,
+                                               domain: Set[Double],
+                                               protected val reversed: Boolean,
+                                               protected val failCount: Long = 0,
+                                               protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                               protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
     def this(domain: Set[Double], reversed: Boolean) = this(0, domain, reversed)
@@ -482,12 +483,12 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.flatMap(tryToDouble).count(domain.contains)
-      if (rowCnt == values.length) NumberInDomainValuesMetricCalculator(
+      if (rowCnt == values.length) NumberInDomainRDDMetricCalculator(
         cnt + rowCnt, domain, reversed, failCount
       )
-      else NumberInDomainValuesMetricCalculator(
+      else NumberInDomainRDDMetricCalculator(
         cnt + rowCnt,
         domain,
         reversed,
@@ -505,28 +506,28 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.flatMap(tryToDouble).count(domain.contains)
-      if (rowCnt > 0) NumberInDomainValuesMetricCalculator(
+      if (rowCnt > 0) NumberInDomainRDDMetricCalculator(
         cnt + rowCnt,
         domain,
         reversed,
         failCount + rowCnt,
         CalculatorStatus.Failure,
         s"Some of the provided numeric values are IN the provided domain of ${domain.mkString("[", ",", "]")}"
-      ) else NumberInDomainValuesMetricCalculator(cnt, domain, reversed, failCount)
+      ) else NumberInDomainRDDMetricCalculator(cnt, domain, reversed, failCount)
     }
 
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
 
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.NumberInDomain.entryName -> (cnt.toDouble, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[NumberInDomainValuesMetricCalculator]
-      NumberInDomainValuesMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[NumberInDomainRDDMetricCalculator]
+      NumberInDomainRDDMetricCalculator(
         this.cnt + that.cnt,
         this.domain,
         this.reversed,
@@ -543,13 +544,13 @@ object BasicNumericMetrics {
    * @param domain set of element that represent requested domain
    * @return result map with keys: "NUMBER_OUT_DOMAIN"
    */
-  case class NumberOutDomainValuesMetricCalculator(cnt: Double,
-                                                   domain: Set[Double],
-                                                   protected val reversed: Boolean,
-                                                   protected val failCount: Long = 0,
-                                                   protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                                   protected val failMsg: String = "OK")
-    extends MetricCalculator with ReversibleCalculator {
+  case class NumberOutDomainRDDMetricCalculator(cnt: Double,
+                                                domain: Set[Double],
+                                                protected val reversed: Boolean,
+                                                protected val failCount: Long = 0,
+                                                protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                                protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
     def this(domain: Set[Double], reversed: Boolean) = this(0, domain, reversed)
@@ -562,13 +563,13 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       // takes into account non-number values also. these values are removed from sequence during flatMap operation
       val rowCnt = values.length - values.flatMap(tryToDouble).count(domain.contains)
-      if (rowCnt == values.length) NumberOutDomainValuesMetricCalculator(
+      if (rowCnt == values.length) NumberOutDomainRDDMetricCalculator(
         cnt + rowCnt, domain, reversed, failCount
       )
-      else NumberOutDomainValuesMetricCalculator(
+      else NumberOutDomainRDDMetricCalculator(
         cnt + rowCnt,
         domain,
         reversed,
@@ -586,10 +587,10 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = {
       // takes into account non-number values also. these values are removed from sequence during flatMap operation
       val rowCnt = values.length - values.flatMap(tryToDouble).count(domain.contains)
-      if (rowCnt > 0) NumberOutDomainValuesMetricCalculator(
+      if (rowCnt > 0) NumberOutDomainRDDMetricCalculator(
         cnt + rowCnt,
         domain,
         reversed,
@@ -597,18 +598,18 @@ object BasicNumericMetrics {
         CalculatorStatus.Failure,
         s"Some of the provided numeric values are outside of the provided domain of ${domain.mkString("[", ",", "]")}"
       )
-      else NumberOutDomainValuesMetricCalculator(cnt, domain, reversed, failCount)
+      else NumberOutDomainRDDMetricCalculator(cnt, domain, reversed, failCount)
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.NumberOutDomain.entryName -> (cnt, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[NumberOutDomainValuesMetricCalculator]
-      NumberOutDomainValuesMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[NumberOutDomainRDDMetricCalculator]
+      NumberOutDomainRDDMetricCalculator(
         this.cnt + that.cnt,
         this.domain,
         this.reversed,
@@ -626,13 +627,13 @@ object BasicNumericMetrics {
    * @param compareValue Target value to track
    * @return result map with keys: "NUMBER_VALUES"
    */
-  case class NumberValuesMetricCalculator(cnt: Long,
-                                          compareValue: Double,
-                                          protected val reversed: Boolean,
-                                          protected val failCount: Long = 0,
-                                          protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                          protected val failMsg: String = "OK")
-    extends MetricCalculator with ReversibleCalculator {
+  case class NumberValuesRDDMetricCalculator(cnt: Long,
+                                             compareValue: Double,
+                                             protected val reversed: Boolean,
+                                             protected val failCount: Long = 0,
+                                             protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                             protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
     def this(compareValue: Double, reversed: Boolean) = this(0, compareValue, reversed)
@@ -645,12 +646,12 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.flatMap(tryToDouble).count(_ == compareValue)
-      if (rowCnt == values.length) NumberValuesMetricCalculator(
+      if (rowCnt == values.length) NumberValuesRDDMetricCalculator(
         cnt + rowCnt, compareValue, reversed, failCount
       )
-      else NumberValuesMetricCalculator(
+      else NumberValuesRDDMetricCalculator(
         cnt + rowCnt,
         compareValue,
         reversed,
@@ -668,9 +669,9 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.flatMap(tryToDouble).count(_ == compareValue)
-      if (rowCnt > 0) NumberValuesMetricCalculator(
+      if (rowCnt > 0) NumberValuesRDDMetricCalculator(
         cnt + rowCnt,
         compareValue,
         reversed,
@@ -678,18 +679,18 @@ object BasicNumericMetrics {
         CalculatorStatus.Failure,
         s"Some of the provided values DO equal to requested number value of '$compareValue'"
       )
-      else NumberValuesMetricCalculator(cnt, compareValue, reversed, failCount)
+      else NumberValuesRDDMetricCalculator(cnt, compareValue, reversed, failCount)
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.NumberValues.entryName -> (cnt.toDouble, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[NumberValuesMetricCalculator]
-      NumberValuesMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[NumberValuesRDDMetricCalculator]
+      NumberValuesRDDMetricCalculator(
         this.cnt + that.cnt,
         this.compareValue,
         this.reversed,
@@ -707,14 +708,14 @@ object BasicNumericMetrics {
    * @param includeBound Flag which sets whether compareValue is included or excluded from the interval
    * @return result map with keys: "NUMBER_LESS_THAN"
    */
-  case class NumberLessThanMetricCalculator(cnt: Long,
-                                            compareValue: Double,
-                                            includeBound: Boolean,
-                                            protected val reversed: Boolean,
-                                            protected val failCount: Long = 0,
-                                            protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                            protected val failMsg: String = "OK")
-    extends MetricCalculator with ReversibleCalculator {
+  case class NumberLessThanRDDMetricCalculator(cnt: Long,
+                                               compareValue: Double,
+                                               includeBound: Boolean,
+                                               protected val reversed: Boolean,
+                                               protected val failCount: Long = 0,
+                                               protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                               protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
     def this(compareValue: Double, includeBound: Boolean, reversed: Boolean) =
@@ -728,12 +729,12 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.count(compareFunc)
-      if (rowCnt == values.length) NumberLessThanMetricCalculator(
+      if (rowCnt == values.length) NumberLessThanRDDMetricCalculator(
         cnt + rowCnt, compareValue, includeBound, reversed, failCount
       )
-      else NumberLessThanMetricCalculator(
+      else NumberLessThanRDDMetricCalculator(
         cnt + rowCnt,
         compareValue,
         includeBound,
@@ -752,9 +753,9 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.count(compareFunc)
-      if (rowCnt > 0) NumberLessThanMetricCalculator(
+      if (rowCnt > 0) NumberLessThanRDDMetricCalculator(
         cnt + rowCnt,
         compareValue,
         includeBound,
@@ -763,18 +764,18 @@ object BasicNumericMetrics {
         CalculatorStatus.Failure,
         s"Some of the provided values DO meet numeric criteria of '${if (includeBound) "<=" else "<"}$compareValue'"
       )
-      else NumberLessThanMetricCalculator(cnt, compareValue, includeBound, reversed, failCount)
+      else NumberLessThanRDDMetricCalculator(cnt, compareValue, includeBound, reversed, failCount)
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
 
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.NumberLessThan.entryName -> (cnt.toDouble, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[NumberLessThanMetricCalculator]
-      NumberLessThanMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[NumberLessThanRDDMetricCalculator]
+      NumberLessThanRDDMetricCalculator(
         this.cnt + that.cnt,
         this.compareValue,
         this.includeBound,
@@ -797,14 +798,14 @@ object BasicNumericMetrics {
    * @param includeBound Flag which sets whether compareValue is included (>=) or excluded (>) from the interval.
    * @return result map with keys: "NUMBER_GREATER_THAN"
    */
-  case class NumberGreaterThanMetricCalculator(cnt: Long,
-                                               compareValue: Double,
-                                               includeBound: Boolean,
-                                               protected val reversed: Boolean,
-                                               protected val failCount: Long = 0,
-                                               protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                               protected val failMsg: String = "OK")
-    extends MetricCalculator with ReversibleCalculator {
+  case class NumberGreaterThanRDDMetricCalculator(cnt: Long,
+                                                  compareValue: Double,
+                                                  includeBound: Boolean,
+                                                  protected val reversed: Boolean,
+                                                  protected val failCount: Long = 0,
+                                                  protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                                  protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
     def this(compareValue: Double, includeBound: Boolean, reversed: Boolean) =
@@ -818,12 +819,12 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.count(compareFunc)
-      if (rowCnt == values.length) NumberGreaterThanMetricCalculator(
+      if (rowCnt == values.length) NumberGreaterThanRDDMetricCalculator(
         cnt + rowCnt, compareValue, includeBound, reversed, failCount
       )
-      else NumberGreaterThanMetricCalculator(
+      else NumberGreaterThanRDDMetricCalculator(
         cnt + rowCnt,
         compareValue,
         includeBound,
@@ -842,9 +843,9 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.count(compareFunc)
-      if (rowCnt > 0) NumberGreaterThanMetricCalculator(
+      if (rowCnt > 0) NumberGreaterThanRDDMetricCalculator(
         cnt + rowCnt,
         compareValue,
         includeBound,
@@ -852,18 +853,18 @@ object BasicNumericMetrics {
         failCount + rowCnt,
         CalculatorStatus.Failure,
         s"Some of the provided values DO meet numeric criteria of '${if (includeBound) ">=" else ">"}$compareValue'"
-      ) else NumberGreaterThanMetricCalculator(cnt, compareValue, includeBound, reversed, failCount)
+      ) else NumberGreaterThanRDDMetricCalculator(cnt, compareValue, includeBound, reversed, failCount)
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.NumberGreaterThan.entryName -> (cnt.toDouble, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[NumberGreaterThanMetricCalculator]
-      NumberGreaterThanMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[NumberGreaterThanRDDMetricCalculator]
+      NumberGreaterThanRDDMetricCalculator(
         this.cnt + that.cnt,
         this.compareValue,
         this.includeBound,
@@ -887,15 +888,15 @@ object BasicNumericMetrics {
    * @param includeBound Flag which sets whether interval bounds are included or excluded from the interval.
    * @return result map with keys: "NUMBER_BETWEEN"
    */
-  case class NumberBetweenMetricCalculator(cnt: Long,
-                                           lowerCompareValue: Double,
-                                           upperCompareValue: Double,
-                                           includeBound: Boolean,
-                                           protected val reversed: Boolean,
-                                           protected val failCount: Long = 0,
-                                           protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                           protected val failMsg: String = "OK")
-    extends MetricCalculator with ReversibleCalculator {
+  case class NumberBetweenRDDMetricCalculator(cnt: Long,
+                                              lowerCompareValue: Double,
+                                              upperCompareValue: Double,
+                                              includeBound: Boolean,
+                                              protected val reversed: Boolean,
+                                              protected val failCount: Long = 0,
+                                              protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                              protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
     def this(lowerCompareValue: Double, upperCompareValue: Double, includeBound: Boolean, reversed: Boolean) =
@@ -909,12 +910,12 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.count(compareFunc)
-      if (rowCnt == values.length) NumberBetweenMetricCalculator(
+      if (rowCnt == values.length) NumberBetweenRDDMetricCalculator(
         cnt + rowCnt, lowerCompareValue, upperCompareValue, includeBound, reversed, failCount
       )
-      else NumberBetweenMetricCalculator(
+      else NumberBetweenRDDMetricCalculator(
         cnt + rowCnt,
         lowerCompareValue,
         upperCompareValue,
@@ -934,9 +935,9 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.count(compareFunc)
-      if (rowCnt > 0) NumberBetweenMetricCalculator(
+      if (rowCnt > 0) NumberBetweenRDDMetricCalculator(
         cnt + rowCnt,
         lowerCompareValue,
         upperCompareValue,
@@ -945,20 +946,20 @@ object BasicNumericMetrics {
         failCount + rowCnt,
         CalculatorStatus.Failure,
         s"Some of the provided values DO meet numeric criteria of '$criteriaStringRepr'"
-      ) else NumberBetweenMetricCalculator(
+      ) else NumberBetweenRDDMetricCalculator(
         cnt, lowerCompareValue, upperCompareValue, includeBound, reversed, failCount
       )
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.NumberBetween.entryName -> (cnt.toDouble, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[NumberBetweenMetricCalculator]
-      NumberBetweenMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[NumberBetweenRDDMetricCalculator]
+      NumberBetweenRDDMetricCalculator(
         this.cnt + that.cnt,
         this.lowerCompareValue,
         this.upperCompareValue,
@@ -988,15 +989,15 @@ object BasicNumericMetrics {
    * @param includeBound Flag which sets whether interval bounds are included or excluded from the interval.
    * @return result map with keys: "NUMBER_NOT_BETWEEN"
    */
-  case class NumberNotBetweenMetricCalculator(cnt: Long,
-                                              lowerCompareValue: Double,
-                                              upperCompareValue: Double,
-                                              includeBound: Boolean,
-                                              protected val reversed: Boolean,
-                                              protected val failCount: Long = 0,
-                                              protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                              protected val failMsg: String = "OK")
-    extends MetricCalculator with ReversibleCalculator {
+  case class NumberNotBetweenRDDMetricCalculator(cnt: Long,
+                                                 lowerCompareValue: Double,
+                                                 upperCompareValue: Double,
+                                                 includeBound: Boolean,
+                                                 protected val reversed: Boolean,
+                                                 protected val failCount: Long = 0,
+                                                 protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                                 protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
     def this(lowerCompareValue: Double, upperCompareValue: Double, includeBound: Boolean, reversed: Boolean) =
@@ -1010,12 +1011,12 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.count(compareFunc)
-      if (rowCnt == values.length) NumberNotBetweenMetricCalculator(
+      if (rowCnt == values.length) NumberNotBetweenRDDMetricCalculator(
         cnt + rowCnt, lowerCompareValue, upperCompareValue, includeBound, reversed, failCount
       )
-      else NumberNotBetweenMetricCalculator(
+      else NumberNotBetweenRDDMetricCalculator(
         cnt + rowCnt,
         lowerCompareValue,
         upperCompareValue,
@@ -1035,9 +1036,9 @@ object BasicNumericMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = {
       val rowCnt = values.count(compareFunc)
-      if (rowCnt > 0) NumberNotBetweenMetricCalculator(
+      if (rowCnt > 0) NumberNotBetweenRDDMetricCalculator(
         cnt + rowCnt,
         lowerCompareValue,
         upperCompareValue,
@@ -1046,20 +1047,20 @@ object BasicNumericMetrics {
         failCount + rowCnt,
         CalculatorStatus.Failure,
         s"Some of the provided values DO meet numeric criteria of '$criteriaStringRepr'"
-      ) else NumberNotBetweenMetricCalculator(
+      ) else NumberNotBetweenRDDMetricCalculator(
         cnt, lowerCompareValue, upperCompareValue, includeBound, reversed, failCount
       )
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.NumberNotBetween.entryName -> (cnt.toDouble, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[NumberNotBetweenMetricCalculator]
-      NumberNotBetweenMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[NumberNotBetweenRDDMetricCalculator]
+      NumberNotBetweenRDDMetricCalculator(
         this.cnt + that.cnt,
         this.lowerCompareValue,
         this.upperCompareValue,
@@ -1077,8 +1078,8 @@ object BasicNumericMetrics {
     }
 
     private def criteriaStringRepr: String =
-      if (includeBound) s"<=$lowerCompareValue AND >=$upperCompareValue"
-      else s"<$lowerCompareValue AND >$upperCompareValue"
+      if (includeBound) s"<=$lowerCompareValue OR >=$upperCompareValue"
+      else s"<$lowerCompareValue OR >$upperCompareValue"
   }
 
   /**
@@ -1091,21 +1092,21 @@ object BasicNumericMetrics {
    * @param uniqueValues Set of unique values in a sequence
    * @return result map with keys: "SEQUENCE_COMPLETENESS"
    */
-  case class SequenceCompletenessMetricCalculator(uniqueValues: Set[Long],
-                                                  increment: Long,
-                                                  minVal: Long,
-                                                  maxVal: Long,
-                                                  protected val failCount: Long = 0,
-                                                  protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                                  protected val failMsg: String = "OK") extends MetricCalculator {
+  case class SequenceCompletenessRDDMetricCalculator(uniqueValues: Set[Long],
+                                                     increment: Long,
+                                                     minVal: Long,
+                                                     maxVal: Long,
+                                                     protected val failCount: Long = 0,
+                                                     protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                                     protected val failMsg: String = "OK") extends RDDMetricCalculator {
 
     // axillary constructor to init metric calculator:
     def this(increment: Long) = this(Set.empty[Long], increment, Long.MaxValue, Long.MinValue)
       
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       assert(values.length == 1, "sequenceCompleteness metric works with single column only!")
       tryToLong(values.head) match {
-        case Some(value) => SequenceCompletenessMetricCalculator(
+        case Some(value) => SequenceCompletenessRDDMetricCalculator(
           uniqueValues + value, increment, Math.min(minVal, value), Math.max(maxVal, value), failCount
         )
         case None => copyWithError(
@@ -1115,7 +1116,7 @@ object BasicNumericMetrics {
       }
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
 
     def result(): Map[String, (Double, Option[String])] = Map(
@@ -1123,9 +1124,9 @@ object BasicNumericMetrics {
         (uniqueValues.size.toDouble / ((maxVal - minVal).toDouble / increment.toDouble + 1.0), None)
     )
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[SequenceCompletenessMetricCalculator]
-      SequenceCompletenessMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[SequenceCompletenessRDDMetricCalculator]
+      SequenceCompletenessRDDMetricCalculator(
         this.uniqueValues ++ that.uniqueValues,
         this.increment,
         Math.min(this.minVal, that.minVal),

@@ -1,18 +1,20 @@
-package ru.raiffeisen.checkita.core.metrics
+package ru.raiffeisen.checkita.core.metrics.rdd
 
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.{Row, SparkSession}
 import ru.raiffeisen.checkita.core.Source
 import ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors
+import ru.raiffeisen.checkita.core.metrics.{BasicMetricProcessor, RegularMetric}
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import scala.collection.JavaConverters._
 import scala.util.Try
 
 /** Regular metrics processor for Batch Applications */
-object MetricBatchProcessor extends MetricProcessor {
+object RDDMetricBatchProcessor extends RDDMetricProcessor {
 
-  import MetricProcessor._
+  import BasicMetricProcessor._
+  import RDDMetricProcessor._
 
   /** Type in which metric errors are collected  */
   type AccType = AccumulatedErrors

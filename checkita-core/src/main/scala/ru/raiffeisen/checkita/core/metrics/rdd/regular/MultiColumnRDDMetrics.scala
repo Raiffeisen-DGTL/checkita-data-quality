@@ -1,13 +1,14 @@
-package ru.raiffeisen.checkita.core.metrics.regular
+package ru.raiffeisen.checkita.core.metrics.rdd.regular
 
 import org.apache.commons.text.similarity.LevenshteinDistance
 import ru.raiffeisen.checkita.core.CalculatorStatus
-import ru.raiffeisen.checkita.core.Casting.{tryToDate, tryToDouble, tryToString}
-import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName, ReversibleCalculator}
+import ru.raiffeisen.checkita.core.metrics.rdd.Casting.{tryToDate, tryToDouble, tryToString}
+import ru.raiffeisen.checkita.core.metrics.rdd.{RDDMetricCalculator, ReversibleRDDCalculator}
+import ru.raiffeisen.checkita.core.metrics.MetricName
 
 import java.time.temporal.ChronoUnit.DAYS
 
-object MultiColumnMetrics {
+object MultiColumnRDDMetrics {
 
   /**
    * Calculates covariance between values of two columns
@@ -23,18 +24,18 @@ object MultiColumnMetrics {
    *         - "COVARIANCE"
    *         - "COVARIANCE_BESSEL"
    */
-  case class CovarianceMetricCalculator(lMean: Double,
-                                        rMean: Double,
-                                        coMoment: Double,
-                                        n: Long,
-                                        protected val failCount: Long = 0,
-                                        protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                        protected val failMsg: String = "OK") extends MetricCalculator {
+  case class CovarianceRDDMetricCalculator(lMean: Double,
+                                           rMean: Double,
+                                           coMoment: Double,
+                                           n: Long,
+                                           protected val failCount: Long = 0,
+                                           protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                           protected val failMsg: String = "OK") extends RDDMetricCalculator {
 
     // axillary constructor to init metric calculator:
     def this() = this(0, 0, 0, 0)
     
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       assert(values.length == 2, "covariance metric works with two columns only!")
       val lOpt = tryToDouble(values.head)
       val rOpt = tryToDouble(values.tail.head)
@@ -45,7 +46,7 @@ object MultiColumnMetrics {
           val lm = lMean + (l - lMean) / newN
           val rm = rMean + (r - rMean) / newN
           val cm = coMoment + (l - lMean) * (r - rm)
-          CovarianceMetricCalculator(lm, rm, cm, newN, failCount)
+          CovarianceRDDMetricCalculator(lm, rm, cm, newN, failCount)
         case (None, _) | (_, None) => copyWithError(
           CalculatorStatus.Failure,
           "Some of the provided values cannot be cast to number"
@@ -53,7 +54,7 @@ object MultiColumnMetrics {
       }
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
 
     override def result(): Map[String, (Double, Option[String])] = {
@@ -66,10 +67,10 @@ object MultiColumnMetrics {
         MetricName.CovarianceBessel.entryName -> (covarianceBessel, None)
       )
     }
-
-    override def merge(m2: MetricCalculator): MetricCalculator = {
-      val that: CovarianceMetricCalculator = m2.asInstanceOf[CovarianceMetricCalculator]
-      if (this.n == 0) that else CovarianceMetricCalculator(
+    
+    override def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that: CovarianceRDDMetricCalculator = m2.asInstanceOf[CovarianceRDDMetricCalculator]
+      if (this.n == 0) that else CovarianceRDDMetricCalculator(
         (this.lMean * this.n + that.lMean * that.n) / (this.n + that.n),
         (this.rMean * this.n + that.rMean * that.n) / (this.n + that.n),
         this.coMoment + that.coMoment +
@@ -87,12 +88,12 @@ object MultiColumnMetrics {
    * @param cnt current counter
    * @return result map with keys: "COLUMN_EQ"
    */
-  case class EqualStringColumnsMetricCalculator(cnt: Int,
-                                                protected val reversed: Boolean,
-                                                protected val failCount: Long = 0,
-                                                protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                                protected val failMsg: String = "OK")
-    extends MetricCalculator with ReversibleCalculator {
+  case class ColumnEqRDDMetricCalculator(cnt: Int,
+                                         protected val reversed: Boolean,
+                                         protected val failCount: Long = 0,
+                                         protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                         protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
     def this(reversed: Boolean) = this(0, reversed)
@@ -105,11 +106,11 @@ object MultiColumnMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       val valuesStr = values.flatMap(tryToString)
       
       if (values.length == valuesStr.length) {
-        if (valuesStr.distinct.length == 1) EqualStringColumnsMetricCalculator(cnt + 1, reversed, failCount)
+        if (valuesStr.distinct.length == 1) ColumnEqRDDMetricCalculator(cnt + 1, reversed, failCount)
         else copyWithError(CalculatorStatus.Failure, "Provided values are not equal.")
       }
       else copyWithError(CalculatorStatus.Failure, "Some of the provided values cannot be cast to string.")
@@ -123,26 +124,26 @@ object MultiColumnMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = {
       val valuesStr = values.flatMap(tryToString)
 
       if (values.length == valuesStr.length) {
-        if (valuesStr.distinct.length == 1) EqualStringColumnsMetricCalculator(
+        if (valuesStr.distinct.length == 1) ColumnEqRDDMetricCalculator(
           cnt + 1, reversed, failCount + 1, CalculatorStatus.Failure, "Provided values ARE equal.")
-        else EqualStringColumnsMetricCalculator(cnt, reversed, failCount)
+        else ColumnEqRDDMetricCalculator(cnt, reversed, failCount)
       }
       else copyWithError(CalculatorStatus.Failure, "Some of the provided values cannot be cast to string.")
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
       
     def result(): Map[String, (Double, Option[String])] = 
       Map(MetricName.ColumnEq.entryName -> (cnt.toDouble, None))
 
-    override def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[EqualStringColumnsMetricCalculator]
-      EqualStringColumnsMetricCalculator(
+    override def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[ColumnEqRDDMetricCalculator]
+      ColumnEqRDDMetricCalculator(
         this.cnt + that.cnt,
         this.reversed,
         this.failCount + that.getFailCounter,
@@ -160,14 +161,14 @@ object MultiColumnMetrics {
    * @param threshold Maximum allowed day distance between dates in columns
    * @return result map with keys: "DAY_DISTANCE"
    */
-  case class DayDistanceMetricCalculator(cnt: Double,
-                                         dateFormat: String,
-                                         threshold: Int,
-                                         protected val reversed: Boolean,
-                                         protected val failCount: Long = 0,
-                                         protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                         protected val failMsg: String = "OK")
-    extends MetricCalculator with ReversibleCalculator {
+  case class DayDistanceRDDMetricCalculator(cnt: Double,
+                                            dateFormat: String,
+                                            threshold: Int,
+                                            protected val reversed: Boolean,
+                                            protected val failCount: Long = 0,
+                                            protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                            protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
     def this(dateFormat: String, threshold: Int, reversed: Boolean) = this(0, dateFormat, threshold, reversed)
@@ -181,8 +182,8 @@ object MultiColumnMetrics {
      * @return Updated calculator or throws an exception
      */
     private def incrementer(values: Seq[Any],
-                            incrementedOutput: MetricCalculator,
-                            notIncrementedOutput: MetricCalculator): MetricCalculator = {
+                            incrementedOutput: RDDMetricCalculator,
+                            notIncrementedOutput: RDDMetricCalculator): RDDMetricCalculator = {
       assert(values.length == 2, "dayDistance metric works with two columns only!")
       val dates = for {
         firstDate <- tryToDate(values.head, dateFormat)
@@ -207,9 +208,9 @@ object MultiColumnMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = incrementer(
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = incrementer(
       values,
-      DayDistanceMetricCalculator(cnt + 1, dateFormat, threshold, reversed, failCount),
+      DayDistanceRDDMetricCalculator(cnt + 1, dateFormat, threshold, reversed, failCount),
       copyWithError(
         CalculatorStatus.Failure,
         s"Distance between two dates is greater than or equal to given threshold of '$threshold'"
@@ -224,9 +225,9 @@ object MultiColumnMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = incrementer(
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = incrementer(
       values,
-      DayDistanceMetricCalculator(
+      DayDistanceRDDMetricCalculator(
         cnt + 1,
         dateFormat,
         threshold,
@@ -235,18 +236,18 @@ object MultiColumnMetrics {
         CalculatorStatus.Failure,
         s"Distance between two dates lower than given threshold of '$threshold'"
       ),
-      DayDistanceMetricCalculator(cnt, dateFormat, threshold, reversed, failCount)
+      DayDistanceRDDMetricCalculator(cnt, dateFormat, threshold, reversed, failCount)
     )
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
 
     override def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.DayDistance.entryName -> (cnt, None))
 
-    override def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[DayDistanceMetricCalculator]
-      DayDistanceMetricCalculator(
+    override def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[DayDistanceRDDMetricCalculator]
+      DayDistanceRDDMetricCalculator(
         this.cnt + that.cnt,
         this.dateFormat,
         this.threshold,
@@ -265,14 +266,14 @@ object MultiColumnMetrics {
    * @param normalize Flag to define whether distance should be normalized over maximum length of two input strings
    * @return result map with keys: "LEVENSHTEIN_DISTANCE"                
    */
-  case class LevenshteinDistanceMetricCalculator(cnt: Double,
-                                                 threshold: Double,
-                                                 normalize: Boolean,
-                                                 protected val reversed: Boolean,
-                                                 protected val failCount: Long = 0,
-                                                 protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                                 protected val failMsg: String = "OK")
-    extends MetricCalculator with ReversibleCalculator {
+  case class LevenshteinDistanceRDDMetricCalculator(cnt: Double,
+                                                    threshold: Double,
+                                                    normalize: Boolean,
+                                                    protected val reversed: Boolean,
+                                                    protected val failCount: Long = 0,
+                                                    protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                                    protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
 
     // axillary constructor to init metric calculator:
     def this(threshold: Double, normalize: Boolean, reversed: Boolean) = this(0, threshold, normalize, reversed)
@@ -286,8 +287,8 @@ object MultiColumnMetrics {
      * @return Updated calculator or throws an exception
      */
     private def incrementer(values: Seq[Any],
-                            incrementedOutput: MetricCalculator,
-                            notIncrementedOutput: MetricCalculator): MetricCalculator = {
+                            incrementedOutput: RDDMetricCalculator,
+                            notIncrementedOutput: RDDMetricCalculator): RDDMetricCalculator = {
       assert(values.length == 2, "levenshteinDistance metric works with two columns only!")
       if (normalize) assert(
         0 <= threshold && threshold <= 1,
@@ -317,9 +318,9 @@ object MultiColumnMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = incrementer(
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = incrementer(
       values,
-      LevenshteinDistanceMetricCalculator(cnt + 1, threshold, normalize, reversed, failCount),
+      LevenshteinDistanceRDDMetricCalculator(cnt + 1, threshold, normalize, reversed, failCount),
       copyWithError(
         CalculatorStatus.Failure,
         s"Levenshtein distance for given values is grater than or equal to given threshold of '$threshold'"
@@ -334,9 +335,9 @@ object MultiColumnMetrics {
      * @param values values to process
      * @return updated calculator or throws an exception
      */
-    protected def tryToIncrementReversed(values: Seq[Any]): MetricCalculator = incrementer(
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = incrementer(
       values,
-      LevenshteinDistanceMetricCalculator(
+      LevenshteinDistanceRDDMetricCalculator(
         cnt + 1,
         threshold,
         normalize,
@@ -345,18 +346,18 @@ object MultiColumnMetrics {
         CalculatorStatus.Failure,
         s"Levenshtein distance for given values is lower than given threshold of '$threshold'"
       ),
-      LevenshteinDistanceMetricCalculator(cnt, threshold, normalize, reversed, failCount)
+      LevenshteinDistanceRDDMetricCalculator(cnt, threshold, normalize, reversed, failCount)
     )
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
       
     override def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.LevenshteinDistance.entryName -> (cnt, None))
 
-    override def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[LevenshteinDistanceMetricCalculator]
-      LevenshteinDistanceMetricCalculator(
+    override def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[LevenshteinDistanceRDDMetricCalculator]
+      LevenshteinDistanceRDDMetricCalculator(
         this.cnt + that.cnt,
         this.threshold,
         this.normalize,

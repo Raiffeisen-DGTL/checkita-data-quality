@@ -1,14 +1,15 @@
-package ru.raiffeisen.checkita.core.metrics.regular
+package ru.raiffeisen.checkita.core.metrics.rdd.regular
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import ru.raiffeisen.checkita.core.CalculatorStatus
-import ru.raiffeisen.checkita.core.metrics.regular.AlgebirdMetrics._
-import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName}
+import ru.raiffeisen.checkita.core.metrics.MetricName
+import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
+import ru.raiffeisen.checkita.core.metrics.rdd.regular.AlgebirdRDDMetrics._
 
 import scala.util.Random
 
-class AlgebirdMetricsSpec extends AnyWordSpec with Matchers {
+class AlgebirdRDDMetricsSpec extends AnyWordSpec with Matchers {
   private val testValues = Seq(
     Seq("Gpi2C7", "Gpi2C7", "xTOn6x", "3xGSz0", "Gpi2C7", "Gpi2C7", "Gpi2C7", "xTOn6x", "3xGSz0", "xTOn6x", "M66yO0", "M66yO0"),
     Seq(5.94, 1.72, 5.94, 5.87, 5.94, 5.94, 5.94, 1.72, 5.87, 1.72, 8.26, 8.26),
@@ -23,7 +24,7 @@ class AlgebirdMetricsSpec extends AnyWordSpec with Matchers {
       val results = Seq(4, 4, 4, 9)
       val values = testValues zip results
       val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new HyperLogLogMetricCalculator(accuracy))(
+        t._1.foldLeft[RDDMetricCalculator](new HyperLogLogRDDMetricCalculator(accuracy))(
           (m, v) => m.increment(Seq(v))).result(),
         t._2
       ))
@@ -34,7 +35,7 @@ class AlgebirdMetricsSpec extends AnyWordSpec with Matchers {
 
     "return zero values when applied to empty sequence" in {
       val values = Seq.empty
-      values.foldLeft[MetricCalculator](new HyperLogLogMetricCalculator(accuracy))((m, v) => m.increment(Seq(v)))
+      values.foldLeft[RDDMetricCalculator](new HyperLogLogRDDMetricCalculator(accuracy))((m, v) => m.increment(Seq(v)))
         .result()(MetricName.ApproximateDistinctValues.entryName)._1 shouldEqual 0
     }
     
@@ -45,7 +46,7 @@ class AlgebirdMetricsSpec extends AnyWordSpec with Matchers {
       )
 
       values.foreach { s =>
-        s.foldLeft[MetricCalculator](new HyperLogLogMetricCalculator(accuracy)) {
+        s.foldLeft[RDDMetricCalculator](new HyperLogLogRDDMetricCalculator(accuracy)) {
           (m, v) =>
             val mc = m.increment(v)
             mc.getStatus shouldEqual CalculatorStatus.Error
@@ -68,7 +69,7 @@ class AlgebirdMetricsSpec extends AnyWordSpec with Matchers {
       )
       val values = testValues zip results
       val metricResults = values.map(t => (
-        t._1.foldLeft[MetricCalculator](new TopKMetricCalculator(maxCapacity, targetNumber))(
+        t._1.foldLeft[RDDMetricCalculator](new TopKRDDMetricCalculator(maxCapacity, targetNumber))(
           (m, v) => m.increment(Seq(v))).result(),
         t._2
       ))
@@ -82,8 +83,8 @@ class AlgebirdMetricsSpec extends AnyWordSpec with Matchers {
 
     "return NaN for frequency and empty string as top value when applied to empty sequence" in {
       val values = Seq.empty
-      val metricResult = values.foldLeft[MetricCalculator](
-        new TopKMetricCalculator(maxCapacity, targetNumber)
+      val metricResult = values.foldLeft[RDDMetricCalculator](
+        new TopKRDDMetricCalculator(maxCapacity, targetNumber)
       )((m, v) => m.increment(Seq(v))).result()
       metricResult(MetricName.TopN.entryName + "_" + 1)._1.isNaN shouldEqual true
       metricResult(MetricName.TopN.entryName + "_" + 1)._2.get shouldEqual ""
@@ -96,7 +97,7 @@ class AlgebirdMetricsSpec extends AnyWordSpec with Matchers {
       )
 
       values.foreach { s =>
-        s.foldLeft[MetricCalculator](new TopKMetricCalculator(maxCapacity, targetNumber)) {
+        s.foldLeft[RDDMetricCalculator](new TopKRDDMetricCalculator(maxCapacity, targetNumber)) {
           (m, v) =>
             val mc = m.increment(v)
             mc.getStatus shouldEqual CalculatorStatus.Error
@@ -139,7 +140,7 @@ class AlgebirdMetricsSpec extends AnyWordSpec with Matchers {
     "return correct metric value for single column sequence" in {
       (allSingleColSeq, results).zipped.toList.foreach { tt =>
         val metricResults = (tt._1, paramList, tt._2).zipped.toList.map(t => (
-          t._1.foldLeft[MetricCalculator](new HLLSequenceCompletenessMetricCalculator(t._2._1, t._2._2))(
+          t._1.foldLeft[RDDMetricCalculator](new HLLSequenceCompletenessRDDMetricCalculator(t._2._1, t._2._2))(
             (m, v) => m.increment(Seq(v))).result()(MetricName.ApproximateSequenceCompleteness.entryName)._1,
           t._3
         ))
@@ -149,8 +150,8 @@ class AlgebirdMetricsSpec extends AnyWordSpec with Matchers {
 
     "return zero when applied to empty sequence" in {
       val values = Seq.empty
-      val metricResult = values.foldLeft[MetricCalculator](
-        new HLLSequenceCompletenessMetricCalculator(paramList.head._1, paramList.head._2)
+      val metricResult = values.foldLeft[RDDMetricCalculator](
+        new HLLSequenceCompletenessRDDMetricCalculator(paramList.head._1, paramList.head._2)
       )((m, v) => m.increment(v))
       metricResult.result()(MetricName.ApproximateSequenceCompleteness.entryName)._1 shouldEqual 0.0
     }
@@ -162,8 +163,8 @@ class AlgebirdMetricsSpec extends AnyWordSpec with Matchers {
       )
 
       values.foreach { s =>
-        s.foldLeft[MetricCalculator](
-          new HLLSequenceCompletenessMetricCalculator(paramList.head._1, paramList.head._2)
+        s.foldLeft[RDDMetricCalculator](
+          new HLLSequenceCompletenessRDDMetricCalculator(paramList.head._1, paramList.head._2)
         ){
           (m, v) =>
             val mc = m.increment(v)

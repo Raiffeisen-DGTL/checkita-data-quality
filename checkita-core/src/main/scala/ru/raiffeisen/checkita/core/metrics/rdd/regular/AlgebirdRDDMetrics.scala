@@ -1,16 +1,39 @@
-package ru.raiffeisen.checkita.core.metrics.regular
+package ru.raiffeisen.checkita.core.metrics.rdd.regular
 
 import com.twitter.algebird.HyperLogLog.long2Bytes
 import com.twitter.algebird.{HLL, HyperLogLog, HyperLogLogMonoid, SpaceSaver}
 import ru.raiffeisen.checkita.core.CalculatorStatus
-import ru.raiffeisen.checkita.core.Casting.{tryToLong, tryToString}
-import ru.raiffeisen.checkita.core.metrics.{MetricCalculator, MetricName}
+import ru.raiffeisen.checkita.core.metrics.rdd.Casting.{tryToLong, tryToString}
+import ru.raiffeisen.checkita.core.metrics.MetricName
+import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
 
 /**
  * Metrics based on using the Algebird library (abstract algebra for Scala)
  * https://github.com/twitter/algebird
  */
-object AlgebirdMetrics {
+object AlgebirdRDDMetrics {
+
+  /*
+  HLL accuracy is limited to a value that correspond to bits number of 30 or less.
+  This is done to prevent integer overflow when computing HLL monoid size.
+
+  bits vs size vs accuracy table:
+
+  bits | size  | error
+  9      512     0.0460
+  10     1024    0.0325
+  11     2048    0.0230
+  12     4096    0.0163
+  13     8192    0.0115
+  14     16384   0.0081
+  15     32768   0.0057
+  16     65536   0.0041
+  17     131072  0.0029
+  18     262144  0.0020
+  19     524288  0.0014
+  20     1048576 0.0010
+ */
+
 
   /**
    * Calculates number of distinct values in processed elements
@@ -23,31 +46,29 @@ object AlgebirdMetrics {
    *
    * @return result map with keys: "APPROXIMATE_DISTINCT_VALUES"
    */
-  case class HyperLogLogMetricCalculator(hLL: HLL,
-                                         bitsNumber: Int,
-                                         accuracyError: Double,
-                                         protected val failCount: Long = 0,
-                                         protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                         protected val failMsg: String = "OK")
-    extends MetricCalculator {
+  case class HyperLogLogRDDMetricCalculator(hLL: HLL,
+                                            bitsNumber: Int,
+                                            accuracyError: Double,
+                                            protected val failCount: Long = 0,
+                                            protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                            protected val failMsg: String = "OK")
+    extends RDDMetricCalculator {
 
     // Auxiliary constrictor to init metric calculator:
-    // Accuracy is limited to a value that correspond to bits number of 30 or less.
-    // This is done to prevent integer overflow when computing HLL monoid size.
     def this(accuracyError: Double) = this(
       new HyperLogLogMonoid(HyperLogLog.bitsForError(math.max(accuracyError, 0.00003174))).zero,
       HyperLogLog.bitsForError(math.max(accuracyError, 0.00003174)),
       accuracyError
     )
 
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       assert(values.length == 1, "approximateDistinctValues metric works for single column only!")
       tryToString(values.head) match {
         case Some(v) =>
           val monoid = new HyperLogLogMonoid(this.bitsNumber)
           val valToAdd = if (v.trim == "") "EMPTY_VAL" else v
 
-          HyperLogLogMetricCalculator(
+          HyperLogLogRDDMetricCalculator(
             monoid.plus(hLL, monoid.create(valToAdd.getBytes())),
             bitsNumber,
             accuracyError,
@@ -60,15 +81,15 @@ object AlgebirdMetrics {
       }
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator = 
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] =
       Map(MetricName.ApproximateDistinctValues.entryName -> (hLL.approximateSize.estimate.toDouble, None))
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[HyperLogLogMetricCalculator]
-      HyperLogLogMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[HyperLogLogRDDMetricCalculator]
+      HyperLogLogRDDMetricCalculator(
         this.hLL + that.hLL,
         this.bitsNumber,
         this.accuracyError,
@@ -93,34 +114,34 @@ object AlgebirdMetrics {
    * @param increment Sequence increment
    * @return result map with keys: "APPROXIMATE_SEQUENCE_COMPLETENESS"
    */
-  case class HLLSequenceCompletenessMetricCalculator(hLL: HLL,
-                                                     bitsNumber: Int,
-                                                     minVal: Long,
-                                                     maxVal: Long,
-                                                     accuracyError: Double,
-                                                     increment: Long,
-                                                     protected val failCount: Long = 0,
-                                                     protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                                     protected val failMsg: String = "OK")
-    extends MetricCalculator {
+  case class HLLSequenceCompletenessRDDMetricCalculator(hLL: HLL,
+                                                        bitsNumber: Int,
+                                                        minVal: Long,
+                                                        maxVal: Long,
+                                                        accuracyError: Double,
+                                                        increment: Long,
+                                                        protected val failCount: Long = 0,
+                                                        protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                                        protected val failMsg: String = "OK")
+    extends RDDMetricCalculator {
     
     // axillary constructor to initiate HyperLogLog monoid:
     def this(accuracyError: Double, increment: Long) = this(
-      new HyperLogLogMonoid(HyperLogLog.bitsForError(accuracyError)).zero,
-      HyperLogLog.bitsForError(accuracyError),
+      new HyperLogLogMonoid(HyperLogLog.bitsForError(math.max(accuracyError, 0.00003174))).zero,
+      HyperLogLog.bitsForError(math.max(accuracyError, 0.00003174)),
       Long.MaxValue,
       Long.MinValue,
       accuracyError,
       increment
     )
 
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       assert(values.length == 1, "approximateSequenceCompleteness metric works with single column only!")
       tryToLong(values.head) match {
         case Some(value) =>
           val monoid = new HyperLogLogMonoid(this.bitsNumber)
 
-          HLLSequenceCompletenessMetricCalculator(
+          HLLSequenceCompletenessRDDMetricCalculator(
             monoid.plus(hLL, monoid.create(value)),
             this.bitsNumber,
             Math.min(minVal, value),
@@ -131,12 +152,12 @@ object AlgebirdMetrics {
           )
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Provided value cannot be cast to string"
+          "Provided value cannot be cast to Long"
         )
       }
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Option[String])] = Map(
@@ -144,10 +165,10 @@ object AlgebirdMetrics {
         (hLL.approximateSize.estimate.toDouble / ((maxVal - minVal).toDouble / increment.toDouble + 1), None)
     )
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
       val monoid = new HyperLogLogMonoid(this.bitsNumber)
-      val that = m2.asInstanceOf[HLLSequenceCompletenessMetricCalculator]
-      HLLSequenceCompletenessMetricCalculator(
+      val that = m2.asInstanceOf[HLLSequenceCompletenessRDDMetricCalculator]
+      HLLSequenceCompletenessRDDMetricCalculator(
         monoid.plus(this.hLL, that.hLL),
         this.bitsNumber,
         Math.min(this.minVal, that.minVal),
@@ -172,14 +193,14 @@ object AlgebirdMetrics {
    *
    * @return result map with keys: "TOP_N_{index}"
    */
-  case class TopKMetricCalculator(list: SpaceSaver[String],
-                                  maxCapacity: Int,
-                                  targetNumber: Int,
-                                  rowCount: Int,
-                                  protected val failCount: Long = 0,
-                                  protected val status: CalculatorStatus = CalculatorStatus.Success,
-                                  protected val failMsg: String = "OK")
-    extends MetricCalculator {
+  case class TopKRDDMetricCalculator(list: SpaceSaver[String],
+                                     maxCapacity: Int,
+                                     targetNumber: Int,
+                                     rowCount: Int,
+                                     protected val failCount: Long = 0,
+                                     protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                     protected val failMsg: String = "OK")
+    extends RDDMetricCalculator {
     
     // axillary constructor to initiate empty SpaceSaver:
     def this(maxCapacity: Int, targetNumber: Int) = this(
@@ -189,12 +210,12 @@ object AlgebirdMetrics {
       0
     )
 
-    protected def tryToIncrement(values: Seq[Any]): MetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       assert(values.length == 1, "topN metric works for single column only!")
       tryToString(values.head) match {
         case Some(v) =>
           val newSPaceSave = list ++ SpaceSaver(maxCapacity, v)
-          TopKMetricCalculator(
+          TopKRDDMetricCalculator(
             newSPaceSave, maxCapacity, targetNumber, rowCount + 1, failCount
           )
         case None => copyWithError(
@@ -204,7 +225,7 @@ object AlgebirdMetrics {
       }
     }
 
-    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): MetricCalculator =
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
     
     def result(): Map[String, (Double, Some[String])] = {
@@ -214,9 +235,9 @@ object AlgebirdMetrics {
       ).toMap
     }
 
-    def merge(m2: MetricCalculator): MetricCalculator = {
-      val that = m2.asInstanceOf[TopKMetricCalculator]
-      TopKMetricCalculator(
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[TopKRDDMetricCalculator]
+      TopKRDDMetricCalculator(
         this.list ++ that.list,
         this.maxCapacity,
         this.targetNumber,

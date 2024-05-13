@@ -1,9 +1,10 @@
-package ru.raiffeisen.checkita.core.metrics
+package ru.raiffeisen.checkita.core.metrics.rdd
 
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import ru.raiffeisen.checkita.config.appconf.StreamConfig
 import ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors
+import ru.raiffeisen.checkita.core.metrics.{BasicMetricProcessor, RegularMetric}
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
@@ -11,9 +12,9 @@ import scala.collection.JavaConverters._
 import scala.collection.concurrent
 import scala.util.Try
 
-object MetricStreamProcessor extends MetricProcessor with Logging {
-
-  import MetricProcessor._
+object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
+  import BasicMetricProcessor._
+  import RDDMetricProcessor._
 
   /**
    * Type in which metric errors are collected:
