@@ -56,8 +56,8 @@ class MultiColumnRDDMetricsSpec extends AnyWordSpec with Matchers {
     
     "return correct result and fail counts when sequence contains non-number values" in {
       val results = (545.5746740000001, 181.8582246666667, 272.78733700000004)
-      val metricCalc = testValues(3).foldLeft[MetricCalculator](
-        new CovarianceMetricCalculator())((m, v) => m.increment(v))
+      val metricCalc = testValues(3).foldLeft[RDDMetricCalculator](
+        new CovarianceRDDMetricCalculator())((m, v) => m.increment(v))
       val metricResult = metricCalc.result()
       val metricFailCnt = metricCalc.getFailCounter
       
@@ -69,8 +69,8 @@ class MultiColumnRDDMetricsSpec extends AnyWordSpec with Matchers {
     }
     
     "return NaN values when sequence do not contain numeric values" in {
-      val metricResult = testValues.head.foldLeft[MetricCalculator](
-        new CovarianceMetricCalculator())((m, v) => m.increment(v)).result()
+      val metricResult = testValues.head.foldLeft[RDDMetricCalculator](
+        new CovarianceRDDMetricCalculator())((m, v) => m.increment(v)).result()
       
       metricResult(MetricName.CoMoment.entryName)._1.isNaN shouldEqual true
       metricResult(MetricName.Covariance.entryName)._1.isNaN shouldEqual true

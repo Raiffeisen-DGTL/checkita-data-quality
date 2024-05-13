@@ -6,7 +6,7 @@ import ru.raiffeisen.checkita.core.Results.{MetricCalculatorResult, ResultType}
 import ru.raiffeisen.checkita.core.metrics.ErrorCollection.{ErrorRow, MetricErrors}
 import ru.raiffeisen.checkita.core.metrics.df.Helpers.{DFMetricOutput, addColumnSuffix}
 import ru.raiffeisen.checkita.core.metrics.df.regular.ApproxCardinalityDFMetrics.TopNDFMetricCalculator
-import ru.raiffeisen.checkita.core.metrics.{BasicMetricProcessor, RegularMetric}
+import ru.raiffeisen.checkita.core.metrics.{BasicMetricProcessor, MetricName, RegularMetric}
 import ru.raiffeisen.checkita.core.{CalculatorStatus, Source}
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
@@ -124,9 +124,9 @@ object DFMetricProcessor extends BasicMetricProcessor {
    *         (some metrics yield multiple results).
    */
   private def buildMetricResults(results: CalculatorResults,
-                         calculators: Map[String, DFMetricCalculator],
-                         sourceId: String)
-                        (implicit keyFields: Seq[String]): MetricResults = results.map {
+                                 calculators: Map[String, DFMetricCalculator],
+                                 sourceId: String)
+                                (implicit keyFields: Seq[String]): MetricResults = results.map {
     case (metricId, (metricResults, metricErrors)) =>
       val calculator = calculators(metricId)
       val allColumns = (keyFields ++ calculator.columns).distinct
@@ -138,18 +138,23 @@ object DFMetricProcessor extends BasicMetricProcessor {
         ))
         case _ => None
       }
-      metricId -> metricResults.map {
-        case (result, additionalResult) => MetricCalculatorResult(
-          metricId,
-          calculator.metricName.entryName,
-          result,
-          additionalResult,
-          Seq(sourceId),
-          keyFields,
-          calculator.columns,
-          errors,
-          ResultType.RegularMetric
-        )
+      metricId -> metricResults.zipWithIndex.map {
+        case ((result, additionalResult), idx) => 
+          val metricName = if (calculator.metricName == MetricName.TopN) {
+            calculator.metricName.entryName + "_" + (idx + 1)
+          } else calculator.metricName.entryName
+          
+          MetricCalculatorResult(
+            metricId,
+            metricName,
+            result,
+            additionalResult,
+            Seq(sourceId),
+            keyFields,
+            calculator.columns,
+            errors,
+            ResultType.RegularMetric
+          )
       }
   }
 
@@ -225,7 +230,7 @@ object DFMetricProcessor extends BasicMetricProcessor {
     
     assert(
       singlePassResultDF.nonEmpty || groupedResultsDFs.nonEmpty,
-      s"There are not calculators results produced for source '${source.id}''"
+      s"There are no calculator results produced for source '${source.id}''"
     )
     
     // Each of the processed dataframe will contain a single row with multiple columns containing
