@@ -1,3 +1,16 @@
+## [1.7.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.6.0...v1.7.0) (2024-05-13)
+
+
+### Bug Fixes
+
+* modify unique key constraint for regular metrics results table ([#38](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/38)) ([6a67b2f](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/6a67b2f34616caf2f377cfe05efda4e482695e40))
+* update covariance metric logic ([#39](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/39)) ([0951ddc](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/0951ddcdf315e3408aa085989edf854216f385f4))
+
+
+### Features
+
+* adding schema registry reader and corresponding schema configuration ([#40](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/40)) ([be48204](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/be4820473515abec31f9af16b46d4300c6fba885))
+
 ## [1.6.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.5.0...v1.6.0) (2024-04-16)
 
 
