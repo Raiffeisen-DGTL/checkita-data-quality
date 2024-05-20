@@ -2,10 +2,12 @@ package ru.raiffeisen.checkita.core.metrics.rdd.regular
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import ru.raiffeisen.checkita.Common.checkSerDe
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.metrics.MetricName
 import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.AlgebirdRDDMetrics._
+import ru.raiffeisen.checkita.core.metrics.serialization.Implicits._
 
 import scala.util.Random
 
@@ -53,6 +55,12 @@ class AlgebirdRDDMetricsSpec extends AnyWordSpec with Matchers {
             mc
         }
       }
+    }
+    
+    "be serializable for buffer checkpointing" in {
+      testValues.map(v => v.foldLeft[RDDMetricCalculator](new HyperLogLogRDDMetricCalculator(accuracy))(
+          (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
 
@@ -104,6 +112,12 @@ class AlgebirdRDDMetricsSpec extends AnyWordSpec with Matchers {
             mc
         }
       }
+    }
+    
+    "be serializable for buffer checkpointing" in {
+      testValues.map(v => v.foldLeft[RDDMetricCalculator](new TopKRDDMetricCalculator(maxCapacity, targetNumber))(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
 
@@ -172,6 +186,13 @@ class AlgebirdRDDMetricsSpec extends AnyWordSpec with Matchers {
             mc
         }
       }
+    }
+    "be serializable for buffer checkpointing" in {
+      intSeq.zip(paramList).map(t => t._1.foldLeft[RDDMetricCalculator](
+        new HLLSequenceCompletenessRDDMetricCalculator(t._2._1, t._2._2)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
 }

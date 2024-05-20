@@ -27,7 +27,7 @@ object Results {
     case object LoadCheck extends ResultType
     case object Check extends ResultType
 
-    override val values: immutable.IndexedSeq[ResultType] = findValues
+    override def values: immutable.IndexedSeq[ResultType] = findValues
   }
 
   sealed abstract class TypedResult {

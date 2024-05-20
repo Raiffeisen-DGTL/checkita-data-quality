@@ -2,9 +2,12 @@ package ru.raiffeisen.checkita.core.metrics.rdd.regular
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import ru.raiffeisen.checkita.Common.checkSerDe
 import ru.raiffeisen.checkita.core.metrics.MetricName
 import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
+import ru.raiffeisen.checkita.core.metrics.rdd.regular.BasicNumericRDDMetrics.TDigestRDDMetricCalculator
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.BasicStringRDDMetrics._
+import ru.raiffeisen.checkita.core.metrics.serialization.Implicits._
 
 class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
   private val testSingleColSeq = Seq(
@@ -57,6 +60,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
         (m, v) => m.increment(v)
       )
       metricResult.result()(MetricName.DistinctValues.entryName)._1 shouldEqual 0
+    }
+    
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.map(v => v.foldLeft[RDDMetricCalculator](
+        new DistinctValuesRDDMetricCalculator()
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
   
@@ -114,6 +125,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
         (m, v) => m.increment(v)
       )
       metricResult.result()(MetricName.DuplicateValues.entryName)._1 shouldEqual 0
+    }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.map(v => v.foldLeft[RDDMetricCalculator](
+        new DuplicateValuesRDDMetricCalculator()
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
 
@@ -191,6 +210,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       )
       metricResult.result()(MetricName.RegexMatch.entryName)._1 shouldEqual 0
     }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.zip(regexList).map(v => v._1.foldLeft[RDDMetricCalculator](
+        new RegexMatchRDDMetricCalculator(v._2, false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
+    }
   }
 
   "RegexMismatchRDDMetricCalculator" must {
@@ -267,6 +294,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       )
       metricResult.result()(MetricName.RegexMismatch.entryName)._1 shouldEqual 0
     }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.zip(regexList).map(v => v._1.foldLeft[RDDMetricCalculator](
+        new RegexMismatchRDDMetricCalculator(v._2, false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
+    }
   }
 
   "NullValuesRDDMetricCalculator" must {
@@ -337,6 +372,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       )
       metricResult.result()(MetricName.NullValues.entryName)._1 shouldEqual 0
     }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.map(v => v.foldLeft[RDDMetricCalculator](
+        new NullValuesRDDMetricCalculator(false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
+    }
   }
 
   "EmptyValuesRDDMetricCalculator" must {
@@ -406,6 +449,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
         (m, v) => m.increment(v)
       )
       metricResult.result()(MetricName.EmptyValues.entryName)._1 shouldEqual 0
+    }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.map(v => v.foldLeft[RDDMetricCalculator](
+        new EmptyValuesRDDMetricCalculator(false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
 
@@ -496,6 +547,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       )
       metricResult.result()(MetricName.Completeness.entryName)._1.isNaN shouldEqual true
     }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.map(v => v.foldLeft[RDDMetricCalculator](
+        new CompletenessRDDMetricCalculator(paramList.head, false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
+    }
   }
 
   "MinStringRDDMetricCalculator" must {
@@ -525,6 +584,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
         (m, v) => m.increment(v)
       )
       metricResult.result()(MetricName.MinString.entryName)._1 shouldEqual Int.MaxValue
+    }
+    
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.map(v => v.foldLeft[RDDMetricCalculator](
+        new MinStringRDDMetricCalculator()
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
 
@@ -556,6 +623,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       )
       metricResult.result()(MetricName.MaxString.entryName)._1 shouldEqual Int.MinValue
     }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.map(v => v.foldLeft[RDDMetricCalculator](
+        new MaxStringRDDMetricCalculator()
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
+    }
   }
 
   "AvgStringRDDMetricCalculator" must {
@@ -585,6 +660,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
         (m, v) => m.increment(v)
       )
       metricResult.result()(MetricName.AvgString.entryName)._1.isNaN shouldEqual true
+    }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.map(v => v.foldLeft[RDDMetricCalculator](
+        new AvgStringRDDMetricCalculator()
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
 
@@ -660,6 +743,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       val metricResult = values.foldLeft[RDDMetricCalculator](
         new FormattedDateRDDMetricCalculator(paramsWithResults.head._1, false))((m, v) => m.increment(v))
       metricResult.result()(MetricName.FormattedDate.entryName)._1 shouldEqual 0
+    }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.zip(paramsWithResults).map(v => v._1.foldLeft[RDDMetricCalculator](
+        new FormattedDateRDDMetricCalculator(v._2._1, false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
 
@@ -740,6 +831,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       )((m, v) => m.increment(v))
       metricResult.result()(MetricName.StringLength.entryName)._1 shouldEqual 0
     }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.zip(paramList).map(v => v._1.foldLeft[RDDMetricCalculator](
+        new StringLengthRDDMetricCalculator(v._2._1, v._2._2, false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
+    }
   }
 
   "StringInDomainRDDMetricCalculator" must {
@@ -819,6 +918,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
         new StringInDomainRDDMetricCalculator(domainList.head, false)
       )((m, v) => m.increment(v))
       metricResult.result()(MetricName.StringInDomain.entryName)._1 shouldEqual 0
+    }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.zip(domainList).map(v => v._1.foldLeft[RDDMetricCalculator](
+        new StringInDomainRDDMetricCalculator(v._2, false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
 
@@ -904,6 +1011,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       )((m, v) => m.increment(v))
       metricResult.result()(MetricName.StringOutDomain.entryName)._1 shouldEqual 0
     }
+    
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.zip(domainList).map(v => v._1.foldLeft[RDDMetricCalculator](
+        new StringOutDomainRDDMetricCalculator(v._2, false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
+    }
   }
 
   "StringValuesRDDMetricCalculator" must {
@@ -974,6 +1089,14 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
         new StringValuesRDDMetricCalculator(compareValues.head, false)
       )((m, v) => m.increment(v))
       metricResult.result()(MetricName.StringValues.entryName)._1 shouldEqual 0
+    }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.zip(compareValues).map(v => v._1.foldLeft[RDDMetricCalculator](
+        new StringValuesRDDMetricCalculator(v._2, false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
 }

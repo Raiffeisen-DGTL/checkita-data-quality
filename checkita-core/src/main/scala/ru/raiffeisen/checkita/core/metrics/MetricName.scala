@@ -57,5 +57,5 @@ object MetricName extends Enum[MetricName] {
   case object LevenshteinDistance extends MetricName("LEVENSHTEIN_DISTANCE")
   case object TopN extends MetricName("TOP_N")
   
-  override val values: immutable.IndexedSeq[MetricName] = findValues
+  override def values: immutable.IndexedSeq[MetricName] = findValues
 }

@@ -1,5 +1,7 @@
 package ru.raiffeisen.checkita.core.metrics.serialization
 
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+
 trait SerDeTransformations {
 
   /**
@@ -8,23 +10,23 @@ trait SerDeTransformations {
    * current type. Transformation between current and target type
    * is performed with use of provided conversion functions.
    * 
-   * @param serDe SerDe for current type A.
+   * @param aSerDe SerDe for current type A.
    * @param f Conversion function from current type A to target type B.
    * @param g Conversion function from target type B to current type A.
    * @tparam A Current type
    * @tparam B Target type
    * @return SerDe of target type B.
    */
-  def transform[A, B](serDe: SerDe[A], f: A => B, g: B => A): SerDe[B] =
+  def transform[A, B](aSerDe: SerDe[A], f: A => B, g: B => A): SerDe[B] =
     new SerDe[B] {
-      override def serializeValue(value: B): Array[Byte] = serDe.serializeValue(g(value))
-      override def deserializeValue(bytes: Array[Byte]): B = f(serDe.deserializeValue(bytes))
+      override def serialize(bf: ByteArrayOutputStream, value: B): Unit = aSerDe.serialize(bf, g(value))
+      override def deserialize(bf: ByteArrayInputStream): B = f(aSerDe.deserialize(bf))
     }
 
   /**
    * Build SerDe for kinded type families: family of classes that extends common parent trait or class.
    * 
-   * Such serde is required to correctly serialize/deserialize generic collection 
+   * Such SerDe is required to correctly serialize/deserialize generic collection 
    * containing various family classes. 
    * 
    * All family classes are mapped to their kind identifier, which is also encoded into serialized value.
@@ -40,14 +42,17 @@ trait SerDeTransformations {
    */
   def kinded[K, T](kSerDe: SerDe[K], f: T => K, g: K => SerDe[T]): SerDe[T] =
     new SerDe[T] {
-      override def serializeValue(value: T): Array[Byte] = {
-        val vSerDe = g(f(value))
-        kSerDe.serialize(f(value)) ++ vSerDe.serialize(value)
-      }
-      override def deserializeValue(bytes: Array[Byte]): T = {
-        val (kind, valueBytes) = kSerDe.extractValue(bytes)
+      override def serialize(bf: ByteArrayOutputStream, value: T): Unit = {
+        val kind: K = f(value)
         val vSerDe = g(kind)
-        vSerDe.deserialize(valueBytes)
+        kSerDe.serialize(bf, kind)
+        vSerDe.serialize(bf, value)
+      }
+
+      override def deserialize(bf: ByteArrayInputStream): T = {
+        val kind = kSerDe.deserialize(bf)
+        val vSerDe = g(kind)
+        vSerDe.deserialize(bf)
       }
     }
   
@@ -62,13 +67,15 @@ trait SerDeTransformations {
    */
   def union[A, B](serDeA: SerDe[A], serDeB: SerDe[B]): SerDe[(A, B)] = 
     new SerDe[(A, B)] {
-      override def serializeValue(value: (A, B)): Array[Byte] =
-        serDeA.serialize(value._1) ++ serDeB.serialize(value._2)
-      override def deserializeValue(bytes: Array[Byte]): (A, B) = {
-        val (valueA, remaining) = serDeA.extractValue(bytes)
-        val valueB = serDeB.deserialize(remaining)
-        valueA -> valueB
+      override def serialize(bf: ByteArrayOutputStream, value: (A, B)): Unit = {
+        serDeA.serialize(bf, value._1)
+        serDeB.serialize(bf, value._2)
+      }
+
+      override def deserialize(bf: ByteArrayInputStream): (A, B) = {
+        val a = serDeA.deserialize(bf)
+        val b = serDeB.deserialize(bf)
+        a -> b
       }
     }
-    
 }

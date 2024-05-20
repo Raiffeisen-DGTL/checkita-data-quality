@@ -1,192 +1,121 @@
 package ru.raiffeisen.checkita.core.metrics.serialization
 
-import scala.annotation.tailrec
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import scala.collection.concurrent.TrieMap
+import scala.collection.mutable.ArrayBuffer
 
-trait SerializersCollections {
-
-  /**
-   * Type class definition for serializing/deserializing traversable collections 
-   * of single-typed value.
-   *
-   * @tparam T Type of collection values.
-   * @tparam W Higher-kinded type of traversable collection
-   */
-  sealed trait SingleTraversableSerDe[T, W[T] <: TraversableOnce[T]] extends SerDe[W[T]] {
-    
-    /**
-     * Initiates empty collection.
-     *
-     * @return Empty collection of required type.
-     */
-    protected def getEmpty: W[T]
-
-    /**
-     * Appends element to collection.
-     *
-     * @param current Current collection state
-     * @param element Element to append
-     * @return Updated collection.
-     */
-    protected def appendElem(current: W[T], element: T): W[T]
-
-    /**
-     * SerDe used to serialize/deserialize collection elements.
-     */
-    protected val serDeT: SerDe[T]
-
-    /**
-     * Recursive function used to deserialize collection elements
-     * from byte array and add them to a resulting collection.
-     *
-     * @param bytes Array of bytes to deserialize
-     * @param acc   Accumulator storing current collection state.
-     * @return Deserialized collection
-     */
-    @tailrec
-    private def deserializeValues(bytes: Array[Byte], acc: W[T]): W[T] =
-      if (bytes.isEmpty) acc else {
-        val (currentValue, remaining) = serDeT.extractValue(bytes)
-        deserializeValues(remaining, appendElem(acc, currentValue))
-      }
-    
-    override def serializeValue(value: W[T]): Array[Byte] =
-      value.foldLeft(Array.empty[Byte])((b, v) => b ++ serDeT.serialize(v))
-
-    override def deserializeValue(bytes: Array[Byte]): W[T] = deserializeValues(bytes, getEmpty)
-  }
+trait SerializersCollections { this: SerDeTransformations =>
 
   /**
-   * Type class definition for serializing/deserializing traversable collections
-   * of two type arguments (e.g. maps).
+   * Implicit conversion to generate SerDe for traversable collections of elements
    *
-   * @tparam K Collection key type argument
-   * @tparam V Collection value type argument
-   * @tparam W Higher-kinded type of traversable collection.
-   */
-  sealed trait TupledTraversableSerDe[K, V, W[K, V] <: TraversableOnce[(K, V)]] extends SerDe[W[K, V]] {
-
-    /**
-     * Initiates empty collection.
-     *
-     * @return Empty collection of required type.
-     */    
-    protected def getEmpty: W[K, V]
-
-    /**
-     * Appends element to collection. 
-     * For collections with two type arguments, the element is a tuple
-     * of this two types.
-     *
-     * @param current Current collection state
-     * @param element Element to append
-     * @return Updated collection.
-     */
-    protected def appendElem(current: W[K, V], element: (K, V)): W[K, V]
-
-    /**
-     * SerDe used to serialize/deserialize collection elements.
-     */
-    protected val serDeT: SerDe[(K, V)]
-
-    /**
-     * Recursive function used to deserialize collection elements
-     * from byte array and add them to a resulting collection.
-     *
-     * @param bytes Array of bytes to deserialize
-     * @param acc   Accumulator storing current collection state.
-     * @return Deserialized collection
-     */
-    @tailrec
-    private def deserializeValues(bytes: Array[Byte], acc: W[K, V]): W[K, V] =
-      if (bytes.isEmpty) acc else {
-        val (currentValue, remaining) = serDeT.extractValue(bytes)
-        deserializeValues(remaining, appendElem(acc, currentValue))
-      }
-
-    override def serializeValue(value: W[K, V]): Array[Byte] =
-      value.foldLeft(Array.empty[Byte])((b, v) => b ++ serDeT.serialize(v))
-
-    override def deserializeValue(bytes: Array[Byte]): W[K, V] = deserializeValues(bytes, getEmpty)
-  }
-
-  /**
-   * Implicit conversion to generate SerDe for sequence-like collections.
-   *
-   * @param simpleSerDe Implicit SerDe for collection elements
+   * @note Deserialization is performed with use of array buffer as appending element to it
+   *       takes constant time.
+   * @param f      Function to build target collection from array buffer.
+   * @param tSerDe Implicit SerDe for collection elements.
    * @tparam T Type of collection elements
-   * @tparam W Higher-kinded type of sequence-like collection
-   * @return SerDe for collection W[T]
+   * @tparam W Actual type of collection
+   * @return SerDe for collection.
    */
-  implicit def sequenceSerDe[T, W[T] <: Seq[T]](implicit simpleSerDe: SerDe[T]): SerDe[W[T]] =
-    new SingleTraversableSerDe[T, W] {
-      override protected def getEmpty: W[T] = Seq.empty[T].asInstanceOf[W[T]]
-      override protected def appendElem(current: W[T], element: T): W[T] = (current :+ element).asInstanceOf[W[T]]
-      override protected val serDeT: SerDe[T] = simpleSerDe
+  private def getCollectionSerDe[T, W[T] <: TraversableOnce[T]](f: ArrayBuffer[T] => W[T])
+                                                               (implicit tSerDe: SerDe[T]): SerDe[W[T]] =
+    new SerDe[W[T]] {
+      override def serialize(bf: ByteArrayOutputStream, value: W[T]): Unit = {
+        encodeSize(bf, value.size)
+        value.foreach(v => tSerDe.serialize(bf, v))
+      }
+
+      override def deserialize(bf: ByteArrayInputStream): W[T] = {
+        val size = decodeSize(bf)
+        val arrayBuffer = (1 to size).foldLeft(ArrayBuffer.empty[T]){ (b, _) => b += tSerDe.deserialize(bf); b }
+        f(arrayBuffer)
+      }
     }
 
   /**
-   * Implicit conversion to generate SerDe for sets.
+   * Implicit conversion to generate SerDe for traversable collections of tuple of two elements.
    *
-   * @param simpleSerDe Implicit SerDe for set elements
-   * @tparam T Type of set elements
-   * @return SerDe for Set[T]
+   * @note Deserialization is performed with use of array buffer as appending element to it
+   *       takes constant time.
+   * @param f      Function to build target collection from array buffer.
+   * @param tSerDe Implicit SerDe for collection elements.
+   * @tparam K Type of collection keys
+   * @tparam V Type of collection values
+   * @tparam W Actual type of collection
+   * @return SerDe for collection of tuple of two elements.
    */
-  implicit def setSerDe[T](implicit simpleSerDe: SerDe[T]): SerDe[Set[T]] =
-    new SingleTraversableSerDe[T, Set] {
-      override protected def getEmpty: Set[T] = Set.empty[T]
-      override protected def appendElem(current: Set[T], element: T): Set[T] = current + element
-      override protected val serDeT: SerDe[T] = simpleSerDe
+  private def getTupledCollectionSerDe[K, V, W[K, V] <: TraversableOnce[(K, V)]]
+                                      (f: ArrayBuffer[(K, V)] => W[K, V])
+                                      (implicit tSerDe: SerDe[(K, V)]): SerDe[W[K, V]] =
+    new SerDe[W[K, V]] {
+      override def serialize(bf: ByteArrayOutputStream, value: W[K, V]): Unit = {
+        encodeSize(bf, value.size)
+        value.foreach(v => tSerDe.serialize(bf, v))
+      }
+
+      override def deserialize(bf: ByteArrayInputStream): W[K, V] = {
+        val size = decodeSize(bf)
+        val arrayBuffer = (1 to size).foldLeft(ArrayBuffer.empty[(K, V)]){ (b, _) => b += tSerDe.deserialize(bf); b }
+        f(arrayBuffer)
+      }
     }
+  
+  /**
+   * Implicit conversion to generate SerDe for Seq[T]
+   */
+  implicit def seqSerDe[T](implicit tSerDe: SerDe[T]): SerDe[Seq[T]] =
+    getCollectionSerDe[T, Seq](identity)
+
+  /** 
+   * Implicit conversion to generate SerDe for List[T]
+   */
+  implicit def listSerDe[T](implicit tSerDe: SerDe[T]): SerDe[List[T]] =
+    getCollectionSerDe[T, List](bf => bf.toList)
 
   /**
-   * Implicit conversion conversion to generate SerDe for maps.
-   *
-   * @param simpleSerDe Implicit SerDe for map elements (tuple key -> value)
-   * @tparam K Type map keys
-   * @tparam V Type of map values
-   * @return SerDe for Map[K, V]
+   * Implicit conversion to generate SerDe for Vector[T]
    */
-  implicit def mapSerDe[K, V](implicit simpleSerDe: SerDe[(K, V)]): SerDe[Map[K, V]] =
-    new TupledTraversableSerDe[K, V, Map] {
-      override protected def getEmpty: Map[K, V] = Map.empty[K, V]
-      override protected def appendElem(current: Map[K, V], element: (K, V)): Map[K, V] = current + element
-      override protected val serDeT: SerDe[(K, V)] = simpleSerDe
-    }
+  implicit def vectorSerDe[T](implicit tSerDe: SerDe[T]): SerDe[Vector[T]] =
+    getCollectionSerDe[T, Vector](bf => bf.toVector)
+  
+  /**
+   * Implicit conversion to generate SerDe for Set[T]
+   */
+  implicit def setSerDe[T](implicit tSerDe: SerDe[T]): SerDe[Set[T]] =
+    getCollectionSerDe[T, Set](bf => bf.toSet)
+
+  /**
+   * Implicit conversion conversion to generate SerDe for Map[K, V]
+   */
+  implicit def mapSerDe[K, V](implicit tSerDe: SerDe[(K, V)]): SerDe[Map[K, V]] =
+    getTupledCollectionSerDe[K, V, Map](bf => bf.toMap)
 
   /**
    * Implicit conversion conversion to generate SerDe for concurrent TrieMap.
-   *
-   * @param simpleSerDe Implicit SerDe for map elements (tuple key -> value)
-   * @tparam K Type map keys
-   * @tparam V Type of map values
-   * @return SerDe for TrieMap[K, V]
    */
-  implicit def trieMapSerDe[K, V](implicit simpleSerDe: SerDe[(K, V)]): SerDe[TrieMap[K, V]] =
-    new TupledTraversableSerDe[K, V, TrieMap] {
-      override protected def getEmpty: TrieMap[K, V] = TrieMap.empty[K, V]
-      override protected def appendElem(current: TrieMap[K, V], element: (K, V)): TrieMap[K, V] = {
-        current += element
-        current
-      }
-      override protected val serDeT: SerDe[(K, V)] = simpleSerDe
-    }
+  implicit def trieMapSerDe[K, V](implicit tSerDe: SerDe[(K, V)]): SerDe[TrieMap[K, V]] =
+    getTupledCollectionSerDe[K, V, TrieMap](bf => TrieMap(bf: _*))
+    
 
   /**
    * Implicit conversion to generate SerDe for options.
    *
-   * @param simpleSerDe Implicit SerDe for element within option.
+   * @param tSerDe Implicit SerDe for element within option.
    * @tparam T Type of option element.
    * @return SerDe for Option[T]
    */
-  implicit def optionSerDe[T](implicit simpleSerDe: SerDe[T]): SerDe[Option[T]] =
+  implicit def optionSerDe[T](implicit tSerDe: SerDe[T]): SerDe[Option[T]] =
     new SerDe[Option[T]] {
-      override def serializeValue(value: Option[T]): Array[Byte] = value match {
-        case None => Array.empty
-        case Some(v) => simpleSerDe.serialize(v)
+      override def serialize(bf: ByteArrayOutputStream, value: Option[T]): Unit = value match {
+        case Some(v) => 
+          encodeSize(bf, 1)
+          tSerDe.serialize(bf, v)
+        case None => encodeSize(bf, 0)
       }
-      override def deserializeValue(bytes: Array[Byte]): Option[T] =
-        if (bytes.isEmpty) None else Some(simpleSerDe.deserialize(bytes))
+      override def deserialize(bf: ByteArrayInputStream): Option[T] = {
+        val size = decodeSize(bf)
+        if (size == 0) None else Some(tSerDe.deserialize(bf))
+      }
     }
   
 }

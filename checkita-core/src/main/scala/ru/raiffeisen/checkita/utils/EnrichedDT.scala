@@ -89,7 +89,7 @@ object EnrichedDT {
    * @return EnrichedDT instance
    */
   def fromEpoch(epoch: Long,
-                dateFormat: DateFormat = DateFormat.fromString("yyyy-MM-dd HH:mm:ss"),
+                dateFormat: DateFormat = DateFormat("yyyy-MM-dd HH:mm:ss"),
                 timeZone: ZoneId = ZoneId.systemDefault()
                ): EnrichedDT = {
     val zoneOffset = timeZone.getRules.getOffset(Instant.now())

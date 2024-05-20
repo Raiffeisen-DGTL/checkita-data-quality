@@ -16,5 +16,5 @@ object LoadCheckName extends Enum[LoadCheckName] {
   case object ColumnsExist extends LoadCheckName("COLUMNS_EXIST")
   case object SchemaMatch extends LoadCheckName("SCHEMA_MATCH")
 
-  override val values: immutable.IndexedSeq[LoadCheckName] = findValues
+  override def values: immutable.IndexedSeq[LoadCheckName] = findValues
 }

@@ -22,5 +22,5 @@ object CheckName extends Enum[CheckName] {
   case object AverageBoundRange extends CheckName("AVERAGE_BOUND_RANGE", true)
   case object TopNRank extends CheckName("TOP_N_RANK", true)
   
-  override val values: immutable.IndexedSeq[CheckName] = findValues
+  override def values: immutable.IndexedSeq[CheckName] = findValues
 }

@@ -1,7 +1,6 @@
 package ru.raiffeisen.checkita.config.appconf
 
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import ru.raiffeisen.checkita.config.RefinedTypes.DateFormat
 
 
@@ -13,6 +12,6 @@ import ru.raiffeisen.checkita.config.RefinedTypes.DateFormat
  */
 case class DateTimeConfig(
                            timeZone: ZoneId = ZoneId.of("UTC"),
-                           referenceDateFormat: DateFormat = DateFormat.fromString("yyyy-MM-dd'T'HH:mm:ss.SSS"),
-                           executionDateFormat: DateFormat = DateFormat.fromString("yyyy-MM-dd'T'HH:mm:ss.SSS")
+                           referenceDateFormat: DateFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"),
+                           executionDateFormat: DateFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
                          )

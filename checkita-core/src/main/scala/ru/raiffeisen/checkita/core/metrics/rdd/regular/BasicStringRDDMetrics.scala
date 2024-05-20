@@ -21,13 +21,13 @@ object BasicStringRDDMetrics {
    * @param uniqueValues Set of processed values
    * @return result map with keys: "DISTINCT_VALUES"
    */
-  case class DistinctValuesRDDMetricCalculator(uniqueValues: Set[Any] = Set.empty[Any],
+  case class DistinctValuesRDDMetricCalculator(uniqueValues: Set[String] = Set.empty[String],
                                                protected val failCount: Long = 0,
                                                protected val status: CalculatorStatus = CalculatorStatus.Success,
                                                protected val failMsg: String = "OK") extends RDDMetricCalculator {
 
     // axillary constructor to init metric calculator:
-    def this() = this(Set.empty[Any])
+    def this() = this(Set.empty[String])
 
     protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator =
       DistinctValuesRDDMetricCalculator(uniqueValues ++ values.map(v => seqToString(Seq(v))).toSet, failCount)

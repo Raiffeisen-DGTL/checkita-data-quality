@@ -66,6 +66,12 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
         concurrent.TrieMap.empty[(String, Long), Seq[AccumulatedErrors]]
       )
     }
+    
+    def fromTuple(t: (
+      concurrent.TrieMap[String, Long], 
+      concurrent.TrieMap[(String, Long), GroupedCalculators], 
+      concurrent.TrieMap[(String, Long), Seq[AccumulatedErrors]]
+    )): ProcessorBuffer = ProcessorBuffer(t._1, t._2, t._3)
   }
 
 

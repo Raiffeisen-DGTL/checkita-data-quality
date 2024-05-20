@@ -376,5 +376,4 @@ object MultiColumnRDDMetrics {
       if (normalize) distance / Math.max(cleanX.length, cleanY.length).toDouble else distance.toDouble
     }
   }
-
 }

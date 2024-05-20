@@ -1,6 +1,6 @@
 package ru.raiffeisen.checkita.core.metrics.rdd.regular
 
-import org.isarnproject.sketches.TDigest
+import org.isarnproject.sketches.java.TDigest
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.metrics.rdd.Casting.{tryToDouble, tryToLong}
 import ru.raiffeisen.checkita.core.metrics.rdd.{RDDMetricCalculator, ReversibleRDDCalculator}
@@ -45,9 +45,9 @@ object BasicNumericRDDMetrics {
     protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
       assert(values.length == 1, "TDigest metrics work for single column only!")
       tryToDouble(values.head) match {
-        case Some(v) => TDigestRDDMetricCalculator(
-          tdigest + v, accuracyError, targetSideNumber, failCount
-        )
+        case Some(v) => 
+          tdigest.update(v)
+          TDigestRDDMetricCalculator(tdigest, accuracyError, targetSideNumber, failCount)
         case None    => copyWithError(CalculatorStatus.Failure,
           "Provided value cannot be cast to a number"
         )
@@ -78,7 +78,7 @@ object BasicNumericRDDMetrics {
     def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
       val that = m2.asInstanceOf[TDigestRDDMetricCalculator]
       TDigestRDDMetricCalculator(
-        this.tdigest ++ that.tdigest,
+        TDigest.merge(this.tdigest, that.tdigest),
         this.accuracyError,
         this.targetSideNumber,
         this.failCount + that.getFailCounter,

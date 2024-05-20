@@ -46,7 +46,7 @@ object Implicits {
   )
 
   implicit val dateFormatConverter: ConfigConvert[DateFormat] =
-    ConfigConvert[String].xmap[DateFormat](DateFormat.fromString, _.pattern)
+    ConfigConvert[String].xmap[DateFormat](DateFormat, _.pattern)
 
   implicit val timeZoneConverter: ConfigConvert[ZoneId] =
     ConfigConvert[String].xmap[ZoneId](

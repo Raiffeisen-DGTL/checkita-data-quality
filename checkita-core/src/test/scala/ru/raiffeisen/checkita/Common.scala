@@ -8,6 +8,9 @@ import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.storage.Connections.DqStorageConnection
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
 import ru.raiffeisen.checkita.utils.SparkUtils.{makeFileSystem, makeSparkSession}
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import ru.raiffeisen.checkita.core.metrics.serialization.SerDe
+import ru.raiffeisen.checkita.core.metrics.serialization.API.{encode, decode}
 
 object Common {
   implicit val jobId: String = "earthquakes_base_job"
@@ -52,5 +55,11 @@ object Common {
     ).zipped.toSeq.map {
       case (t, v4, v5) => (t._1, t._2, t._3, v4, v5)
     }
+  }
+
+  def checkSerDe[T](input: T)(implicit serDe: SerDe[T]): Unit = {
+    val bytes = encode(input)
+    val decoded = decode[T](bytes)
+    decoded shouldEqual input
   }
 }

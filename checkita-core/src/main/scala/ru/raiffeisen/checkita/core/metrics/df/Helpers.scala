@@ -12,7 +12,7 @@ object Helpers {
     case object Errors extends DFMetricOutput("errors")
     case object GroupResult extends DFMetricOutput("groupResult")
     case object GroupErrors extends DFMetricOutput("groupErrors")
-    override val values: immutable.IndexedSeq[DFMetricOutput] = findValues
+    override def values: immutable.IndexedSeq[DFMetricOutput] = findValues
   }
 
 

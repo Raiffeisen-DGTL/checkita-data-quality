@@ -2,10 +2,12 @@ package ru.raiffeisen.checkita.core.metrics.rdd.regular
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import ru.raiffeisen.checkita.Common.checkSerDe
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.metrics.MetricName
 import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.MultiColumnRDDMetrics._
+import ru.raiffeisen.checkita.core.metrics.serialization.Implicits._
 
 class MultiColumnRDDMetricsSpec extends AnyWordSpec with Matchers {
   private val testValues = Seq(
@@ -111,6 +113,14 @@ class MultiColumnRDDMetricsSpec extends AnyWordSpec with Matchers {
         }
       }
     }
+
+    "be serializable for buffer checkpointing" in {
+      Seq(testValues(1), testValues(2)).map(v => v.foldLeft[RDDMetricCalculator](
+        new CovarianceRDDMetricCalculator()
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
+    }
   }
 
   "ColumnEqRDDMetricCalculator" must {
@@ -141,6 +151,14 @@ class MultiColumnRDDMetricsSpec extends AnyWordSpec with Matchers {
         new ColumnEqRDDMetricCalculator(false))((m, v) => m.increment(v)).result()
 
       metricResult(MetricName.ColumnEq.entryName)._1 shouldEqual 0
+    }
+
+    "be serializable for buffer checkpointing" in {
+      testValues.map(v => v.foldLeft[RDDMetricCalculator](
+        new ColumnEqRDDMetricCalculator(false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
 
@@ -206,6 +224,14 @@ class MultiColumnRDDMetricsSpec extends AnyWordSpec with Matchers {
         }
       }
     }
+
+    "be serializable for buffer checkpointing" in {
+      values.map(v => v.foldLeft[RDDMetricCalculator](
+        new DayDistanceRDDMetricCalculator(dateFormat, threshold, false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
+    }
   }
 
   "LevenshteinDistanceRDDMetricCalculator" must {
@@ -267,6 +293,14 @@ class MultiColumnRDDMetricsSpec extends AnyWordSpec with Matchers {
         mc.getStatus shouldEqual CalculatorStatus.Error
         mc
       }
+    }
+
+    "be serializable for buffer checkpointing" in {
+      testValues.zip(paramList).map(v => v._1.foldLeft[RDDMetricCalculator](
+        new LevenshteinDistanceRDDMetricCalculator(v._2._1, v._2._2, v._2._3)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
     }
   }
 }
