@@ -13,6 +13,7 @@ import ru.raiffeisen.checkita.connections.jdbc.JdbcConnection
 import ru.raiffeisen.checkita.connections.kafka.KafkaConnection
 import ru.raiffeisen.checkita.connections.greenplum.PivotalConnection
 import ru.raiffeisen.checkita.core.Source
+import ru.raiffeisen.checkita.core.streaming.Checkpoints.Checkpoint
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.utils.Common.paramsSeqToMap
 import ru.raiffeisen.checkita.utils.ResultUtils._
@@ -32,14 +33,17 @@ object SourceReaders {
 
     /**
      * Wraps spark dataframe into Source instance.
-     * 
-     * @param config Source configuration
-     * @param df Spark Dataframe
+     *
+     * @param config     Source configuration
+     * @param df         Spark Dataframe
+     * @param checkpoint Initial source checkpoint (applicable only to streaming sources)
      * @return Source
      */
-    protected def toSource(config: T, df: DataFrame)
+    protected def toSource(config: T, df: DataFrame, checkpoint: Option[Checkpoint] = None)
                           (implicit settings: AppSettings): Source = {
-      Source.validated(config.id.value, df, config.keyFields.map(_.value))(settings.enableCaseSensitivity)
+      Source.validated(
+        config.id.value, df, config.keyFields.map(_.value), checkpoint = checkpoint
+      )(settings.enableCaseSensitivity)
     }
 
     /**
@@ -51,8 +55,8 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Source
-     *
      * @note Safeguard against reading non-streamable source as a stream is implemented in the higher-level
      *       method that uses this one. Therefore, current method implementation may just ignore 'readMode'
      *       argument for non-streamable sources.
@@ -62,22 +66,26 @@ object SourceReaders {
                                       spark: SparkSession,
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
-                                      connections: Map[String, DQConnection]): Source
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source
 
     /**
      * Safely reads source given source configuration.
-     * @param config Source configuration
-     * @param settings Implicit application settings object
-     * @param spark    Implicit spark session object
-     * @param schemas Map of explicitly defined schemas (schemaId -> SourceSchema)
+     *
+     * @param config      Source configuration
+     * @param settings    Implicit application settings object
+     * @param spark       Implicit spark session object
+     * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Either a valid Source or a list of source reading errors.
      */
     def read(config: T)(implicit settings: AppSettings,
                         spark: SparkSession,
                         fs: FileSystem,
                         schemas: Map[String, SourceSchema],
-                        connections: Map[String, DQConnection]): Result[Source] =
+                        connections: Map[String, DQConnection],
+                        checkpoints: Map[String, Checkpoint]): Result[Source] =
       Try(tryToRead(config, ReadMode.Batch)).toResult(
         preMsg = s"Unable to read source '${config.id.value}' due to following error: "
       )
@@ -90,13 +98,15 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Either a valid Source or a list of source reading errors.
      */
     def readStream(config: T)(implicit settings: AppSettings,
                               spark: SparkSession,
                               fs: FileSystem,
                               schemas: Map[String, SourceSchema],
-                              connections: Map[String, DQConnection]): Result[Source] = Try {
+                              connections: Map[String, DQConnection],
+                              checkpoints: Map[String, Checkpoint]): Result[Source] = Try {
       if (config.streamable) tryToRead(config, ReadMode.Stream)
       else throw new UnsupportedOperationException(
         s"Source ${config.id} is not streamable and, therefore, cannot be read as a stream."
@@ -167,6 +177,7 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Source
      * @note TableSource is not streamable, therefore, 'readMode' argument is ignored
      *       and source is always read as static DataFrame.
@@ -176,7 +187,8 @@ object SourceReaders {
                                       spark: SparkSession,
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
-                                      connections: Map[String, DQConnection]): Source = {
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source = {
       val conn = connections.getOrElse(config.connection.value, throw new NoSuchElementException(
         s"JDBC connection with id = '${config.connection.value}' not found."
       ))
@@ -203,6 +215,7 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Source
      */
     def tryToRead(config: KafkaSourceConfig,
@@ -210,7 +223,8 @@ object SourceReaders {
                                       spark: SparkSession,
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
-                                      connections: Map[String, DQConnection]): Source = {
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source = {
 
       val conn = connections.getOrElse(config.connection.value, throw new NoSuchElementException(
         s"Kafka connection with id = '${config.connection.value}' not found."
@@ -223,7 +237,7 @@ object SourceReaders {
         case ReadMode.Batch => conn.asInstanceOf[KafkaConnection].loadDataFrame(config)
         case ReadMode.Stream => conn.asInstanceOf[KafkaConnection].loadDataStream(config)
       }
-      toSource(config, df)
+      toSource(config, df, Some(Checkpoint.init(config)))
     }
   }
 
@@ -243,6 +257,7 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Source
      */
     def tryToRead(config: GreenplumSourceConfig,
@@ -250,7 +265,8 @@ object SourceReaders {
                                       spark: SparkSession,
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
-                                      connections: Map[String, DQConnection]): Source = {
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source = {
 
       val conn = connections.getOrElse(config.connection.value, throw new NoSuchElementException(
         s"Pivotal greenplum connection with id = '${config.connection.value}' not found."
@@ -279,6 +295,7 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Source
      * @note HiveSource is not streamable, therefore, 'readMode' argument is ignored
      *       and source is always read as static DataFrame.
@@ -288,7 +305,8 @@ object SourceReaders {
                                       spark: SparkSession,
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
-                                      connections: Map[String, DQConnection]): Source = {
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source = {
       val tableName = s"${config.schema.value}.${config.table.value}"
       val preDf = spark.read.table(tableName)
       val df = if (config.partitions.nonEmpty) {
@@ -344,6 +362,7 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Source
      * @note When read in stream mode, Spark will stream newly added files only.
      */
@@ -352,7 +371,8 @@ object SourceReaders {
                                       spark: SparkSession,
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
-                                      connections: Map[String, DQConnection]): Source = {
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source = {
 
       val schemaId = config.schema.map(_.value).getOrElse(
         throw new IllegalArgumentException("Schema must always be provided to read fixed-width file.")
@@ -395,6 +415,7 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Source
      * @note When read in stream mode, Spark will stream newly added files only.
      */
@@ -403,7 +424,8 @@ object SourceReaders {
                                       spark: SparkSession,
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
-                                      connections: Map[String, DQConnection]): Source = {
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source = {
 
       val reader = (opts: Map[String, String], schema: Option[StructType]) => readMode match {
         case ReadMode.Batch =>
@@ -454,6 +476,7 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Source
      * @note When read in stream mode, Spark will stream newly added files only.
      */
@@ -462,7 +485,8 @@ object SourceReaders {
                                       spark: SparkSession,
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
-                                      connections: Map[String, DQConnection]): Source =
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source =
       toSource(config, fileReader(readMode, config.path.value, "Avro", config.schema.map(_.value), config.windowBy))
   }
 
@@ -480,6 +504,7 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Source
      * @note When read in stream mode, Spark will stream newly added files only.
      */
@@ -488,7 +513,8 @@ object SourceReaders {
                                       spark: SparkSession,
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
-                                      connections: Map[String, DQConnection]): Source =
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source =
       toSource(config, fileReader(readMode, config.path.value, "Parquet", config.schema.map(_.value), config.windowBy))
   }
 
@@ -506,6 +532,7 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Source
      */
     def tryToRead(config: OrcFileSourceConfig,
@@ -513,7 +540,8 @@ object SourceReaders {
                                       spark: SparkSession,
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
-                                      connections: Map[String, DQConnection]): Source =
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source =
       toSource(config, fileReader(readMode, config.path.value, "ORC", config.schema.map(_.value), config.windowBy))
   }
 
@@ -528,14 +556,16 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Source
      */
     def tryToRead(config: CustomSource,
                   readMode: ReadMode)(implicit settings: AppSettings,
-                                        spark: SparkSession,
-                                        fs: FileSystem,
-                                        schemas: Map[String, SourceSchema],
-                                        connections: Map[String, DQConnection]): Source = {
+                                      spark: SparkSession,
+                                      fs: FileSystem,
+                                      schemas: Map[String, SourceSchema],
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source = {
       val readOptions = paramsSeqToMap(config.options.map(_.value))
       val sourceSchema = config.schema.map(_.value).map(sId =>
         schemas.getOrElse(sId, throw new NoSuchElementException(s"Schema with id = '$sId' not found."))
@@ -570,14 +600,16 @@ object SourceReaders {
      * @param spark       Implicit spark session object
      * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
      * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
      * @return Source
      */
     def tryToRead(config: SourceConfig,
                   readMode: ReadMode)(implicit settings: AppSettings,
-                                        spark: SparkSession,
-                                        fs: FileSystem,
-                                        schemas: Map[String, SourceSchema],
-                                        connections: Map[String, DQConnection]): Source =  
+                                      spark: SparkSession,
+                                      fs: FileSystem,
+                                      schemas: Map[String, SourceSchema],
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source =  
     config match {
       case table: TableSourceConfig => TableSourceReader.tryToRead(table, readMode)
       case kafka: KafkaSourceConfig => KafkaSourceReader.tryToRead(kafka, readMode)
@@ -602,6 +634,7 @@ object SourceReaders {
    * @param spark Implicit spark session object
    * @param schemas Map of explicitly defined schemas (schemaId -> SourceSchema)
    * @param connections Map of existing connection (connectionID -> DQConnection)
+   * @param checkpoints Map of initial checkpoints read from checkpoint directory
    * @tparam T Type of source configuration
    */
   implicit class SourceReaderOps[T <: SourceConfig](config: T)
@@ -610,7 +643,8 @@ object SourceReaders {
                                                     spark: SparkSession,
                                                     fs: FileSystem,
                                                     schemas: Map[String, SourceSchema],
-                                                    connections: Map[String, DQConnection]) {
+                                                    connections: Map[String, DQConnection],
+                                                    checkpoints: Map[String, Checkpoint]) {
     def read: Result[Source] = reader.read(config)
     def readStream: Result[Source] = Try(if (!config.streamable) throw new UnsupportedOperationException(
       s"Source '${config.id.value}' is not streamable and, therefore, cannot be read as a stream."

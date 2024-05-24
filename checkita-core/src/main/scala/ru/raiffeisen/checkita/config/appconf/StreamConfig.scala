@@ -1,5 +1,7 @@
 package ru.raiffeisen.checkita.config.appconf
 
+import ru.raiffeisen.checkita.config.RefinedTypes.URI
+
 import scala.concurrent.duration.Duration
 import java.util.UUID
 
@@ -13,14 +15,18 @@ import java.util.UUID
  *                          window is below watermark and for some of the processed streams there are no results then
  *                          all related checks will be skipped if this flag is set to 'true'. Otherwise, checks will
  *                          be processed and return error status with 'metric results were not found' message.
+ * @param checkPointDir     Checkpoint directory. 
+ *                          If not set, then checkpoints in streaming applications will not be saved.
  */
 case class StreamConfig(
                          trigger: Duration = Duration("10s"),
                          window: Duration = Duration("10m"),
                          watermark: Duration = Duration("5m"),
-                         allowEmptyWindows: Boolean = false
+                         allowEmptyWindows: Boolean = false,
+                         checkPointDir: Option[URI] = None
                        ) {
   // random column names are generated to be used for windowing:
   lazy val windowTsCol: String = UUID.randomUUID.toString.replace("-", "")
   lazy val eventTsCol: String = UUID.randomUUID.toString.replace("-", "")
+  lazy val checkpointCol: String = UUID.randomUUID.toString.replace("-", "")
 }

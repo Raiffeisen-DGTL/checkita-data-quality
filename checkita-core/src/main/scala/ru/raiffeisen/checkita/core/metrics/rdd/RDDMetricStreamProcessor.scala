@@ -5,11 +5,12 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import ru.raiffeisen.checkita.config.appconf.StreamConfig
 import ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors
 import ru.raiffeisen.checkita.core.metrics.{BasicMetricProcessor, RegularMetric}
+import ru.raiffeisen.checkita.core.streaming.Checkpoints.Checkpoint
+import ru.raiffeisen.checkita.core.streaming.ProcessorBuffer
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import scala.collection.JavaConverters._
-import scala.collection.concurrent
 import scala.util.Try
 
 object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
@@ -30,49 +31,7 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
    *
    * @note window is identified by its start time as unix epoch (in seconds).
    */
-  type MicroBatchState = (Long, Map[Long, GroupedCalculators])
-
-  /**
-   * Processor state buffer used in streaming applications.
-   * Holds following metric calculation state:
-   *   - current watermarks per each stream that is being processed.
-   *   - state of metric calculators per each stream and each processing window withing a stream.
-   *   - metric error accumulators per each stream and each processing window withing a stream.
-   *
-   * @param watermarks  Watermarks per each stream.
-   * @param calculators Calculators state per each stream and each window.
-   * @param errors      Metric errors per each stream and each window.
-   * @note Scala concurrent Trie Map is used to store results in a buffer as it is a thread safe and
-   *       allows lock free access to its contents.
-   */
-  case class ProcessorBuffer(
-                              watermarks: concurrent.TrieMap[String, Long],
-                              calculators: concurrent.TrieMap[(String, Long), GroupedCalculators],
-                              errors: concurrent.TrieMap[(String, Long), Seq[AccumulatedErrors]]
-                            )
-  object ProcessorBuffer {
-    /**
-     * Creates empty processor buffer provided with sequence of streams to be processed.
-     * @param streamIds Stream Ids to be processed.
-     * @return Empty processor buffer
-     * @note Empty processor buffer has its watermarks initialized with long minimum value
-     */
-    def init(streamIds: Seq[String]): ProcessorBuffer = {
-      val initWatermarks = concurrent.TrieMap.empty[String, Long]
-      streamIds.foreach(initWatermarks.update(_, Long.MinValue))
-      ProcessorBuffer(
-        initWatermarks,
-        concurrent.TrieMap.empty[(String, Long), GroupedCalculators],
-        concurrent.TrieMap.empty[(String, Long), Seq[AccumulatedErrors]]
-      )
-    }
-    
-    def fromTuple(t: (
-      concurrent.TrieMap[String, Long], 
-      concurrent.TrieMap[(String, Long), GroupedCalculators], 
-      concurrent.TrieMap[(String, Long), Seq[AccumulatedErrors]]
-    )): ProcessorBuffer = ProcessorBuffer(t._1, t._2, t._3)
-  }
+  type MicroBatchState = (Long, Map[Long, GroupedCalculators], Option[Checkpoint])
 
 
   /**
@@ -91,7 +50,8 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
    */
   def processRegularMetrics(streamId: String,
                             streamKeys: Seq[String],
-                            streamMetrics: Seq[RegularMetric])
+                            streamMetrics: Seq[RegularMetric],
+                            streamCheckpoint: Option[Checkpoint])
                            (implicit spark: SparkSession,
                             buffer: ProcessorBuffer,
                             streamConf: StreamConfig,
@@ -126,7 +86,7 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
       // get and register metric error accumulator:
       val metricErrorAccumulator = getAndRegisterErrorAccumulator
 
-      val initState: MicroBatchState = (0L, Map.empty)
+      val initState: MicroBatchState = (0L, Map.empty, streamCheckpoint)
       val updatedState = df.rdd.treeAggregate(initState)(
         seqOp = {
           case (state: MicroBatchState, row: Row) =>
@@ -148,8 +108,11 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
             getErrorsFromGroupedCalculators(updatedCalculators, row, columnIndexes, columnNames, streamKeyIds)
               .foreach(err => metricErrorAccumulator.add(rowWindowStart, err))
 
+            // update checkpoint:
+            val updatedCheckpoint = state._3.map(_.update(row, columnIndexes))
+            
             // yield updated state:
-            math.max(state._1, rowEventTime) -> state._2.updated(rowWindowStart, updatedCalculators)
+            (math.max(state._1, rowEventTime), state._2.updated(rowWindowStart, updatedCalculators), updatedCheckpoint)
         },
         combOp = (l, r) => {
           val maxEventTime = math.max(l._1, r._1)
@@ -159,13 +122,20 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
             .mapValues(s => s.map(_._2))
             .mapValues(sq => sq.reduce((lt, rt) => mergeGroupCalculators(lt, rt)))
             .map(identity)
-
-          maxEventTime -> mergedState
+          
+          val mergedCheckpoint = for {
+            lChk <- l._3
+            rChk <- r._3
+          } yield lChk.merge(rChk)
+          
+          (maxEventTime, mergedState, mergedCheckpoint)
         }
       )
 
-      // update buffer:
+      // update buffer watermarks:
       buffer.watermarks.update(streamId, math.max(watermark, updatedState._1 - streamConf.watermark.toSeconds))
+      
+      // update buffer calculators:
       updatedState._2.foreach {
         case (window, state) =>
           val bufferedCalculators = buffer.calculators.get((streamId, window))
@@ -175,7 +145,7 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
           buffer.calculators.update((streamId, window), updatedCalculators)
       }
 
-      // update errors:
+      // update buffer errors:
       metricErrorAccumulator.value.asScala
         .groupBy(t => t._1)
         .mapValues(v => v.map(_._2))
@@ -185,6 +155,14 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
             val updatedErrors = bufferedErrors.map(be => be ++ errors).getOrElse(errors)
             buffer.errors.update((streamId, window), updatedErrors)
         }
+      
+      // update buffer checkpoints:
+      updatedState._3.foreach { checkpoint =>
+        val currentCheckpoint = buffer.checkpoints.get(checkpoint.id)
+        val updatedCheckpoint = currentCheckpoint.map(_.merge(checkpoint)).getOrElse(checkpoint)
+        buffer.checkpoints.update(checkpoint.id, updatedCheckpoint)
+      }
+      
       metricErrorAccumulator.reset()
 
       log.info(s"[STREAM '$streamId'] Regular metrics are processed for non-empty batch (batchId = $batchId).")

@@ -1,4 +1,4 @@
-package ru.raiffeisen.checkita.core.metrics.serialization
+package ru.raiffeisen.checkita.core.serialization
 
 import enumeratum.{Enum, EnumEntry}
 import eu.timepit.refined.api.Refined

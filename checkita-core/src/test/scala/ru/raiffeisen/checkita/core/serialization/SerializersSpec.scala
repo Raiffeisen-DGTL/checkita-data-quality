@@ -1,10 +1,11 @@
-package ru.raiffeisen.checkita.core.metrics.serialization
+package ru.raiffeisen.checkita.core.serialization
 
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.auto._
+import org.apache.spark.sql.{Encoder, Encoders}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import ru.raiffeisen.checkita.Common.checkSerDe
+import ru.raiffeisen.checkita.Common.{checkSerDe, spark}
 import ru.raiffeisen.checkita.config.Enums._
 import ru.raiffeisen.checkita.config.RefinedTypes.ID
 import ru.raiffeisen.checkita.config.jobconf.MetricParams._
@@ -13,11 +14,13 @@ import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.metrics.ErrorCollection.{AccumulatedErrors, MetricStatus}
 import ru.raiffeisen.checkita.core.metrics.RegularMetric
 import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricProcessor.GroupedCalculators
-import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricStreamProcessor.ProcessorBuffer
+import ru.raiffeisen.checkita.core.metrics.rdd.regular.AlgebirdRDDMetrics.HyperLogLogRDDMetricCalculator
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.BasicNumericRDDMetrics.{StdAvgNumberRDDMetricCalculator, TDigestRDDMetricCalculator}
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.BasicStringRDDMetrics.RegexMatchRDDMetricCalculator
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.FileRDDMetrics.RowCountRDDMetricCalculator
-import ru.raiffeisen.checkita.core.metrics.serialization.Implicits._
+import ru.raiffeisen.checkita.core.serialization.Implicits._
+import ru.raiffeisen.checkita.core.streaming.Checkpoints._
+import ru.raiffeisen.checkita.core.streaming.ProcessorBuffer
 
 import scala.collection.concurrent.TrieMap
 import scala.util.Random
@@ -267,26 +270,47 @@ class SerializersSpec extends AnyWordSpec with Matchers {
   }
   
   "ProcessorBuffer SerDe" must {
-    "correctly serialize streaming processor buffer" in {
-      val watermarks: TrieMap[String, Long] = TrieMap("streamOne" -> 123456L, "streamTwo" -> 654321L)
-      val calculators: TrieMap[(String, Long), GroupedCalculators] = TrieMap(
-        ("streamOne", 111111111L) -> Map(Seq("col1", "col2") -> Seq(
-          RowCountRDDMetricCalculator(10) -> Seq(RowCountMetricConfig(ID("row_cnt_metric"), None, "streamOne")),
-          StdAvgNumberRDDMetricCalculator(123, 7654313, 10) -> Seq(
-            AvgNumberMetricConfig(ID("avg_num_metric"), None, "streamOne", Refined.unsafeApply(Seq("col1", "col2"))),
-            SumNumberMetricConfig(ID("sum_num_metric"), None, "streamOne", Refined.unsafeApply(Seq("col1", "col2"))),
-          )
-        )),
-        ("streamTwo", 222222222L) -> Map(Seq("col3") -> Seq(
-          RowCountRDDMetricCalculator(25) -> Seq(RowCountMetricConfig(ID("row_cnt_metric_2"), None, "streamTwo")),
-          RegexMatchRDDMetricCalculator(5, """^\w+$""", reversed = false) -> Seq(RegexMismatchMetricConfig(
-            ID("some_metric"), None, "streamTwo", Refined.unsafeApply(Seq("col3")),
-            RegexParams("""^\w+$""")
-          ))
+    val watermarks: TrieMap[String, Long] = TrieMap("streamOne" -> 123456L, "streamTwo" -> 654321L)
+    val calculators: TrieMap[(String, Long), GroupedCalculators] = TrieMap(
+      ("streamOne", 111111111L) -> Map(Seq("col1", "col2") -> Seq(
+        RowCountRDDMetricCalculator(10) -> Seq(RowCountMetricConfig(ID("row_cnt_metric"), None, "streamOne")),
+        StdAvgNumberRDDMetricCalculator(123, 7654313, 10) -> Seq(
+          AvgNumberMetricConfig(ID("avg_num_metric"), None, "streamOne", Refined.unsafeApply(Seq("col1", "col2"))),
+          SumNumberMetricConfig(ID("sum_num_metric"), None, "streamOne", Refined.unsafeApply(Seq("col1", "col2"))),
+        ),
+        new HyperLogLogRDDMetricCalculator(0.001) -> Seq(ApproxDistinctValuesMetricConfig(
+          ID("approx_dist"), None, "streamOne", Refined.unsafeApply(Seq("col1", "col2")),
+          ApproxDistinctValuesParams(0.001)
         ))
-      )
-      val buffer = ProcessorBuffer(watermarks, calculators, errors)
+      )),
+      ("streamTwo", 222222222L) -> Map(Seq("col3") -> Seq(
+        RowCountRDDMetricCalculator(25) -> Seq(RowCountMetricConfig(ID("row_cnt_metric_2"), None, "streamTwo")),
+        RegexMatchRDDMetricCalculator(5, """^\w+$""", reversed = false) -> Seq(RegexMismatchMetricConfig(
+          ID("some_metric"), None, "streamTwo", Refined.unsafeApply(Seq("col3")),
+          RegexParams("""^\w+$""")
+        )),
+        new TDigestRDDMetricCalculator(0.001, 0.1) -> Seq(GetQuantileMetricConfig(
+          ID("get_q_metric"), None, "streamTwo", Refined.unsafeApply(Seq("col3")),
+          TDigestGeqQuantileParams(target = 0.1)
+        ))
+      ))
+    )
+    val checkpoints = TrieMap(
+      "streamOne" -> KafkaCheckpoint("streamOne", Map(("some.topic" -> 0) -> 123456)).asInstanceOf[Checkpoint]
+    )
+    val buffer = ProcessorBuffer(watermarks, calculators, errors, checkpoints)
+    
+    "correctly serialize streaming processor buffer" in {
       checkSerDe[ProcessorBuffer](buffer)
+    }
+    "correctly serialize streaming processor buffer using Kryo" in {
+      val path = "internal/tmp/buffer"
+      implicit val encoder: Encoder[ProcessorBuffer] = Encoders.kryo[ProcessorBuffer]
+      val df = spark.createDataset(Seq(buffer))
+      df.write.mode("overwrite").parquet(path)
+      val decoded = spark.read.parquet(path).as[ProcessorBuffer].take(1).head
+      print(decoded)
+      buffer shouldEqual decoded
     }
   }
 }

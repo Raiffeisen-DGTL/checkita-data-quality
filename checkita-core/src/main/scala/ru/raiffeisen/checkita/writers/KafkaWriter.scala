@@ -6,6 +6,7 @@ import ru.raiffeisen.checkita.config.jobconf.Files.FileConfig
 import ru.raiffeisen.checkita.config.jobconf.Outputs.KafkaOutputConfig
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.connections.kafka.{KafkaConnection, KafkaOutput}
+import ru.raiffeisen.checkita.utils.Common.getStringHash
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.security.MessageDigest
@@ -23,7 +24,7 @@ trait KafkaWriter[T <: KafkaOutputConfig] extends OutputWriter[Seq[String], T] {
    */
   private def keyGenerator(msg: String, jobId: String, entityType: String)
                           (implicit settings: AppSettings): String = {
-    val md5hash = MessageDigest.getInstance("MD5").digest(msg.getBytes).map("%02x".format(_)).mkString
+    val md5hash = getStringHash(msg)
     s"$entityType@$jobId@${settings.referenceDateTime.render}@${settings.executionDateTime.render}@$md5hash"
   }
 

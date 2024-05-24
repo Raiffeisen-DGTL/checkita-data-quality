@@ -1,10 +1,11 @@
 package ru.raiffeisen.checkita.context
 
+import com.typesafe.config.ConfigRenderOptions
 import org.apache.hadoop.fs.FileSystem
 import org.apache.logging.log4j.Level
 import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.{AppSettings, VersionInfo}
-import ru.raiffeisen.checkita.config.IO.readJobConfig
+import ru.raiffeisen.checkita.config.IO.{RenderOptions, readJobConfig, writeJobConfig}
 import ru.raiffeisen.checkita.config.Parsers._
 import ru.raiffeisen.checkita.config.appconf.AppConfig
 import ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig
@@ -17,13 +18,15 @@ import ru.raiffeisen.checkita.config.jobconf.Sources.{SourceConfig, VirtualSourc
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.core.Source
+import ru.raiffeisen.checkita.core.streaming.Checkpoints.Checkpoint
+import ru.raiffeisen.checkita.core.streaming.{CheckpointIO, ProcessorBuffer}
 import ru.raiffeisen.checkita.readers.ConnectionReaders._
 import ru.raiffeisen.checkita.readers.SchemaReaders._
 import ru.raiffeisen.checkita.readers.SourceReaders._
 import ru.raiffeisen.checkita.readers.VirtualSourceReaders.VirtualSourceReaderOps
 import ru.raiffeisen.checkita.storage.Connections.DqStorageConnection
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
-import ru.raiffeisen.checkita.utils.Common.prepareConfig
+import ru.raiffeisen.checkita.utils.Common.{getStringHash, prepareConfig}
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
 import ru.raiffeisen.checkita.utils.SparkUtils.{makeFileSystem, makeSparkSession}
@@ -53,6 +56,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
   private val schemaStage: String = RunStage.ReadSchemas.entryName
   private val sourceStage: String = RunStage.ReadSources.entryName
   private val virtualSourceStage: String = RunStage.ReadVirtualSources.entryName
+  private val checkpointStage: String = RunStage.CheckpointStage.entryName
 
   /**
    * Trick here is that this value needs to be evaluated when DQ context is created.
@@ -87,7 +91,8 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       s"  - Window duration:     ${settings.streamConfig.window.toString}",
       s"  - Trigger interval:    ${settings.streamConfig.trigger.toString}",
       s"  - Watermark interval:  ${settings.streamConfig.watermark.toString}",
-      s"  - Allow empty windows: ${settings.streamConfig.allowEmptyWindows}"
+      s"  - Allow empty windows: ${settings.streamConfig.allowEmptyWindows}",
+      s"  - Checkpoint location: ${settings.streamConfig.checkPointDir.map(_.value).getOrElse("Not specified.")}"
     )
     val logEnablers = Seq(
       "* Enablers settings:",
@@ -261,9 +266,11 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
   private def readSources(sources: Seq[SourceConfig],
                           schemas: Map[String, SourceSchema],
                           connections: Map[String, DQConnection],
-                          readAsStream: Boolean = false): Result[Map[String, Source]] = {
+                          readAsStream: Boolean = false,
+                          checkpoints: Map[String, Checkpoint] = Map.empty): Result[Map[String, Source]] = {
     implicit val sc: Map[String, SourceSchema] = schemas
     implicit val c: Map[String, DQConnection] = connections
+    implicit val chk: Map[String, Checkpoint] = checkpoints
     
     reduceToMap(sources.map{ srcConf =>
       log.info(s"$sourceStage Reading source '${srcConf.id.value}'...")
@@ -490,12 +497,31 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     implicit val jobId: String = jobConfig.jobId.value
 
     logJobBuildStart
-
+    
+    log.info(s"$checkpointStage Reading checkpoint.")
+    val bufferCheckpoint = jobConfig.getJobHash.mapValue { jh =>
+      settings.streamConfig.checkPointDir match {
+        case Some(dir) => CheckpointIO.readCheckpoint(dir.value, jobId, jh)
+        case None => 
+          log.info(s"$checkpointStage Checkpoint directory is not set.")
+          None
+      }
+    }.tap{
+      case Some(_) => log.info(s"$checkpointStage Checkpoints retrieved successfully.")
+      case None => log.info(s"$checkpointStage No checkpoint was retrieved. Proceed with empty stream processor buffer.")
+    }.mapLeft(_.map(e => s"$checkpointStage $e")) // update error messages with running stage
+    
+    val checkpoints = bufferCheckpoint.map(optBuffer =>
+      optBuffer.map(_.checkpoints.readOnlySnapshot().toMap).getOrElse(Map.empty)
+    )
+    
     val connections = establishConnections(jobConfig.connections.map(_.getAllConnections).getOrElse(Seq.empty))
     val schemas = readSchemas(jobConfig.schemas)
-    val regularSources = connections.combine(schemas)((c, s) => (c, s)).flatMap {
-      case (conn, sch) => readSources(
-        jobConfig.streams.map(_.getAllSources).getOrElse(Seq.empty), sch, conn, readAsStream = true
+    val regularSources = connections.union(schemas, checkpoints).flatMap {
+      case (conn, sch, checkpoints) => readSources(
+        jobConfig.streams.map(_.getAllSources).getOrElse(Seq.empty), sch, conn, 
+        readAsStream = true,
+        checkpoints = checkpoints
       )
     }
 

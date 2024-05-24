@@ -1,4 +1,4 @@
-package ru.raiffeisen.checkita.core.metrics.serialization
+package ru.raiffeisen.checkita.core.serialization
 
 import com.twitter.algebird.{HLL, HyperLogLog, SpaceSaver}
 import org.isarnproject.sketches.java.TDigest

@@ -9,8 +9,8 @@ import ru.raiffeisen.checkita.storage.Connections.DqStorageConnection
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
 import ru.raiffeisen.checkita.utils.SparkUtils.{makeFileSystem, makeSparkSession}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import ru.raiffeisen.checkita.core.metrics.serialization.SerDe
-import ru.raiffeisen.checkita.core.metrics.serialization.API.{encode, decode}
+import ru.raiffeisen.checkita.core.serialization.API.{encode, decode}
+import ru.raiffeisen.checkita.core.serialization.SerDe
 
 object Common {
   implicit val jobId: String = "earthquakes_base_job"

@@ -10,6 +10,7 @@ import ru.raiffeisen.checkita.config.RefinedTypes.ID
 import ru.raiffeisen.checkita.config.jobconf.Sources._
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.core.Source
+import ru.raiffeisen.checkita.core.streaming.Checkpoints.Checkpoint
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.readers.SourceReaders._
 
@@ -81,6 +82,7 @@ class SourceReadersSpec extends AnyWordSpec with Matchers {
       StructField("city", StringType, nullable = true),
     )))
   )
+  implicit val checkpoints: Map[String, Checkpoint] = Map.empty
   
   "FixedFileSourceReader" must {
     val filePath = getClass.getResource("/data/companies/inc_500_companies_2019.txt").getPath

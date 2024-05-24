@@ -6,7 +6,7 @@ import ru.raiffeisen.checkita.Common.checkSerDe
 import ru.raiffeisen.checkita.core.metrics.MetricName
 import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.FileRDDMetrics.RowCountRDDMetricCalculator
-import ru.raiffeisen.checkita.core.metrics.serialization.Implicits._
+import ru.raiffeisen.checkita.core.serialization.Implicits._
 
 import scala.util.Random
 

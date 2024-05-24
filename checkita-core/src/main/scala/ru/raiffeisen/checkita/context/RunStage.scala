@@ -10,6 +10,7 @@ import scala.collection.immutable
 sealed abstract class RunStage(override val entryName: String) extends EnumEntry
 object RunStage extends Enum[RunStage] {
   case object ApplicationSetup extends RunStage("[APPLICATION SETUP]")
+  case object CheckpointStage extends RunStage("[READING CHECKPOINT]")
   case object EstablishConnections extends RunStage("[ESTABLISH CONNECTIONS]")
   case object ReadSchemas extends RunStage("[READING SCHEMAS]")
   case object ReadSources extends RunStage("[READING REGULAR SOURCES]")

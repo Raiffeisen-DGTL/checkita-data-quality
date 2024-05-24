@@ -9,7 +9,7 @@ import ru.raiffeisen.checkita.core.metrics.rdd.Casting.tryToDouble
 import ru.raiffeisen.checkita.core.metrics.MetricName
 import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.BasicNumericRDDMetrics._
-import ru.raiffeisen.checkita.core.metrics.serialization.Implicits._
+import ru.raiffeisen.checkita.core.serialization.Implicits._
 
 class BasicNumericRDDMetricsSpec extends AnyWordSpec with Matchers {
   

@@ -1,4 +1,4 @@
-package ru.raiffeisen.checkita.core.metrics.serialization
+package ru.raiffeisen.checkita.core.serialization
 
 import ru.raiffeisen.checkita.config.Enums.{CompareRule, PrecisionCompareRule}
 import ru.raiffeisen.checkita.config.RefinedTypes.{DateFormat, Email, ID}
@@ -7,13 +7,14 @@ import ru.raiffeisen.checkita.config.jobconf.Metrics._
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.metrics.ErrorCollection.{AccumulatedErrors, MetricStatus}
 import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
-import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricStreamProcessor.ProcessorBuffer
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.AlgebirdRDDMetrics._
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.BasicNumericRDDMetrics._
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.BasicStringRDDMetrics._
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.FileRDDMetrics.RowCountRDDMetricCalculator
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.MultiColumnRDDMetrics._
 import ru.raiffeisen.checkita.core.metrics.{MetricName, RegularMetric}
+import ru.raiffeisen.checkita.core.streaming.Checkpoints._
+import ru.raiffeisen.checkita.core.streaming.ProcessorBuffer
 import ru.raiffeisen.checkita.utils.Common.camelToSnakeCase
 
 object Implicits extends SerDeTransformations 
@@ -21,7 +22,24 @@ object Implicits extends SerDeTransformations
   with SerializersTuples 
   with SerializersCollections 
   with SerializersSpecific {
+  
+  // todo: make generic. Causing "diverging implicit expansion..." error.
+  implicit def checkpointSerDe(implicit kSerDe: SerDe[Int]): SerDe[Checkpoint] = {
+    val kindGetter: Checkpoint => Int = (c: Checkpoint) =>
+      c.getClass.getSimpleName.dropRight("Checkpoint".length).toLowerCase match {
+        case "kafka" => 1
+      }
 
+    val serDeGetter: Int => SerDe[Checkpoint] = kindId => {
+      val serDe = kindId match {
+        case 1 => getProductSerDe(KafkaCheckpoint.unapply, KafkaCheckpoint.tupled)
+      }
+      serDe.asInstanceOf[SerDe[Checkpoint]]
+    }
+
+    kinded(kSerDe, kindGetter, serDeGetter)
+  }
+  
   implicit def rddCalculatorSerDe[R <: RDDMetricCalculator](implicit kSerDe: SerDe[String]): SerDe[R] = {
     val kindGetter: R => String = (r: R) =>
       camelToSnakeCase(r.getClass.getSimpleName.dropRight("RDDMetricCalculator".length))
@@ -291,7 +309,7 @@ object Implicits extends SerDeTransformations
     }
     kinded(mSerDe, (r: R) => r.metricName, getter)
   }
-
+  
   /**
    * Implicit SerDe for Streaming Processor Buffer.
    * 

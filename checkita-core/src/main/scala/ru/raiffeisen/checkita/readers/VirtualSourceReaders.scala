@@ -23,7 +23,7 @@ object VirtualSourceReaders {
      * @param parentSources Map of already defined virtual sources
      * @return Sequence of parent sources specific to given virtual source configuration.
      */
-    protected def getParents(config: T)(implicit parentSources: Map[String, Source]): Seq[Source] =
+    protected def getParents(config: T, parentSources: Map[String, Source]): Seq[Source] =
       config.parents.map( sId => parentSources.getOrElse(
         sId, throw new NoSuchElementException(s"Parent source with id = '$sId' not found.")
       ))
@@ -32,15 +32,14 @@ object VirtualSourceReaders {
      * Builds virtual source dataframe given the virtual source configuration.
      *
      * @param config        Virtual source configuration
+     * @param parents       Sequence of parent sources for this virtual source
      * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
      * @param settings      Implicit application settings object
      * @param spark         Implicit spark session object
-     * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
      */
-    def getDataFrame(config: T, readMode: ReadMode)(implicit settings: AppSettings,
-                                                    spark: SparkSession,
-                                                    parentSources: Map[String, Source]): DataFrame
+    def getDataFrame(config: T, parents: Seq[Source], readMode: ReadMode)(implicit settings: AppSettings,
+                                                                          spark: SparkSession): DataFrame
 
     /**
      * Safely reads virtual source given source configuration.
@@ -57,12 +56,22 @@ object VirtualSourceReaders {
              readMode: ReadMode)(implicit settings: AppSettings,
                                  spark: SparkSession): Result[Source] =
       Try{
-        implicit val parents: Map[String, Source] = parentSources
-        val df = getDataFrame(config, readMode)
+        val parents: Seq[Source] = getParents(config, parentSources)
+        
+        // checkpoint could be defined only for streaming applications 
+        // There are only two type of virtual streams currently: 
+        // select and filter. Both of them must have exactly one parent.
+        // Thus we will use checkpoint of parent regular stream.
+        val checkpoint = readMode match {
+          case ReadMode.Batch => None
+          case ReadMode.Stream => if (parents.size == 1) parents.head.checkpoint else None
+        }
+        
+        val df = getDataFrame(config, parents, readMode)
         // persist if necessary:
         if (config.persist.nonEmpty) df.persist(config.persist.get)
         Source.validated(
-          config.id.value, df, config.keyFields.map(_.value), config.parents
+          config.id.value, df, config.keyFields.map(_.value), config.parents, checkpoint
         )(settings.enableCaseSensitivity)
       }.toResult(
         preMsg = s"Unable to read virtual source '${config.id.value}' due to following error: "
@@ -76,20 +85,19 @@ object VirtualSourceReaders {
      * Builds virtual source dataframe given the virtual source configuration.
      *
      * @param config        Virtual source configuration
+     * @param parents       Sequence of parent sources for this virtual source
      * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
      * @param settings      Implicit application settings object
      * @param spark         Implicit spark session object
-     * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
      * @note SqlVirtualSource is not streamable, therefore, 'readMode' argument is ignored
      *       and source is always read as static DataFrame.
      */
     def getDataFrame(config: SqlVirtualSourceConfig,
+                     parents: Seq[Source],
                      readMode: ReadMode)(implicit settings: AppSettings,
-                                         spark: SparkSession,
-                                         parentSources: Map[String, Source]): DataFrame =
+                                         spark: SparkSession): DataFrame =
       if (settings.allowSqlQueries) {
-        val parents = getParents(config)
         // register tempViews:
         parents.foreach(src => src.df.createOrReplaceTempView(src.id))
         spark.sql(config.query.value)
@@ -106,19 +114,18 @@ object VirtualSourceReaders {
      * Builds virtual source dataframe given the virtual source configuration.
      *
      * @param config        Virtual source configuration
+     * @param parents       Sequence of parent sources for this virtual source
      * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
      * @param settings      Implicit application settings object
      * @param spark         Implicit spark session object
-     * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
      * @note JoinVirtualSource is not streamable, therefore, 'readMode' argument is ignored
      *       and source is always read as static DataFrame.
      */
     def getDataFrame(config: JoinVirtualSourceConfig,
+                     parents: Seq[Source],
                      readMode: ReadMode)(implicit settings: AppSettings,
-                                         spark: SparkSession,
-                                         parentSources: Map[String, Source]): DataFrame = {
-      val parents = getParents(config)
+                                         spark: SparkSession): DataFrame = {
       require(parents.size == 2,
         s"Join virtual source must have two parent sources defined. Got following: " +
           parents.map(_.id).mkString("[", ",", "]")
@@ -137,17 +144,16 @@ object VirtualSourceReaders {
      * Builds virtual source dataframe given the virtual source configuration.
      *
      * @param config        Virtual source configuration
+     * @param parents       Sequence of parent sources for this virtual source
      * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
      * @param settings      Implicit application settings object
      * @param spark         Implicit spark session object
-     * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
      */
     def getDataFrame(config: FilterVirtualSourceConfig,
+                     parents: Seq[Source],
                      readMode: ReadMode)(implicit settings: AppSettings,
-                                         spark: SparkSession,
-                                         parentSources: Map[String, Source]): DataFrame = {
-      val parents = getParents(config)
+                                         spark: SparkSession): DataFrame = {
       require(parents.size == 1,
         s"Filter virtual source must have exactly one parent source. Got following: " +
           parents.map(_.id).mkString("[", ",", "]")
@@ -173,17 +179,16 @@ object VirtualSourceReaders {
      * Builds virtual source dataframe given the virtual source configuration.
      *
      * @param config        Virtual source configuration
+     * @param parents       Sequence of parent sources for this virtual source
      * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
      * @param settings      Implicit application settings object
      * @param spark         Implicit spark session object
-     * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
      */
     def getDataFrame(config: SelectVirtualSourceConfig,
+                     parents: Seq[Source],
                      readMode: ReadMode)(implicit settings: AppSettings,
-                                                        spark: SparkSession,
-                                                        parentSources: Map[String, Source]): DataFrame = {
-      val parents = getParents(config)
+                                         spark: SparkSession): DataFrame = {
       require(parents.size == 1,
         s"Select virtual source must have exactly one parent source. Got following: " +
           parents.map(_.id).mkString("[", ",", "]")
@@ -210,19 +215,18 @@ object VirtualSourceReaders {
      * Builds virtual source dataframe given the virtual source configuration.
      *
      * @param config        Virtual source configuration
+     * @param parents       Sequence of parent sources for this virtual source
      * @param readMode      Mode in which source is read. Either 'batch' or 'stream'
      * @param settings      Implicit application settings object
      * @param spark         Implicit spark session object
-     * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
      * @note AggregateVirtualSource is not streamable, therefore, 'readMode' argument is ignored
      *       and source is always read as static DataFrame.
      */
     def getDataFrame(config: AggregateVirtualSourceConfig,
+                     parents: Seq[Source],
                      readMode: ReadMode)(implicit settings: AppSettings,
-                                         spark: SparkSession,
-                                         parentSources: Map[String, Source]): DataFrame = {
-      val parents = getParents(config)
+                                         spark: SparkSession): DataFrame = {
       require(parents.size == 1,
         s"Aggregate virtual source must have exactly one parent source. Got following: " +
           parents.map(_.id).mkString("[", ",", "]")
@@ -239,25 +243,26 @@ object VirtualSourceReaders {
    * Generic virtual source reader that calls specific reader depending on the virtual source configuration type.
    */
   implicit object AnyVirtualSourceReader extends VirtualSourceReader[VirtualSourceConfig] {
+    
     /**
      * Builds virtual source dataframe given the virtual source configuration.
      *
      * @param config        Virtual source configuration
+     * @param parents       Sequence of parent sources for this virtual source
      * @param settings      Implicit application settings object
      * @param spark         Implicit spark session object
-     * @param parentSources Map of already defined sources (sourceId -> Source)
      * @return Spark Dataframe
      */
     def getDataFrame(config: VirtualSourceConfig,
+                     parents: Seq[Source],
                      readMode: ReadMode)(implicit settings: AppSettings,
-                                         spark: SparkSession,
-                                         parentSources: Map[String, Source]): DataFrame =
+                                         spark: SparkSession): DataFrame =
     config match {
-      case sql: SqlVirtualSourceConfig => SqlVirtualSourceReader.getDataFrame(sql, readMode)
-      case join: JoinVirtualSourceConfig => JoinVirtualSourceReader.getDataFrame(join, readMode)
-      case filter: FilterVirtualSourceConfig => FilterVirtualSourceReader.getDataFrame(filter, readMode)
-      case select: SelectVirtualSourceConfig => SelectVirtualSourceReader.getDataFrame(select, readMode)
-      case aggregate: AggregateVirtualSourceConfig => AggregateVirtualSourceReader.getDataFrame(aggregate, readMode)
+      case sql: SqlVirtualSourceConfig => SqlVirtualSourceReader.getDataFrame(sql, parents, readMode)
+      case join: JoinVirtualSourceConfig => JoinVirtualSourceReader.getDataFrame(join, parents, readMode)
+      case filter: FilterVirtualSourceConfig => FilterVirtualSourceReader.getDataFrame(filter, parents, readMode)
+      case select: SelectVirtualSourceConfig => SelectVirtualSourceReader.getDataFrame(select, parents, readMode)
+      case aggregate: AggregateVirtualSourceConfig => AggregateVirtualSourceReader.getDataFrame(aggregate, parents, readMode)
       case other => throw new IllegalArgumentException(
         s"Unsupported virtual source type: '${other.getClass.getTypeName}"
       )
