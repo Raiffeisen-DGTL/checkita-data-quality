@@ -199,11 +199,15 @@ object VirtualSourceReaders {
         case ReadMode.Batch => parentDf.select(config.expr.value :_*)
         case ReadMode.Stream => if (config.windowBy.isEmpty) {
           val allColumns = config.expr.value ++ Seq(
+            settings.streamConfig.checkpointCol,
             settings.streamConfig.windowTsCol,
             settings.streamConfig.eventTsCol
           ).map(col)
           parentDf.select(allColumns: _*)
-        } else parentDf.select(config.expr.value :_*).prepareStream(config.windowBy.get)
+        } else {
+          val allColumns = config.expr.value :+ col(settings.streamConfig.checkpointCol)
+          parentDf.select(allColumns :_*).prepareStream(config.windowBy.get)
+        }
       }
     }
   }

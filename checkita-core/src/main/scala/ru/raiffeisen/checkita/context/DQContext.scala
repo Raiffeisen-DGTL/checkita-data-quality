@@ -92,7 +92,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       s"  - Trigger interval:    ${settings.streamConfig.trigger.toString}",
       s"  - Watermark interval:  ${settings.streamConfig.watermark.toString}",
       s"  - Allow empty windows: ${settings.streamConfig.allowEmptyWindows}",
-      s"  - Checkpoint location: ${settings.streamConfig.checkPointDir.map(_.value).getOrElse("Not specified.")}"
+      s"  - Checkpoint location: ${settings.streamConfig.checkpointDir.map(_.value).getOrElse("Not specified.")}"
     )
     val logEnablers = Seq(
       "* Enablers settings:",
@@ -500,7 +500,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     
     log.info(s"$checkpointStage Reading checkpoint.")
     val bufferCheckpoint = jobConfig.getJobHash.mapValue { jh =>
-      settings.streamConfig.checkPointDir match {
+      settings.streamConfig.checkpointDir match {
         case Some(dir) => CheckpointIO.readCheckpoint(dir.value, jobId, jh)
         case None => 
           log.info(s"$checkpointStage Checkpoint directory is not set.")
@@ -532,8 +532,8 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     val checks: Seq[CheckConfig] = jobConfig.checks.toSeq.flatMap(_.getAllChecks)
     val targets: Seq[TargetConfig] = jobConfig.targets.toSeq.flatMap(_.getAllTargets)
 
-    allSources.combineT3(connections, schemas, getStorageManager)(
-      (sources, conn, _, manager) => DQStreamJob(
+    allSources.combineT4(connections, schemas, getStorageManager, bufferCheckpoint)(
+      (sources, conn, _, manager, buffer) => DQStreamJob(
         jobConfig,
         sources.values.toSeq,
         regularMetrics,
@@ -543,7 +543,8 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
         targets,
         Map.empty[String, SourceSchema], // as no need to run load checks then schemas are not needed as well
         conn,
-        manager
+        manager,
+        buffer
       )
     ).mapLeft(_.distinct) // there is some error message duplication that needs to be eliminated.
   }

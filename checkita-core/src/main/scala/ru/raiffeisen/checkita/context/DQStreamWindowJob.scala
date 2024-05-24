@@ -205,7 +205,7 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
               log.debug(s"$windowStage CALCULATORS buffer now contains following windows: ${buffer.calculators.keys.toSeq}")
               log.debug(s"$windowStage ERRORS buffer now contains following windows: ${buffer.calculators.keys.toSeq}")
             }.union(jobConfig.getJobHash).flatMap { // writing checkpoint
-              case (_, jh) => windowSettings.streamConfig.checkPointDir match {
+              case (_, jh) => windowSettings.streamConfig.checkpointDir match {
                 case Some(dir) =>
                   log.info(s"$windowStage Writing checkpoint to ${dir.value}/$jobId ...")
                   CheckpointIO.writeCheckpoint(

@@ -15,7 +15,7 @@ import java.util.UUID
  *                          window is below watermark and for some of the processed streams there are no results then
  *                          all related checks will be skipped if this flag is set to 'true'. Otherwise, checks will
  *                          be processed and return error status with 'metric results were not found' message.
- * @param checkPointDir     Checkpoint directory. 
+ * @param checkpointDir     Checkpoint directory. 
  *                          If not set, then checkpoints in streaming applications will not be saved.
  */
 case class StreamConfig(
@@ -23,7 +23,7 @@ case class StreamConfig(
                          window: Duration = Duration("10m"),
                          watermark: Duration = Duration("5m"),
                          allowEmptyWindows: Boolean = false,
-                         checkPointDir: Option[URI] = None
+                         checkpointDir: Option[URI] = None
                        ) {
   // random column names are generated to be used for windowing:
   lazy val windowTsCol: String = UUID.randomUUID.toString.replace("-", "")

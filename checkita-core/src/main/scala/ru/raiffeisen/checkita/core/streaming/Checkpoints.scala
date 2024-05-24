@@ -14,7 +14,7 @@ object Checkpoints {
 
   object Checkpoint {
     def init[T <: SourceConfig](config: T): Checkpoint = config match {
-      case KafkaSourceConfig => KafkaCheckpoint(config.id.value, Map.empty)
+      case kafkaConfig: KafkaSourceConfig => KafkaCheckpoint(kafkaConfig.id.value, Map.empty)
       case _ => throw new IllegalArgumentException(
         s"Unable to initialize checkpoint for source '${config.id.value}'. " +
           "This source does not support checkpointing."
