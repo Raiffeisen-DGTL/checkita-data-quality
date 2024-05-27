@@ -206,7 +206,7 @@ object BasicStringDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    def errorMessage: String = "Couldn't calculate minimum string length out of provided values."
+    def errorMessage: String = "Failed to calculate minimum string length out of provided values."
 
     /**
      * Determines minimum string length for row values in requested columns.
@@ -250,7 +250,7 @@ object BasicStringDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    def errorMessage: String = "Couldn't calculate maximum string length out of provided values."
+    def errorMessage: String = "Failed to calculate maximum string length out of provided values."
 
     /**
      * Determines maximum string length for row values in requested columns.
@@ -299,7 +299,7 @@ object BasicStringDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    def errorMessage: String = "Couldn't calculate average string length for provided values."
+    def errorMessage: String = "Failed to calculate average string length for provided values."
 
     /**
      * Spark expression yielding numeric result for processed row.
@@ -409,8 +409,8 @@ object BasicStringDFMetrics {
      * @return Metric increment failure message.
      */
     override def errorMessage: String =
-      if (reversed) s"There are values found that DO meet string length criteria '$criteriaStringRepr'"
-      else s"There are values found that do not meet string length criteria '$criteriaStringRepr'"
+      if (reversed) s"There are values found that DO meet string length criteria '$criteriaStringRepr'."
+      else s"There are values found that do not meet string length criteria '$criteriaStringRepr'."
 
 
     /**
@@ -461,8 +461,8 @@ object BasicStringDFMetrics {
      * @return Metric increment failure message.
      */
     override def errorMessage: String =
-      if (reversed) s"Some of the provided values are IN the given domain of ${domain.mkString("[", ",", "]")}"
-      else s"Some of the provided values are not in the given domain of ${domain.mkString("[", ",", "]")}"
+      if (reversed) s"Some of the provided values are IN the given domain of ${domain.mkString("[", ",", "]")}."
+      else s"Some of the provided values are not in the given domain of ${domain.mkString("[", ",", "]")}."
 
     /**
      * Create spark expression which checks if column value is within provided domain.
@@ -498,8 +498,8 @@ object BasicStringDFMetrics {
      * @return Metric increment failure message.
      */
     override def errorMessage: String =
-      if (reversed) s"Some of the provided values are not in the given domain of ${domain.mkString("[", ",", "]")}"
-      else s"Some of the provided values are IN the given domain of ${domain.mkString("[", ",", "]")}"
+      if (reversed) s"Some of the provided values are not in the given domain of ${domain.mkString("[", ",", "]")}."
+      else s"Some of the provided values are IN the given domain of ${domain.mkString("[", ",", "]")}."
 
     /**
      * Create spark expression which checks if column value is outside of the provided domain.
@@ -535,8 +535,8 @@ object BasicStringDFMetrics {
      * @return Metric increment failure message.
      */
     override def errorMessage: String =
-      if (reversed) s"Some of the provided values DO equal to requested string value of '$compareValue'"
-      else s"Some of the provided values do not equal to requested string value of '$compareValue'"
+      if (reversed) s"Some of the provided values DO equal to requested string value of '$compareValue'."
+      else s"Some of the provided values do not equal to requested string value of '$compareValue'."
 
     /**
      * Create spark expression which checks if column value is equal to requested value.

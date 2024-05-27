@@ -25,7 +25,7 @@ object BasicNumericDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    def errorMessage: String = "Provided value cannot be cast to a number."
+    def errorMessage: String = "Provided value cannot be cast to number."
 
     /**
      * Retrieves number from requested column of row.
@@ -181,7 +181,7 @@ object BasicNumericDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    def errorMessage: String = "Couldn't calculate minimum number out of provided values."
+    def errorMessage: String = "Failed to calculate minimum number out of provided values."
 
     /**
      * Determines minimum number for row values in requested columns.
@@ -227,7 +227,7 @@ object BasicNumericDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    def errorMessage: String = "Couldn't calculate maximum number out of provided values."
+    def errorMessage: String = "Failed to calculate maximum number out of provided values."
 
     /**
      * Determines maximum number for row values in requested columns.
@@ -272,7 +272,7 @@ object BasicNumericDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    def errorMessage: String = "Some of the provided values cannot be cast to number"
+    def errorMessage: String = "Some of the provided values cannot be cast to number."
 
     /**
      * Determines sum number for row values in requested columns.
@@ -328,7 +328,7 @@ object BasicNumericDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    def errorMessage: String = "Provided value cannot be cast to number"
+    def errorMessage: String = "Provided value cannot be cast to number."
 
     /**
      * Retrieves number from requested column of row.
@@ -378,7 +378,7 @@ object BasicNumericDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    def errorMessage: String = "Provided value cannot be cast to number"
+    def errorMessage: String = "Provided value cannot be cast to number."
 
     /**
      * Retrieves number from requested column of row.
@@ -435,44 +435,13 @@ object BasicNumericDFMetrics {
      */
     override def errorMessage: String =
       if (reversed) "Some of the provided values CAN be cast to number which meets given" +
-        s"precision and scale criteria of $criteriaStringRepr"
+        s"precision and scale criteria of $criteriaStringRepr."
       else "Some of the provided values could not be cast to number which meets given" +
-        s"precision and scale criteria of $criteriaStringRepr"
+        s"precision and scale criteria of $criteriaStringRepr."
 
     override def metricCondExpr(colName: String): Column = check_number_format(
       col(colName).cast(DoubleType), precision, scale, compareRule == "outbound"
     )
-
-//    /**
-//     * Returns expression that gets string representation of a number and then
-//     * retrieves number of digits out of it.
-//     * @param colName Column name to apply expression to.
-//     * @return Spark expression yielding precision of number
-//     */
-//    private def getPrecision(colName: String): Column = length(
-//      regexp_replace(col(colName).cast(DoubleType).cast(StringType), "[\\.-]", "")
-//    )
-//
-//    /**
-//     * Returns expression that gets string representation of a number and then
-//     * retrieves number of digits after dot.
-//     * @param colName Column name to apply expression to.
-//     * @return Spark expression yielding scale of number.
-//     */
-//    private def getScale(colName: String): Column = length(
-//      split(col(colName).cast(DoubleType).cast(StringType), "\\.").getItem(1)
-//    )
-
-//    /**
-//     * Create spark expression which checks if number meets precision and scale criterion.
-//     *
-//     * @param colName Column to which the metric condition is applied
-//     */
-//    override def metricCondExpr(colName: String): Column = compareRule match {
-//      case "inbound" => getPrecision(colName) <= lit(precision) && getScale(colName) <= lit(scale)
-//      case "outbound" => getPrecision(colName) > lit(precision) && getScale(colName) > lit(scale)
-//      case s => throw new IllegalArgumentException(s"Unknown compare rule for FORMATTED_NUMBER metric: '$s'")
-//    }
   }
 
   /**
@@ -535,8 +504,8 @@ object BasicNumericDFMetrics {
      * @return Metric increment failure message.
      */
     override def errorMessage: String =
-      if (reversed) s"Some of the provided numeric values are IN the given domain of ${domain.mkString("[", ",", "]")}"
-      else s"Some of the provided numeric values are not in the given domain of ${domain.mkString("[", ",", "]")}"
+      if (reversed) s"Some of the provided numeric values are IN the given domain of ${domain.mkString("[", ",", "]")}."
+      else s"Some of the provided numeric values are not in the given domain of ${domain.mkString("[", ",", "]")}."
 
     /**
      * Create spark expression which checks if column value is within provided domain.
@@ -572,8 +541,8 @@ object BasicNumericDFMetrics {
      * @return Metric increment failure message.
      */
     override def errorMessage: String =
-      if (reversed) s"Some of the provided numeric values are not in the given domain of ${domain.mkString("[", ",", "]")}"
-      else s"Some of the provided numeric values are IN the given domain of ${domain.mkString("[", ",", "]")}"
+      if (reversed) s"Some of the provided numeric values are not in the given domain of ${domain.mkString("[", ",", "]")}."
+      else s"Some of the provided numeric values are IN the given domain of ${domain.mkString("[", ",", "]")}."
 
     /**
      * Create spark expression which checks if column value is within provided domain.
@@ -610,8 +579,8 @@ object BasicNumericDFMetrics {
      * @return Metric increment failure message.
      */
     override def errorMessage: String =
-      if (reversed) s"Some of the provided values DO equal to requested number value of '$compareValue'"
-      else s"Some of the provided values do not equal to requested number value of '$compareValue'"
+      if (reversed) s"Some of the provided values DO equal to requested number value of '$compareValue'."
+      else s"Some of the provided values do not equal to requested number value of '$compareValue'."
 
     /**
      * Create spark expression which checks if column value is equal to requested value.
@@ -640,8 +609,8 @@ object BasicNumericDFMetrics {
      * @return Metric increment failure message.
      */
     override def errorMessage: String =
-      if (reversed) s"Some of the provided values DO meet numeric criteria of '$criteriaRepr'"
-      else s"Some of the provided values do not meet numeric criteria of '$criteriaRepr'"
+      if (reversed) s"Some of the provided values DO meet numeric criteria of '$criteriaRepr'."
+      else s"Some of the provided values do not meet numeric criteria of '$criteriaRepr'."
 
   }
 

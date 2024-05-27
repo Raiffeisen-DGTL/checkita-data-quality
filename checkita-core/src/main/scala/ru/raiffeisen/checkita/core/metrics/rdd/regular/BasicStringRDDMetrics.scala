@@ -142,7 +142,7 @@ object BasicStringRDDMetrics {
         cnt + matchCnt,
         regex,
         reversed,
-        failCount + values.length - matchCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
         s"Some of the values failed to match regex pattern '$regex'."
       )
@@ -162,7 +162,7 @@ object BasicStringRDDMetrics {
         cnt + matchCnt,
         regex,
         reversed,
-        failCount + matchCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
         s"Some of the values DO match regex pattern '$regex'."
       )
@@ -227,7 +227,7 @@ object BasicStringRDDMetrics {
         cnt + mismatchCnt,
         regex,
         reversed,
-        failCount + values.length - mismatchCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
         s"Some of the values DO match regex pattern '$regex'."
       )
@@ -247,7 +247,7 @@ object BasicStringRDDMetrics {
         cnt + mismatchCnt,
         regex,
         reversed,
-        failCount + mismatchCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
         s"Some of the values failed to match regex pattern '$regex'."
       )
@@ -304,9 +304,9 @@ object BasicStringRDDMetrics {
         NullValuesRDDMetricCalculator(
           cnt + null_cnt,
           reversed,
-          failCount + (values.size - null_cnt),
+          failCount + 1,
           CalculatorStatus.Failure,
-          s"There are ${values.size - null_cnt} non-null values found within processed values."
+          s"There are non-null values found within processed values."
         )
       } else NullValuesRDDMetricCalculator(cnt + null_cnt, reversed, failCount)
     }
@@ -325,9 +325,9 @@ object BasicStringRDDMetrics {
         NullValuesRDDMetricCalculator(
           cnt + null_cnt,
           reversed,
-          failCount + null_cnt,
+          failCount + 1,
           CalculatorStatus.Failure,
-          s"There are $null_cnt null values found within processed values."
+          s"There are null values found within processed values."
         )
       } else NullValuesRDDMetricCalculator(cnt, reversed, failCount)
     }
@@ -390,14 +390,14 @@ object BasicStringRDDMetrics {
       val rowNullCnt = nullCounter(values)
       if (rowNullCnt < values.size) {
         val failMsg = if (includeEmptyStrings)
-          s"There are ${values.size - rowNullCnt} non-null or non-empty values found within processed values."
-        else s"There are ${values.size - rowNullCnt} non-null values found within processed values."
+          s"There are non-null or non-empty values found within processed values."
+        else s"There are non-null values found within processed values."
         CompletenessRDDMetricCalculator(
           nullCnt + rowNullCnt,
           cellCnt + values.size,
           includeEmptyStrings,
           reversed,
-          failCount + (values.size - rowNullCnt),
+          failCount + 1,
           CalculatorStatus.Failure,
           failMsg
         )
@@ -414,14 +414,14 @@ object BasicStringRDDMetrics {
       val rowNullCnt = nullCounter(values)
       if (rowNullCnt > 0) {
         val failMsg = if (includeEmptyStrings)
-          s"There are $rowNullCnt null or empty values found within processed values."
-        else s"There are $rowNullCnt null values found within processed values."
+          s"There are null or empty values found within processed values."
+        else s"There are null values found within processed values."
         CompletenessRDDMetricCalculator(
           nullCnt + rowNullCnt,
           cellCnt + values.size,
           includeEmptyStrings,
           reversed,
-          failCount + rowNullCnt,
+          failCount + 1,
           CalculatorStatus.Failure,
           failMsg
         )
@@ -488,9 +488,9 @@ object BasicStringRDDMetrics {
         EmptyValuesRDDMetricCalculator(
           cnt + rowEmptyStrCount,
           reversed,
-          failCount + (values.size - rowEmptyStrCount),
+          failCount + 1,
           CalculatorStatus.Failure,
-          s"There are ${values.size - rowEmptyStrCount} non-empty strings found within processed values."
+          s"There are non-empty strings found within processed values."
         )
       } else EmptyValuesRDDMetricCalculator(cnt + rowEmptyStrCount, reversed, failCount)
     }
@@ -512,9 +512,9 @@ object BasicStringRDDMetrics {
         EmptyValuesRDDMetricCalculator(
           cnt + rowEmptyStrCount,
           reversed,
-          failCount + rowEmptyStrCount,
+          failCount + 1,
           CalculatorStatus.Failure,
-          s"There are $rowEmptyStrCount empty strings found within processed values."
+          s"There are empty strings found within processed values."
         )
       } else EmptyValuesRDDMetricCalculator(cnt, reversed, failCount)
     }
@@ -559,7 +559,7 @@ object BasicStringRDDMetrics {
         case Some(v) => MinStringRDDMetricCalculator(Math.min(v, strl), failCount)
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Couldn't calculate minimum string length out of provided values."
+          "Failed to calculate minimum string length out of provided values."
         )
       }
     }
@@ -604,7 +604,7 @@ object BasicStringRDDMetrics {
         case Some(v) => MaxStringRDDMetricCalculator(Math.max(v, strl), failCount)
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Couldn't calculate maximum string length out of provided values."
+          "Failed to calculate maximum string length out of provided values."
         )
       }
     }
@@ -655,7 +655,7 @@ object BasicStringRDDMetrics {
       sumWithCnt match {
         case (0.0, 0) => copyWithError(
           CalculatorStatus.Failure,
-          "Couldn't calculate average string length for provided values."
+          "Failed to calculate average string length for provided values."
         )
         case v => AvgStringRDDMetricCalculator(sum + v._1, cnt + v._2, failCount)
       }
@@ -715,7 +715,7 @@ object BasicStringRDDMetrics {
         cnt + formatMatchCnt,
         dateFormat,
         reversed,
-        failCount + values.length - formatMatchCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
         s"Some of the provided values cannot be cast to date with given format of '$dateFormat'."
       )
@@ -735,7 +735,7 @@ object BasicStringRDDMetrics {
         cnt + formatMatchCnt,
         dateFormat,
         reversed,
-        failCount + formatMatchCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
         s"Some of the provided values CAN be cast to date with given format of '$dateFormat'."
       ) else FormattedDateRDDMetricCalculator(cnt, dateFormat, reversed, failCount)
@@ -804,9 +804,9 @@ object BasicStringRDDMetrics {
         length,
         compareRule,
         reversed,
-        failCount + values.size - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"There are ${values.size - rowCnt} values found that do not meet string length criteria '$criteriaStringRepr'"
+        s"There are values found that do not meet string length criteria '$criteriaStringRepr'."
       )
     }
 
@@ -825,9 +825,9 @@ object BasicStringRDDMetrics {
         length,
         compareRule,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"There are $rowCnt values found that DO meet string length criteria '$criteriaStringRepr'"
+        s"There are values found that DO meet string length criteria '$criteriaStringRepr'."
       )
       else StringLengthRDDMetricCalculator(cnt, length, compareRule, reversed, failCount)
     }
@@ -902,9 +902,9 @@ object BasicStringRDDMetrics {
         cnt + rowCnt,
         domain,
         reversed,
-        failCount + values.length - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values are not in the given domain of ${domain.mkString("[", ",", "]")}"
+        s"Some of the provided values are not in the given domain of ${domain.mkString("[", ",", "]")}."
       )
     }
 
@@ -922,9 +922,9 @@ object BasicStringRDDMetrics {
         cnt=cnt + rowCnt,
         domain,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values are IN the given domain of ${domain.mkString("[", ",", "]")}"
+        s"Some of the provided values are IN the given domain of ${domain.mkString("[", ",", "]")}."
       )
       else StringInDomainRDDMetricCalculator(cnt, domain, reversed, failCount)
     }
@@ -983,9 +983,9 @@ object BasicStringRDDMetrics {
         cnt + rowCnt,
         domain,
         reversed,
-        failCount + values.length - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values are IN the given domain of ${domain.mkString("[", ",", "]")}"
+        s"Some of the provided values are IN the given domain of ${domain.mkString("[", ",", "]")}."
       )
     }
 
@@ -1003,9 +1003,9 @@ object BasicStringRDDMetrics {
         cnt=cnt + rowCnt,
         domain,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values are not in the given domain of ${domain.mkString("[", ",", "]")}"
+        s"Some of the provided values are not in the given domain of ${domain.mkString("[", ",", "]")}."
       ) else StringOutDomainRDDMetricCalculator(cnt, domain, reversed, failCount)
     }
 
@@ -1064,9 +1064,9 @@ object BasicStringRDDMetrics {
         cnt + rowCnt,
         compareValue,
         reversed,
-        failCount + values.length - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values do not equal to requested string value of '$compareValue'"
+        s"Some of the provided values do not equal to requested string value of '$compareValue'."
       )
     }
 
@@ -1084,9 +1084,9 @@ object BasicStringRDDMetrics {
         cnt=cnt + rowCnt,
         compareValue,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values DO equal to requested string value of '$compareValue'"
+        s"Some of the provided values DO equal to requested string value of '$compareValue'."
       )
       else StringValuesRDDMetricCalculator(cnt, compareValue, reversed, failCount)
     }

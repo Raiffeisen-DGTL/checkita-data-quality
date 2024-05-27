@@ -77,7 +77,7 @@ object MultiColumnDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    override def errorMessage: String = "Some of the provided values cannot be cast to number"
+    override def errorMessage: String = "Some of the provided values cannot be cast to number."
 
     /**
      * Value which is returned when metric result is null.
@@ -137,7 +137,7 @@ object MultiColumnDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    override def errorMessage: String = "Some of the provided values cannot be cast to number"
+    override def errorMessage: String = "Some of the provided values cannot be cast to number."
 
     /**
      * Value which is returned when metric result is null.
@@ -197,7 +197,7 @@ object MultiColumnDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    override def errorMessage: String = "Some of the provided values cannot be cast to number"
+    override def errorMessage: String = "Some of the provided values cannot be cast to number."
 
     /**
      * Value which is returned when metric result is null.
@@ -262,7 +262,7 @@ object MultiColumnDFMetrics {
      */
     override def errorMessage: String =
       if (reversed) "Provided values ARE equal."
-      else "Some of the provided values cannot be cast to string or provided values are not equal"
+      else "Some of the provided values cannot be cast to string or provided values are not equal."
 
     /**
      * Create spark expression which checks if string representation of values in requested columns is the same
@@ -353,9 +353,9 @@ object MultiColumnDFMetrics {
      * @return Metric increment failure message.
      */
     override def errorMessage: String =
-      if (reversed) s"Levenshtein distance for given values is lower than given threshold of '$threshold'"
+      if (reversed) s"Levenshtein distance for given values is lower than given threshold of '$threshold'."
       else "Some of the provided values cannot be cast to string " +
-        s"or levenshtein distance for given values is grater than or equal to given threshold of '$threshold'"
+        s"or levenshtein distance for given values is grater than or equal to given threshold of '$threshold'."
 
     private def maxStrLength: Column = greatest(
       col(columns.head).cast(StringType),

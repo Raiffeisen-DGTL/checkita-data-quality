@@ -76,7 +76,7 @@ object AlgebirdRDDMetrics {
           )
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Provided value cannot be cast to string"
+          "Provided value cannot be cast to string."
         )
       }
     }
@@ -152,7 +152,7 @@ object AlgebirdRDDMetrics {
           )
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Provided value cannot be cast to Long"
+          "Provided value cannot be cast to Long."
         )
       }
     }
@@ -220,7 +220,7 @@ object AlgebirdRDDMetrics {
           )
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Provided value cannot be cast to string"
+          "Provided value cannot be cast to string."
         )
       }
     }

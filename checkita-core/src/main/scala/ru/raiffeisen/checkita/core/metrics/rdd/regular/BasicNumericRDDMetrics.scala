@@ -49,7 +49,7 @@ object BasicNumericRDDMetrics {
           tdigest.update(v)
           TDigestRDDMetricCalculator(tdigest, accuracyError, targetSideNumber, failCount)
         case None    => copyWithError(CalculatorStatus.Failure,
-          "Provided value cannot be cast to a number"
+          "Provided value cannot be cast to number."
         )
       }
     }
@@ -109,7 +109,7 @@ object BasicNumericRDDMetrics {
         case Some(v) => MinNumberRDDMetricCalculator(Math.min(v, min), failCount)
         case None    => copyWithError(
           CalculatorStatus.Failure,
-          "Couldn't compute minimum number out of provided values."
+          "Failed to calculate minimum number out of provided values."
         )
       }
     }
@@ -153,7 +153,7 @@ object BasicNumericRDDMetrics {
         case Some(v) => MaxNumberRDDMetricCalculator(Math.max(v, max), failCount)
         case None    => copyWithError(
           CalculatorStatus.Failure,
-          "Couldn't compute maximum number out of provided values."
+          "Failed to calculate maximum number out of provided values."
         )
       }
     }
@@ -195,9 +195,9 @@ object BasicNumericRDDMetrics {
       if (doubleValues.size == values.size) SumNumberRDDMetricCalculator(sum + doubleValues.sum, failCount)
       else SumNumberRDDMetricCalculator(
         sum + doubleValues.sum,
-        failCount + values.size - doubleValues.size,
+        failCount + 1,
         CalculatorStatus.Failure,
-        "Some of the provided values cannot be cast to number"
+        "Some of the provided values cannot be cast to number."
       )
     }
 
@@ -249,7 +249,7 @@ object BasicNumericRDDMetrics {
         case Some(v) => StdAvgNumberRDDMetricCalculator(sum + v, sqSum + (v * v), cnt + 1, failCount)
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Provided value cannot be cast to number"
+          "Provided value cannot be cast to number."
         )
       }
     }
@@ -321,10 +321,10 @@ object BasicNumericRDDMetrics {
         scale,
         compareRule,
         reversed,
-        failCount + values.length - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        "Some of the provided values could not be cast to number which meets given" + 
-          s"precision and scale criteria of $criteriaStringRepr"
+        "Some of the provided values could not be cast to number which meets given" +
+          s"precision and scale criteria of $criteriaStringRepr."
       )
     }
 
@@ -344,10 +344,10 @@ object BasicNumericRDDMetrics {
         scale,
         compareRule,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
         "Some of the provided values CAN be cast to number which meets given" +
-          s"precision and scale criteria of $criteriaStringRepr"
+          s"precision and scale criteria of $criteriaStringRepr."
       ) else FormattedNumberRDDMetricCalculator(cnt, precision, scale, compareRule, reversed, failCount)
     }
 
@@ -415,7 +415,7 @@ object BasicNumericRDDMetrics {
       else CastedNumberRDDMetricCalculator(
         cnt + rowCnt,
         reversed,
-        failCount + values.length - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
         "Some of the provided values cannot be cast to number."
       )
@@ -434,9 +434,9 @@ object BasicNumericRDDMetrics {
       if (rowCnt > 0) CastedNumberRDDMetricCalculator(
         cnt + rowCnt,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        "Some of the provided values CAN be cast to number"
+        "Some of the provided values CAN be cast to number."
       ) else CastedNumberRDDMetricCalculator(cnt, reversed, failCount)
     }
 
@@ -492,9 +492,9 @@ object BasicNumericRDDMetrics {
         cnt + rowCnt,
         domain,
         reversed,
-        failCount + values.length - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided numeric values are not in the provided domain of ${domain.mkString("[", ",", "]")}"
+        s"Some of the provided numeric values are not in the given domain of ${domain.mkString("[", ",", "]")}."
       )
     }
 
@@ -512,9 +512,9 @@ object BasicNumericRDDMetrics {
         cnt + rowCnt,
         domain,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided numeric values are IN the provided domain of ${domain.mkString("[", ",", "]")}"
+        s"Some of the provided numeric values are IN the given domain of ${domain.mkString("[", ",", "]")}."
       ) else NumberInDomainRDDMetricCalculator(cnt, domain, reversed, failCount)
     }
 
@@ -573,9 +573,9 @@ object BasicNumericRDDMetrics {
         cnt + rowCnt,
         domain,
         reversed,
-        failCount + values.length - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided numeric values are IN the provided domain of ${domain.mkString("[", ",", "]")}"
+        s"Some of the provided numeric values are IN the given domain of ${domain.mkString("[", ",", "]")}."
       )
     }
 
@@ -594,9 +594,9 @@ object BasicNumericRDDMetrics {
         cnt + rowCnt,
         domain,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided numeric values are outside of the provided domain of ${domain.mkString("[", ",", "]")}"
+        s"Some of the provided numeric values are not in the given domain of ${domain.mkString("[", ",", "]")}."
       )
       else NumberOutDomainRDDMetricCalculator(cnt, domain, reversed, failCount)
     }
@@ -655,9 +655,9 @@ object BasicNumericRDDMetrics {
         cnt + rowCnt,
         compareValue,
         reversed,
-        failCount + values.length - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values do not equal to requested number value of '$compareValue'"
+        s"Some of the provided values do not equal to requested number value of '$compareValue'."
       )
     }
 
@@ -675,9 +675,9 @@ object BasicNumericRDDMetrics {
         cnt + rowCnt,
         compareValue,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values DO equal to requested number value of '$compareValue'"
+        s"Some of the provided values DO equal to requested number value of '$compareValue'."
       )
       else NumberValuesRDDMetricCalculator(cnt, compareValue, reversed, failCount)
     }
@@ -739,9 +739,9 @@ object BasicNumericRDDMetrics {
         compareValue,
         includeBound,
         reversed,
-        failCount + values.length - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values do not meet numeric criteria of '${if (includeBound) "<=" else "<"}$compareValue'"
+        s"Some of the provided values do not meet numeric criteria of '${if (includeBound) "<=" else "<"}$compareValue'."
       )
     }
 
@@ -760,9 +760,9 @@ object BasicNumericRDDMetrics {
         compareValue,
         includeBound,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values DO meet numeric criteria of '${if (includeBound) "<=" else "<"}$compareValue'"
+        s"Some of the provided values DO meet numeric criteria of '${if (includeBound) "<=" else "<"}$compareValue'."
       )
       else NumberLessThanRDDMetricCalculator(cnt, compareValue, includeBound, reversed, failCount)
     }
@@ -829,9 +829,9 @@ object BasicNumericRDDMetrics {
         compareValue,
         includeBound,
         reversed,
-        failCount + values.length - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values do not meet numeric criteria of '${if (includeBound) ">=" else ">"}$compareValue'"
+        s"Some of the provided values do not meet numeric criteria of '${if (includeBound) ">=" else ">"}$compareValue'."
       )
     }
 
@@ -850,9 +850,9 @@ object BasicNumericRDDMetrics {
         compareValue,
         includeBound,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values DO meet numeric criteria of '${if (includeBound) ">=" else ">"}$compareValue'"
+        s"Some of the provided values DO meet numeric criteria of '${if (includeBound) ">=" else ">"}$compareValue'."
       ) else NumberGreaterThanRDDMetricCalculator(cnt, compareValue, includeBound, reversed, failCount)
     }
 
@@ -921,9 +921,9 @@ object BasicNumericRDDMetrics {
         upperCompareValue,
         includeBound,
         reversed,
-        failCount + values.length - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values do not meet numeric criteria of '$criteriaStringRepr'"
+        s"Some of the provided values do not meet numeric criteria of '$criteriaStringRepr'."
       )
     }
 
@@ -943,9 +943,9 @@ object BasicNumericRDDMetrics {
         upperCompareValue,
         includeBound,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values DO meet numeric criteria of '$criteriaStringRepr'"
+        s"Some of the provided values DO meet numeric criteria of '$criteriaStringRepr'."
       ) else NumberBetweenRDDMetricCalculator(
         cnt, lowerCompareValue, upperCompareValue, includeBound, reversed, failCount
       )
@@ -1022,9 +1022,9 @@ object BasicNumericRDDMetrics {
         upperCompareValue,
         includeBound,
         reversed,
-        failCount + values.length - rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values do not meet numeric criteria of '$criteriaStringRepr'"
+        s"Some of the provided values do not meet numeric criteria of '$criteriaStringRepr'."
       )
     }
 
@@ -1044,9 +1044,9 @@ object BasicNumericRDDMetrics {
         upperCompareValue,
         includeBound,
         reversed,
-        failCount + rowCnt,
+        failCount + 1,
         CalculatorStatus.Failure,
-        s"Some of the provided values DO meet numeric criteria of '$criteriaStringRepr'"
+        s"Some of the provided values DO meet numeric criteria of '$criteriaStringRepr'."
       ) else NumberNotBetweenRDDMetricCalculator(
         cnt, lowerCompareValue, upperCompareValue, includeBound, reversed, failCount
       )
@@ -1111,7 +1111,7 @@ object BasicNumericRDDMetrics {
         )
         case None => copyWithError(
           CalculatorStatus.Failure,
-          "Provided value cannot be cast to a number"
+          "Provided value cannot be cast to number."
         )
       }
     }

@@ -39,7 +39,7 @@ object ApproxCardinalityDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    override def errorMessage: String = "Provided value cannot be cast to string"
+    override def errorMessage: String = "Provided value cannot be cast to string."
 
     /**
      * Retrieves string from requested column of row.
@@ -96,7 +96,7 @@ object ApproxCardinalityDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    override def errorMessage: String = "Provided value cannot be cast to Long"
+    override def errorMessage: String = "Provided value cannot be cast to Long."
 
     /**
      * Retrieves long value from requested column of row.
@@ -140,7 +140,7 @@ object ApproxCardinalityDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    override def errorMessage: String = "Provided value cannot be cast to string"
+    override def errorMessage: String = "Provided value cannot be cast to string."
 
     /**
      * TopN metric return empty string as value and NaN as frequency when applied to empty sequence.

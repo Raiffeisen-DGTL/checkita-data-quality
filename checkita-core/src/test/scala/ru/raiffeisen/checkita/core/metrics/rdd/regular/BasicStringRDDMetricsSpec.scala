@@ -146,7 +146,9 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
     val results = Seq(1, 4, 3, 4)
     val failCounts = Seq(11, 8, 9, 8)
     val failCountsRev = Seq(1, 4, 3, 4)
-
+    val failCountsMulti = Seq(4, 4, 4, 4)
+    val failCountsMultiRev = Seq(1, 2, 2, 4)
+    
     "return correct metric value for single column sequence" in {
       val values = (testSingleColSeq, regexList, results).zipped.toList
       val metricResults = for {
@@ -188,7 +190,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [direct error collection]" in {
-      val values = (testMultiColSeq, regexList, failCounts).zipped.toList
+      val values = (testMultiColSeq, regexList, failCountsMulti).zipped.toList
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new RegexMatchRDDMetricCalculator(t._2, false))((m, v) => m.increment(v)),
         t._3
@@ -196,7 +198,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [reversed error collection]" in {
-      val values = (testMultiColSeq, regexList, failCountsRev).zipped.toList
+      val values = (testMultiColSeq, regexList, failCountsMultiRev).zipped.toList
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new RegexMatchRDDMetricCalculator(t._2, true))((m, v) => m.increment(v)),
         t._3
@@ -230,7 +232,9 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
     val results = Seq(11, 8, 9, 8)
     val failCounts = Seq(1, 4, 3, 4)
     val failCountsRev = Seq(11, 8, 9, 8)
-
+    val failCountsMulti = Seq(1, 2, 2, 4)
+    val failCountsMultiRev = Seq(4, 4, 4, 4)
+    
     "return correct metric value for single column sequence" in {
       val values = (testSingleColSeq, regexList, results).zipped.toList
       val metricResults = for {
@@ -272,7 +276,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [direct error collection]" in {
-      val values = (testMultiColSeq, regexList, failCounts).zipped.toList
+      val values = (testMultiColSeq, regexList, failCountsMulti).zipped.toList
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new RegexMismatchRDDMetricCalculator(t._2, false))((m, v) => m.increment(v)),
         t._3
@@ -280,7 +284,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [reversed error collection]" in {
-      val values = (testMultiColSeq, regexList, failCountsRev).zipped.toList
+      val values = (testMultiColSeq, regexList, failCountsMultiRev).zipped.toList
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new RegexMismatchRDDMetricCalculator(t._2, true))((m, v) => m.increment(v)),
         t._3
@@ -308,7 +312,9 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
     val results = Seq.fill(4)(3)
     val failCount = Seq.fill(4)(9)
     val failCountRev = Seq.fill(4)(3)
-
+    val failCountsMulti = Seq(4, 4, 4, 4)
+    val failCountsMultiRev = Seq(3, 3, 3, 3)
+    
     "return correct metric value for single column sequence" in {
       val values = nullSingleColSeq zip results
       val metricResults = for {
@@ -350,7 +356,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [direct error collection]" in {
-      val values = nullMultiColSeq zip failCount
+      val values = nullMultiColSeq zip failCountsMulti
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new NullValuesRDDMetricCalculator(false))((m, v) => m.increment(v)),
         t._2
@@ -358,7 +364,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [reversed error collection]" in {
-      val values = nullMultiColSeq zip failCountRev
+      val values = nullMultiColSeq zip failCountsMultiRev
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new NullValuesRDDMetricCalculator(true))((m, v) => m.increment(v)),
         t._2
@@ -386,7 +392,9 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
     val results = Seq.fill(4)(3)
     val failCount = Seq.fill(4)(9)
     val failCountRev = Seq.fill(4)(3)
-
+    val failCountsMulti = Seq(4, 4, 4, 4)
+    val failCountsMultiRev = Seq(3, 3, 3, 3)
+    
     "return correct metric value for single column sequence" in {
       val values = emptySingleColSeq zip results
       val metricResults = for {
@@ -428,7 +436,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [direct error collection]" in {
-      val values = emptyMultiColSeq zip failCount
+      val values = emptyMultiColSeq zip failCountsMulti
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new EmptyValuesRDDMetricCalculator(false))((m, v) => m.increment(v)),
         t._2
@@ -436,7 +444,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [reversed error collection]" in {
-      val values = emptyMultiColSeq zip failCountRev
+      val values = emptyMultiColSeq zip failCountsMultiRev
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new EmptyValuesRDDMetricCalculator(true))((m, v) => m.increment(v)),
         t._2
@@ -465,6 +473,8 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
     val results = Seq(Seq.fill(4)(1.0), Seq.fill(4)(0.75), Seq.fill(4)(0.5))
     val failCount = Seq(Seq.fill(4)(12), Seq.fill(4)(9), Seq.fill(4)(6))
     val failCountRev = Seq(Seq.fill(4)(0), Seq.fill(4)(3), Seq.fill(4)(6))
+    val failCountsMulti = Seq(Seq(4, 4, 4, 4), Seq(4, 4, 4, 4), Seq(4, 4, 4, 4))
+    val failCountsMultiRev = Seq(Seq(0, 0, 0, 0), Seq(3, 3, 3, 3), Seq(4, 4, 4, 4))
     val allSingleColSeq = Seq(testSingleColSeq, nullSingleColSeq, emptySingleColSeq)
     val allMultiColSeq = Seq(testMultiColSeq, nullMultiColSeq, emptyMultiColSeq)
 
@@ -521,7 +531,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       }
     }
     "return correct fail counts for multi column sequence [direct error collection]" in {
-      (allMultiColSeq, paramList, failCount).zipped.toList.foreach { tt =>
+      (allMultiColSeq, paramList, failCountsMulti).zipped.toList.foreach { tt =>
         val values = tt._1 zip tt._3
         val metricResults = values.map(t => (
           t._1.foldLeft[RDDMetricCalculator](new CompletenessRDDMetricCalculator(tt._2, false))((m, v) => m.increment(v)),
@@ -531,7 +541,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       }
     }
     "return correct fail counts for multi column sequence [reversed error collection]" in {
-      (allMultiColSeq, paramList, failCountRev).zipped.toList.foreach { tt =>
+      (allMultiColSeq, paramList, failCountsMultiRev).zipped.toList.foreach { tt =>
         val values = tt._1 zip tt._3
         val metricResults = values.map(t => (
           t._1.foldLeft[RDDMetricCalculator](new CompletenessRDDMetricCalculator(tt._2, true))((m, v) => m.increment(v)),
@@ -672,12 +682,12 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
   }
 
   "FormattedDateRDDMetricCalculator" must {
-    // (params, metric_result, failure_count, reversed_failure_count)
-    val paramsWithResults: Seq[(String, Int, Int, Int)] = Seq(
-      ("yyyy-MM-dd", 2, 10, 2),
-      ("EEE, MMM dd, yyyy", 1, 11, 1),
-      ("yyyy-MM-dd'T'HH:mm:ss.SSSZ", 1, 11, 1),
-      ("h:mm a", 2, 10, 2)
+    // (params, metric_result, failure_count, reversed_failure_count, fail_count_multi, reversed_fail_count_multi)
+    val paramsWithResults: Seq[(String, Int, Int, Int, Int, Int)] = Seq(
+      ("yyyy-MM-dd", 2, 10, 2, 4, 2),
+      ("EEE, MMM dd, yyyy", 1, 11, 1, 4, 1),
+      ("yyyy-MM-dd'T'HH:mm:ss.SSSZ", 1, 11, 1, 4, 1),
+      ("h:mm a", 2, 10, 2, 4, 2)
     )
     val valuesSingleCol = Seq(
       "Gpi2C7", "DgXDiA", "2022-03-43", "2001-07-04T12:08:56.235-0700",
@@ -726,7 +736,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       val metricResults = paramsWithResults.map(t => (
         valuesMultiCol.foldLeft[RDDMetricCalculator](new FormattedDateRDDMetricCalculator(t._1, false))(
           (m, v) => m.increment(v)),
-        t._3
+        t._5
       ))
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
@@ -734,7 +744,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       val metricResults = paramsWithResults.map(t => (
         valuesMultiCol.foldLeft[RDDMetricCalculator](new FormattedDateRDDMetricCalculator(t._1, true))(
           (m, v) => m.increment(v)),
-        t._4
+        t._6
       ))
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
@@ -759,7 +769,9 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
     val results = Seq(12, 12, 0, 4)
     val failCounts = Seq(0, 0, 12, 8)
     val failCountsRev = Seq(12, 12, 0, 4)
-
+    val failCountsMulti = Seq(0, 0, 4, 4)
+    val failCountsMultiRev = Seq(4, 4, 0, 3)
+    
     "return correct metric value for single column sequence" in {
       val values = (testSingleColSeq, paramList, results).zipped.toList
       val metricResults = for {
@@ -805,7 +817,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [direct error collection]" in {
-      val values = (testMultiColSeq, paramList, failCounts).zipped.toList
+      val values = (testMultiColSeq, paramList, failCountsMulti).zipped.toList
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new StringLengthRDDMetricCalculator(t._2._1, t._2._2, false))(
           (m, v) => m.increment(v)
@@ -815,7 +827,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [reversed error collection]" in {
-      val values = (testMultiColSeq, paramList, failCountsRev).zipped.toList
+      val values = (testMultiColSeq, paramList, failCountsMultiRev).zipped.toList
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new StringLengthRDDMetricCalculator(t._2._1, t._2._2, true))(
           (m, v) => m.increment(v)
@@ -851,7 +863,9 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
     val results = Seq(4, 4, 4, 2)
     val failCounts = Seq(8, 8, 8, 10)
     val failCountsRev = Seq(4, 4, 4, 2)
-
+    val failCountsMulti = Seq(4, 4, 4, 4)
+    val failCountsMultiRev = Seq(3, 2, 3, 1)
+    
     "return correct metric value for single column sequence" in {
       val values = (testSingleColSeq, domainList, results).zipped.toList
       val metricResults = for {
@@ -897,7 +911,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [direct error collection]" in {
-      val values = (testMultiColSeq, domainList, failCounts).zipped.toList
+      val values = (testMultiColSeq, domainList, failCountsMulti).zipped.toList
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new StringInDomainRDDMetricCalculator(t._2, false))((m, v) => m.increment(v)),
         t._3
@@ -905,7 +919,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [reversed error collection]" in {
-      val values = (testMultiColSeq, domainList, failCountsRev).zipped.toList
+      val values = (testMultiColSeq, domainList, failCountsMultiRev).zipped.toList
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new StringInDomainRDDMetricCalculator(t._2, true))((m, v) => m.increment(v)),
         t._3
@@ -939,7 +953,9 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
     val results = Seq(8, 8, 8, 10)
     val failCounts = Seq(4, 4, 4, 2)
     val failCountsRev = Seq(8, 8, 8, 10)
-
+    val failCountsMulti = Seq(3, 2, 3, 1)
+    val failCountsMultiRev = Seq(4, 4, 4, 4)
+    
     "return correct metric value for single column sequence" in {
       val values = (testSingleColSeq, domainList, results).zipped.toList
       val metricResults = for {
@@ -985,7 +1001,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [direct error collection]" in {
-      val values = (testMultiColSeq, domainList, failCounts).zipped.toList
+      val values = (testMultiColSeq, domainList, failCountsMulti).zipped.toList
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new StringOutDomainRDDMetricCalculator(t._2, false))(
           (m, v) => m.increment(v)
@@ -995,7 +1011,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [reversed error collection]" in {
-      val values = (testMultiColSeq, domainList, failCountsRev).zipped.toList
+      val values = (testMultiColSeq, domainList, failCountsMultiRev).zipped.toList
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new StringOutDomainRDDMetricCalculator(t._2, true))(
           (m, v) => m.increment(v)
@@ -1026,7 +1042,9 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
     val results = Seq(4, 4, 4, 2)
     val failCounts = Seq(8, 8, 8, 10)
     val failCountsRev = Seq(4, 4, 4, 2)
-
+    val failCountsMulti = Seq(4, 4, 3, 4)
+    val failCountsMultiRev = Seq(3, 2, 2, 2)
+    
     "return correct metric value for single column sequence" in {
       val values = (testSingleColSeq, compareValues, results).zipped.toList
       val metricResults = for {
@@ -1068,7 +1086,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [direct error collection]" in {
-      val values = (testMultiColSeq, compareValues, failCounts).zipped.toList
+      val values = (testMultiColSeq, compareValues, failCountsMulti).zipped.toList
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new StringValuesRDDMetricCalculator(t._2, false))((m, v) => m.increment(v)),
         t._3
@@ -1076,7 +1094,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
     }
     "return correct fail counts for multi column sequence [reversed error collection]" in {
-      val values = (testMultiColSeq, compareValues, failCountsRev).zipped.toList
+      val values = (testMultiColSeq, compareValues, failCountsMultiRev).zipped.toList
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new StringValuesRDDMetricCalculator(t._2, true))((m, v) => m.increment(v)),
         t._3

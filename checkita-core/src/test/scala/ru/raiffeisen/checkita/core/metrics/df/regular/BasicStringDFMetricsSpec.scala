@@ -319,8 +319,8 @@ class BasicStringDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsT
     val results = Seq(2, 1, 1, 2).map(_.toDouble)
     val failCountsSingleSeq = Seq(10, 11, 11, 10)
     val failCountsSingleSeqRev = Seq(2, 1, 1, 2)
-    val failCountsMultiSeq = Seq(4, 4, 4, 4) // ???
-    val failCountsMultiSeqRev = Seq(2, 1, 1, 2) // ???
+    val failCountsMultiSeq = Seq(4, 4, 4, 4)
+    val failCountsMultiSeqRev = Seq(2, 1, 1, 2)
 
     val getCalc: (String, Seq[String], Map[String, Any]) => DFMetricCalculator = (mId, cols, params) => {
       val fmt = params.getOrElse("dateFormat", "").asInstanceOf[String]

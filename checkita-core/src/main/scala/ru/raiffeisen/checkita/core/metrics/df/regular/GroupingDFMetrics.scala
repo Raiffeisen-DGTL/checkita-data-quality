@@ -127,7 +127,7 @@ object GroupingDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    override def errorMessage: String = "Duplicates found."
+    override def errorMessage: String = "Duplicate found."
 
     /**
      * Collect error data for groups which contain more than 1 row i.e. group has duplicates.
@@ -204,7 +204,7 @@ object GroupingDFMetrics {
      *
      * @return Metric increment failure message.
      */
-    override def errorMessage: String = "Provided value cannot be cast to a number"
+    override def errorMessage: String = "Provided value cannot be cast to number."
 
     /**
      * Collect error data for groups where at least on of the column values is null.

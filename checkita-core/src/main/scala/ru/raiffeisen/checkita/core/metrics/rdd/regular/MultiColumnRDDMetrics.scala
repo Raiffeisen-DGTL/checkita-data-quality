@@ -49,7 +49,7 @@ object MultiColumnRDDMetrics {
           CovarianceRDDMetricCalculator(lm, rm, cm, newN, failCount)
         case (None, _) | (_, None) => copyWithError(
           CalculatorStatus.Failure,
-          "Some of the provided values cannot be cast to number"
+          "Some of the provided values cannot be cast to number."
         )
       }
     }
@@ -213,7 +213,7 @@ object MultiColumnRDDMetrics {
       DayDistanceRDDMetricCalculator(cnt + 1, dateFormat, threshold, reversed, failCount),
       copyWithError(
         CalculatorStatus.Failure,
-        s"Distance between two dates is greater than or equal to given threshold of '$threshold'"
+        s"Distance between two dates is greater than or equal to given threshold of '$threshold'."
       )
     )
 
@@ -234,7 +234,7 @@ object MultiColumnRDDMetrics {
         reversed,
         failCount + 1,
         CalculatorStatus.Failure,
-        s"Distance between two dates lower than given threshold of '$threshold'"
+        s"Distance between two dates lower than given threshold of '$threshold'."
       ),
       DayDistanceRDDMetricCalculator(cnt, dateFormat, threshold, reversed, failCount)
     )
@@ -306,7 +306,7 @@ object MultiColumnRDDMetrics {
           else notIncrementedOutput
       }.getOrElse(copyWithError(
         CalculatorStatus.Failure,
-        "Some of the provided values cannot be cast to string"
+        "Some of the provided values cannot be cast to string."
       ))
     }
 
@@ -323,7 +323,7 @@ object MultiColumnRDDMetrics {
       LevenshteinDistanceRDDMetricCalculator(cnt + 1, threshold, normalize, reversed, failCount),
       copyWithError(
         CalculatorStatus.Failure,
-        s"Levenshtein distance for given values is grater than or equal to given threshold of '$threshold'"
+        s"Levenshtein distance for given values is grater than or equal to given threshold of '$threshold'."
       )
     )
 
@@ -344,7 +344,7 @@ object MultiColumnRDDMetrics {
         reversed,
         failCount + 1,
         CalculatorStatus.Failure,
-        s"Levenshtein distance for given values is lower than given threshold of '$threshold'"
+        s"Levenshtein distance for given values is lower than given threshold of '$threshold'."
       ),
       LevenshteinDistanceRDDMetricCalculator(cnt, threshold, normalize, reversed, failCount)
     )
