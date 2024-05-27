@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.0...v1.7.1) (2024-05-27)
+
+
+### Bug Fixes
+
+* prevent division by zero in check calculators ([#42](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/42)) ([c19578f](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/c19578f47a54c7de1483c51fdf87efe6843c0bba))
+
 ## [1.7.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.6.0...v1.7.0) (2024-05-13)
 
 
