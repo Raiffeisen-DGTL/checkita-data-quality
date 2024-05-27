@@ -92,6 +92,10 @@ abstract class AverageBoundCheckCalculator extends CheckCalculator with WindowPa
       )
     }
     
+    if (historyResults.isEmpty) throw new IllegalArgumentException(
+      s"There ara no historical results found to perform ${checkName.entryName} check '$checkId'."
+    )
+    
     val baseResult = baseMetricCalcRes.result
     val avgResult = historyResults.sum / historyResults.length
 
