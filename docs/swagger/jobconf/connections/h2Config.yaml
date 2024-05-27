@@ -1,0 +1,14 @@
+allOf:
+  - $ref: 'baseConnectionConfig.yaml'
+  - type: object
+    description: Connection configuration to H2 database
+    required:
+      - url
+    properties:
+      url:
+        type: string
+        description: |-
+          Connection URL. Should contain host, port and name of database. 
+          In addition, extra parameters can be supplied in connection URL if required. 
+          ***Connection protocol must not be specified.***
+        example: h2.db.com:9092/default

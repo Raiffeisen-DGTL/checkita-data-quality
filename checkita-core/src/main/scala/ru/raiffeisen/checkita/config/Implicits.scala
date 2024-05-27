@@ -46,14 +46,17 @@ object Implicits {
   )
 
   implicit val dateFormatConverter: ConfigConvert[DateFormat] =
-    ConfigConvert[String].xmap[DateFormat](DateFormat.fromString, _.pattern)
+    ConfigConvert[String].xmap[DateFormat](DateFormat, _.pattern)
 
   implicit val timeZoneConverter: ConfigConvert[ZoneId] =
     ConfigConvert[String].xmap[ZoneId](
       s => TimeZone.getTimeZone(s).toZoneId,
       tz => TimeZone.getTimeZone(tz).getDisplayName
     )
-    
+
+  implicit val metricEnginAPIConverter: ConfigConvert[MetricEngineAPI] =
+    ConfigConvert[String].xmap[MetricEngineAPI](MetricEngineAPI.withNameInsensitive, _.toString.toLowerCase)
+
   implicit val dqStorageTypeConverter: ConfigConvert[DQStorageType] =
     ConfigConvert[String].xmap[DQStorageType](DQStorageType.withNameInsensitive, _.toString.toLowerCase)
     

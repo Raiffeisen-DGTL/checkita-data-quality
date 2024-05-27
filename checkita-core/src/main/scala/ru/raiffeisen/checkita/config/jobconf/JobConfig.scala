@@ -1,7 +1,7 @@
 package ru.raiffeisen.checkita.config.jobconf
 
 import eu.timepit.refined.types.string.NonEmptyString
-
+import ru.raiffeisen.checkita.config.IO.{RenderOptions, writeJobConfig}
 import ru.raiffeisen.checkita.config.RefinedTypes.{ID, SparkParam}
 import ru.raiffeisen.checkita.config.jobconf.Checks.ChecksConfig
 import ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionsConfig
@@ -10,6 +10,8 @@ import ru.raiffeisen.checkita.config.jobconf.Metrics.MetricsConfig
 import ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig
 import ru.raiffeisen.checkita.config.jobconf.Sources.{SourcesConfig, StreamSourcesConfig, VirtualSourceConfig}
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetsConfig
+import ru.raiffeisen.checkita.utils.Common.getStringHash
+import ru.raiffeisen.checkita.utils.ResultUtils._
 
 /**
  * Data Quality job-level configuration
@@ -41,4 +43,8 @@ final case class JobConfig(
                             checks: Option[ChecksConfig],
                             targets: Option[TargetsConfig],
                             jobMetadata: Seq[SparkParam] = Seq.empty
-                          )
+                          ) {
+  
+  lazy val rendered: Result[String] = writeJobConfig(this).mapValue(jc => jc.root().render(RenderOptions.COMPACT))
+  def getJobHash: Result[String] = rendered.mapValue(getStringHash)
+}

@@ -2,6 +2,7 @@ package ru.raiffeisen.checkita.config.appconf
 
 import ru.raiffeisen.checkita.config.RefinedTypes.PositiveInt
 import eu.timepit.refined.auto._
+import ru.raiffeisen.checkita.config.Enums.MetricEngineAPI
 
 /**
  * Application-level configuration for switchers (enablers)
@@ -21,5 +22,6 @@ final case class Enablers(
                            aggregatedKafkaOutput: Boolean = false,
                            enableCaseSensitivity: Boolean = false,
                            errorDumpSize: PositiveInt = 10000,
-                           outputRepartition: PositiveInt = 1
+                           outputRepartition: PositiveInt = 1,
+                           metricEngineAPI: MetricEngineAPI = MetricEngineAPI.RDD
                          )

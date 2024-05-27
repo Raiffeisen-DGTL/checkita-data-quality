@@ -5,9 +5,8 @@ import org.json4s.jackson.Serialization.write
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.core.metrics.ErrorCollection.MetricErrors
 import ru.raiffeisen.checkita.storage.Models._
-import ru.raiffeisen.checkita.utils.Common.jsonFormats
+import ru.raiffeisen.checkita.utils.Common.{getStringHash, jsonFormats}
 
-import java.security.MessageDigest
 import scala.collection.immutable
 
 object Results {
@@ -27,7 +26,7 @@ object Results {
     case object LoadCheck extends ResultType
     case object Check extends ResultType
 
-    override val values: immutable.IndexedSeq[ResultType] = findValues
+    override def values: immutable.IndexedSeq[ResultType] = findValues
   }
 
   sealed abstract class TypedResult {
@@ -133,9 +132,7 @@ object Results {
           val status = e.status.toString
           val message = e.message
           val rowData = write(err.columns.zip(e.rowData).toMap)
-          val errorHash = MessageDigest.getInstance("MD5").digest(
-            (metricId + status + message + rowData).getBytes
-          ).map("%02x".format(_)).mkString
+          val errorHash = getStringHash(metricId + status + message + rowData)
 
           ResultMetricError(
             jobId,

@@ -1,0 +1,26 @@
+title: hive
+allOf:
+  - $ref: 'baseSchemaConfig.yaml'
+  - type: object
+    required:
+      - schema
+      - table
+    properties:
+      schema:
+        type: string
+        description: Hive schema to search for a table.
+        example: 'hive_schema'
+      table:
+        type: string
+        description: Hive table to retrieve schema from.
+        example: 'hive_table'
+      excludeColumns:
+        type: array
+        description: |-
+          List of column names to exclude from schema. 
+          Sometimes it is required, e.g. to exclude partition columns from schema.
+        items:
+          type: string
+          description: Column name to exclude from schema
+          example: 'exclude_column'
+        default: []

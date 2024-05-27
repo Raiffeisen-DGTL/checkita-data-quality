@@ -1,11 +1,10 @@
 package ru.raiffeisen.checkita.connections.jdbc
 
-import org.apache.spark.sql.SparkSession
+import ru.raiffeisen.checkita.config.jobconf.Connections.MSSQLConnectionConfig
+import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.sql.DriverManager
 import scala.util.Try
-import ru.raiffeisen.checkita.config.jobconf.Connections.MSSQLConnectionConfig
-import ru.raiffeisen.checkita.utils.ResultUtils._
 
 /**
   * Connection to MS SQL database

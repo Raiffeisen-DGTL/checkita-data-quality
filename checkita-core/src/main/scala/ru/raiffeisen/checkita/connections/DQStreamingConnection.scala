@@ -2,6 +2,7 @@ package ru.raiffeisen.checkita.connections
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import ru.raiffeisen.checkita.appsettings.AppSettings
+import ru.raiffeisen.checkita.core.streaming.Checkpoints.Checkpoint
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 
 /**
@@ -16,10 +17,12 @@ trait DQStreamingConnection { this: DQConnection =>
    * @param settings     Implicit application settings object
    * @param spark        Implicit spark session object
    * @param schemas      Implicit Map of all explicitly defined schemas (schemaId -> SourceSchema)
+   * @param checkpoints Map of initial checkpoints read from checkpoint directory
    * @return Spark Streaming DataFrame
    */
   def loadDataStream(sourceConfig: SourceType)
                     (implicit settings: AppSettings,
                      spark: SparkSession,
-                     schemas: Map[String, SourceSchema]): DataFrame
+                     schemas: Map[String, SourceSchema],
+                     checkpoints: Map[String, Checkpoint]): DataFrame
 }

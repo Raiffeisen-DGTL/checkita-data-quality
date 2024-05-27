@@ -1,0 +1,37 @@
+description: |-
+  Section holding parameters defining connection to Data Quality results storage.
+  If this section is missing then application will run without usage of results storage:
+    - results won't be saved (only targets can be sent);
+    - trend checks (used for anomaly detection in data) won't be performed as they require historical results data.
+type: object
+properties:
+  dbType:
+    type: string
+    description: |-
+      Type of database used to store Data Quality results. 
+      Must be on of the supported RDBMS type.
+    example: postgres
+  url:
+    type: string
+    description: Database connection URL (without protocol identifiers).
+    example: server1:5432/public
+  username:
+    type: string
+    description: Username to connect to database with (if required).
+    example: someUser!
+  password:
+    type: string
+    description: Password to connect to database with (if required).
+    example: somePassword!
+  schema:
+    type: string
+    description: Schema where data quality tables are located (if required).
+    example: dqdb
+  saveErrorsToStorage:
+    type: boolean
+    description: Enables metric errors to be stored in storage database.
+    default: false
+    example: true
+required:
+  - dbType
+  - url

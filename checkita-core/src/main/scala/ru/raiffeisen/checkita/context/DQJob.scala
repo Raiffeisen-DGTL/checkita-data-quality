@@ -12,7 +12,6 @@ import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.core.Results.ResultType
 import ru.raiffeisen.checkita.core.{CalculatorStatus, Source}
-import ru.raiffeisen.checkita.core.metrics.MetricProcessor.{MetricResults, processComposedMetrics}
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.storage.Connections.DqStorageJdbcConnection
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
@@ -23,6 +22,7 @@ import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
 import ru.raiffeisen.checkita.config.IO.{writeEncryptedJobConfig, writeJobConfig}
 import ru.raiffeisen.checkita.config.jobconf.JobConfig
+import ru.raiffeisen.checkita.core.metrics.BasicMetricProcessor.{MetricResults, processComposedMetrics}
 
 import scala.reflect.runtime.universe.TypeTag
 import scala.util.Try

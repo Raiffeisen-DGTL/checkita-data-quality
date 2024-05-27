@@ -1,0 +1,37 @@
+title: delimited
+allOf:
+  - $ref: 'baseSchemaConfig.yaml'
+  - type: object
+    required:
+      - schema
+    properties:
+      schema:
+        type: array
+        description: List of schema columns
+        items:
+          type: object
+          description: Column definition
+          required:
+            - name
+            - type
+          properties:
+            name:
+              type: string
+              description: Name of the column
+              example: flag_column
+            type:
+              type: string
+              description: Type of the column.
+              example: boolean
+              enum:
+                - string
+                - boolean
+                - date
+                - timestamp
+                - integer
+                - long
+                - short
+                - byte
+                - double
+                - float
+                - decimal(*, *)

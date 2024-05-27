@@ -67,10 +67,11 @@ object RefinedTypes {
    * @note DataTimeFormatter is not serializable, therefore, it is marked as @transient 
    *       to avoid serialization errors in Spark Tasks.
    * @param pattern - datetime pattern string
-   * @param formatter - datetime formatter for pattern
    */
-  case class DateFormat(pattern: String, @transient formatter: DateTimeFormatter)
-  object DateFormat {
-    def fromString(s: String): DateFormat = DateFormat(s, DateTimeFormatter.ofPattern(s))
+  case class DateFormat(pattern: String) {
+    @transient val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
   }
+//  object DateFormat {
+//    def fromString(s: String): DateFormat = DateFormat(s, DateTimeFormatter.ofPattern(s))
+//  }
 }

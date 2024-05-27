@@ -10,7 +10,8 @@ import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.io.{File, InputStreamReader, SequenceInputStream, Serializable}
 import java.nio.charset.StandardCharsets
-import scala.reflect.runtime.universe.{MethodSymbol, TypeTag, typeOf}
+import java.security.MessageDigest
+import scala.reflect.runtime.universe._
 import scala.util.Try
 
 object Common {
@@ -31,6 +32,14 @@ object Common {
       }
     })
 
+  /**
+   * Builds MD5 hash for input string.
+   * @param s String to build has for.
+   * @return MD5 hash string.
+   */
+  def getStringHash(s: String): String =
+    MessageDigest.getInstance("MD5").digest(s.getBytes).map("%02x".format(_)).mkString
+  
   /**
    * Converts sequence of parameter strings with format "k=v" into a Map(k -> v)
    * @param paramsSeq Sequence of parameter strings

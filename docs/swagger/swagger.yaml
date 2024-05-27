@@ -1,0 +1,43 @@
+openapi: 3.0.3
+info:
+  title: Checkita Data Quality - Configuration Schemas
+  description: |-
+    This page provides Checkita Data Quality configuration schemas for both 
+    application configuration and job configuration files.
+  version: 1.6.0
+tags:
+  - name: dummy
+    description: Dummy endpoints to review Checkita configurations
+paths: 
+  /appConfig:
+    get:
+      tags:
+        - dummy
+      summary: Checkita Application Configuration
+      description: '**DUMMY** endpoint to review Checkita Application Configuration'
+      responses:
+        '200':
+          description: Application Configuration
+          content:
+            application/hocon:
+              schema:
+                $ref: '#/components/schemas/ApplicationConfiguration'
+  /jobConfig:
+    get:
+      tags:
+        - dummy
+      summary: Checkita Job Configuration
+      description: '**DUMMY** endpoint to review Checkita Job Configuration'
+      responses:
+        '200':
+          description: Job Configuration
+          content:
+            application/hocon:
+              schema:
+                $ref: '#/components/schemas/JobConfiguration'
+components:
+  schemas:
+    ApplicationConfiguration:
+      $ref: 'appconf/topLevelAppConfig.yaml'
+    JobConfiguration:
+      $ref: 'jobconf/topLevelJobConfig.yaml'

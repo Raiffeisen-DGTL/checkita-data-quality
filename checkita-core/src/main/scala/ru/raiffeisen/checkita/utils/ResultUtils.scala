@@ -73,7 +73,7 @@ object ResultUtils {
       case Right(r) => Right(r)
       case Left(l) => Left(f(l))
     }
-
+    
     /**
      * Converts either value to a Result value.
      * @param f Function that converts left value to Vector of log messages: Vector[LogMsg]
@@ -203,5 +203,26 @@ object ResultUtils {
       val g2: (T, (R1, R2, R3, R4, R5)) => S = (v, t) => f(v, t._1, t._2, t._3, t._4, t._5)
       value.combine(r1.combineT4(r2, r3, r4, r5)(g1))(g2)
     }
+    
+    def union[R](r: Result[R]): Result[(T, R)] = value.combine(r)((v, v1) => (v, v1))
+    
+    def union[R1, R2](r1: Result[R1], r2: Result[R2]): Result[(T, R1, R2)] = 
+      value.combineT2(r1, r2)((v, v1, v2) => (v, v1, v2))
+      
+    def union[R1, R2, R3](r1: Result[R1], r2: Result[R2], r3: Result[R3]): Result[(T, R1, R2, R3)] =
+      value.combineT3(r1, r2, r3)((v, v1, v2, v3) => (v, v1, v2, v3))
+      
+    def union[R1, R2, R3, R4](r1: Result[R1], 
+                              r2: Result[R2], 
+                              r3: Result[R3], 
+                              r4: Result[R4]): Result[(T, R1, R2, R3, R4)] =
+      value.combineT4(r1, r2, r3, r4)((v, v1, v2, v3, v4) => (v, v1, v2, v3, v4))
+      
+    def union[R1, R2, R3, R4, R5](r1: Result[R1],
+                                  r2: Result[R2],
+                                  r3: Result[R3],
+                                  r4: Result[R4],
+                                  r5: Result[R5]): Result[(T, R1, R2, R3, R4, R5)] =
+      value.combineT5(r1, r2, r3, r4, r5)((v, v1, v2, v3, v4, v5) => (v, v1, v2, v3, v4, v5))
   }
 }

@@ -2,7 +2,7 @@ package ru.raiffeisen.checkita.core.metrics
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import ru.raiffeisen.checkita.core.Casting._
+import ru.raiffeisen.checkita.core.metrics.rdd.Casting._
 
 import java.nio.ByteBuffer
 import java.time.{LocalDate, LocalDateTime, LocalTime}
