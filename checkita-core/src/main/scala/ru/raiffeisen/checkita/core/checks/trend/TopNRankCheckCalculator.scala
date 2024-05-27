@@ -138,6 +138,10 @@ case class TopNRankCheckCalculator(checkId: String,
       .mapValues(_.flatMap(t => t._2)).toSeq.maxBy(t => t._1.getTime)._2.toSet
       // collect results for latest referenceDate
     
+    if (historyResults.isEmpty) throw new IllegalArgumentException(
+      s"There ara no historical results found to perform ${checkName.entryName} check '$checkId'."
+    )
+    
     val dist = calculateJacquardDistance(baseResults, historyResults)
 
     val (status, statusString) =

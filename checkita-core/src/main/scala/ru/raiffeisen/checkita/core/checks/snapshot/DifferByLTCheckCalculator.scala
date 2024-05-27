@@ -70,7 +70,10 @@ case class DifferByLTCheckCalculator(checkId: String,
     
     val baseResult = baseMetricCalcRes.result
     val compareResult = compareMetricCalcRes.result
-    val metricDiff = Math.abs(baseResult - compareResult) / compareResult
+    val metricDiff = 
+      if (compareResult == 0 && baseResult == 0) 0
+      else if (compareResult == 0) 1
+      else Math.abs(baseResult - compareResult) / compareResult
     
     val (status, statusString) = 
       if (metricDiff < compareThreshold)
