@@ -26,14 +26,13 @@ import ru.raiffeisen.checkita.readers.SourceReaders._
 import ru.raiffeisen.checkita.readers.VirtualSourceReaders.VirtualSourceReaderOps
 import ru.raiffeisen.checkita.storage.Connections.DqStorageConnection
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
-import ru.raiffeisen.checkita.utils.Common.{getStringHash, prepareConfig}
+import ru.raiffeisen.checkita.utils.Common.{getPrependVars, getStringHash, prepareConfig}
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
 import ru.raiffeisen.checkita.utils.SparkUtils.{makeFileSystem, makeSparkSession}
 
 import java.io.InputStreamReader
 import scala.annotation.tailrec
-import scala.collection.JavaConverters._
 import scala.util.Try
 
 /**
@@ -657,11 +656,7 @@ object DQContext {
             doMigration: Boolean = false,
             extraVariables: Map[String, String] = Map.empty, // no limitations on variables names.
             logLvl: Level = Level.INFO): Result[DQContext] = {
-    val variablesRegex = "^(?i)(DQ)[a-z0-9_-]+$" // system variables must match the given regex.
-    val systemVariables = System.getProperties.asScala.filterKeys(_ matches variablesRegex)
-    val prependVariables = (systemVariables ++ extraVariables).map {
-      case (k, v) => k + ": \"" + v + "\""
-      }.mkString("", "\n", "\n")
+    val prependVariables = getPrependVars(extraVariables)
     AppSettings.build(appConfig, referenceDate, isLocal, isShared, doMigration, prependVariables, logLvl)
       .flatMap(settings => build(settings))
   }

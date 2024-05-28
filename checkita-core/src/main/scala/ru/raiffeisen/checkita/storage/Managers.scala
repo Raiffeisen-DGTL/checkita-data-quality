@@ -154,7 +154,7 @@ object Managers {
     import profile.api._
     
     implicit val ec: ExecutionContextExecutor = ExecutionContext.fromExecutor(Executors.newWorkStealingPool(4))
-    private val db = Database.forDataSource(ds.getDataSource, Some(ds.getMaxConnections))
+    protected val db: profile.backend.DatabaseDef = Database.forDataSource(ds.getDataSource, Some(ds.getMaxConnections))
     val tables: Tables = new Tables(profile)
 
     private def runUpsert[R <: DQEntity : TypeTag](data: Seq[R],

@@ -45,9 +45,18 @@ object Dependencies {
   val flywayOracle = "org.flywaydb" % "flyway-database-oracle" % flywayVersion
   val flywayMSSQL = "org.flywaydb" % "flyway-sqlserver" % flywayVersion
 
-//  // Schema Registry:
+  // Schema Registry:
   val schemaRegistry = "io.confluent" % "kafka-schema-registry-client" % "7.6.0"
   
+  // HTTP4S
+  val http4sVersion = "0.23.23"
+  val http4sDsl = "org.http4s" %% "http4s-dsl" % http4sVersion
+  val http4sCirce = "org.http4s" %% "http4s-circe" % http4sVersion
+  val http4sServer = "org.http4s" %% "http4s-ember-server" % http4sVersion
+
+  // Circe
+  val circe = "io.circe" %% "circe-generic" % "0.14.5"
+
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.15" % Test
   
   val checkita_core: Seq[ModuleID] = Seq(
@@ -77,13 +86,13 @@ object Dependencies {
     flywayMySQL,
     flywayOracle,
     flywayMSSQL,
-    schemaRegistry,
     scalaTest
   )
 
-
-//   val refinedCats = "eu.timepit" %% "refined-cats" % Versions.refined
-//   val refinedEval = "eu.timepit" %% "refined-eval" % Versions.refined
-//   val catsCore = "org.typelevel" %% "cats-core" % Versions.cats
-//   val scalate = "org.scalatra.scalate" %% "scalate-core" % Versions.scalate
+  val checkita_api: Seq[ModuleID] = Seq(
+    http4sDsl,
+    http4sCirce,
+    http4sServer,
+    circe
+  )
 }
