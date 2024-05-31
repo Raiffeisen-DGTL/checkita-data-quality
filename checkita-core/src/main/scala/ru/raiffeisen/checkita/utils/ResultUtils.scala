@@ -20,6 +20,20 @@ object ResultUtils {
    */
   def liftToResult[T](value: T): Result[T] = Right(value).toResult(Vector.empty)
   
+  implicit class ThrowableOps(value: Throwable) {
+    
+    /**
+     * Function to print stack trace to string maintaining its formatting.
+     *
+     * @return Stack trace string
+     */
+    def getStackTraceAsString: String = {
+      val sw = new StringWriter
+      value.printStackTrace(new PrintWriter(sw))
+      sw.toString
+    }
+  }
+  
   /**
    * Implicit conversion for Try[T] with extra methods
    *
@@ -27,18 +41,18 @@ object ResultUtils {
    * @tparam T Type of Try value
    */
   implicit class TryOps[T](value: Try[T]) {
-
-    /**
-     * Function to print stack trace to string maintaining its formatting.
-     *
-     * @param e Throwable
-     * @return Stack trace string
-     */
-    private def getStackTraceAsString(e: Throwable) = {
-      val sw = new StringWriter
-      e.printStackTrace(new PrintWriter(sw))
-      sw.toString
-    }
+    
+//    /**
+//     * Function to print stack trace to string maintaining its formatting.
+//     *
+//     * @param e Throwable
+//     * @return Stack trace string
+//     */
+//    private def getStackTraceAsString(e: Throwable) = {
+//      val sw = new StringWriter
+//      e.printStackTrace(new PrintWriter(sw))
+//      sw.toString
+//    }
 
     /**
      * Converts Try[T] into a Result[T]
@@ -51,7 +65,7 @@ object ResultUtils {
       value match {
         case Success(v) => Right(v)
         case Failure(e) =>
-          val msg = if (includeStackTrace) preMsg + "\n" + getStackTraceAsString(e) else preMsg + "\n" + e.getMessage
+          val msg = if (includeStackTrace) preMsg + "\n" + e.getStackTraceAsString else preMsg + "\n" + e.getMessage
           Left(Vector(msg))
       }
   }

@@ -3,7 +3,7 @@ package ru.raiffeisen.checkita.utils
 import ru.raiffeisen.checkita.config.RefinedTypes.DateFormat
 
 import java.sql.Timestamp
-import java.time.{Instant, LocalDate, LocalDateTime, LocalTime, ZoneId, ZonedDateTime}
+import java.time.{Instant, LocalDate, LocalDateTime, LocalTime, ZoneId, ZoneOffset, ZonedDateTime}
 import scala.concurrent.duration.Duration
 import scala.language.postfixOps
 import scala.util.Try
@@ -55,6 +55,9 @@ case class EnrichedDT(dateFormat: DateFormat, timeZone: ZoneId, dateString: Opti
    */
   def render: String = zonedDT.format(formatter)
   
+  def renderUtcTs(ts: Timestamp): String =
+    LocalDateTime.ofInstant(ts.toInstant, ZoneId.of("UTC")).format(formatter)
+    
   /**
    * Transforms ZonedDateTime to timestamp at UTC time zone
    * @return Timestamp at UTC tz
@@ -93,6 +96,9 @@ case class EnrichedDT(dateFormat: DateFormat, timeZone: ZoneId, dateString: Opti
 }
 
 object EnrichedDT {
+  
+  private val utcZone = ZoneId.of("UTC")
+  
   /**
    * Builds EnrichedDT instance from Unix epoch (in seconds)
    * @param epoch Unix epoch
@@ -108,5 +114,16 @@ object EnrichedDT {
     val localDt = LocalDateTime.ofEpochSecond(epoch, 0, zoneOffset)
     val localDtString = localDt.format(dateFormat.formatter)
     EnrichedDT(dateFormat, timeZone, Some(localDtString))
+  }
+  
+  def fromUtcTs(ts: Timestamp,
+                dateFormat: DateFormat = DateFormat("yyyy-MM-dd HH:mm:ss"),
+                timeZone: ZoneId = ZoneId.systemDefault()
+               ): EnrichedDT = {
+    val zdt = LocalDateTime.ofInstant(ts.toInstant, ZoneId.systemDefault())
+      .atZone(utcZone).withZoneSameInstant(timeZone)
+    val zdtStr = zdt.format(dateFormat.formatter)
+    println(s"Timestamp = ${ts.getTime};\tformat = ${dateFormat.pattern};\ttimeZone = $timeZone;\trenderTime = $zdtStr")
+    EnrichedDT(dateFormat, timeZone, Some(zdtStr))
   }
 }

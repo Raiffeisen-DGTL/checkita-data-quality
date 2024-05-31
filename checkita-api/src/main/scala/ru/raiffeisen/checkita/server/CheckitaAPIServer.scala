@@ -10,14 +10,15 @@ import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.Enums.DQStorageType
 import ru.raiffeisen.checkita.dbmanager.APIJdbcStorageManager
 import ru.raiffeisen.checkita.routes.StorageRoutes
-import ru.raiffeisen.checkita.routes.ValidationRoutes.configValidationRoutes
+import ru.raiffeisen.checkita.routes.ValidationRoutes
 import ru.raiffeisen.checkita.storage.Connections.DqStorageJdbcConnection
 import ru.raiffeisen.checkita.utils.Common.getPrependVars
+import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import scala.util.Try
 
-object CheckitaAPIServer extends IOApp {
+object CheckitaAPIServer extends IOApp with Logging {
 
   /**
    * Read application configuration and builds an instance of application settings.
@@ -35,10 +36,15 @@ object CheckitaAPIServer extends IOApp {
                               extraVariables: Map[String, String],
                               logLvl: Level): Result[AppSettings] = {
     val prependVariables = getPrependVars(extraVariables)
-    AppSettings.build(appConfig, None, false, false, doMigration, prependVariables, logLvl)
+    AppSettings.build(
+      appConfig, None, isLocal = false, isShared = false, doMigration = doMigration, prependVariables, logLvl
+    )
   }
-
-
+  /**
+   * Retrieves connection to DQ Storage.
+   * @param settings Application settings
+   * @return Either an instance of DQ Storage connection or a list of connection errors.
+   */
   private def getStorageConnection(settings: AppSettings): Result[DqStorageJdbcConnection] =
     settings.storageConfig match {
       case Some(config) if !Seq(DQStorageType.File, DQStorageType.Hive).contains(config.dbType) =>
@@ -52,18 +58,32 @@ object CheckitaAPIServer extends IOApp {
       ))
     }
 
-
+  /**
+   * Builds DQ Storage manager provided with DQ Storage connection.
+   * @param dqStorageConn DQ Storage connection (jdbc-like).
+   * @return Either an instance of DQ Storage manager or a list of building errors.
+   */
   private def getStorageManager(dqStorageConn: DqStorageJdbcConnection): Result[APIJdbcStorageManager] =
     Try(new APIJdbcStorageManager(dqStorageConn)).toResult(
         preMsg = "Unable to connect to Data Quality storage due to following error:"
     )
 
-
+  /**
+   * Assembles API routes.
+   * @param dbManager DQ Storage manager
+   * @param settings Application settings
+   * @return All http routes for Checkita API.
+   */
   private def getRouter(dbManager: APIJdbcStorageManager, settings: AppSettings): HttpRoutes[IO] = Router(
-    "/api/validation" -> configValidationRoutes,
+    "/api/validation" -> ValidationRoutes.configValidationRoutes,
     "/api/storage" -> StorageRoutes(dbManager, settings).dqStorageRoutes
   )
 
+  /**
+   * Builds HTTP Server provided with API routes.
+   * @param router API routes.
+   * @return Instance of HTTP server.
+   */
   private def getServer(router: HttpRoutes[IO]): Resource[IO, Server] = EmberServerBuilder
     .default[IO]
     .withHost(ipv4"0.0.0.0")
@@ -71,19 +91,23 @@ object CheckitaAPIServer extends IOApp {
     .withHttpApp(router.orNotFound)
     .build
 
+  /**
+   * Runs the HTTP server.
+   */
   override def run(args: List[String]): IO[ExitCode] = {
     CommandLineOptions.parser().parse(args, CommandLineOptions()) match {
       case Some(opts) =>
         val router = for {
           settings <- readAppSettings(opts.appConf, opts.migrate, opts.extraVars, opts.logLevel)
+          _ <- Try(initLogger(settings.loggingLevel)).toResult()
           dqStorageConn <- getStorageConnection(settings)
           dqStorageManager <- getStorageManager(dqStorageConn)
         } yield getRouter(dqStorageManager, settings)
 
         router match {
-          case Right(rtr) =>
-            println("Running API server...")
-            getServer(rtr).use(_ => IO.never).as(ExitCode.Success)
+          case Right(r) =>
+            log.info("Running API server...")
+            getServer(r).use(_ => IO.never).as(ExitCode.Success)
           case Left(errs) => throw new IllegalArgumentException(
             s"Unable to startup Checkita API server due to following errors:\n${errs.mkString("\n")}"
           )

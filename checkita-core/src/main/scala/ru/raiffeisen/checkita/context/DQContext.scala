@@ -1,11 +1,10 @@
 package ru.raiffeisen.checkita.context
 
-import com.typesafe.config.ConfigRenderOptions
 import org.apache.hadoop.fs.FileSystem
 import org.apache.logging.log4j.Level
 import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.{AppSettings, VersionInfo}
-import ru.raiffeisen.checkita.config.IO.{RenderOptions, readJobConfig, writeJobConfig}
+import ru.raiffeisen.checkita.config.IO.readJobConfig
 import ru.raiffeisen.checkita.config.Parsers._
 import ru.raiffeisen.checkita.config.appconf.AppConfig
 import ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig
@@ -18,15 +17,15 @@ import ru.raiffeisen.checkita.config.jobconf.Sources.{SourceConfig, VirtualSourc
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.core.Source
+import ru.raiffeisen.checkita.core.streaming.CheckpointIO
 import ru.raiffeisen.checkita.core.streaming.Checkpoints.Checkpoint
-import ru.raiffeisen.checkita.core.streaming.{CheckpointIO, ProcessorBuffer}
 import ru.raiffeisen.checkita.readers.ConnectionReaders._
 import ru.raiffeisen.checkita.readers.SchemaReaders._
 import ru.raiffeisen.checkita.readers.SourceReaders._
 import ru.raiffeisen.checkita.readers.VirtualSourceReaders.VirtualSourceReaderOps
 import ru.raiffeisen.checkita.storage.Connections.DqStorageConnection
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
-import ru.raiffeisen.checkita.utils.Common.{getPrependVars, getStringHash, prepareConfig}
+import ru.raiffeisen.checkita.utils.Common.{getPrependVars, prepareConfig}
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
 import ru.raiffeisen.checkita.utils.SparkUtils.{makeFileSystem, makeSparkSession}

@@ -55,8 +55,10 @@ object Dependencies {
   val http4sServer = "org.http4s" %% "http4s-ember-server" % http4sVersion
 
   // Circe
-  val circe = "io.circe" %% "circe-generic" % "0.14.5"
-
+  val circeVersion = "0.14.5"
+  val circe = "io.circe" %% "circe-generic" % circeVersion
+  val circeParser = "io.circe" %% "circe-parser" % circeVersion
+  
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.15" % Test
   
   val checkita_core: Seq[ModuleID] = Seq(
@@ -86,6 +88,7 @@ object Dependencies {
     flywayMySQL,
     flywayOracle,
     flywayMSSQL,
+    schemaRegistry,
     scalaTest
   )
 
@@ -93,6 +96,7 @@ object Dependencies {
     http4sDsl,
     http4sCirce,
     http4sServer,
-    circe
+    circe,
+    circeParser
   )
 }
