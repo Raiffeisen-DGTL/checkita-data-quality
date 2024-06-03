@@ -19,7 +19,12 @@ object ResultUtils {
    * @return Result of value type
    */
   def liftToResult[T](value: T): Result[T] = Right(value).toResult(Vector.empty)
-  
+
+  /**
+   * Implicit traversable for Throwable.
+   * Holds method for getting stack trace as a string.
+   * @param value Throwable
+   */
   implicit class ThrowableOps(value: Throwable) {
     
     /**
@@ -41,18 +46,6 @@ object ResultUtils {
    * @tparam T Type of Try value
    */
   implicit class TryOps[T](value: Try[T]) {
-    
-//    /**
-//     * Function to print stack trace to string maintaining its formatting.
-//     *
-//     * @param e Throwable
-//     * @return Stack trace string
-//     */
-//    private def getStackTraceAsString(e: Throwable) = {
-//      val sw = new StringWriter
-//      e.printStackTrace(new PrintWriter(sw))
-//      sw.toString
-//    }
 
     /**
      * Converts Try[T] into a Result[T]

@@ -3,7 +3,7 @@ package ru.raiffeisen.checkita.dbmanager
 
 import io.circe.Json
 import io.circe.parser._
-import ru.raiffeisen.checkita.models.StorageModels.{JobFailCount, JobInfo}
+import ru.raiffeisen.checkita.models.StorageModels._
 import ru.raiffeisen.checkita.storage.Connections.DqStorageJdbcConnection
 import ru.raiffeisen.checkita.storage.Managers.DqJdbcStorageManager
 import ru.raiffeisen.checkita.storage.Models._
@@ -11,10 +11,8 @@ import ru.raiffeisen.checkita.utils.{EnrichedDT, Logging}
 
 import java.sql.Timestamp
 import java.time.ZoneId
-import java.util.TimeZone
 import scala.concurrent.Future
 import scala.reflect.runtime.universe.TypeTag
-import scala.util.Try
 
 /**
  * Enhanced version of DqJdbcStorageManger by providing series of methods
@@ -29,12 +27,26 @@ class APIJdbcStorageManager(ds: DqStorageJdbcConnection)
   import profile.api._
   import tables.TableImplicits._
   
-  log.debug(ZoneId.systemDefault())
+  log.debug(s"Default system timezone is: ${ZoneId.systemDefault()}")
   
   private def getTable[R <: DQEntity : TypeTag]
                       (implicit ops: tables.DQTableOps[R]): tables.profile.api.TableQuery[ops.T] =
     ops.getTableQuery(ds.getSchema)
 
+  private def getResults[R <: DQEntity : TypeTag](jobId: String, dt: Option[EnrichedDT], singleRecord: Boolean = false)
+                                                 (implicit ops: tables.DQTableOps[R]): Future[Seq[R]] = {
+    val table = ops.getTableQuery(ds.getSchema)
+    val preQuery = table.filter(_.jobId === jobId)
+    val maxRefDate = table.filter(_.jobId === jobId).map(_.referenceDate).max
+    val finalQuery = dt.map(d => preQuery.filter(_.referenceDate === d.getUtcTS))
+      .getOrElse(preQuery.filter(_.referenceDate === maxRefDate)).result
+    
+    finalQuery.statements.foreach(log.debug)
+    
+    if (singleRecord) db.run(finalQuery.headOption).map(_.toSeq)
+    else db.run(finalQuery)
+  }
+  
   private def getJobDescription(config: String): String = {
     val json = parse(config).getOrElse(Json.Null)
     val cursor = json.hcursor
@@ -46,17 +58,10 @@ class APIJdbcStorageManager(ds: DqStorageJdbcConnection)
   private lazy val resChkTbl: tables.profile.api.TableQuery[tables.ResultCheckTable] = getTable[ResultCheck]
   private lazy val resChkLoadTbl: tables.profile.api.TableQuery[tables.ResultCheckLoadTable] = getTable[ResultCheckLoad]
   private lazy val jobStateTbl: tables.profile.api.TableQuery[tables.JobStateTable] = getTable[JobState]
-
-  def getNumberOfJobs(startDT: EnrichedDT, endDT: EnrichedDT, jobFilter: Option[String]): Future[Int] = db.run(
-    resChkTbl.filter{ t =>
-      val dateOnlyFilter = t.referenceDate >= startDT.getUtcTS && t.referenceDate <= endDT.getUtcTS
-      jobFilter.map(jf => t.jobId.like(jf) && dateOnlyFilter).getOrElse(dateOnlyFilter)
-    }.map(_.jobId).distinct.length.result
-  )
   
   def getJobsInfo(startDT: EnrichedDT, endDT: EnrichedDT): Future[Seq[JobInfo]] = {
     
-    val renderTS = (ts: Timestamp) => EnrichedDT.fromUtcTs(ts, startDT.dateFormat, startDT.timeZone).render
+    val renderTS = (ts: Timestamp) => EnrichedDT(startDT.dateFormat, startDT.timeZone, ts).render
     
     // get jobId and last job run referenceDate.
     val lastRun = jobStateTbl.groupBy(_.jobId).map {
@@ -90,13 +95,12 @@ class APIJdbcStorageManager(ds: DqStorageJdbcConnection)
           t2.map(_._2),
           t2.map(_._3)
         )
-      }
+      }.result
     
-    val res = finalQuery.result
-    res.statements.foreach(log.debug)
+    finalQuery.statements.foreach(log.debug)
     
     // run query and process results.
-    db.run(res).map{ data =>
+    db.run(finalQuery).map{ data =>
       data.groupBy(d => (d._1, d._3)).mapValues{ s => 
         val failCounts = s.flatMap{
           case (_, _, _, optDt, optFc) => for {
@@ -117,30 +121,17 @@ class APIJdbcStorageManager(ds: DqStorageJdbcConnection)
     }
   }
   
-  /*
-    QUERIES
-
-    1) FACTOIDS
-      a) get number of jobs
-         Args:
-          - startDate
-          - endDate
-          - jobFilter
-      b) get number of regular sources
-         Args:
-          - start_date
-          - end_date
-          - jobId
-          - jobFilter
-          - sourceFilter
-      c) get number of virtual sources
-         Args:
-          - start_date
-          - end_date
-          - jobId
-          - jobFilter
-          - sourceFilter
-      d) tbd..
-   */
+  def getJobState(jobId: String, dt: Option[EnrichedDT] = None): Future[Seq[JobState]] = 
+    getResults[JobState](jobId, dt, singleRecord = true)
+  
+  
+  def getJobResults(jobId: String, dt: Option[EnrichedDT] = None): Future[JobResults] = for {
+    regMetRes <- getResults[ResultMetricRegular](jobId, dt)
+    compMetRes <- getResults[ResultMetricComposed](jobId, dt)
+    errMetRes <- getResults[ResultMetricError](jobId, dt)
+    loadChkRes <- getResults[ResultCheckLoad](jobId, dt)
+    chkRes <- getResults[ResultCheck](jobId, dt)
+  } yield JobResults(regMetRes, compMetRes, loadChkRes, chkRes, errMetRes)
+  
 
 }

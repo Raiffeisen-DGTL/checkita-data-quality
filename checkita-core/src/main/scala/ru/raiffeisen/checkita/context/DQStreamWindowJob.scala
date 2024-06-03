@@ -79,8 +79,8 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
    */
   private def copySettings(windowId: Long): AppSettings = settings.copy(
     executionDateTime = settings.executionDateTime.resetToCurrentTime,
-    referenceDateTime = EnrichedDT.fromEpoch(
-      windowId, settings.referenceDateTime.dateFormat, settings.referenceDateTime.timeZone)
+    referenceDateTime = settings.referenceDateTime.setTo(windowId)
+    //EnrichedDT(settings.referenceDateTime.dateFormat, settings.referenceDateTime.timeZone, windowId)
   )
 
   /**

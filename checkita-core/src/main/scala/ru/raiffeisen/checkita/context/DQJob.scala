@@ -20,7 +20,7 @@ import ru.raiffeisen.checkita.targets.TargetProcessors._
 import ru.raiffeisen.checkita.storage.Models._
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
-import ru.raiffeisen.checkita.config.IO.{writeEncryptedJobConfig, writeJobConfig}
+import ru.raiffeisen.checkita.config.IO.{RenderOptions, writeEncryptedJobConfig, writeJobConfig}
 import ru.raiffeisen.checkita.config.jobconf.JobConfig
 import ru.raiffeisen.checkita.core.metrics.BasicMetricProcessor.{MetricResults, processComposedMetrics}
 
@@ -351,8 +351,6 @@ trait DQJob extends Logging {
   protected def finalizeJobState(jobConfig: JobConfig)
                                 (implicit settings: AppSettings, jobId: String): Result[JobState] = {
 
-    val renderOpts = ConfigRenderOptions.defaults().setComments(false).setOriginComments(false).setFormatted(false)
-
     val writeFunc = (jc: JobConfig) => settings.encryption match {
       case Some(e) => writeEncryptedJobConfig(jc)(new ConfigEncryptor(e.secret, e.keyFields))
       case None => writeJobConfig(jc)
@@ -360,7 +358,7 @@ trait DQJob extends Logging {
 
     writeFunc(jobConfig).map(jc => JobState(
       jobId,
-      jc.root().render(renderOpts),
+      jc.root().render(RenderOptions.COMPACT),
       settings.versionInfo.asJsonString,
       settings.referenceDateTime.getUtcTS,
       settings.executionDateTime.getUtcTS
