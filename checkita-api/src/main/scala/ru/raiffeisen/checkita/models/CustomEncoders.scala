@@ -8,20 +8,14 @@ import ru.raiffeisen.checkita.storage.Serialization._
 
 import scala.reflect.runtime.universe.TypeTag
 
+/**
+ * Custom Json encoders that adds to or override default Circe encoders.
+ */
 object CustomEncoders {
-  
-//  /**
-//   * Implicit conversion to generate Circe Json Encoder for timestamps.
-//   * Timestamps are converted to date strings with pre-configured date format and time zone.
-//   */
-//  implicit def timestampEncoder(implicit format: DateFormat, 
-//                                zoneId: ZoneId): Encoder[Timestamp] = (a: Timestamp) => Json.fromString(
-//    EnrichedDT.fromUtcTs(a, format, zoneId).render
-//  )
 
   /**
    * Implicit conversion to generate custom Circe Json Encoder for DQ entities.
-   * We want that API responses return the same JSON object as we built when DQ jobs are run.
+   * We want that API responses return the same JSON object as we generate when DQ jobs are run.
    *
    * @param settings Implicit application settings.
    * @tparam T Type of DQ entity
@@ -29,6 +23,5 @@ object CustomEncoders {
    */
   implicit def dqEntityEncoder[T <: DQEntity : TypeTag](implicit settings: AppSettings): Encoder[T] = 
     (a: T) => parse(a.toJson).fold(throw _, identity)
-    
   
 }

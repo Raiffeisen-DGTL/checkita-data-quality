@@ -4,7 +4,7 @@ import cats.effect.IO
 import cats.implicits._
 import org.http4s.dsl.io._
 import org.http4s.{HttpRoutes, ParseFailure, QueryParamDecoder, Response}
-import ru.raiffeisen.checkita.common.Helpers._
+import ru.raiffeisen.checkita.common.ImplicitOps._
 import ru.raiffeisen.checkita.config.IO.{readAppConfig, readJobConfig}
 import ru.raiffeisen.checkita.config.Parsers._
 import ru.raiffeisen.checkita.config.appconf.AppConfig

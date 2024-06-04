@@ -9,7 +9,7 @@ import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.dsl.io._
 import org.http4s.{HttpRoutes, ParseFailure, QueryParamDecoder, Response}
 import ru.raiffeisen.checkita.appsettings.AppSettings
-import ru.raiffeisen.checkita.common.Helpers._
+import ru.raiffeisen.checkita.common.ImplicitOps._
 import ru.raiffeisen.checkita.config.IO.{RenderOptions, readEncryptedJobConfig, writeJobConfig}
 import ru.raiffeisen.checkita.config.{ConfigEncryptor, RefinedTypes}
 import ru.raiffeisen.checkita.dbmanager.APIJdbcStorageManager
@@ -41,14 +41,6 @@ class StorageRoutes(dbManager: APIJdbcStorageManager, implicit val settings: App
         )
       }
     }
-
-//  /**
-//   * Implicit Circe Json Encoder for timestamps.
-//   * Timestamps are converted to date strings with pre-configured date format and time zone.
-//   */
-//  implicit val timestampEncoder: Encoder[Timestamp] = (a: Timestamp) => Json.fromString(
-//    EnrichedDT.fromUtcTs(a, dateFmt, dateTz).render
-//  )
   
   private object DtOptValQPM extends OptionalValidatingQueryParamDecoderMatcher[EnrichedDT]("dt")
   private object StartDtOptValQPM extends OptionalValidatingQueryParamDecoderMatcher[EnrichedDT]("start-dt")

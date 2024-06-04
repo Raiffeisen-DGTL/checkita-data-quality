@@ -33,6 +33,19 @@ class APIJdbcStorageManager(ds: DqStorageJdbcConnection)
                       (implicit ops: tables.DQTableOps[R]): tables.profile.api.TableQuery[ops.T] =
     ops.getTableQuery(ds.getSchema)
 
+  /**
+   * Loads results of particular type from DQ storage.
+   * Results are loaded for partical job and provided reference date.
+   * If reference date is not provided, then results are loaded for
+   * latest available reference date.
+   *
+   * @param jobId        Job ID to load results for.
+   * @param dt           Optional reference date to load results for.
+   * @param singleRecord Boolean flag indicating whether a single record should be retrieved from storage.
+   * @param ops          Implicit table extension methods used to retrieve instance of Slick table that matches the result type.
+   * @tparam R Type of result to be loaded.
+   * @return Future containing loaded sequence of results.
+   */
   private def getResults[R <: DQEntity : TypeTag](jobId: String, dt: Option[EnrichedDT], singleRecord: Boolean = false)
                                                  (implicit ops: tables.DQTableOps[R]): Future[Seq[R]] = {
     val table = ops.getTableQuery(ds.getSchema)
@@ -46,7 +59,14 @@ class APIJdbcStorageManager(ds: DqStorageJdbcConnection)
     if (singleRecord) db.run(finalQuery.headOption).map(_.toSeq)
     else db.run(finalQuery)
   }
-  
+
+  /**
+   * Parses configuration JSON string and retrieves job description
+   * if it is present.
+   *
+   * @param config Job configuration JSON string.
+   * @return Job description or empty string if job description is missing.
+   */
   private def getJobDescription(config: String): String = {
     val json = parse(config).getOrElse(Json.Null)
     val cursor = json.hcursor
@@ -58,7 +78,21 @@ class APIJdbcStorageManager(ds: DqStorageJdbcConnection)
   private lazy val resChkTbl: tables.profile.api.TableQuery[tables.ResultCheckTable] = getTable[ResultCheck]
   private lazy val resChkLoadTbl: tables.profile.api.TableQuery[tables.ResultCheckLoadTable] = getTable[ResultCheckLoad]
   private lazy val jobStateTbl: tables.profile.api.TableQuery[tables.JobStateTable] = getTable[JobState]
-  
+
+  /**
+   * Loads jobs summary information fro DQ storage. Result is a sequence of all available jobs in
+   * the DQ storage with following information for each job:
+   *   - Job ID
+   *   - Job description
+   *   - reference date of latest run
+   *   - sequence of results in interval of [startDT, endDT].
+   *     Results are a map of reference date to number of failed checks.
+   *     If no checks are avaialbe for a particular reference date then -1 is returned.
+   *
+   * @param startDT Start of the interval for pulling check results.
+   * @param endDT   End of the interval for pulling check results.
+   * @return Job summary information.
+   */
   def getJobsInfo(startDT: EnrichedDT, endDT: EnrichedDT): Future[Seq[JobInfo]] = {
     
     val renderTS = (ts: Timestamp) => EnrichedDT(startDT.dateFormat, startDT.timeZone, ts).render
@@ -120,11 +154,34 @@ class APIJdbcStorageManager(ds: DqStorageJdbcConnection)
       }
     }
   }
-  
+
+  /**
+   * Loads job state information from DQ storage.
+   *
+   * @param jobId Job ID to load state for.
+   * @param dt    Reference date for which state is loaded. 
+   *              If empty, then latest available job state is loaded.
+   * @return Job state: sequence containing single record 
+   *         or empty sequence in case if job state was not found 
+   *         for given jobId and for provided reference date.
+   */
   def getJobState(jobId: String, dt: Option[EnrichedDT] = None): Future[Seq[JobState]] = 
     getResults[JobState](jobId, dt, singleRecord = true)
   
-  
+  /**
+   * Loads job results from DQ storage.
+   * Results include following information:
+   *   - sequence of regular metric results
+   *   - sequence of composed metric results
+   *   - sequence of load checks results
+   *   - sequence of check results
+   *   - sequence of collected metric errors
+   * 
+   * @param jobId Job ID to load results for.
+   * @param dt Reference date for which results are loaded.
+   *           If empty then results are loaded for latest avaiable reference date.
+   * @return Job results.
+   */
   def getJobResults(jobId: String, dt: Option[EnrichedDT] = None): Future[JobResults] = for {
     regMetRes <- getResults[ResultMetricRegular](jobId, dt)
     compMetRes <- getResults[ResultMetricComposed](jobId, dt)
@@ -133,5 +190,4 @@ class APIJdbcStorageManager(ds: DqStorageJdbcConnection)
     chkRes <- getResults[ResultCheck](jobId, dt)
   } yield JobResults(regMetRes, compMetRes, loadChkRes, chkRes, errMetRes)
   
-
 }
