@@ -16,6 +16,7 @@ object MetricName extends Enum[MetricName] {
   case object EmptyValues extends MetricName("EMPTY_VALUES")
   case object DuplicateValues extends MetricName("DUPLICATE_VALUES")
   case object Completeness extends MetricName("COMPLETENESS")
+  case object Emptiness extends MetricName("EMPTINESS")
   case object SequenceCompleteness extends MetricName("SEQUENCE_COMPLETENESS")
   case object ApproximateSequenceCompleteness extends MetricName("APPROXIMATE_SEQUENCE_COMPLETENESS")
   case object DistinctValues extends MetricName("DISTINCT_VALUES")

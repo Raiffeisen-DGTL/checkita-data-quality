@@ -32,7 +32,7 @@ object Metrics {
 
   /**
    * Base class for all regular metric configurations (except row count metric). All regular metrics must have a
-   * reference to source ID over which the metric is being calculated. In addition, column metrics must have non-empty
+   * reference to source ID over which the metric is being calculated. In addition, regular metrics must have non-empty
    * sequence of columns over which the metric is being calculated.
    * Metric error collection logic might be reversed provided with corresponding boolean flag set to `true`.
    */
@@ -49,28 +49,28 @@ object Metrics {
     val paramString: Option[String]
   }
 
-  /** Base class for column metrics that works with any number of columns.
+  /** Base class for regular metrics that works with any number of columns.
     */
   sealed abstract class AnyColumnRegularMetricConfig extends RegularMetricConfig {
     val columns: NonEmptyStringSeq
     val metricColumns: Seq[String] = columns.value
   }
 
-  /** Base class for column metrics that works only with single column.
+  /** Base class for regular metrics that works only with single column.
     */
   sealed abstract class SingleColumnRegularMetricConfig extends RegularMetricConfig {
     val columns: SingleElemStringSeq
     val metricColumns: Seq[String] = columns.value
   }
 
-  /** Base class for column metrics that works only with two columns.
+  /** Base class for regular metrics that works only with two columns.
     */
   sealed abstract class DoubleColumnRegularMetricConfig extends RegularMetricConfig {
     val columns: DoubleElemStringSeq
     val metricColumns: Seq[String] = columns.value
   }
 
-  /** Base class for column metrics that works with at least two columns.
+  /** Base class for regular metrics that works with at least two columns.
     */
   sealed abstract class MultiColumnRegularMetricConfig extends RegularMetricConfig {
     val columns: MultiElemStringSeq
@@ -115,7 +115,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = RowCountDFMetricCalculator(metricId)
   }
 
-  /** Duplicate values column metric configuration
+  /** Duplicate values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -136,7 +136,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = DuplicateValuesDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Distinct values column metric configuration
+  /** Distinct values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -157,7 +157,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = DistinctValuesDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Approximate distinct values column metric configuration
+  /** Approximate distinct values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -183,7 +183,7 @@ object Metrics {
     )
   }
 
-  /** Null values column metric configuration
+  /** Null values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -208,7 +208,7 @@ object Metrics {
     )
   }
 
-  /** Empty values column metric configuration
+  /** Empty values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -233,7 +233,7 @@ object Metrics {
     )
   }
 
-  /** Completeness column metric configuration
+  /** Completeness regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -261,7 +261,35 @@ object Metrics {
     )
   }
 
-  /** Sequence completeness column metric configuration
+  /** Emptiness regular metric configuration
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
+  final case class EmptinessMetricConfig(
+                                          id: ID,
+                                          description: Option[NonEmptyString],
+                                          source: NonEmptyString,
+                                          columns: NonEmptyStringSeq,
+                                          params: CompletenessParams = CompletenessParams(),
+                                          metadata: Seq[SparkParam] = Seq.empty,
+                                          reversed: Boolean = true
+                                        ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
+    val metricName: MetricName      = MetricName.Emptiness
+    val paramString: Option[String] = Some(write(getFieldsMap(params)))
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new EmptinessRDDMetricCalculator(params.includeEmptyStrings, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = EmptinessDFMetricCalculator(
+      metricId, metricColumns, params.includeEmptyStrings, reversed
+    )
+  }
+
+  /** Sequence completeness regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -286,7 +314,7 @@ object Metrics {
       SequenceCompletenessDFMetricCalculator(metricId, metricColumns, params.increment.value)
   }
 
-  /** Sequence completeness column metric configuration
+  /** Sequence completeness regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -312,7 +340,7 @@ object Metrics {
     )
   }
 
-  /** Min string column metric configuration
+  /** Min string regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -333,7 +361,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = MinStringDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Max string column metric configuration
+  /** Max string regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -354,7 +382,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = MaxStringDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Average string column metric configuration
+  /** Average string regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -375,7 +403,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = AvgStringDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** String length column metric configuration
+  /** String length regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -403,7 +431,7 @@ object Metrics {
     )
   }
 
-  /** String in domain column metric configuration
+  /** String in domain regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -431,7 +459,7 @@ object Metrics {
     )
   }
 
-  /** String out domain column metric configuration
+  /** String out domain regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -459,7 +487,7 @@ object Metrics {
     )
   }
 
-  /** String values column metric configuration
+  /** String values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -487,7 +515,7 @@ object Metrics {
     )
   }
 
-  /** Regex match column metric configuration
+  /** Regex match regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -515,7 +543,7 @@ object Metrics {
     )
   }
 
-  /** Regex mismatch column metric configuration
+  /** Regex mismatch regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -543,7 +571,7 @@ object Metrics {
     )
   }
 
-  /** Formatted date column metric configuration
+  /** Formatted date regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -571,7 +599,7 @@ object Metrics {
     )
   }
 
-  /** Formatted number column metric configuration
+  /** Formatted number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -608,7 +636,7 @@ object Metrics {
     )
   }
 
-  /** Min number column metric configuration
+  /** Min number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -629,7 +657,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = MinNumberDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Max number column metric configuration
+  /** Max number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -650,7 +678,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = MaxNumberDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Sum number column metric configuration
+  /** Sum number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -671,7 +699,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = SumNumberDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Average number column metric configuration
+  /** Average number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -692,7 +720,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = AvgNumberDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Standard deviation number column metric configuration
+  /** Standard deviation number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -713,7 +741,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = StdNumberDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Casted number column metric configuration
+  /** Casted number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -738,7 +766,7 @@ object Metrics {
       CastedNumberDFMetricCalculator(metricId, metricColumns, reversed)
   }
 
-  /** Number in domain column metric configuration
+  /** Number in domain regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -765,7 +793,7 @@ object Metrics {
       NumberInDomainDFMetricCalculator(metricId, metricColumns, params.domain.value.toSet, reversed)
   }
 
-  /** Number out domain column metric configuration
+  /** Number out domain regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -792,7 +820,7 @@ object Metrics {
       NumberOutDomainDFMetricCalculator(metricId, metricColumns, params.domain.value.toSet, reversed)
   }
 
-  /** Number less than column metric configuration
+  /** Number less than regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -819,7 +847,7 @@ object Metrics {
       NumberLessThanDFMetricCalculator(metricId, metricColumns, params.compareValue, params.includeBound, reversed)
   }
 
-  /** Number greater than column metric configuration
+  /** Number greater than regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -846,7 +874,7 @@ object Metrics {
       NumberGreaterThanDFMetricCalculator(metricId, metricColumns, params.compareValue, params.includeBound, reversed)
   }
 
-  /** Number between column metric configuration
+  /** Number between regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -875,7 +903,7 @@ object Metrics {
     )
   }
 
-  /** Number not between column metric configuration
+  /** Number not between regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -904,7 +932,7 @@ object Metrics {
     )
   }
 
-  /** Number values column metric configuration
+  /** Number values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -932,7 +960,7 @@ object Metrics {
     )
   }
 
-  /** TDigest Median value column metric configuration
+  /** TDigest Median value regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -958,7 +986,7 @@ object Metrics {
     )
   }
 
-  /** TDigest First quantile column metric configuration
+  /** TDigest First quantile regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -984,7 +1012,7 @@ object Metrics {
     )
   }
 
-  /** TDigest Third quantile column metric configuration
+  /** TDigest Third quantile regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1010,7 +1038,7 @@ object Metrics {
     )
   }
 
-  /** TDigest Get quantile column metric configuration
+  /** TDigest Get quantile regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1036,7 +1064,7 @@ object Metrics {
     )
   }
 
-  /** TDigest Get percentile column metric configuration
+  /** TDigest Get percentile regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1086,7 +1114,7 @@ object Metrics {
       ColumnEqDFMetricCalculator(metricId, metricColumns, reversed)
   }
 
-  /** Day distance column metric configuration
+  /** Day distance regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1114,7 +1142,7 @@ object Metrics {
     )
   }
 
-  /** Levenshtein distance column metric configuration
+  /** Levenshtein distance regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1142,7 +1170,7 @@ object Metrics {
     )
   }
 
-  /** Co-moment column metric configuration
+  /** Co-moment regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1163,7 +1191,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = CoMomentDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Covariance column metric configuration
+  /** Covariance regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1184,7 +1212,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = CovarianceDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Covariance Bessel column metric configuration
+  /** Covariance Bessel regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1205,7 +1233,7 @@ object Metrics {
     def initDFMetricCalculator: DFMetricCalculator = CovarianceBesselDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** TopN column metric configuration
+  /** TopN regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1231,7 +1259,7 @@ object Metrics {
     )
   }
 
-  /** Data Quality job configuration section describing column metrics
+  /** Data Quality job configuration section describing regular metrics
     *
     * @param rowCount
     *   Sequence of rowCount metrics
@@ -1328,6 +1356,7 @@ object Metrics {
       emptyValues: Seq[EmptyValuesMetricConfig] = Seq.empty,
       duplicateValues: Seq[DuplicateValuesMetricConfig] = Seq.empty,
       completeness: Seq[CompletenessMetricConfig] = Seq.empty,
+      emptiness: Seq[EmptinessMetricConfig] = Seq.empty,
       sequenceCompleteness: Seq[SequenceCompletenessMetricConfig] = Seq.empty,
       approximateSequenceCompleteness: Seq[ApproxSequenceCompletenessMetricConfig] = Seq.empty,
       minString: Seq[MinStringMetricConfig] = Seq.empty,

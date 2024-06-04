@@ -60,6 +60,8 @@ object Implicits extends SerDeTransformations
           getProductSerDe(NullValuesRDDMetricCalculator.unapply, NullValuesRDDMetricCalculator.tupled)
         case "completeness" =>
           getProductSerDe(CompletenessRDDMetricCalculator.unapply, CompletenessRDDMetricCalculator.tupled)
+        case "emptiness" =>
+          getProductSerDe(EmptinessRDDMetricCalculator.unapply, EmptinessRDDMetricCalculator.tupled)
         case "empty_values" =>
           getProductSerDe(EmptyValuesRDDMetricCalculator.unapply, EmptyValuesRDDMetricCalculator.tupled)
         case "min_string" =>
@@ -226,6 +228,8 @@ object Implicits extends SerDeTransformations
           getProductSerDe(DuplicateValuesMetricConfig.unapply, DuplicateValuesMetricConfig.tupled)
         case MetricName.Completeness =>
           getProductSerDe(CompletenessMetricConfig.unapply, CompletenessMetricConfig.tupled)
+        case MetricName.Emptiness =>
+          getProductSerDe(EmptinessMetricConfig.unapply, EmptinessMetricConfig.tupled)
         case MetricName.SequenceCompleteness =>
           getProductSerDe(SequenceCompletenessMetricConfig.unapply, SequenceCompletenessMetricConfig.tupled)
         case MetricName.ApproximateSequenceCompleteness =>

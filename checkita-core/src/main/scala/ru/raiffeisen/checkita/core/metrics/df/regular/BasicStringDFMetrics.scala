@@ -159,6 +159,50 @@ object BasicStringDFMetrics {
   }
 
   /**
+   * Calculates emptiness of values in the specified columns, 
+   * i.e. percentage of null values or empty values (if configured to account for empty values).
+   *
+   * @param metricId            Id of the metric.
+   * @param columns             Sequence of columns which are used for metric calculation
+   * @param includeEmptyStrings Flag which sets whether empty strings are considered in addition to null values.
+   * @param reversed            Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
+  case class EmptinessDFMetricCalculator(metricId: String,
+                                         columns: Seq[String],
+                                         includeEmptyStrings: Boolean,
+                                         protected val reversed: Boolean)
+    extends ConditionalDFCalculator {
+
+    val metricName: MetricName = MetricName.Emptiness
+
+    /**
+     * For direct error collection logic any non-null (or non-empty if `includeEmptyStrings` is `true`)
+     * values are considered as metric failure.
+     * For reversed error collection logic null (or empty if `includeEmptyStrings` is `true`) values
+     * are considered as metric failure
+     *
+     * @return Metric increment failure message.
+     */
+    def errorMessage: String = (includeEmptyStrings, reversed) match {
+      case (true, false) => s"There are non-null or non-empty values found within processed values."
+      case (true, true) => s"There are null or empty values found within processed values."
+      case (false, false) => s"There are non-null values found within processed values."
+      case (false, true) => s"There are null values found within processed values."
+    }
+
+    def metricCondExpr(colName: String): Column =
+      if (includeEmptyStrings) col(colName).isNull || col(colName).cast(StringType) === lit("")
+      else col(colName).isNull
+
+    /**
+     * Emptiness metric is aggregated as ratio of total number of null (or empty)
+     * cells to total number of cells that were processed.
+     */
+    override protected val resultAggregateFunction: Column => Column =
+      rowRes => sum(rowRes) / count(lit(1)) / lit(columns.size)
+  }
+
+  /**
    * Calculates amount of empty strings in processed elements.
    *
    * @param metricId            Id of the metric.

@@ -137,6 +137,25 @@ in the specified columns are null (or empty if `includeEmptyStrings` is set to `
 
 All completeness metrics are defined in `completeness` subsection.
 
+### Emptiness Metric
+
+Calculates the measure of emptiness in the specified columns: `null_count / values_count`.
+When applied to multiple columns, total number of values and total number of nulls are used in the equation above.
+
+Additional parameters can be supplied:
+
+* `includeEmptyStrings` - *Optional, default is `false`*. Boolean parameter indicating whether empty string values
+  should be considered as nulls.
+
+Metric is reversible. **By default, `reversed` parameter is set to `true`,
+i.e. error collection logic is reversed by default.**
+For direct error collection logic, metric increment returns `Failure` status for rows where some values in the
+specified columns are non-noll (or non-empty if `includeEmptyStrings` is set to `true`).
+For reversed error collection logic (default one), metric increment returns `Failure` status when some values
+in the specified columns are null (or empty if `includeEmptyStrings` is set to `true`).
+
+All completeness metrics are defined in `emptiness` subsection.
+
 ### Sequence Completeness Metric
 
 Calculates measure of completeness of an incremental sequence of integers. In other words, it looks for the missing 

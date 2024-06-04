@@ -455,6 +455,111 @@ object BasicStringRDDMetrics {
   }
 
   /**
+   * Calculates emptiness of values in the specified columns, 
+   * i.e. percentage of null values or empty values (if configured to account for empty values).
+   *
+   * @param nullCnt             Current amount of null values.
+   * @param cellCnt             Current amount of cells.
+   * @param includeEmptyStrings Flag which sets whether empty strings are considered in addition to null values.
+   * @param reversed            Boolean flag indicating whether error collection logic should be direct or reversed.
+   * @return result map with keys: "EMPTINESS"
+   */
+  case class EmptinessRDDMetricCalculator(nullCnt: Long,
+                                          cellCnt: Long,
+                                          includeEmptyStrings: Boolean,
+                                          protected val reversed: Boolean,
+                                          protected val failCount: Long = 0,
+                                          protected val status: CalculatorStatus = CalculatorStatus.Success,
+                                          protected val failMsg: String = "OK")
+    extends RDDMetricCalculator with ReversibleRDDCalculator {
+
+    // axillary constructor to init metric calculator:
+    def this(includeEmptyStrings: Boolean, reversed: Boolean) = this(0, 0, includeEmptyStrings, reversed)
+
+    private val nullCounter: Seq[Any] => Long = v => v.count {
+      case null => true
+      case v: String if v == "" && includeEmptyStrings => true
+      case _ => false
+    }
+
+    /**
+     * Increment metric calculator. May throw an exception.
+     * Direct error collection logic implies that any non-null
+     * (or non-empty if `includeEmptyStrings` is `true`) values are considered
+     * as metric failure and are collected.
+     *
+     * @param values values to process
+     * @return updated calculator or throws an exception
+     */
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
+      val rowNullCnt = nullCounter(values)
+      if (rowNullCnt < values.size) {
+        val failMsg = if (includeEmptyStrings)
+          s"There are non-null or non-empty values found within processed values."
+        else s"There are non-null values found within processed values."
+        EmptinessRDDMetricCalculator(
+          nullCnt + rowNullCnt,
+          cellCnt + values.size,
+          includeEmptyStrings,
+          reversed,
+          failCount + 1,
+          CalculatorStatus.Failure,
+          failMsg
+        )
+      } else EmptinessRDDMetricCalculator(
+        nullCnt + rowNullCnt,
+        cellCnt + values.size,
+        includeEmptyStrings,
+        reversed,
+        failCount
+      )
+    }
+
+    protected def tryToIncrementReversed(values: Seq[Any]): RDDMetricCalculator = {
+      val rowNullCnt = nullCounter(values)
+      if (rowNullCnt > 0) {
+        val failMsg = if (includeEmptyStrings)
+          s"There are null or empty values found within processed values."
+        else s"There are null values found within processed values."
+        EmptinessRDDMetricCalculator(
+          nullCnt + rowNullCnt,
+          cellCnt + values.size,
+          includeEmptyStrings,
+          reversed,
+          failCount + 1,
+          CalculatorStatus.Failure,
+          failMsg
+        )
+      } else EmptinessRDDMetricCalculator(
+        nullCnt,
+        cellCnt + values.size,
+        includeEmptyStrings,
+        reversed,
+        failCount
+      )
+    }
+
+    protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
+      this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
+
+    def result(): Map[String, (Double, Option[String])] =
+      Map(MetricName.Emptiness.entryName -> (nullCnt.toDouble / cellCnt.toDouble, None))
+
+    def merge(m2: RDDMetricCalculator): RDDMetricCalculator = {
+      val that = m2.asInstanceOf[EmptinessRDDMetricCalculator]
+      EmptinessRDDMetricCalculator(
+        this.nullCnt + that.nullCnt,
+        this.cellCnt + that.cellCnt,
+        this.includeEmptyStrings,
+        this.reversed,
+        this.failCount + that.getFailCounter,
+        this.status,
+        this.failMsg
+      )
+    }
+  }
+
+  /**
    * Calculates amount of empty strings in processed elements.
    *
    * @param cnt      Current amount of empty strings.

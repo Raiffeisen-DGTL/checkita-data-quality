@@ -248,6 +248,50 @@ class BasicStringDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsT
     }
   }
 
+  "EmptinessDFMetricCalculator" must {
+    val mId = "emptiness"
+    val directParams = Seq(false, false, true).map { includeEmptyStrings =>
+      Seq.fill(4)(0).map(_ => Map("reversed" -> false, "includeEmptyStrings" -> includeEmptyStrings))
+    }
+    val reversedParams = Seq(false, false, true).map { includeEmptyStrings =>
+      Seq.fill(4)(0).map(_ => Map("reversed" -> true, "includeEmptyStrings" -> includeEmptyStrings))
+    }
+    val results = Seq(Seq.fill(4)(0.0), Seq.fill(4)(0.25), Seq(0.5, 0.5, 0.25, 0.5))
+    val failCountsSingleSeq = Seq(Seq.fill(4)(12), Seq.fill(4)(9), Seq(6, 6, 9, 6))
+    val failCountsSingleSeqRev = Seq(Seq.fill(4)(0), Seq.fill(4)(3), Seq(6, 6, 3, 6))
+    val failCountsMultiSeq = Seq(Seq(4, 4, 4, 4), Seq(4, 4, 4, 4), Seq(4, 4, 4, 4))
+    val failCountsMultiSeqRev = Seq(Seq(0, 0, 0, 0), Seq(3, 3, 3, 3), Seq(4, 4, 3, 4))
+    val allSingleColDFs = Seq(testSingleColDFs, nullSingleColDFs, emptySingleColDFs)
+    val allMultiColDFs = Seq(testMultiColDFs, nullMultiColDFs, emptyMultiColDFs)
+
+    val getCalc: (String, Seq[String], Map[String, Any]) => DFMetricCalculator = (mId, cols, params) => {
+      val ies = params.getOrElse("includeEmptyStrings", false).asInstanceOf[Boolean]
+      val rev = params.getOrElse("reversed", false).asInstanceOf[Boolean]
+      EmptinessDFMetricCalculator(mId, cols, ies, rev)
+    }
+
+    "return correct metric value and fail counts for single column sequence" in {
+      (allSingleColDFs, directParams, results, failCountsSingleSeq).zipped.foreach {
+        case (df, params, res, fc) => testMetric(df, mId, singleCols, res, fc, params, getCalc)
+      }
+      (allSingleColDFs, reversedParams, results, failCountsSingleSeqRev).zipped.foreach {
+        case (df, params, res, fc) => testMetric(df, mId, singleCols, res, fc, params, getCalc)
+      }
+    }
+    "return correct metric value and fail counts for multi column sequence" in {
+      (allMultiColDFs, directParams, results, failCountsMultiSeq).zipped.foreach {
+        case (df, params, res, fc) => testMetric(df, mId, multiCols, res, fc, params, getCalc)
+      }
+      (allMultiColDFs, reversedParams, results, failCountsMultiSeqRev).zipped.foreach {
+        case (df, params, res, fc) => testMetric(df, mId, multiCols, res, fc, params, getCalc)
+      }
+    }
+    "return NaN when applied to empty sequence" in {
+      testMetric(Seq(emptyDF), mId, singleCols, Seq(0.0), Seq(0), directParams.head, getCalc)
+      testMetric(Seq(emptyDF), mId, singleCols, Seq(0.0), Seq(0), reversedParams.head, getCalc)
+    }
+  }
+
   "MinStringDFMetricCalculator" must {
     val mId = "minString"
     val params = Seq.fill(4)(Map.empty[String, Any])

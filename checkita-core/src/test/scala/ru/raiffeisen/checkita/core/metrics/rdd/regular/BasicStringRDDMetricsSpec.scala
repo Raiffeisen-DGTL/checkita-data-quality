@@ -5,7 +5,6 @@ import org.scalatest.wordspec.AnyWordSpec
 import ru.raiffeisen.checkita.Common.checkSerDe
 import ru.raiffeisen.checkita.core.metrics.MetricName
 import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
-import ru.raiffeisen.checkita.core.metrics.rdd.regular.BasicNumericRDDMetrics.TDigestRDDMetricCalculator
 import ru.raiffeisen.checkita.core.metrics.rdd.regular.BasicStringRDDMetrics._
 import ru.raiffeisen.checkita.core.serialization.Implicits._
 
@@ -567,6 +566,105 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
     }
   }
 
+  "EmptinessRDDMetricCalculator" must {
+    val paramList: Seq[Boolean] = Seq(false, false, true)
+    val results = Seq(Seq.fill(4)(0.0), Seq.fill(4)(0.25), Seq.fill(4)(0.5))
+    val failCount = Seq(Seq.fill(4)(12), Seq.fill(4)(9), Seq.fill(4)(6))
+    val failCountRev = Seq(Seq.fill(4)(0), Seq.fill(4)(3), Seq.fill(4)(6))
+    val failCountsMulti = Seq(Seq(4, 4, 4, 4), Seq(4, 4, 4, 4), Seq(4, 4, 4, 4))
+    val failCountsMultiRev = Seq(Seq(0, 0, 0, 0), Seq(3, 3, 3, 3), Seq(4, 4, 4, 4))
+    val allSingleColSeq = Seq(testSingleColSeq, nullSingleColSeq, emptySingleColSeq)
+    val allMultiColSeq = Seq(testMultiColSeq, nullMultiColSeq, emptyMultiColSeq)
+
+    "return correct metric value for single column sequence" in {
+      (allSingleColSeq, paramList, results).zipped.toList.foreach { tt =>
+        val values = tt._1 zip tt._3
+        val metricResults = for {
+          reversed <- Seq(false, true)
+          metricResult <- values.map(t => (
+            t._1.foldLeft[RDDMetricCalculator](new EmptinessRDDMetricCalculator(tt._2, reversed))(
+              (m, v) => m.increment(Seq(v))).result()(MetricName.Emptiness.entryName)._1,
+            t._2
+          ))
+        } yield metricResult
+        metricResults.foreach(v => v._1 shouldEqual v._2)
+      }
+    }
+    "return correct fail counts for single column sequence [direct error collection]" in {
+      (allSingleColSeq, paramList, failCount).zipped.toList.foreach { tt =>
+        val values = tt._1 zip tt._3
+        val metricResults = values.map(t => (
+          t._1.foldLeft[RDDMetricCalculator](new EmptinessRDDMetricCalculator(tt._2, false))(
+            (m, v) => m.increment(Seq(v))
+          ),
+          t._2
+        ))
+        metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+      }
+    }
+    "return correct fail counts for single column sequence [reversed error collection]" in {
+      (allSingleColSeq, paramList, failCountRev).zipped.toList.foreach { tt =>
+        val values = tt._1 zip tt._3
+        val metricResults = values.map(t => (
+          t._1.foldLeft[RDDMetricCalculator](new EmptinessRDDMetricCalculator(tt._2, true))(
+            (m, v) => m.increment(Seq(v))
+          ),
+          t._2
+        ))
+        metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+      }
+    }
+    "return correct metric value for multi column sequence" in {
+      (allMultiColSeq, paramList, results).zipped.toList.foreach { tt =>
+        val values = tt._1 zip tt._3
+        val metricResults = for {
+          reversed <- Seq(false, true)
+          metricResult <- values.map(t => (
+            t._1.foldLeft[RDDMetricCalculator](new EmptinessRDDMetricCalculator(tt._2, reversed))(
+              (m, v) => m.increment(v)).result()(MetricName.Emptiness.entryName)._1,
+            t._2
+          ))
+        } yield metricResult
+        metricResults.foreach(v => v._1 shouldEqual v._2)
+      }
+    }
+    "return correct fail counts for multi column sequence [direct error collection]" in {
+      (allMultiColSeq, paramList, failCountsMulti).zipped.toList.foreach { tt =>
+        val values = tt._1 zip tt._3
+        val metricResults = values.map(t => (
+          t._1.foldLeft[RDDMetricCalculator](new EmptinessRDDMetricCalculator(tt._2, false))((m, v) => m.increment(v)),
+          t._2
+        ))
+        metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+      }
+    }
+    "return correct fail counts for multi column sequence [reversed error collection]" in {
+      (allMultiColSeq, paramList, failCountsMultiRev).zipped.toList.foreach { tt =>
+        val values = tt._1 zip tt._3
+        val metricResults = values.map(t => (
+          t._1.foldLeft[RDDMetricCalculator](new EmptinessRDDMetricCalculator(tt._2, true))((m, v) => m.increment(v)),
+          t._2
+        ))
+        metricResults.foreach(v => v._1.getFailCounter shouldEqual v._2)
+      }
+    }
+    "return NaN when applied to empty sequence" in {
+      val values = Seq.empty
+      val metricResult = values.foldLeft[RDDMetricCalculator](new EmptinessRDDMetricCalculator(paramList.head, false))(
+        (m, v) => m.increment(v)
+      )
+      metricResult.result()(MetricName.Emptiness.entryName)._1.isNaN shouldEqual true
+    }
+
+    "be serializable for buffer checkpointing" in {
+      testSingleColSeq.map(v => v.foldLeft[RDDMetricCalculator](
+        new EmptinessRDDMetricCalculator(paramList.head, false)
+      )(
+        (m, v) => m.increment(Seq(v))
+      )).foreach(c => checkSerDe[RDDMetricCalculator](c))
+    }
+  }
+  
   "MinStringRDDMetricCalculator" must {
     val results = Seq(6, 4, 4, 1)
 
