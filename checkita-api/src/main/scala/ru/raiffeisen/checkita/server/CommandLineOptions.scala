@@ -13,13 +13,16 @@ import scopt.OptionParser
  * @param logLevel Application logging level
  */
 case class CommandLineOptions(
-                               appConf: String = getClass.getResource("/application.conf").getPath,
+                               appConf: String = CommandLineOptions.DEFAULT_APP_CONF,
                                migrate: Boolean = false,
                                extraVars: Map[String, String] = Map.empty,
                                logLevel: Level = Level.INFO
                              )
 
 object CommandLineOptions {
+  
+  lazy val DEFAULT_APP_CONF: String = getClass.getResource("/application.conf").getPath
+  
   /** Command line arguments parser */
   def parser(): OptionParser[CommandLineOptions] =
     new OptionParser[CommandLineOptions]("CheckitaDataQuality") {

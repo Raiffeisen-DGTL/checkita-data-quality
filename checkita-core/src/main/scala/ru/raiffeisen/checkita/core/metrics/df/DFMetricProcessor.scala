@@ -8,6 +8,7 @@ import ru.raiffeisen.checkita.core.metrics.df.Helpers.{DFMetricOutput, addColumn
 import ru.raiffeisen.checkita.core.metrics.df.regular.ApproxCardinalityDFMetrics.TopNDFMetricCalculator
 import ru.raiffeisen.checkita.core.metrics.{BasicMetricProcessor, MetricName, RegularMetric}
 import ru.raiffeisen.checkita.core.{CalculatorStatus, Source}
+import ru.raiffeisen.checkita.utils.Common._
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import scala.collection.mutable
@@ -85,12 +86,12 @@ object DFMetricProcessor extends BasicMetricProcessor {
                                    calculatorResultColumns: Map[String, (String, String, Boolean)]): CalculatorResults = {
 
     val processedColumnIndexes = getColumnIndexMap(processedDF)
-    val resultColumns = processedColumnIndexes.filterKeys(
-      k => k.endsWith(DFMetricOutput.Result.entryName) || k.endsWith(DFMetricOutput.Result.entryName + "`")
-    )
-    val errorsColumns = processedColumnIndexes.filterKeys(
-      k => k.endsWith(DFMetricOutput.Errors.entryName) || k.endsWith(DFMetricOutput.Errors.entryName + "`")
-    )
+    val resultColumns = processedColumnIndexes.filter {
+      case (k, _) => k.endsWith(DFMetricOutput.Result.entryName) || k.endsWith(DFMetricOutput.Result.entryName + "`")
+    }
+    val errorsColumns = processedColumnIndexes.filter {
+      case (k, _) => k.endsWith(DFMetricOutput.Errors.entryName) || k.endsWith(DFMetricOutput.Errors.entryName + "`")
+    }
 
     val processedResults: Array[Row] = processedDF.collect()
 
@@ -109,10 +110,10 @@ object DFMetricProcessor extends BasicMetricProcessor {
         }
       else Seq(row.get(resultColumns(calcResCols._2._1)).asInstanceOf[Double] -> None)
 
-      calcResCols._1 -> (results, errors)
-    }).toMap
+      calcResCols._1 -> (results.toSeq, errors.toSeq)
+    }).toMap 
   }
-
+  
   /**
    * Builds final map of metric calculators results.
    *
@@ -134,7 +135,7 @@ object DFMetricProcessor extends BasicMetricProcessor {
       val errors: Option[MetricErrors] = metricErrors match {
         case errs if errs.nonEmpty => Some(MetricErrors(
           columns = allColumns,
-          errors = errs.map(e => ErrorRow(CalculatorStatus.Failure, errMsg, e))
+          errors = errs.map(e => ErrorRow(CalculatorStatus.Failure, errMsg, e.toSeq))
         ))
         case _ => None
       }
@@ -179,7 +180,7 @@ object DFMetricProcessor extends BasicMetricProcessor {
     implicit val sourceKeys: Seq[String] = source.keyFields
 
     val df = if (caseSensitive) source.df else
-      source.df.select(source.df.columns.map(c => col(c).as(c.toLowerCase)): _*)
+      source.df.select(source.df.columns.map(c => col(c).as(c.toLowerCase)).toSeqUnsafe: _*)
 
     val columnIndexes = getColumnIndexMap(df)
     val sourceKeyIds = sourceKeys.flatMap(columnIndexes.get)

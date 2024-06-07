@@ -12,6 +12,8 @@ import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import ru.raiffeisen.checkita.core.serialization.API.{encode, decode}
 import ru.raiffeisen.checkita.core.serialization.SerDe
 
+import scala.collection.compat._
+
 object Common {
   implicit val jobId: String = "earthquakes_base_job"
   implicit val dumpSize: Int = 1000
@@ -41,25 +43,25 @@ object Common {
     DqStorageManager(DqStorageConnection(config))
   )
 
-  implicit class Tuple4Ops[T1, T2, T3, T4](value: (Seq[T1], Seq[T2], Seq[T3], Seq[T4])) {
-    def zipped: Seq[(T1, T2, T3, T4)] = (value._1, value._2, value._3).zipped.toSeq.zip(value._4).map {
-      case (t, v) => (t._1, t._2, t._3, v)
-    }
-  }
-
-  implicit class Tuple5Ops[T1, T2, T3, T4, T5](value: (Seq[T1], Seq[T2], Seq[T3], Seq[T4], Seq[T5])) {
-    def zipped: Seq[(T1, T2, T3, T4, T5)] = (
-      (value._1, value._2, value._3).zipped.toSeq,
-      value._4,
-      value._5
-    ).zipped.toSeq.map {
-      case (t, v4, v5) => (t._1, t._2, t._3, v4, v5)
-    }
-  }
-
   def checkSerDe[T](input: T)(implicit serDe: SerDe[T]): Unit = {
     val bytes = encode(input)
     val decoded = decode[T](bytes)
     decoded shouldEqual input
+  }
+  
+  def zipT[T1, T2](t1: Seq[T1], t2: Seq[T2]): Seq[(T1, T2)] = (t1 lazyZip t2).toSeq
+  
+  def zipT[T1, T2, T3](t1: Seq[T1], t2: Seq[T2], t3: Seq[T3]): Seq[(T1, T2, T3)] = (t1 lazyZip t2 lazyZip t3).toSeq
+  
+  def zipT[T1, T2, T3, T4](t1: Seq[T1], t2: Seq[T2], t3: Seq[T3], t4: Seq[T4]): Seq[(T1, T2, T3, T4)] = {
+    val seqT3 = zipT(t1, t2, t3)
+    (seqT3 lazyZip t4).map{ case (tt1, tt2) => (tt1._1, tt1._2, tt1._3, tt2)}.toSeq
+  }
+
+  def zipT[T1, T2, T3, T4, T5](t1: Seq[T1], t2: Seq[T2], t3: Seq[T3], t4: Seq[T4], t5: Seq[T5]): Seq[(T1, T2, T3, T4, T5)] = {
+    val seqT3 = zipT(t1, t2, t3)
+    (seqT3 lazyZip t4 lazyZip t5).map{ 
+      case (tt1, tt2, tt3) => (tt1._1, tt1._2, tt1._3, tt2, tt3)
+    }.toSeq
   }
 }

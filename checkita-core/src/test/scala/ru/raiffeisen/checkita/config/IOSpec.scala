@@ -28,13 +28,13 @@ class IOSpec extends AnyWordSpec with Matchers {
       val renderOpts = ConfigRenderOptions.defaults().setComments(false).setOriginComments(false).setFormatted(false)
       val configFile = new File(getClass.getResource("/test_job.conf").getPath)
 
-      val written = readJobConfig[File](configFile).right.get
+      val written = readJobConfig[File](configFile).toOption.get
 
-      val encryptedConfig = writeEncryptedJobConfig(written)(encryptor).right.get.root().render(renderOpts)
-      val decryptedConfig = readEncryptedJobConfig[String](encryptedConfig)(StringConfigParser, encryptor).right.get
+      val encryptedConfig = writeEncryptedJobConfig(written)(encryptor).toOption.get.root().render(renderOpts)
+      val decryptedConfig = readEncryptedJobConfig[String](encryptedConfig)(StringConfigParser, encryptor).toOption.get
 
-      val originalConfig = writeJobConfig(written).right.get.root().render(renderOpts)
-      val afterDecryption = writeJobConfig(decryptedConfig).right.get.root().render(renderOpts)
+      val originalConfig = writeJobConfig(written).toOption.get.root().render(renderOpts)
+      val afterDecryption = writeJobConfig(decryptedConfig).toOption.get.root().render(renderOpts)
 
       originalConfig shouldEqual afterDecryption
     }

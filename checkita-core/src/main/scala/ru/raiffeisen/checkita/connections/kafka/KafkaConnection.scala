@@ -3,7 +3,7 @@ package ru.raiffeisen.checkita.connections.kafka
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
-import org.apache.spark.sql.avro.from_avro
+import org.apache.spark.sql.avro.functions.from_avro
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.StringType
@@ -181,7 +181,9 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
       .map{ chk =>
         val offsets = chk.currentOffsets
           .groupBy(t => t._1._1)
-          .mapValues(im => im.map(t => t._1._2.toString -> (t._2 + 1)))
+          .map {
+            case (k, im) => k -> im.map(t => t._1._2.toString -> (t._2 + 1))
+          }
         write(offsets)
       }
       .orElse(sourceConfig.startingOffsets.map(_.value))

@@ -25,7 +25,7 @@ object VirtualSourceWriter {
 
   /**
    * Safely saves virtual source if save configuration is provided.
-   * @param vs: Virtual source configuration
+   * @param vs Virtual source configuration
    * @param df Virtual source dataframe
    * @param jobId Current job ID
    * @return "Success" string in case of successful write operation or a list of errors.

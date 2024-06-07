@@ -56,7 +56,9 @@ trait RDDMetricProcessor extends BasicMetricProcessor {
    */
   protected def getGroupedCalculators(groupedMetrics: GroupedMetrics): GroupedCalculators = groupedMetrics.map {
     case (columns, metrics) =>
-      columns -> metrics.map(m => (m, m.initRDDMetricCalculator)).groupBy(_._2).mapValues(_.map(_._1)).toSeq
+      columns -> metrics.map(m => (m, m.initRDDMetricCalculator))
+        .groupBy(_._2)
+        .map{ case (k, v) => k -> v.map(_._1)}.toSeq
   }
 
   /**
@@ -139,11 +141,11 @@ trait RDDMetricProcessor extends BasicMetricProcessor {
         val errorRow = ErrorRow(s.status, s.message, err.rowData)
         (s.id, err.columnNames, errorRow)
       }
-    }.groupBy(_._1).mapValues { t =>
-      val columns = t.head._2
+    }.groupBy(_._1).map { case (k, v) =>
+      val columns = v.head._2
       // take maximum dumpSize errors and convert to immutable collection:
-      val errors = Seq(t.map(_._3).take(dumpSize): _*)
-      MetricErrors(columns, errors)
+      val errors = Seq(v.map(_._3).take(dumpSize): _*)
+      k -> MetricErrors(columns, errors)
     }
   }
 

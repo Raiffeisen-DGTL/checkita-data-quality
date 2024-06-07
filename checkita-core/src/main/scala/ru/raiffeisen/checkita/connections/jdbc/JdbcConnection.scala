@@ -11,7 +11,7 @@ import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.sql.DriverManager
 import java.util.Properties
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 

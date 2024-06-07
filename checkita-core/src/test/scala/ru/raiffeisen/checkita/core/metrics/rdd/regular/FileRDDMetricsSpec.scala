@@ -15,7 +15,7 @@ class FileRDDMetricsSpec extends AnyWordSpec with Matchers {
   val testValues: Seq[Seq[Seq[Any]]] = Seq(
     Seq.fill(42)(Seq.fill(1)(rand.nextInt(100))),
     Seq.fill(42)(Seq.fill(4)(rand.alphanumeric.take(5).mkString)),
-    Seq.fill(42)(Seq.fill(42)(rand.nextDouble))
+    Seq.fill(42)(Seq.fill(42)(rand.nextDouble()))
   )
   "RowCountRDDMetricCalculator" must {
     "return correct metric value for input sequence" in {

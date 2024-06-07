@@ -91,7 +91,7 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
    */
   private def getWindowsToProcess: Seq[Long] = {
     val currentWatermarks = buffer.watermarks.readOnlySnapshot()
-      .filterKeys(processedSources.contains)
+      .filter{ case (k, _) => processedSources.contains(k) }
       .filter{ case (_, v) => v != Long.MinValue }
       .values.toSeq
 

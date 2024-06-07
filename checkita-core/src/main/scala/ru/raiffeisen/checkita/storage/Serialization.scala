@@ -158,7 +158,7 @@ object Serialization {
      * Gets flattened map of field name to string representation of field values.
      * @return Map fieldName -> fieldValue as string
      */
-    def getFieldsMap: Map[String, String] = flatRepr.toMap.mapValues(JValueToString)
+    def getFieldsMap: Map[String, String] = flatRepr.map{ case (k, v) => (k, JValueToString(v)) }.toMap
     
     /** Getter to retrieve TSV header (conforms to flattened tsv string) */
     def getTsvHeader: String = getFields.mkString("\t")

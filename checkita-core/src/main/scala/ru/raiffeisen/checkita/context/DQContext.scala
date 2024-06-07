@@ -60,7 +60,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    * Trick here is that this value needs to be evaluated when DQ context is created.
    * Thus, evaluation of this value forces logger initialization and app settings logging.
    */
-  private val _: Unit = {
+  locally {
     initLogger(settings.loggingLevel)
     val logGeneral = Seq(
       "General Checkita Data Quality configuration:",
@@ -140,7 +140,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     val logMMConfig = settings.mattermostConfig match {
       case Some(conf) => Seq(
         "* Mattermost configuration:",
-        s"  - API URL: ${conf.host.value} (API token is not shown intentionally"        
+        s"  - API URL: ${conf.host.value} (API token is not shown intentionally"
       )
       case None => Seq(
         "* Mattermost configuration:",
@@ -162,21 +162,21 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
         s"  - Encrypt metric errors row data: ${eCfg.encryptErrorData}",
       )
     }.getOrElse(Seq("  - Encryption configuration is not set and, therefore, results will not be encrypted."))
-    
-    (
-      logGeneral ++ 
-      logSparkConf ++ 
-      logTimePref ++
-      logStreamingPref ++
-      logEnablers ++ 
-      logStorageConf ++ 
-      logEmailConfig ++ 
-      logMMConfig ++
-      logExtraVars ++
-      logEncryption
-    ).foreach(msg => log.info(s"$settingsStage $msg"))
-  }
 
+    (
+      logGeneral ++
+        logSparkConf ++
+        logTimePref ++
+        logStreamingPref ++
+        logEnablers ++
+        logStorageConf ++
+        logEmailConfig ++
+        logMMConfig ++
+        logExtraVars ++
+        logEncryption
+      ).foreach(msg => log.info(s"$settingsStage $msg"))
+  }
+  
   private def logJobBuildStart(implicit jobId: String): Unit = {
     log.warn("************************************************************************")
     log.warn(s"                   Starting build of job '$jobId'")

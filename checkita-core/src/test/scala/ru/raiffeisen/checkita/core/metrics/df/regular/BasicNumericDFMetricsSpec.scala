@@ -2,7 +2,7 @@ package ru.raiffeisen.checkita.core.metrics.df.regular
 
 import org.apache.spark.sql.{DataFrame, Row}
 import org.apache.spark.sql.types._
-import org.isarnproject.sketches.TDigest
+import org.isarnproject.sketches.java.TDigest
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import ru.raiffeisen.checkita.Common._
@@ -41,7 +41,7 @@ class BasicNumericDFMetricsSpec extends AnyWordSpec with Matchers with DFMetrics
     val mId = "medianValue"
     val params: Seq[Map[String, Any]] = Seq.fill(4)(Map("accuracyError" -> 0.005))
     val results = testSingleColSeq.map(
-      s => s.flatMap(tryToDouble).foldLeft(TDigest.empty(0.005))((t, v) => t + v)
+      s => s.flatMap(tryToDouble).foldLeft(TDigest.empty(0.005)){(t, v) => t.update(v); t}
     ).map(t => t.cdfInverse(0.5))
     val failCountsSingleSeq = Seq(0, 0, 0, 6)
 
@@ -67,7 +67,7 @@ class BasicNumericDFMetricsSpec extends AnyWordSpec with Matchers with DFMetrics
     val mId = "firstQuantile"
     val params: Seq[Map[String, Any]] = Seq.fill(4)(Map("accuracyError" -> 0.005))
     val results = testSingleColSeq.map(
-      s => s.flatMap(tryToDouble).foldLeft(TDigest.empty(0.005))((t, v) => t + v)
+      s => s.flatMap(tryToDouble).foldLeft(TDigest.empty(0.005)){(t, v) => t.update(v); t}
     ).map(t => t.cdfInverse(0.25))
     val failCountsSingleSeq = Seq(0, 0, 0, 6)
 
@@ -93,7 +93,7 @@ class BasicNumericDFMetricsSpec extends AnyWordSpec with Matchers with DFMetrics
     val mId = "thirdQuantile"
     val params: Seq[Map[String, Any]] = Seq.fill(4)(Map("accuracyError" -> 0.005))
     val results = testSingleColSeq.map(
-      s => s.flatMap(tryToDouble).foldLeft(TDigest.empty(0.005))((t, v) => t + v)
+      s => s.flatMap(tryToDouble).foldLeft(TDigest.empty(0.005)){(t, v) => t.update(v); t}
     ).map(t => t.cdfInverse(0.75))
     val failCountsSingleSeq = Seq(0, 0, 0, 6)
 
@@ -119,7 +119,7 @@ class BasicNumericDFMetricsSpec extends AnyWordSpec with Matchers with DFMetrics
     val mId = "getQuantile"
     val params: Seq[Map[String, Any]] = Seq.fill(4)(Map("accuracyError" -> 0.005, "target" -> 0.1))
     val results = testSingleColSeq.map(
-      s => s.flatMap(tryToDouble).foldLeft(TDigest.empty(0.005))((t, v) => t + v)
+      s => s.flatMap(tryToDouble).foldLeft(TDigest.empty(0.005)){(t, v) => t.update(v); t}
     ).map(t => t.cdfInverse(0.1))
     val failCountsSingleSeq = Seq(0, 0, 0, 6)
 
@@ -146,7 +146,7 @@ class BasicNumericDFMetricsSpec extends AnyWordSpec with Matchers with DFMetrics
     val mId = "getPercentile"
     val params: Seq[Map[String, Any]] = Seq.fill(4)(Map("accuracyError" -> 0.005, "target" -> 0.1))
     val results = testSingleColSeq.map(
-      s => s.flatMap(tryToDouble).foldLeft(TDigest.empty(0.005))((t, v) => t + v)
+      s => s.flatMap(tryToDouble).foldLeft(TDigest.empty(0.005)){(t, v) => t.update(v); t}
     ).map(t => t.cdf(0.1))
     val failCountsSingleSeq = Seq(0, 0, 0, 6)
 

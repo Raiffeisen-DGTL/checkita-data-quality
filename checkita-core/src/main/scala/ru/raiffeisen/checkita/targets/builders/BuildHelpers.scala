@@ -20,7 +20,7 @@ trait BuildHelpers {
     errors
       .filter(r => if (requested.isEmpty) true else requested.contains(r.metricId))
       .groupBy(_.metricId)
-      .mapValues(errs => errs.zipWithIndex.filter(t => t._2 < dumpSize).map(_._1))
+      .map{ case (k, v) => k -> v.zipWithIndex.filter(t => t._2 < dumpSize).map(_._1) }
       .toSeq.flatMap(_._2)
 
 

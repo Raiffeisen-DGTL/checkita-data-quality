@@ -135,23 +135,24 @@ class APIJdbcStorageManager(ds: DqStorageJdbcConnection)
     
     // run query and process results.
     db.run(finalQuery).map{ data =>
-      data.groupBy(d => (d._1, d._3)).mapValues{ s => 
-        val failCounts = s.flatMap{
-          case (_, _, _, optDt, optFc) => for {
-            dt <- optDt
-            fc <- optFc
-          } yield JobFailCount(renderTS(dt), fc.getOrElse(-1))
-        }
-        val jobDesc = getJobDescription(s.filter(_._2 != "N/A").head._2)
-        (jobDesc, failCounts)
-      }.toSeq.map{
-        case (jobInfo, results) => JobInfo(
-          jobInfo._1,
-          results._1,
-          jobInfo._2.map(renderTS).getOrElse(""),
-          results._2
-        )
-      }
+      data.groupBy(d => (d._1, d._3))
+        .map { case (k, v) => 
+          val failCounts = v.flatMap{
+            case (_, _, _, optDt, optFc) => for {
+              dt <- optDt
+              fc <- optFc
+            } yield JobFailCount(renderTS(dt), fc.getOrElse(-1))
+          }
+          val jobDesc = getJobDescription(v.filter(_._2 != "N/A").head._2)
+          k -> (jobDesc, failCounts)
+        }.map{
+          case (jobInfo, results) => JobInfo(
+            jobInfo._1,
+            results._1,
+            jobInfo._2.map(renderTS).getOrElse(""),
+            results._2
+          )
+        }.toSeq
     }
   }
 

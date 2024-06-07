@@ -1,9 +1,9 @@
 package ru.raiffeisen.checkita.core.metrics.rdd.regular
 
-import org.isarnproject.sketches.TDigest
+import org.isarnproject.sketches.java.TDigest
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import ru.raiffeisen.checkita.Common.checkSerDe
+import ru.raiffeisen.checkita.Common.{checkSerDe, zipT}
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.metrics.rdd.Casting.tryToDouble
 import ru.raiffeisen.checkita.core.metrics.MetricName
@@ -25,7 +25,8 @@ class BasicNumericRDDMetricsSpec extends AnyWordSpec with Matchers {
     val accuracyError = 0.005
     val targetSideNumber = 0.1
     val results = testSingleColSeq.map(
-      s => s.flatMap(tryToDouble).foldLeft(TDigest.empty(0.005))((t, v) => t + v)).map(
+      s => s.flatMap(tryToDouble).foldLeft(TDigest.empty(0.005)){(t, v) => t.update(v); t}
+    ).map(
       t => (t.cdfInverse(0.5), t.cdfInverse(0.25), t.cdfInverse(0.75), t.cdfInverse(0.1), t.cdf(0.1))
     )
 
@@ -1041,8 +1042,8 @@ class BasicNumericRDDMetricsSpec extends AnyWordSpec with Matchers {
     val allSingleColSeq = Seq(intSeq, nullIntSeq, emptyIntSeq)
 
     "return correct metric value for single column sequence" in {
-      (allSingleColSeq, results).zipped.toList.foreach { tt =>
-        val metricResults = (tt._1, incrementList, tt._2).zipped.toList.map(t => (
+      zipT(allSingleColSeq, results).foreach { tt =>
+        val metricResults = zipT(tt._1, incrementList, tt._2).toList.map(t => (
           t._1.foldLeft[RDDMetricCalculator](new SequenceCompletenessRDDMetricCalculator(t._2))(
             (m, v) => m.increment(Seq(v))).result()(MetricName.SequenceCompleteness.entryName)._1,
           t._3

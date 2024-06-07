@@ -7,10 +7,11 @@ import ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors
 import ru.raiffeisen.checkita.core.metrics.{BasicMetricProcessor, RegularMetric}
 import ru.raiffeisen.checkita.core.streaming.Checkpoints.Checkpoint
 import ru.raiffeisen.checkita.core.streaming.ProcessorBuffer
+import ru.raiffeisen.checkita.utils.Common._
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
@@ -65,7 +66,7 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
       ))
 
       val df = if (caseSensitive) batchDf else
-        batchDf.select(batchDf.columns.map(c => col(c).as(c.toLowerCase)): _*)
+        batchDf.select(batchDf.columns.map(c => col(c).as(c.toLowerCase)).toSeqUnsafe: _*)
 
       val columnIndexes = getColumnIndexMap(df)
       val columnNames = getColumnNamesMap(df)
@@ -119,9 +120,9 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
 
           val mergedState = (l._2.toSeq ++ r._2.toSeq)
             .groupBy(_._1)
-            .mapValues(s => s.map(_._2))
-            .mapValues(sq => sq.reduce((lt, rt) => mergeGroupCalculators(lt, rt)))
-            .map(identity)
+            .map { case (k, v) =>
+              k -> v.map(_._2).reduce((lt, rt) => mergeGroupCalculators(lt, rt))
+            }.map(identity)
           
           val mergedCheckpoint = for {
             lChk <- l._3
@@ -148,11 +149,11 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
       // update buffer errors:
       metricErrorAccumulator.value.asScala
         .groupBy(t => t._1)
-        .mapValues(v => v.map(_._2))
+        .map{ case (k, v) => k -> v.map(_._2)}
         .foreach {
           case (window, errors) =>
             val bufferedErrors = buffer.errors.get((streamId, window))
-            val updatedErrors = bufferedErrors.map(be => be ++ errors).getOrElse(errors)
+            val updatedErrors = bufferedErrors.map(be => be ++ errors).getOrElse(errors).toSeq
             buffer.errors.update((streamId, window), updatedErrors)
         }
       

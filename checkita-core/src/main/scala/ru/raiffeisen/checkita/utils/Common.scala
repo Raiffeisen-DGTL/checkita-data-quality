@@ -11,7 +11,8 @@ import ru.raiffeisen.checkita.utils.ResultUtils._
 import java.io.{File, InputStreamReader, SequenceInputStream, Serializable}
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
+import scala.collection.compat.immutable.ArraySeq
 import scala.reflect.runtime.universe._
 import scala.util.Try
 
@@ -90,7 +91,7 @@ object Common {
    */
   def getPrependVars(extraVariables: Map[String, String]): String = {
     val variablesRegex = "^(?i)(DQ)[a-z0-9_-]+$" // system variables must match the given regex.
-    val systemVariables = System.getProperties.asScala.filterKeys(_ matches variablesRegex)
+    val systemVariables = System.getProperties.asScala.filter{ case (k, _) => k matches variablesRegex }
     (systemVariables ++ extraVariables).map {
       case (k, v) => k + ": \"" + v + "\""
     }.mkString("", "\n", "\n")
@@ -114,4 +115,9 @@ object Common {
         new SequenceInputStream(stream, openInputStream(new File(config)))
       })
     }.toResult(preMsg = s"Unable to prepare $confName configuration for reading with following error:")
+    
+  
+  implicit class UnsafeArraySeqOps[T](value: Array[T]) {
+    def toSeqUnsafe: ArraySeq[T] = ArraySeq.unsafeWrapArray(value)
+  }
 }

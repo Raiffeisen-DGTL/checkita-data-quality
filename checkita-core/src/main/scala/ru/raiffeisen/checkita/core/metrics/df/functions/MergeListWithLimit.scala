@@ -7,6 +7,7 @@ import org.apache.spark.sql.catalyst.expressions.{Expression, ExpressionDescript
 import org.apache.spark.sql.catalyst.util.GenericArrayData
 import org.apache.spark.sql.types.{ArrayType, DataType}
 
+import scala.collection.compat._
 import scala.collection.mutable
 
 @ExpressionDescription(
@@ -51,7 +52,7 @@ case class MergeListWithLimit(
 
   override protected def convertToBufferElement(value: Any): mutable.ArrayBuffer[Any] = {
     val unsafeArray = InternalRow.copyValue(value).asInstanceOf[UnsafeArrayData]
-    unsafeArray.toArray[Any](bufferElementType).to[mutable.ArrayBuffer]
+    unsafeArray.toArray[Any](bufferElementType).to(mutable.ArrayBuffer)
   }
 
   override def createAggregationBuffer(): mutable.ArrayBuffer[Any] = mutable.ArrayBuffer.empty

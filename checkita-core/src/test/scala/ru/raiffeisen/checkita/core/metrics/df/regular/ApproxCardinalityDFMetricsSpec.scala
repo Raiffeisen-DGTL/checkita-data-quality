@@ -8,6 +8,7 @@ import ru.raiffeisen.checkita.Common._
 import ru.raiffeisen.checkita.core.metrics.df.DFMetricCalculator
 import ru.raiffeisen.checkita.core.metrics.df.regular.ApproxCardinalityDFMetrics._
 
+import scala.collection.compat._
 import scala.collection.mutable
 import scala.util.Random
 
@@ -112,7 +113,7 @@ class ApproxCardinalityDFMetricsSpec extends AnyWordSpec with Matchers with DFMe
     }
 
     "return correct metric value and fail counts for single column sequence" in {
-      (allDFs, results, failCountsSingleSeq).zipped.foreach {
+      zipT(allDFs, results, failCountsSingleSeq).foreach {
         case (df, res, fc) => testMetric(df, mId, singleCols, res, fc, params, getCalc)
       }
     }
@@ -144,14 +145,14 @@ class ApproxCardinalityDFMetricsSpec extends AnyWordSpec with Matchers with DFMe
     }
 
     def runTopNMetricCalc(df: DataFrame,
-                                  calculator: DFMetricCalculator): (Seq[(String, Double)], Int) = {
+                          calculator: DFMetricCalculator): (Seq[(String, Double)], Int) = {
       val metDf = df.select(calculator.result, calculator.errors)
-      val processed = metDf.collect.head
+      val processed = metDf.collect().head
       val result = processed.getAs[mutable.WrappedArray[Row]](0).map { row =>
         row.getString(0) -> row.getDouble(1)
       }
       val errors = processed.getAs[mutable.WrappedArray[mutable.WrappedArray[String]]](1)
-      (result, errors.size)
+      (result.toSeq, errors.size)
     }
 
     def testTopNMetric(dataFrames: Seq[DataFrame],
@@ -163,7 +164,7 @@ class ApproxCardinalityDFMetricsSpec extends AnyWordSpec with Matchers with DFMe
                        fCalc: (String, Seq[String], Map[String, Any]) => DFMetricCalculator): Unit = {
 
       val zipped: Seq[(DataFrame, Map[String, Any], Seq[(String, Double)], Int)] =
-        (dataFrames, paramSeq, results, failCounts).zipped
+        zipT(dataFrames, paramSeq, results, failCounts).toSeq
 
       zipped.foreach {
         case (df, params, res, fc) =>

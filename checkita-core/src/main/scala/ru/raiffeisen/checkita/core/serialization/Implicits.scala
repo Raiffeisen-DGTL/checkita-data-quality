@@ -23,7 +23,6 @@ object Implicits extends SerDeTransformations
   with SerializersCollections 
   with SerializersSpecific {
   
-  // todo: make generic. Causing "diverging implicit expansion..." error.
   implicit def checkpointSerDe(implicit kSerDe: SerDe[Int]): SerDe[Checkpoint] = {
     val kindGetter: Checkpoint => Int = (c: Checkpoint) =>
       c.getClass.getSimpleName.dropRight("Checkpoint".length).toLowerCase match {
@@ -40,11 +39,11 @@ object Implicits extends SerDeTransformations
     kinded(kSerDe, kindGetter, serDeGetter)
   }
   
-  implicit def rddCalculatorSerDe[R <: RDDMetricCalculator](implicit kSerDe: SerDe[String]): SerDe[R] = {
-    val kindGetter: R => String = (r: R) =>
-      camelToSnakeCase(r.getClass.getSimpleName.dropRight("RDDMetricCalculator".length))
+  implicit def rddCalculatorSerDe(implicit kSerDe: SerDe[String]): SerDe[RDDMetricCalculator] = {
+    val kindGetter: RDDMetricCalculator => String = 
+      r => camelToSnakeCase(r.getClass.getSimpleName.dropRight("RDDMetricCalculator".length))
 
-    val serDeGetter: String => SerDe[R] = calcName => {
+    val serDeGetter: String => SerDe[RDDMetricCalculator] = calcName => {
       val serDe = calcName match {
         case "row_count" =>
           getProductSerDe(RowCountRDDMetricCalculator.unapply, RowCountRDDMetricCalculator.tupled)
@@ -125,7 +124,7 @@ object Implicits extends SerDeTransformations
         case "levenshtein_distance" =>
           getProductSerDe(LevenshteinDistanceRDDMetricCalculator.unapply, LevenshteinDistanceRDDMetricCalculator.tupled)
       }
-      serDe.asInstanceOf[SerDe[R]]
+      serDe.asInstanceOf[SerDe[RDDMetricCalculator]]
     }
     kinded(kSerDe, kindGetter, serDeGetter)
   }
@@ -211,8 +210,8 @@ object Implicits extends SerDeTransformations
     TopNParams.unapply, TopNParams.tupled
   )
   
-  implicit def regularMetricSerDe[R <: RegularMetric](implicit mSerDe: SerDe[MetricName]): SerDe[R] = {
-    val getter: MetricName => SerDe[R] = mn => {
+  implicit def regularMetricSerDe(implicit mSerDe: SerDe[MetricName]): SerDe[RegularMetric] = {
+    val getter: MetricName => SerDe[RegularMetric] = mn => {
       val serDe = mn match {
         case MetricName.RowCount =>
           getProductSerDe(RowCountMetricConfig.unapply, RowCountMetricConfig.tupled)
@@ -309,9 +308,9 @@ object Implicits extends SerDeTransformations
         case MetricName.Composed =>
           getProductSerDe(ComposedMetricConfig.unapply, ComposedMetricConfig.tupled)
       }
-      serDe.asInstanceOf[SerDe[R]]
+      serDe.asInstanceOf[SerDe[RegularMetric]]
     }
-    kinded(mSerDe, (r: R) => r.metricName, getter)
+    kinded(mSerDe, (r: RegularMetric) => r.metricName, getter)
   }
   
   /**

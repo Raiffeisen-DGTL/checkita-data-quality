@@ -1,6 +1,7 @@
 package ru.raiffeisen.checkita.core.serialization
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+import scala.collection.compat._
 import scala.collection.concurrent.TrieMap
 import scala.collection.mutable.ArrayBuffer
 
@@ -17,12 +18,12 @@ trait SerializersCollections { this: SerDeTransformations =>
    * @tparam W Actual type of collection
    * @return SerDe for collection.
    */
-  private def getCollectionSerDe[T, W[T] <: TraversableOnce[T]](f: ArrayBuffer[T] => W[T])
+  private def getCollectionSerDe[T, W[T] <: IterableOnce[T]](f: ArrayBuffer[T] => W[T])
                                                                (implicit tSerDe: SerDe[T]): SerDe[W[T]] =
     new SerDe[W[T]] {
       override def serialize(bf: ByteArrayOutputStream, value: W[T]): Unit = {
-        encodeSize(bf, value.size)
-        value.foreach(v => tSerDe.serialize(bf, v))
+        encodeSize(bf, value.iterator.size)
+        value.iterator.foreach(v => tSerDe.serialize(bf, v))
       }
 
       override def deserialize(bf: ByteArrayInputStream): W[T] = {
@@ -44,13 +45,13 @@ trait SerializersCollections { this: SerDeTransformations =>
    * @tparam W Actual type of collection
    * @return SerDe for collection of tuple of two elements.
    */
-  private def getTupledCollectionSerDe[K, V, W[K, V] <: TraversableOnce[(K, V)]]
+  private def getTupledCollectionSerDe[K, V, W[K, V] <: IterableOnce[(K, V)]]
                                       (f: ArrayBuffer[(K, V)] => W[K, V])
                                       (implicit tSerDe: SerDe[(K, V)]): SerDe[W[K, V]] =
     new SerDe[W[K, V]] {
       override def serialize(bf: ByteArrayOutputStream, value: W[K, V]): Unit = {
-        encodeSize(bf, value.size)
-        value.foreach(v => tSerDe.serialize(bf, v))
+        encodeSize(bf, value.iterator.size)
+        value.iterator.foreach(v => tSerDe.serialize(bf, v))
       }
 
       override def deserialize(bf: ByteArrayInputStream): W[K, V] = {
@@ -64,7 +65,7 @@ trait SerializersCollections { this: SerDeTransformations =>
    * Implicit conversion to generate SerDe for Seq[T]
    */
   implicit def seqSerDe[T](implicit tSerDe: SerDe[T]): SerDe[Seq[T]] =
-    getCollectionSerDe[T, Seq](identity)
+    getCollectionSerDe[T, Seq](bf => bf.toSeq)
 
   /** 
    * Implicit conversion to generate SerDe for List[T]
@@ -94,7 +95,7 @@ trait SerializersCollections { this: SerDeTransformations =>
    * Implicit conversion conversion to generate SerDe for concurrent TrieMap.
    */
   implicit def trieMapSerDe[K, V](implicit tSerDe: SerDe[(K, V)]): SerDe[TrieMap[K, V]] =
-    getTupledCollectionSerDe[K, V, TrieMap](bf => TrieMap(bf: _*))
+    getTupledCollectionSerDe[K, V, TrieMap](bf => TrieMap(bf.toSeq: _*))
     
 
   /**

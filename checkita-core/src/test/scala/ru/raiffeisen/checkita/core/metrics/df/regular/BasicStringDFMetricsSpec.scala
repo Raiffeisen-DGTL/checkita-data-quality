@@ -227,18 +227,18 @@ class BasicStringDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsT
     }
 
     "return correct metric value and fail counts for single column sequence" in {
-      (allSingleColDFs, directParams, results, failCountsSingleSeq).zipped.foreach {
+      zipT(allSingleColDFs, directParams, results, failCountsSingleSeq).foreach {
         case (df, params, res, fc) => testMetric(df, mId, singleCols, res, fc, params, getCalc)
       }
-      (allSingleColDFs, reversedParams, results, failCountsSingleSeqRev).zipped.foreach {
+      zipT(allSingleColDFs, reversedParams, results, failCountsSingleSeqRev).foreach {
         case (df, params, res, fc) => testMetric(df, mId, singleCols, res, fc, params, getCalc)
       }
     }
     "return correct metric value and fail counts for multi column sequence" in {
-      (allMultiColDFs, directParams, results, failCountsMultiSeq).zipped.foreach {
+      zipT(allMultiColDFs, directParams, results, failCountsMultiSeq).foreach {
         case (df, params, res, fc) => testMetric(df, mId, multiCols, res, fc, params, getCalc)
       }
-      (allMultiColDFs, reversedParams, results, failCountsMultiSeqRev).zipped.foreach {
+      zipT(allMultiColDFs, reversedParams, results, failCountsMultiSeqRev).foreach {
         case (df, params, res, fc) => testMetric(df, mId, multiCols, res, fc, params, getCalc)
       }
     }
@@ -271,18 +271,18 @@ class BasicStringDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsT
     }
 
     "return correct metric value and fail counts for single column sequence" in {
-      (allSingleColDFs, directParams, results, failCountsSingleSeq).zipped.foreach {
+      zipT(allSingleColDFs, directParams, results, failCountsSingleSeq).foreach {
         case (df, params, res, fc) => testMetric(df, mId, singleCols, res, fc, params, getCalc)
       }
-      (allSingleColDFs, reversedParams, results, failCountsSingleSeqRev).zipped.foreach {
+      zipT(allSingleColDFs, reversedParams, results, failCountsSingleSeqRev).foreach {
         case (df, params, res, fc) => testMetric(df, mId, singleCols, res, fc, params, getCalc)
       }
     }
     "return correct metric value and fail counts for multi column sequence" in {
-      (allMultiColDFs, directParams, results, failCountsMultiSeq).zipped.foreach {
+      zipT(allMultiColDFs, directParams, results, failCountsMultiSeq).foreach {
         case (df, params, res, fc) => testMetric(df, mId, multiCols, res, fc, params, getCalc)
       }
-      (allMultiColDFs, reversedParams, results, failCountsMultiSeqRev).zipped.foreach {
+      zipT(allMultiColDFs, reversedParams, results, failCountsMultiSeqRev).foreach {
         case (df, params, res, fc) => testMetric(df, mId, multiCols, res, fc, params, getCalc)
       }
     }

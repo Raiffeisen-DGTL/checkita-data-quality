@@ -2,7 +2,7 @@ package ru.raiffeisen.checkita.core.metrics.rdd.regular
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import ru.raiffeisen.checkita.Common.checkSerDe
+import ru.raiffeisen.checkita.Common.{checkSerDe, zipT}
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.metrics.MetricName
 import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
@@ -152,8 +152,8 @@ class AlgebirdRDDMetricsSpec extends AnyWordSpec with Matchers {
     val allSingleColSeq = Seq(intSeq, nullIntSeq, emptyIntSeq)
 
     "return correct metric value for single column sequence" in {
-      (allSingleColSeq, results).zipped.toList.foreach { tt =>
-        val metricResults = (tt._1, paramList, tt._2).zipped.toList.map(t => (
+      zipT(allSingleColSeq, results).foreach { tt =>
+        val metricResults = zipT(tt._1, paramList, tt._2).map(t => (
           t._1.foldLeft[RDDMetricCalculator](new HLLSequenceCompletenessRDDMetricCalculator(t._2._1, t._2._2))(
             (m, v) => m.increment(Seq(v))).result()(MetricName.ApproximateSequenceCompleteness.entryName)._1,
           t._3

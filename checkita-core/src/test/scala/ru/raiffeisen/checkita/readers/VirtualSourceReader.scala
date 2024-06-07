@@ -44,8 +44,8 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
       val sqlVirtualSourceDf = sqlVirtualSource.getOrElse(Source("error", spark.emptyDataFrame)).df
       val correctDf = Seq(("2", "second", "s", "ss")).toDF("id", "name", "entity", "description")
 
-      sqlVirtualSourceDf.count shouldEqual 1
-      sqlVirtualSourceDf.collect should contain theSameElementsAs correctDf.collect
+      sqlVirtualSourceDf.count() shouldEqual 1
+      sqlVirtualSourceDf.collect() should contain theSameElementsAs correctDf.collect()
     }
 
     "failed when sql query is wrong" in {
@@ -98,7 +98,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
       val joinVirtualSourceDf = joinVirtualSource.getOrElse(Source("error", spark.emptyDataFrame)).df
       val correctDf = Seq(("1", "first", "third"), ("2", "second", "fourth")).toDF("id", "name1", "name2")
 
-      joinVirtualSourceDf.collect should contain theSameElementsAs correctDf.collect
+      joinVirtualSourceDf.collect() should contain theSameElementsAs correctDf.collect()
     }
 
     "failed when pass only 1 source" in {
@@ -148,7 +148,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
 
       val filterVirtualSourceDf = filterVirtualSource.getOrElse(Source("error", spark.emptyDataFrame)).df
 
-      filterVirtualSourceDf.count shouldEqual 1
+      filterVirtualSourceDf.count() shouldEqual 1
     }
 
     "failed when pass more than 1 source" in {
@@ -200,7 +200,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
       val selectVirtualSourceDf = selectVirtualSource.getOrElse(Source("error", spark.emptyDataFrame)).df
       val correctDf = Seq((2, 2)).toDF("id_cnt", "name_cnt")
 
-      selectVirtualSourceDf.collect should contain theSameElementsAs correctDf.collect
+      selectVirtualSourceDf.collect() should contain theSameElementsAs correctDf.collect()
     }
 
     "failed when pass more than 1 source" in {
@@ -252,7 +252,7 @@ class VirtualSourceReader extends AnyWordSpec with Matchers {
       val aggregateVirtualSourceDf = aggregateVirtualSource.getOrElse(Source("error", spark.emptyDataFrame)).df
       val correctDf = Seq(("1", 3.0, 8)).toDF("col1", "avg_col2", "sum_col3")
 
-      aggregateVirtualSourceDf.collect should contain theSameElementsAs correctDf.collect
+      aggregateVirtualSourceDf.collect() should contain theSameElementsAs correctDf.collect()
     }
 
     "failed when pass more than 1 source" in {

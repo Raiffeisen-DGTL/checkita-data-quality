@@ -31,8 +31,8 @@ class DQContextSpec extends AnyWordSpec with Matchers with PrivateMethodTester {
   )
   "DQContext" must {
     "correctly read sequence of virtual sources" in {
-      val vsReader = PrivateMethod[Result[Map[String, Source]]]('readVirtualSources)
-      val nextVsGetter = PrivateMethod[(VirtualSourceConfig, Seq[VirtualSourceConfig])]('getNextVS)
+      val vsReader = PrivateMethod[Result[Map[String, Source]]](Symbol("readVirtualSources"))
+      val nextVsGetter = PrivateMethod[(VirtualSourceConfig, Seq[VirtualSourceConfig])](Symbol("getNextVS"))
 
       val parents = liftToResult(Seq(Source("emptyDF", emptyDF)).map(s => s.id -> s).toMap)
       val vs1 = FilterVirtualSourceConfig(
@@ -78,14 +78,15 @@ class DQContextSpec extends AnyWordSpec with Matchers with PrivateMethodTester {
       val indices = Seq(0, 8, 16)
       val strPerm = Seq("vs1", "vs2", "vs3", "vs4", "vs5").permutations.toSeq
         .groupBy(_.head)
-        .mapValues(sq => indices.map(idx => sq(idx)))
-        .values.flatten.toSeq
+        .values
+        .flatMap(sq => indices.map(idx => sq(idx)))
+        .toSeq
 
 
       val vsSequences = Seq(vs1, vs2, vs3, vs4, vs5).permutations.toSeq
         .groupBy(_.head)
-        .mapValues(sq => indices.map(idx => sq(idx)))
-        .values.flatten
+        .values
+        .flatMap(sq => indices.map(idx => sq(idx)))
         .map(liftToResult).toSeq
 
 

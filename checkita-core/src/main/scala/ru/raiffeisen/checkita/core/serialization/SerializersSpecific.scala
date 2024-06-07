@@ -12,14 +12,14 @@ trait SerializersSpecific { this: SerDeTransformations =>
    * All enumeration values are mapped to byte values and, 
    * therefore, are encoded as single byte value.
    *
-   * @param enum Enumeration object holding all enumeration entries of current type.
+   * @param e Enumeration object holding all enumeration entries of current type.
    * @tparam E Type of enumeration
    * @return SerDe to serialize/deserialize enumeration values.
    */
-  protected def getEnumSerDe[E <: EnumEntry](enum: Enum[E]): SerDe[E] =
+  protected def getEnumSerDe[E <: EnumEntry](e: Enum[E]): SerDe[E] =
     new SerDe[E] {
       private val byteEncoding: Map[E, Byte] =
-        enum.values.zipWithIndex.map{ case (c, i) => c -> i.toByte }.toMap
+        e.values.zipWithIndex.map{ case (c, i) => c -> i.toByte }.toMap
       private val valueEncoding: Map[Byte, E] = byteEncoding.map(_.swap)
 
       override def serialize(bf: ByteArrayOutputStream, value: E): Unit = bf.write(byteEncoding(value))

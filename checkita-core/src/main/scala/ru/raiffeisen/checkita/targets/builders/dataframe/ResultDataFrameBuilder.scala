@@ -9,7 +9,7 @@ import ru.raiffeisen.checkita.storage.Serialization.ResultsSerializationOps
 import ru.raiffeisen.checkita.targets.builders.TargetBuilder
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 trait ResultDataFrameBuilder[T <: ResultTargetConfig] extends TargetBuilder[T, DataFrame] {

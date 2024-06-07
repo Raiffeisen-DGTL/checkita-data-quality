@@ -134,9 +134,10 @@ case class TopNRankCheckCalculator(checkId: String,
     // several records with TopN metric results
     val historyResults = mgr.loadMetricResults[ResultMetricRegular](
       jobId, baseMetricIds, rule, settings.referenceDateTime, targetNumber.toString, windowOffset
-    ).map(r => r.referenceDate -> r.additionalResult).groupBy(_._1) // grouping results by referenceDate
-      .mapValues(_.flatMap(t => t._2)).toSeq.maxBy(t => t._1.getTime)._2.toSet
-      // collect results for latest referenceDate
+    ).map(r => r.referenceDate -> r.additionalResult)
+      .groupBy(_._1) // grouping results by referenceDate
+      .map { case (k, v) => k -> v.flatMap(t => t._2) }.toSeq
+      .maxBy(t => t._1.getTime)._2.toSet // collect results for latest referenceDate
     
     if (historyResults.isEmpty) throw new IllegalArgumentException(
       s"There ara no historical results found to perform ${checkName.entryName} check '$checkId'."

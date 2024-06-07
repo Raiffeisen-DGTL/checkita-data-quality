@@ -118,7 +118,7 @@ object Managers {
             .orderBy(col("reference_date").desc, col("metric_name"))
 
           preDF.filter(col("reference_date") < startDT.getUtcTS)
-            .withColumn("row_number", row_number.over(w))
+            .withColumn("row_number", row_number().over(w))
             .filter(col("row_number") <= numRows + offset && col("row_number") > offset)
             .select(schema.map(c => col(c.name)) : _*)
             .as[R](encoder).collect().toSeq

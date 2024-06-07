@@ -40,7 +40,7 @@ trait DFMetricsTestUtils { this: AnyWordSpec with Matchers =>
     val metDf = df.select(calculator.result, calculator.errors)
 //    metDf.explain(true)
 //    metDf.show(truncate = false)
-    val processed = metDf.collect.head
+    val processed = metDf.collect().head
     val result = processed.getDouble(0)
     val errors = processed.getAs[mutable.WrappedArray[mutable.WrappedArray[String]]](1)
     (result, errors.size)
@@ -54,7 +54,8 @@ trait DFMetricsTestUtils { this: AnyWordSpec with Matchers =>
                  paramSeq: Seq[Map[String, Any]],
                  fCalc: (String, Seq[String], Map[String, Any]) => DFMetricCalculator): Unit = {
 
-    val zipped: Seq[(DataFrame, Map[String, Any], Double, Int)] = (dataFrames, paramSeq, results, failCounts).zipped
+    val zipped: Seq[(DataFrame, Map[String, Any], Double, Int)] = 
+      zipT(dataFrames, paramSeq, results, failCounts)
 
     zipped.foreach {
       case (df, params, res, fc) =>

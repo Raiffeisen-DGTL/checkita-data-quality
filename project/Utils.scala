@@ -79,8 +79,25 @@ object Utils {
     }.getOrElse(Seq.empty)
   }
   
+  def overrideSnakeYaml: ModuleID = "org.yaml" % "snakeyaml" % "1.33"
+  
   def getVersionString(buildVersion: String, packageType: PackageType.Value): String = packageType match {
     case PackageType.Release => buildVersion
     case otherType => s"$buildVersion-${otherType.toString}"
+  }
+  
+  def getScalacOptions(scalaVersion: String): Seq[String] = {
+    val commonOptions = Seq(
+      "-encoding", "UTF-8",
+      "-target:jvm-1.8",
+      "-deprecation",
+      "-feature",
+      "-language:implicitConversions",
+      "-language:postfixOps",
+      "-language:reflectiveCalls",
+      "-language:higherKinds"
+    )
+    
+    if (scalaVersion.startsWith("2.12")) commonOptions :+ "-Ypartial-unification" else commonOptions
   }
 }

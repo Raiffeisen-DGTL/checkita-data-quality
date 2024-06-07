@@ -121,6 +121,9 @@ object SparkUtils {
     def toSparkInterval: String = s"${d.toSeconds} seconds"
     def toShortString: String = d match {
       case Duration(l, tu) => s"$l${timeUnits(tu)}"
+      case other => throw new IllegalArgumentException(
+        s"Unable to construct short-strung representation for duration of ${other.toString}."
+      )
     }
   }
 

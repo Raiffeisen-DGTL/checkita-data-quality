@@ -21,7 +21,7 @@ class FileDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsTestUtil
   private val testValues = Seq(
     Seq.fill(42)(Seq.fill(1)(rand.nextInt(100))),
     Seq.fill(42)(Seq.fill(4)(rand.alphanumeric.take(5).mkString)),
-    Seq.fill(42)(Seq.fill(42)(rand.nextDouble))
+    Seq.fill(42)(Seq.fill(42)(rand.nextDouble()))
   )
   private val testDFs: Seq[DataFrame] = getTestDataFrames(testValues, testSchemas)
   private val emptyDF = spark.createDataFrame(sc.emptyRDD[Row], testSchemas.head)

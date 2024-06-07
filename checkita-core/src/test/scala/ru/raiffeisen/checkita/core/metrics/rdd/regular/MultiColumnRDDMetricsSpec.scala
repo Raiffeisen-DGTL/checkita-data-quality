@@ -2,7 +2,7 @@ package ru.raiffeisen.checkita.core.metrics.rdd.regular
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import ru.raiffeisen.checkita.Common.checkSerDe
+import ru.raiffeisen.checkita.Common.{checkSerDe, zipT}
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.metrics.MetricName
 import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
@@ -245,8 +245,7 @@ class MultiColumnRDDMetricsSpec extends AnyWordSpec with Matchers {
     val failCounts = Seq(4, 4, 0, 4, 2, 2, 6, 2)
 
     "return correct metric value for sequence of two columns" in {
-      val values = (testValues, paramList, results).zipped.toList
-        .zip((statuses, failCounts).zipped.toList).map(x => (x._1._1, x._1._2, x._1._3, x._2._1, x._2._2))
+      val values = zipT(testValues, paramList, results, statuses, failCounts)
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](
           new LevenshteinDistanceRDDMetricCalculator(t._2._1, t._2._2, t._2._3)

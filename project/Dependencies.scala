@@ -4,7 +4,7 @@ object Dependencies {
 
   val pureConfig = "com.github.pureconfig" %% "pureconfig" % "0.17.3"
   val enumeratum = "com.beachape" %% "enumeratum" % "1.7.2"
-  val isarn = "org.isarnproject" %% "isarn-sketches" % "0.3.0"
+  val isarn = "org.isarnproject" % "isarn-sketches-java" % "0.3.0"
   val algebird = "com.twitter" %% "algebird-core" % "0.13.9"
   val commonsText = "org.apache.commons" % "commons-text" % "1.10.0"
   val commonsMail = "org.apache.commons" % "commons-email" % "1.5"
@@ -60,6 +60,7 @@ object Dependencies {
   val circeParser = "io.circe" %% "circe-parser" % circeVersion
   
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.15" % Test
+  val scalaCollCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0"
   
   val checkita_core: Seq[ModuleID] = Seq(
     pureConfig,
@@ -89,7 +90,8 @@ object Dependencies {
     flywayOracle,
     flywayMSSQL,
     schemaRegistry,
-    scalaTest
+    scalaTest,
+    scalaCollCompat
   )
 
   val checkita_api: Seq[ModuleID] = Seq(
@@ -97,6 +99,8 @@ object Dependencies {
     http4sCirce,
     http4sServer,
     circe,
-    circeParser
+    circeParser,
+    scalaTest,
+    scalaCollCompat
   )
 }

@@ -141,8 +141,8 @@ class SerializersSpec extends AnyWordSpec with Matchers {
     "correctly serialize large collections of elements" in {
       checkSerDe[Seq[Int]](Range.inclusive(1, 100000))
       checkSerDe[Set[Int]](Range.inclusive(1, 100000).toSet)
-      checkSerDe[Set[Double]](Range.inclusive(1, 100000).map(_ => Random.nextDouble).toSet)
-      checkSerDe[Map[Int, Double]](Range.inclusive(1, 100000).map(i => i -> Random.nextDouble).toMap)
+      checkSerDe[Set[Double]](Range.inclusive(1, 100000).map(_ => Random.nextDouble()).toSet)
+      checkSerDe[Map[Int, Double]](Range.inclusive(1, 100000).map(i => i -> Random.nextDouble()).toMap)
     }
     "correctly serialize map of int to string" in {
       checkSerDe[Map[Int, String]](Map(1 -> "one", 2 -> "two", 3 -> "three"))
@@ -157,105 +157,105 @@ class SerializersSpec extends AnyWordSpec with Matchers {
   
   "Regular metrics' SerDe" must {
     "correctly serialize all regular metric case classes" in {
-      checkSerDe[RowCountMetricConfig](RowCountMetricConfig(ID("some_metric"), None, "some_source"))
-      checkSerDe[DistinctValuesMetricConfig](DistinctValuesMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[DuplicateValuesMetricConfig](DuplicateValuesMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[ApproxDistinctValuesMetricConfig](ApproxDistinctValuesMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[NullValuesMetricConfig](NullValuesMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[EmptyValuesMetricConfig](EmptyValuesMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[CompletenessMetricConfig](CompletenessMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[SequenceCompletenessMetricConfig](SequenceCompletenessMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[ApproxSequenceCompletenessMetricConfig](ApproxSequenceCompletenessMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[MinStringMetricConfig](MinStringMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[MaxStringMetricConfig](MaxStringMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[AvgStringMetricConfig](AvgStringMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[StringLengthMetricConfig](StringLengthMetricConfig(
+      checkSerDe[RegularMetric](RowCountMetricConfig(ID("some_metric"), None, "some_source"))
+      checkSerDe[RegularMetric](DistinctValuesMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](DuplicateValuesMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](ApproxDistinctValuesMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](NullValuesMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](EmptyValuesMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](CompletenessMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](SequenceCompletenessMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](ApproxSequenceCompletenessMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](MinStringMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](MaxStringMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](AvgStringMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](StringLengthMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         StringLengthParams(10, CompareRule.Eq)
       ))
-      checkSerDe[StringInDomainMetricConfig](StringInDomainMetricConfig(
+      checkSerDe[RegularMetric](StringInDomainMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         StringDomainParams(Refined.unsafeApply(Seq("foo", "bar")))
       ))
-      checkSerDe[StringOutDomainMetricConfig](StringOutDomainMetricConfig(
+      checkSerDe[RegularMetric](StringOutDomainMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         StringDomainParams(Refined.unsafeApply(Seq("foo", "bar")))
       ))
-      checkSerDe[StringValuesMetricConfig](StringValuesMetricConfig(
+      checkSerDe[RegularMetric](StringValuesMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         StringValuesParams("foo")
       ))
-      checkSerDe[RegexMatchMetricConfig](RegexMatchMetricConfig(
+      checkSerDe[RegularMetric](RegexMatchMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         RegexParams("""^\w+$""")
       ))
-      checkSerDe[RegexMismatchMetricConfig](RegexMismatchMetricConfig(
+      checkSerDe[RegularMetric](RegexMismatchMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         RegexParams("""^\w+$""")
       ))
-      checkSerDe[FormattedDateMetricConfig](FormattedDateMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[FormattedNumberMetricConfig](FormattedNumberMetricConfig(
+      checkSerDe[RegularMetric](FormattedDateMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](FormattedNumberMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         FormattedNumberParams(14, 8)
       ))
-      checkSerDe[MinNumberMetricConfig](MinNumberMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[MaxNumberMetricConfig](MaxNumberMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[SumNumberMetricConfig](SumNumberMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[AvgNumberMetricConfig](AvgNumberMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[StdNumberMetricConfig](StdNumberMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[CastedNumberMetricConfig](CastedNumberMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[NumberInDomainMetricConfig](NumberInDomainMetricConfig(
+      checkSerDe[RegularMetric](MinNumberMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](MaxNumberMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](SumNumberMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](AvgNumberMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](StdNumberMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](CastedNumberMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](NumberInDomainMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         NumberDomainParams(Refined.unsafeApply(Seq(1, 2, 3)))
       ))
-      checkSerDe[NumberOutDomainMetricConfig](NumberOutDomainMetricConfig(
+      checkSerDe[RegularMetric](NumberOutDomainMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         NumberDomainParams(Refined.unsafeApply(Seq(1, 2, 3)))
       ))
-      checkSerDe[NumberLessThanMetricConfig](NumberLessThanMetricConfig(
+      checkSerDe[RegularMetric](NumberLessThanMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         NumberCompareParams(3.14)
       ))
-      checkSerDe[NumberGreaterThanMetricConfig](NumberGreaterThanMetricConfig(
+      checkSerDe[RegularMetric](NumberGreaterThanMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         NumberCompareParams(3.14)
       ))
-      checkSerDe[NumberBetweenMetricConfig](NumberBetweenMetricConfig(
+      checkSerDe[RegularMetric](NumberBetweenMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         NumberIntervalParams(3.14, 9.8)
       ))
-      checkSerDe[NumberNotBetweenMetricConfig](NumberNotBetweenMetricConfig(
+      checkSerDe[RegularMetric](NumberNotBetweenMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         NumberIntervalParams(3.14, 9.8)
       ))
-      checkSerDe[NumberValuesMetricConfig](NumberValuesMetricConfig(
+      checkSerDe[RegularMetric](NumberValuesMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         NumberValuesParams(3.14)
       ))
-      checkSerDe[MedianValueMetricConfig](MedianValueMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[FirstQuantileMetricConfig](FirstQuantileMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[ThirdQuantileMetricConfig](ThirdQuantileMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
-      checkSerDe[GetQuantileMetricConfig](GetQuantileMetricConfig(
+      checkSerDe[RegularMetric](MedianValueMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](FirstQuantileMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](ThirdQuantileMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1"))))
+      checkSerDe[RegularMetric](GetQuantileMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         TDigestGeqQuantileParams(target = 0.99)
       ))
-      checkSerDe[GetPercentileMetricConfig](GetPercentileMetricConfig(
+      checkSerDe[RegularMetric](GetPercentileMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1")),
         TDigestGeqPercentileParams(target = 42)
       ))
-      checkSerDe[ColumnEqMetricConfig](ColumnEqMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1", "col2"))))
-      checkSerDe[DayDistanceMetricConfig](DayDistanceMetricConfig(
+      checkSerDe[RegularMetric](ColumnEqMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1", "col2"))))
+      checkSerDe[RegularMetric](DayDistanceMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1", "col2")),
         DayDistanceParams(3)
       ))
-      checkSerDe[LevenshteinDistanceMetricConfig](LevenshteinDistanceMetricConfig(
+      checkSerDe[RegularMetric](LevenshteinDistanceMetricConfig(
         ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1", "col2")),
         LevenshteinDistanceParams(3)
       ))
-      checkSerDe[CoMomentMetricConfig](CoMomentMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1", "col2"))))
-      checkSerDe[CovarianceMetricConfig](CovarianceMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1", "col2"))))
-      checkSerDe[CovarianceBesselMetricConfig](CovarianceBesselMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1", "col2"))))
-      checkSerDe[TopNMetricConfig](TopNMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1", "col2"))))
+      checkSerDe[RegularMetric](CoMomentMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1", "col2"))))
+      checkSerDe[RegularMetric](CovarianceMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1", "col2"))))
+      checkSerDe[RegularMetric](CovarianceBesselMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1", "col2"))))
+      checkSerDe[RegularMetric](TopNMetricConfig(ID("some_metric"), None, "some_source", Refined.unsafeApply(Seq("col1", "col2"))))
     }
 
     "correctly serialize generic sequence of regular metrics" in {

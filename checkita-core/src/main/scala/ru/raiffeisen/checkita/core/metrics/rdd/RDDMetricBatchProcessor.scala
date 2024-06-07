@@ -5,9 +5,10 @@ import org.apache.spark.sql.{Row, SparkSession}
 import ru.raiffeisen.checkita.core.Source
 import ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors
 import ru.raiffeisen.checkita.core.metrics.{BasicMetricProcessor, RegularMetric}
+import ru.raiffeisen.checkita.utils.Common._
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 /** Regular metrics processor for Batch Applications */
@@ -42,7 +43,7 @@ object RDDMetricBatchProcessor extends RDDMetricProcessor {
                             caseSensitive: Boolean): Result[MetricResults] = Try {
 
     val df = if (caseSensitive) source.df else
-      source.df.select(source.df.columns.map(c => col(c).as(c.toLowerCase)): _*)
+      source.df.select(source.df.columns.map(c => col(c).as(c.toLowerCase)).toSeqUnsafe: _*)
 
     val columnIndexes = getColumnIndexMap(df)
     val columnNames = getColumnNamesMap(df)
@@ -78,7 +79,7 @@ object RDDMetricBatchProcessor extends RDDMetricProcessor {
       combOp = mergeGroupCalculators
     )
 
-    val processedMetricErrors = processMetricErrors(metricErrorAccumulator.value.asScala)
+    val processedMetricErrors = processMetricErrors(metricErrorAccumulator.value.asScala.toSeq)
 
     buildResults(processedCalculators, processedMetricErrors, source.id, sourceKeys)
 

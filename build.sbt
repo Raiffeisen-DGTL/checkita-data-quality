@@ -7,17 +7,7 @@ ThisBuild / versionScheme    := Some("semver-spec")
 ThisBuild / publishTo        := publishRepo.value
 ThisBuild / credentials      += Credentials(Path.userHome / ".sbt" / ".credentials")
 ThisBuild / resolvers        += "Confluent IO" at "https://packages.confluent.io/maven/"
-ThisBuild / scalacOptions    ++= Seq(
-  "-encoding", "UTF-8",
-  "-target:jvm-1.8",
-  "-deprecation",
-  "-feature",
-  "-language:implicitConversions",
-  "-language:postfixOps",
-  "-language:reflectiveCalls",
-  "-language:higherKinds",
-  "-Ypartial-unification"
-)
+ThisBuild / scalacOptions    ++= Utils.getScalacOptions(scalaVersion.value)
 
 lazy val `checkita-data-quality` = (project in file("."))
   .aggregate(`checkita-core`, `checkita-api`)
@@ -34,7 +24,7 @@ lazy val `checkita-core` = (project in file("checkita-core"))
 
     Compile / doc / target := baseDirectory.value / ".." / "docs/api",
 
-    dependencyOverrides ++= Utils.overrideFasterXml(sparkVersion.value),
+    dependencyOverrides ++= (Utils.overrideFasterXml(sparkVersion.value) :+ Utils.overrideSnakeYaml),
 
     version := Utils.getVersionString((ThisBuild / version).value, packageType.value),
 

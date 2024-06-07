@@ -6,7 +6,7 @@ import io.confluent.kafka.schemaregistry.client.rest.entities.Schema
 import ru.raiffeisen.checkita.config.jobconf.Schemas.RegistrySchemaConfig
 import ru.raiffeisen.checkita.utils.Common.paramsSeqToMap
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.jdk.OptionConverters.RichOptional
 
 /**
@@ -103,7 +103,7 @@ case class SchemaRegistryConnection(config: RegistrySchemaConfig) {
    * @return Sequence of tuples (subject, version)
    */
   private def getAllVersionsBySubject(subject: String): Seq[(String, Int)] =
-    client.getAllVersions(subject).asScala.map(v => (subject, v.toInt))
+    client.getAllVersions(subject).asScala.toSeq.map(v => (subject, v.toInt))
 
   /**
    * Gets schema version to read: 

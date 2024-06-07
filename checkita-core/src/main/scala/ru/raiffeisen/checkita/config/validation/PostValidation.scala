@@ -6,7 +6,7 @@ import ru.raiffeisen.checkita.utils.FormulaParser
 import ru.raiffeisen.checkita.utils.Templating.{getTokens, renderTemplate}
 
 import scala.annotation.tailrec
-import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
+import scala.jdk.CollectionConverters._
 import scala.util.{Random, Try}
 
 object PostValidation {
@@ -366,7 +366,7 @@ object PostValidation {
       val formula = compMet._1.get("formula").renderWithOpts
       val comMetPath = s"$compMetPrefix.${compMet._2}.formula"
       val mIds = getTokens(formula)
-      val mResMap = mIds.map(_ -> Random.nextDouble.toString).toMap
+      val mResMap = mIds.map(_ -> Random.nextDouble().toString).toMap
       val parsedFormula = renderTemplate(formula, mResMap)
       val p = new FormulaParser{} // anonymous class
       
