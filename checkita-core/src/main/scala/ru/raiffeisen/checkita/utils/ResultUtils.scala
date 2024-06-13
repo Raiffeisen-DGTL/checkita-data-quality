@@ -210,6 +210,13 @@ object ResultUtils {
       val g2: (T, (R1, R2, R3, R4, R5)) => S = (v, t) => f(v, t._1, t._2, t._3, t._4, t._5)
       value.combine(r1.combineT4(r2, r3, r4, r5)(g1))(g2)
     }
+
+    def combineT6[R1, R2, R3, R4, R5, R6, S](r1: Result[R1], r2: Result[R2], r3: Result[R3], r4: Result[R4], r5: Result[R5], r6: Result[R6])
+                                            (f: (T, R1, R2, R3, R4, R5, R6) => S): Result[S] = {
+      val g1 = (v1: R1, v2: R2, v3: R3, v4: R4, v5: R5, v6: R6) => (v1, v2, v3, v4, v5, v6)
+      val g2: (T, (R1, R2, R3, R4, R5, R6)) => S = (v, t) => f(v, t._1, t._2, t._3, t._4, t._5, t._6)
+      value.combine(r1.combineT5(r2, r3, r4, r5, r6)(g1))(g2)
+    }
     
     def union[R](r: Result[R]): Result[(T, R)] = value.combine(r)((v, v1) => (v, v1))
     
@@ -231,5 +238,13 @@ object ResultUtils {
                                   r4: Result[R4],
                                   r5: Result[R5]): Result[(T, R1, R2, R3, R4, R5)] =
       value.combineT5(r1, r2, r3, r4, r5)((v, v1, v2, v3, v4, v5) => (v, v1, v2, v3, v4, v5))
+
+    def union[R1, R2, R3, R4, R5, R6](r1: Result[R1],
+                                      r2: Result[R2],
+                                      r3: Result[R3],
+                                      r4: Result[R4],
+                                      r5: Result[R5],
+                                      r6: Result[R6]): Result[(T, R1, R2, R3, R4, R5, R6)] =
+      value.combineT6(r1, r2, r3, r4, r5, r6)((v, v1, v2, v3, v4, v5, v6) => (v, v1, v2, v3, v4, v5, v6))
   }
 }

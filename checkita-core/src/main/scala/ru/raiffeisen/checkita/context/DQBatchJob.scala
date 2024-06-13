@@ -7,7 +7,7 @@ import ru.raiffeisen.checkita.config.Enums.MetricEngineAPI
 import ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig
 import ru.raiffeisen.checkita.config.jobconf.JobConfig
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
-import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig}
+import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig, TrendMetricConfig}
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.core.Source
@@ -29,6 +29,7 @@ import scala.language.higherKinds
  * @param sources         Sequence of sources to process
  * @param metrics         Sequence of metrics to calculate
  * @param composedMetrics Sequence of composed metrics to calculate
+ * @param trendMetrics    Sequence of trend metrics to calculate
  * @param checks          Sequence of checks to perform
  * @param loadChecks      Sequence of load checks to perform
  * @param targets         Sequence of targets to send
@@ -44,6 +45,7 @@ final case class DQBatchJob(jobConfig: JobConfig,
                             sources: Seq[Source],
                             metrics: Seq[RegularMetricConfig],
                             composedMetrics: Seq[ComposedMetricConfig] = Seq.empty,
+                            trendMetrics: Seq[TrendMetricConfig] = Seq.empty,
                             checks: Seq[CheckConfig] = Seq.empty,
                             loadChecks: Seq[LoadCheckConfig] = Seq.empty,
                             targets: Seq[TargetConfig] = Seq.empty,

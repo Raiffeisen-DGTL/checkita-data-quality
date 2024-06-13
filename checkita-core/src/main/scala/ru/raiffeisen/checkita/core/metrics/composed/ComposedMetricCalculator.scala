@@ -1,21 +1,20 @@
 package ru.raiffeisen.checkita.core.metrics.composed
 
-import ru.raiffeisen.checkita.core.metrics.ErrorCollection.{ErrorRow, MetricErrors}
 import ru.raiffeisen.checkita.core.CalculatorStatus
 import ru.raiffeisen.checkita.core.Results.{MetricCalculatorResult, ResultType}
+import ru.raiffeisen.checkita.core.metrics.ErrorCollection.{ErrorRow, MetricErrors}
 import ru.raiffeisen.checkita.core.metrics.{ComposedMetric, MetricName}
 import ru.raiffeisen.checkita.utils.FormulaParser
 import ru.raiffeisen.checkita.utils.Templating.{getTokens, renderTemplate}
 
 import scala.util.Try
-import scala.util.matching.Regex
 
 /**
  * Takes all metric results and then calculates new ones with formulas
  * @note TopN metric cannot be used in composed metric calculation due to it yields multiple results
  * @param primitiveMetrics Metric results to operate with
  */
-case class ComposedMetricCalculator(primitiveMetrics: Iterable[MetricCalculatorResult]) extends FormulaParser {
+case class ComposedMetricCalculator(primitiveMetrics: Seq[MetricCalculatorResult]) extends FormulaParser {
 
   /**
    * Builds map of metric ID to metric result. Note that result is casted to string

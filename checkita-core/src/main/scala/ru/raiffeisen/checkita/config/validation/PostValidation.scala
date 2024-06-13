@@ -6,6 +6,7 @@ import ru.raiffeisen.checkita.utils.FormulaParser
 import ru.raiffeisen.checkita.utils.Templating.{getTokens, renderTemplate}
 
 import scala.annotation.tailrec
+import scala.concurrent.duration.Duration
 import scala.jdk.CollectionConverters._
 import scala.util.{Random, Try}
 
@@ -19,6 +20,28 @@ object PostValidation {
    */
   final case class Field(name: String, value: Any, path: String)
 
+  /**
+   * Class to represent cross reference used in configuration.
+   *
+   * @param value Reference value
+   * @param path  Reference location
+   */
+  final class Reference(val value: String, val path: String) {
+    /**
+     * References are the same when their value is the same.
+     * Path usually differs as cross-references are defined in different locations of configuration
+     *
+     * @param obj Object to compare with.
+     * @return Equality check result
+     */
+    override def equals(obj: Any): Boolean = obj match {
+      case ref: Reference => this.value == ref.value
+      case _ => false
+    }
+    override def toString: String = s"Reference($value, $path)"
+    override def hashCode(): Int = value.hashCode
+  }
+  
   /**
    * Appends field name or index to a path
    * @param path Current path
@@ -101,6 +124,65 @@ object PostValidation {
     dfs(initFields)
   }
 
+  /**
+   * Tail recursive DFS to find cycles in directed graph stored in adjacent list format: 
+   * Map(node -> List(adjacent node))
+   *
+   * @param graph Graph to traverse for cycles.
+   * @tparam N Type of the graph nodes.
+   * @return List of cyclic paths in the graph.
+   */
+  def findCycles[N](graph: Map[N, List[N]]): List[List[N]] = {
+
+    /**
+     * Case class for storing DFS stack.
+     *
+     * @param node     Current node.
+     * @param visited  Set of visited nodes.
+     * @param recStack Recursive stack (set of nodes along a single path).
+     * @param path     Current path.
+     */
+    case class Stack(node: N, visited: Set[N], recStack: Set[N], path: List[N])
+    object Stack {
+      /**
+       * Initializes stack for starting node.
+       *
+       * @param node Starting node.
+       * @return Initializes stack.
+       */
+      def init(node: N): Stack = Stack(node, Set.empty, Set.empty, List.empty)
+    }
+
+    /**
+     * Traverse DFS from starting node.
+     *
+     * @param stack  Current stack state.
+     * @param cycles List of found cycles.
+     * @return List of found cycles.
+     */
+    @tailrec
+    def dfs(stack: List[Stack], cycles: List[List[N]]): List[List[N]] = stack match {
+      case Nil => cycles
+      case Stack(curNode, visited, recStack, path) :: rest =>
+        if (recStack.contains(curNode)) {
+          val startIdx = path.indexOf(curNode)
+          val cycle = path.drop(startIdx) :+ curNode
+          dfs(rest, cycles :+ cycle)
+        } else if (visited.contains(curNode)) {
+          dfs(rest, cycles)
+        }
+        else {
+          val neighbours = graph.getOrElse(curNode, List.empty)
+          val newStack = neighbours.map(n => Stack(n, visited + curNode, recStack + curNode, path :+ curNode)) ++ rest
+          dfs(newStack, cycles)
+        }
+    }
+    
+    graph.keys.foldLeft(List.empty[List[N]])(
+      (acc, node) => dfs(List(Stack.init(node)), acc)
+    ).groupBy(_.toSet).map{ case (_, v) => v.head }.toList
+  }
+    
   /**
    * Common function to validate cross reference between different configuration objects.
    * @param checkObj Configuration object to check for wrong references
@@ -262,25 +344,34 @@ object PostValidation {
     val virtualStreamPathPrefix = "jobConfig.virtualStreams"
     val refKey = "parentSources"
     
-    @tailrec
-    def loop(vsPathPrefix: String,
-             vs: Seq[(ConfigObject, Int)],
-             sIds: Set[String],
-             acc: Vector[ConfigReaderFailure] = Vector.empty): Vector[ConfigReaderFailure] = vs match {
-      case Nil => acc
-      case head :: tail =>
-        val vsId = head._1.get("id").renderWithOpts
-        val errors = head._1.toConfig.getStringList(refKey).asScala.zipWithIndex
-          .filterNot(ps => sIds.contains(ps._1)).map { ps =>
-            ConvertFailure(
-              UserValidationFailed(
-                s"Virtual source refers to undefined source '${ps._1}'"
-              ),
-              None,
-              s"$vsPathPrefix.${head._2}.$refKey.${ps._2}"
-            )
-          }
-        loop(vsPathPrefix, tail, sIds + vsId, acc ++ errors)
+    def getVsData(vsPathPrefix: String): Seq[(String, Seq[(String, Int)], String, String)] =
+      Try(root.toConfig.getObjectList(vsPathPrefix).asScala).getOrElse(Seq.empty)
+        .zipWithIndex.map(vs => (
+          vs._1.get("id").renderWithOpts,
+          vs._1.toConfig.getStringList(refKey).asScala.zipWithIndex.toSeq,
+          s"$vsPathPrefix.${vs._2}.id",
+          s"$vsPathPrefix.${vs._2}.$refKey"
+        )).toSeq
+    
+    def getMissingRefs(vsData: Seq[(String, Seq[(String, Int)], String, String)], 
+                       allIds: Set[String],
+                       kind: String): Seq[ConvertFailure] = vsData.flatMap{ vs =>
+      vs._2.filterNot(ref => allIds.contains(ref._1)).map{ missing =>
+        ConvertFailure(
+          UserValidationFailed(s"Virtual $kind refers to undefined $kind '${missing._1}'"),
+          None,
+          s"${vs._4}.${missing._2}"
+        )
+      }
+    }
+    
+    def vsDataToRefGraph(vsData: Seq[(String, Seq[(String, Int)], String, String)]): Map[Reference, List[Reference]] = {
+      val references = for {
+        (id, refs, idPath, refPath) <- vsData
+        (refId, refIdx) <- refs
+      } yield new Reference(id, idPath) -> new Reference(refId, s"$refPath.$refIdx")
+      
+      references.groupBy(_._1).map{ case (k, v) => k -> v.map(_._2).toList }
     }
     
     val sourceIds = getAllValues(
@@ -289,15 +380,30 @@ object PostValidation {
     val streamIds = getAllValues(
       getObjOrEmpty(root, streamPathPrefix), "id", "jobConfig"
     ).map(_.value.toString).toSet
-    val virtualSources = Try(
-      root.toConfig.getObjectList(virtualSourcePathPrefix).asScala.toList.zipWithIndex
-    ).getOrElse(List.empty)
-    val virtualStreams = Try(
-      root.toConfig.getObjectList(virtualStreamPathPrefix).asScala.toList.zipWithIndex
-    ).getOrElse(List.empty)
-      
-    loop(virtualSourcePathPrefix, virtualSources, sourceIds) ++
-      loop(virtualStreamPathPrefix, virtualStreams, streamIds)
+    val virtualSources = getVsData(virtualSourcePathPrefix)
+    val virtualStreams = getVsData(virtualStreamPathPrefix)
+    
+    val allSrcIds = sourceIds ++ virtualSources.map(_._1).toSet
+    val allStrIds = streamIds ++ virtualStreams.map(_._1).toSet
+
+    val missingVsRefs = 
+      getMissingRefs(virtualSources, allSrcIds, "source") ++  getMissingRefs(virtualStreams, allStrIds, "stream")
+    
+    if (missingVsRefs.nonEmpty) missingVsRefs.toVector
+    else {
+      val vSourceRefGraph = vsDataToRefGraph(virtualSources)
+      val vStreamRefGraph = vsDataToRefGraph(virtualStreams)
+
+      (findCycles(vSourceRefGraph).map((_, "source")) ++ findCycles(vStreamRefGraph).map((_, "stream"))).map {
+        case (cycle, kind) => ConvertFailure(
+          UserValidationFailed(
+            s"Virtual $kind references form a cycle: " + cycle.map(f => f.value + "@" + f.path).mkString(" --> ")
+          ),
+          None,
+          cycle.head.path
+        )
+      }.toVector
+    }
   }
 
   /**
@@ -323,9 +429,9 @@ object PostValidation {
 
   /**
    * Validation to check if DQ job configuration contains missing references
-   * from source metrics to sources
+   * from regular metrics to sources
    */
-  val validateSourceMetricRefs: ConfigObject => Vector[ConfigReaderFailure] = root => {
+  val validateRegularMetricRefs: ConfigObject => Vector[ConfigReaderFailure] = root => {
     val allSourceIds = (
       getAllValues(getObjOrEmpty(root,"jobConfig.sources"), "id", "jobConfig.sources") ++
       getAllValues(getObjOrEmpty(root,"jobConfig.streams"), "id", "jobConfig.streams") ++
@@ -352,15 +458,10 @@ object PostValidation {
 
   /**
    * Validation to check if DQ job configuration contains errors in composed metric formulas:
-   *   - missing reference to source metrics
-   *   - wrong equation that can be parsed
+   * wrong equation that can be parsed
    */
   val validateComposedMetrics: ConfigObject => Vector[ConfigReaderFailure] = root => {
     val compMetPrefix = "jobConfig.metrics.composed"
-    val sourceMetricIds = getAllValues(
-      getObjOrEmpty(root, "jobConfig.metrics.regular"), 
-      "id", "jobConfig.metrics.regular"
-    ).map(f => f.value.toString).toSet
     
     Try(root.toConfig.getObjectList(compMetPrefix).asScala).getOrElse(List.empty).zipWithIndex.flatMap { compMet => 
       val formula = compMet._1.get("formula").renderWithOpts
@@ -370,13 +471,7 @@ object PostValidation {
       val parsedFormula = renderTemplate(formula, mResMap)
       val p = new FormulaParser{} // anonymous class
       
-      mIds.filterNot(sourceMetricIds.contains).map{ m =>
-        ConvertFailure(
-          UserValidationFailed(s"Composed metric formula refers to undefined metric '$m'"),
-          None,
-          comMetPath
-        )
-      } ++ Seq(parsedFormula).filter(f => Try(p.eval(p.parseAll(p.expr, f).get)).isFailure).map{ _ =>
+      Seq(parsedFormula).filter(f => Try(p.eval(p.parseAll(p.expr, f).get)).isFailure).map{ _ =>
         ConvertFailure(
           UserValidationFailed(s"Cannot parse composed metric formula '$formula'"),
           None,
@@ -386,6 +481,106 @@ object PostValidation {
     }.toVector
   }
 
+  /**
+   * Validation to check if composed and trend metrics definitions does not create reference cycles.
+   * Metric computation must be acyclic.
+   */
+  val validateMetricCrossReferences: ConfigObject => Vector[ConfigReaderFailure] = root => {
+    val compMetPrefix = "jobConfig.metrics.composed"
+    val trendMetPrefix = "jobConfig.metrics.trend"
+    
+    val regularMetricIds = getAllValues(
+      getObjOrEmpty(root, "jobConfig.metrics.regular"),
+      "id", "jobConfig.metrics.regular"
+    ).map(f => f.value.toString).toSet
+    
+    val composedMetricsData = 
+      Try(root.toConfig.getObjectList(compMetPrefix).asScala).getOrElse(List.empty).zipWithIndex.map(compMet => (
+        compMet._1.get("id").renderWithOpts, 
+        getTokens(compMet._1.get("formula").renderWithOpts).distinct, 
+        s"$compMetPrefix.${compMet._2}.id", 
+        s"$compMetPrefix.${compMet._2}.formula"
+      ))
+    
+    val trendMetricsData =
+      Try(root.toConfig.getObjectList(trendMetPrefix).asScala).getOrElse(List.empty).zipWithIndex.map( trendMet => (
+        trendMet._1.get("id").renderWithOpts, 
+        Seq(trendMet._1.get("lookupMetric").renderWithOpts),
+        s"$trendMetPrefix.${trendMet._2}.id",
+        s"$trendMetPrefix.${trendMet._2}.lookupMetric"
+      ))
+
+    // to check for missing references:
+    val allIds = regularMetricIds ++ composedMetricsData.map(_._1).toSet ++ trendMetricsData.map(_._1).toSet
+    
+    val missingReferencesErrors = (composedMetricsData ++ trendMetricsData).flatMap{ m =>
+      m._2.filterNot(allIds.contains).map{ missing =>
+        ConvertFailure(
+          UserValidationFailed(
+            if (m._4.endsWith("formula")) s"Composed metric formula refers to undefined metric '$missing'"
+            else s"Trend metric refers to undefined lookup metric '$missing'"
+          ),
+          None,
+          m._4
+        )
+      }
+    }
+    
+    // If missing references are found then return them as a validation errors,
+    // otherwise check for cycles within references.
+    if (missingReferencesErrors.nonEmpty) missingReferencesErrors.toVector
+    else {
+      val allRefs = for {
+        (id, refs, idPath, refPath) <- composedMetricsData ++ trendMetricsData
+        ref <- refs
+      } yield new Reference(id, idPath) -> new Reference(ref, refPath)
+      
+      val graph = allRefs.groupBy(_._1).map{ case (k, v) => k -> v.map(_._2).toList}
+      
+      findCycles(graph).map( cycle =>
+        ConvertFailure(
+          UserValidationFailed(
+            s"Metric references form a cycle: " + cycle.map(f => f.value + "@" + f.path).mkString(" --> ")
+          ),
+          None,
+          cycle.head.path
+        )
+      ).toVector
+    }
+  }
+
+  /**
+   * Ensure that windowSize and windowOffset parameters in trend metrics do comply with rule:
+   *   - if rule is record then windowSize and windowOffset must be non-negative integers
+   *   - if rule is datetime then windowSize and windowOffset must be valid non-negative durations
+   * @note This check is run at post-validation stage, as it is quite difficult to derive 
+   *       pureconfig readers for sealed trait families (thus approach is used to define kinded configurations)
+   *       to run check during config parsing.
+   */
+  def validateTrendMetricWindowSettings: ConfigObject => Vector[ConfigReaderFailure] = root => 
+    Try(root.toConfig.getObjectList("jobConfig.metrics.trend").asScala).getOrElse(List.empty).zipWithIndex.flatMap {
+      case (tm, idx) =>
+        val rule = tm.toConfig.getString("rule")
+        val wSize = tm.toConfig.getString("windowSize")
+        val wOffset = Try(tm.toConfig.getString("windowOffset")).toOption
+        val isValid = 
+          if (rule.toLowerCase == "record") Seq(wSize, wOffset.getOrElse("0")).forall { w =>
+            Try(w.toInt).map(i => assert(i >= 0)).isSuccess
+          } else Seq(wSize, wOffset.getOrElse("0s")).forall { w =>
+            Try(Duration(w)).map(d => assert(d >= Duration("0s"))).isSuccess
+          }
+        if (isValid) Seq.empty else Seq(ConvertFailure(
+          UserValidationFailed(
+            "Trend metric requires that windowSize and windowOffset parameters " + {
+              if (rule.toLowerCase == "record") "be non-negative integers when rule is set to 'record'"
+              else "be valid non-negative durations when rule is set to 'datetime'"
+            }
+          ),
+          None,
+          s"jobConfig.metrics.trend.$idx.${tm.get("id").renderWithOpts}"
+        ))
+    }.toVector
+  
   /**
    * Validation to check if DQ job configuration contains missing references
    * from load checks to sources
@@ -507,8 +702,10 @@ object PostValidation {
     validateSourceSchemaRefs,
     validateVirtualStreams,
     validateVirtualSourceRefs,
-    validateSourceMetricRefs,
+    validateRegularMetricRefs,
     validateComposedMetrics,
+    validateMetricCrossReferences,
+    validateTrendMetricWindowSettings,
     validateLoadCheckRefs,
     validateLoadCheckSchemaRefs,
     validateSnapshotCheckRefs,

@@ -23,6 +23,7 @@ object Results {
   object ResultType extends Enum[ResultType] {
     case object RegularMetric extends ResultType
     case object ComposedMetric extends ResultType
+    case object TrendMetric extends ResultType
     case object LoadCheck extends ResultType
     case object Check extends ResultType
 
@@ -116,6 +117,35 @@ object Results {
         settings.executionDateTime.getUtcTS
       )
 
+    /**
+     * Converts trend metric calculator result to final trend metric result representation suitable
+     * for storing into results storage and sending via targets.
+     *
+     * @param description Regular metric description
+     * @param params      Regular metric parameters (JSON string)
+     * @param metadata    Metadata parameters specific to this regular metric (JSON List string)
+     * @param jobId       Implicit Job ID
+     * @param settings    Implicit application settings object
+     * @return Finalized trend metric result
+     */
+    def finalizeAsTrend(description: Option[String],
+                        params: Option[String],
+                        metadata: Option[String])(implicit jobId: String,
+                                                  settings: AppSettings): ResultMetricTrend =
+      ResultMetricTrend(
+        jobId,
+        metricId,
+        metricName,
+        description,
+        metadata,
+        write(sourceIds),
+        params,
+        result,
+        additionalResult,
+        settings.referenceDateTime.getUtcTS,
+        settings.executionDateTime.getUtcTS
+      )
+      
     /**
      * Retrieves sequence of finalized metric errors from metric calculator result
      * that is suitable for storing into results storage and sending via targets.

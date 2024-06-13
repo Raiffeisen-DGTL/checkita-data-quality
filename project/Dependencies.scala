@@ -9,6 +9,7 @@ object Dependencies {
   val commonsText = "org.apache.commons" % "commons-text" % "1.10.0"
   val commonsMail = "org.apache.commons" % "commons-email" % "1.5"
   val commonsValidators = "commons-validator" % "commons-validator" % "1.8.0"
+  val commonsMath = "org.apache.commons" % "commons-math3" % "3.6.1"
   val mustache = "com.github.spullara.mustache.java" % "compiler" % "0.9.10"
 
   // XML support in json4s published in a separate package,
@@ -70,6 +71,7 @@ object Dependencies {
     commonsText,
     commonsMail,
     commonsValidators,
+    commonsMath,
     mustache,
     jsonJava,
     refined,

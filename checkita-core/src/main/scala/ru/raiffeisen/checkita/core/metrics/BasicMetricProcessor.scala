@@ -3,6 +3,7 @@ package ru.raiffeisen.checkita.core.metrics
 import org.apache.spark.sql.DataFrame
 import ru.raiffeisen.checkita.core.Results.MetricCalculatorResult
 import ru.raiffeisen.checkita.core.metrics.composed.ComposedMetricCalculator
+import ru.raiffeisen.checkita.utils.Templating.getTokens
 
 import scala.annotation.tailrec
 
@@ -41,6 +42,35 @@ object BasicMetricProcessor {
 
 
   /**
+   * Gets first composed metric for which we have all required metric results.
+   * The goal is to resolve composed metrics in order different from
+   * the one they were defined in job configuration file.
+   *
+   * @param cm      Sequence of composed metrics
+   * @param results Sequence of computed metric IDs
+   * @param idx     Index of composed metric that being checked at current iteration
+   *                and will be returned if all its parents are resolved.
+   * @return First composed metric for which all required results are found
+   *         and the sequence of remaining composed metrics.
+   */
+  @tailrec
+  private def getNextCM(cm: Seq[ComposedMetric],
+                        results: Set[String],
+                        idx: Int = 0): (ComposedMetric, Seq[ComposedMetric]) = {
+    if (idx == cm.size) throw new NoSuchElementException(
+      "Unable to find composed metric with all required results being calculated. " +
+        s"Currently results available for following metrics: ${results.mkString("[", ",", "]")}. " +
+        s"The list of remaining unresolved composed metrics is: ${cm.map(_.metricId).mkString("[", ",", "]")}."
+    )
+    else {
+      val checkedCm = cm(idx)
+      val requiredResults = getTokens(checkedCm.metricFormula).distinct
+      if (requiredResults.forall(results.contains)) checkedCm -> cm.zipWithIndex.filter(_._2 != idx).map(_._1)
+      else getNextCM(cm, results, idx + 1)
+    }
+  }
+  
+  /**
    * Process all composed metrics given already calculated metrics.
    *
    * @note TopN metric cannot be used in composed metric calculation and will be filtered out.
@@ -50,7 +80,6 @@ object BasicMetricProcessor {
    */
   def processComposedMetrics(composedMetrics: Seq[ComposedMetric],
                              computedMetrics: Seq[MetricCalculatorResult]): MetricResults = {
-
 
     /**
      * Iterates over composed metric sequence and computes then.
@@ -68,8 +97,9 @@ object BasicMetricProcessor {
       if (composed.isEmpty) results
       else {
         val calculator = ComposedMetricCalculator(computed)
-        val processedMetric = calculator.run(composed.head)
-        loop(composed.tail, computed :+ processedMetric, results :+ processedMetric)
+        val (currentCm, remainingCm) = getNextCM(composed, computed.map(_.metricId).toSet)
+        val processedMetric = calculator.run(currentCm)
+        loop(remainingCm, computed :+ processedMetric, results :+ processedMetric)
       }
     }
 

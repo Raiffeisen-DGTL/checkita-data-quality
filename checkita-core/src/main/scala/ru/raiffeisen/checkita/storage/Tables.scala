@@ -82,7 +82,7 @@ class Tables(val profile: JdbcProfile) {
       jobId === r.jobId && metricId === r.metricId && metricName === r.metricName && referenceDate === r.referenceDate
   }
   
-  class ResultMetricComposedTable(tag: Tag,schema: Option[String])
+  class ResultMetricComposedTable(tag: Tag, schema: Option[String])
     extends MetricResultTable[ResultMetricComposed](tag, schema, "results_metric_composed") {
 
     def formula: Rep[String] = column[String]("formula")
@@ -102,6 +102,29 @@ class Tables(val profile: JdbcProfile) {
     ) <> (ResultMetricComposed.tupled, ResultMetricComposed.unapply)
 
     def getUniqueCond(r: ResultMetricComposed): Rep[Boolean] =
+      jobId === r.jobId && metricId === r.metricId && referenceDate === r.referenceDate
+  }
+
+  class ResultMetricTrendTable(tag: Tag, schema: Option[String])
+    extends MetricResultTable[ResultMetricTrend](tag, schema, "results_metric_trend") {
+
+    def params: Rep[Option[String]] = column[Option[String]]("params")
+
+    override def * : ProvenShape[ResultMetricTrend] = (
+      jobId,
+      metricId,
+      metricName,
+      description,
+      metadata,
+      sourceId,
+      params,
+      result,
+      additionalResult,
+      referenceDate,
+      executionDate
+    ) <> (ResultMetricTrend.tupled, ResultMetricTrend.unapply)
+
+    def getUniqueCond(r: ResultMetricTrend): Rep[Boolean] =
       jobId === r.jobId && metricId === r.metricId && referenceDate === r.referenceDate
   }
 
@@ -213,6 +236,12 @@ class Tables(val profile: JdbcProfile) {
       type T = ResultMetricComposedTable
       def getTableQuery(schema: Option[String]): TableQuery[ResultMetricComposedTable] =
         TableQuery[ResultMetricComposedTable]((t: Tag) => new ResultMetricComposedTable(t, schema))
+    }
+
+    implicit object ResultMetricTrendTableOps extends DQTableOps[ResultMetricTrend] {
+      type T = ResultMetricTrendTable
+      def getTableQuery(schema: Option[String]): TableQuery[ResultMetricTrendTable] =
+        TableQuery[ResultMetricTrendTable]((t: Tag) => new ResultMetricTrendTable(t, schema))
     }
 
     implicit object ResultCheckTableOps extends DQTableOps[ResultCheck] {

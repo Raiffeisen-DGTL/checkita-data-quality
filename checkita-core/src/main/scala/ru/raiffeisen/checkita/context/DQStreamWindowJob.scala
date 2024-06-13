@@ -7,7 +7,7 @@ import ru.raiffeisen.checkita.config.appconf.StreamConfig
 import ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig
 import ru.raiffeisen.checkita.config.jobconf.JobConfig
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
-import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig}
+import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig, TrendMetricConfig}
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.core.Source
@@ -19,7 +19,6 @@ import ru.raiffeisen.checkita.core.streaming.{CheckpointIO, ProcessorBuffer}
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
 import ru.raiffeisen.checkita.storage.Models.ResultSet
-import ru.raiffeisen.checkita.utils.EnrichedDT
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import scala.util.Try
@@ -35,6 +34,7 @@ import scala.util.Try
  * @param sources         Sequence of sources to process
  * @param metrics         Sequence of metrics to calculate
  * @param composedMetrics Sequence of composed metrics to calculate
+ * @param trendMetrics    Sequence of trend metrics to calculate
  * @param loadChecks      Sequence of load checks to perform
  * @param checks          Sequence of checks to perform
  * @param targets         Sequence of targets to send
@@ -52,6 +52,7 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
                                    sources: Seq[Source],
                                    metrics: Seq[RegularMetricConfig],
                                    composedMetrics: Seq[ComposedMetricConfig] = Seq.empty,
+                                   trendMetrics: Seq[TrendMetricConfig] = Seq.empty,
                                    checks: Seq[CheckConfig] = Seq.empty,
                                    loadChecks: Seq[LoadCheckConfig] = Seq.empty,
                                    targets: Seq[TargetConfig] = Seq.empty,

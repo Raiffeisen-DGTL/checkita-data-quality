@@ -1,7 +1,9 @@
 package ru.raiffeisen.checkita.config.jobconf
 
 import eu.timepit.refined.types.string.NonEmptyString
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
 import org.json4s.jackson.Serialization.write
+import ru.raiffeisen.checkita.config.Enums.TrendCheckRule
 import ru.raiffeisen.checkita.config.RefinedTypes._
 import ru.raiffeisen.checkita.config.jobconf.MetricParams._
 import ru.raiffeisen.checkita.core.metrics._
@@ -95,6 +97,20 @@ object Metrics {
     val metricFormula: String = formula.value
   }
 
+  /**
+   * Base class for trend metrics that computes statistics over historical metric results.
+   */
+  sealed abstract class TrendMetricConfig extends MetricConfig with TrendMetric {
+    val lookupMetric: ID
+    val windowSize: NonEmptyString
+    val windowOffset: Option[NonEmptyString]
+    val paramString: Option[String]
+    
+    override val lookupMetricId: String = lookupMetric.value
+    override val wSize: String = windowSize.value
+    override val wOffset: Option[String] = windowOffset.map(_.value)
+  }
+  
   /** Row count metric configuration
    *
    * @param id          Metric ID
@@ -1259,6 +1275,233 @@ object Metrics {
     )
   }
 
+  /**
+   * Average trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class AvgTrendMetricConfig(
+                                         id: ID,
+                                         description: Option[NonEmptyString],
+                                         lookupMetric: ID,
+                                         rule: TrendCheckRule,
+                                         windowSize: NonEmptyString,
+                                         windowOffset: Option[NonEmptyString],
+                                         metadata: Seq[SparkParam] = Seq.empty
+                                       ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getMean
+    val metricName: MetricName = MetricName.TrendAvg
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Standard deviation trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class StdTrendMetricConfig(
+                                         id: ID,
+                                         description: Option[NonEmptyString],
+                                         lookupMetric: ID,
+                                         rule: TrendCheckRule,
+                                         windowSize: NonEmptyString,
+                                         windowOffset: Option[NonEmptyString],
+                                         metadata: Seq[SparkParam] = Seq.empty
+                                       ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getStandardDeviation
+    val metricName: MetricName = MetricName.TrendStd
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Min trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class MinTrendMetricConfig(
+                                         id: ID,
+                                         description: Option[NonEmptyString],
+                                         lookupMetric: ID,
+                                         rule: TrendCheckRule,
+                                         windowSize: NonEmptyString,
+                                         windowOffset: Option[NonEmptyString],
+                                         metadata: Seq[SparkParam] = Seq.empty
+                                       ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getMin
+    val metricName: MetricName = MetricName.TrendMin
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Max trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class MaxTrendMetricConfig(
+                                         id: ID,
+                                         description: Option[NonEmptyString],
+                                         lookupMetric: ID,
+                                         rule: TrendCheckRule,
+                                         windowSize: NonEmptyString,
+                                         windowOffset: Option[NonEmptyString],
+                                         metadata: Seq[SparkParam] = Seq.empty
+                                       ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getMax
+    val metricName: MetricName = MetricName.TrendMax
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Sum trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class SumTrendMetricConfig(
+                                         id: ID,
+                                         description: Option[NonEmptyString],
+                                         lookupMetric: ID,
+                                         rule: TrendCheckRule,
+                                         windowSize: NonEmptyString,
+                                         windowOffset: Option[NonEmptyString],
+                                         metadata: Seq[SparkParam] = Seq.empty
+                                       ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getSum
+    val metricName: MetricName = MetricName.TrendSum
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Median trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class MedianTrendMetricConfig(
+                                            id: ID,
+                                            description: Option[NonEmptyString],
+                                            lookupMetric: ID,
+                                            rule: TrendCheckRule,
+                                            windowSize: NonEmptyString,
+                                            windowOffset: Option[NonEmptyString],
+                                            metadata: Seq[SparkParam] = Seq.empty
+                                          ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getPercentile(50)
+    val metricName: MetricName = MetricName.TrendMedian
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * First Quartile trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class FirstQuartileTrendMetricConfig(
+                                                   id: ID,
+                                                   description: Option[NonEmptyString],
+                                                   lookupMetric: ID,
+                                                   rule: TrendCheckRule,
+                                                   windowSize: NonEmptyString,
+                                                   windowOffset: Option[NonEmptyString],
+                                                   metadata: Seq[SparkParam] = Seq.empty
+                                                 ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getPercentile(25)
+    val metricName: MetricName = MetricName.TrendFirstQ
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Third Quartile trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class ThirdQuartileTrendMetricConfig(
+                                                   id: ID,
+                                                   description: Option[NonEmptyString],
+                                                   lookupMetric: ID,
+                                                   rule: TrendCheckRule,
+                                                   windowSize: NonEmptyString,
+                                                   windowOffset: Option[NonEmptyString],
+                                                   metadata: Seq[SparkParam] = Seq.empty
+                                                 ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getPercentile(75)
+    val metricName: MetricName = MetricName.TrendThirdQ
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Quantile trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param quantile     Quantile to compute over historical metric results (must be a number in range [0, 1]).
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class QuantileTrendMetricConfig(
+                                              id: ID,
+                                              description: Option[NonEmptyString],
+                                              lookupMetric: ID,
+                                              quantile: PercentileDouble,
+                                              rule: TrendCheckRule,
+                                              windowSize: NonEmptyString,
+                                              windowOffset: Option[NonEmptyString],
+                                              metadata: Seq[SparkParam] = Seq.empty
+                                            ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getPercentile(quantile.value * 100)
+    val metricName: MetricName = MetricName.TrendQuantile
+    val paramString: Option[String] = Some(write(Map("quantile" -> quantile.value)))
+  }
+  
   /** Data Quality job configuration section describing regular metrics
     *
     * @param rowCount
@@ -1401,14 +1644,14 @@ object Metrics {
   }
 
   /** Data Quality job configuration section describing all metrics
-    *
-    * @param regular
-    *   Regular metrics of all subtypes
-    * @param composed
-    *   Sequence of composed metrics
-    */
+   *
+   * @param regular  Regular metrics of all subtypes
+   * @param composed Sequence of composed metrics
+   * @param trend    Sequence of trend metrics
+   */
   final case class MetricsConfig(
       regular: Option[RegularMetricsConfig],
-      composed: Seq[ComposedMetricConfig] = Seq.empty
+      composed: Seq[ComposedMetricConfig] = Seq.empty,
+      trend: Seq[TrendMetricConfig] = Seq.empty
   )
 }
