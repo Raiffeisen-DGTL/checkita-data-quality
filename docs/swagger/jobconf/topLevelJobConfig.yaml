@@ -31,21 +31,23 @@ properties:
         $ref: 'connectionsConfig.yaml'
       schemas:
        $ref: 'schemasConfig.yaml'
-      # sources: 
-      #   $ref: 'sourcesConfig.yaml'
-      # streams:
-      #   $ref: 'streamsConfig.yaml'
-      # virtualSources:
-      #   $ref: 'virtualSourcesConfig.yaml'
-      # virtualStreams:
-      #   $ref: 'virtualStreamsConfig.yaml'
-      # loadChecks:
-      #   $ref: 'loadChecksConfig.yaml'
-      # metrics:
-      #   $ref: 'metricsConfig.yaml'
-      # checks:
-      #   $ref: 'checksConfig.yaml'
-      # targets:
-      #   $ref: 'targetsConfig.yaml'
+      sources: 
+        $ref: 'sourcesConfig.yaml'
+      streams:
+        $ref: 'streamsConfig.yaml'
+      virtualSources:
+        $ref: 'virtualSourcesConfig.yaml'
+      virtualStreams:
+        $ref: 'virtualStreamsConfig.yaml'
+      loadChecks:
+        $ref: 'loadChecksConfig.yaml'
+      metrics:
+        $ref: 'metricsConfig.yaml'
+      checks:
+        $ref: 'checksConfig.yaml'
+      targets:
+        $ref: 'targetsConfig.yaml'
+      fileOutput:
+        $ref: 'fileOutput.yaml'
     required:
       - jobId
