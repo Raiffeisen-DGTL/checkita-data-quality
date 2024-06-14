@@ -1,0 +1,128 @@
+description: Checkita Data Quality Job Virtual Sources Configuration
+type: object
+properties:
+  virtualSources:
+    type: array
+    description: |-
+      Checkita framework supports creation of virtual (temporary) sources based on regular ones (defined in sources section of job configuration, as described in Sources Configuration chapter). Virtual sources are created by applying transformations to existing sources using Spark SQL API. Subsequently, metrics and checks can also be applied to virtual sources.
+
+      It is also important to note that virtual sources are created recursively, therefore, once a virtual source is created it can be used to create another one in the same way as regular sources. The order in which virtual sources are defined in the job configuration file is not important. On the contrary, virtual sources are read in the order that corresponds to their dependencies on parent sources.
+
+      The following types of virtual sources are supported:
+      
+      - **SQL**: enables creation of virtual source from existing ones using arbitrary SQL query.
+      - **Join**: creates virtual source by joining two (and only 2) existing sources.
+      - **Filter**: creates virtual source from existing one by applying filter expression.
+      - **Select**: creates virtual source from existing one by applying select expression.
+      - **Aggregate**: creates virtual source by applying groupBy and aggregate operations to existing one.
+
+      All types of virtual sources have common features:
+      
+      - It is possible to cache virtual sources in memory or on disk. This could be handy when a virtual source is used as a parent for more than one virtual source. In such cases, caching the virtual source allows not to calculate it multiple times.
+      - Virtual sources can be saved as a file in one of the supported formats. This feature can be used for debugging purposes or just to keep data transformations applied during quality checks.
+
+      Thus, virtual sources are defined in the virtualSources section of the job configuration and have the following common parameters:
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Required. Virtual source ID.
+        description:
+          type: string
+          description: Optional. Virtual source description.
+        parentSources:
+          type: array
+          description: Required. List of parent sources to use for creation of virtual sources. There could be limitations imposed on the number of parent sources, depending on the virtual source type.
+          items:
+            type: string
+        persist:
+          type: string
+          description: |-
+            Optional. One of the allowed Spark StorageLevels used to cache virtual sources. By default, virtual sources are not cached. Supported Spark StorageLevels are: NONE, DISK_ONLY, DISK_ONLY_2, MEMORY_ONLY, MEMORY_ONLY_2, MEMORY_ONLY_SER, MEMORY_ONLY_SER_2, MEMORY_AND_DISK, MEMORY_AND_DISK_2, MEMORY_AND_DISK_SER, MEMORY_AND_DISK_SER_2, OFF_HEAP.
+        save:
+          type: string
+          description: Optional. File output configuration used to save virtual source. By default, virtual sources are not saved. For more information on configuring file outputs, see File Output Configuration chapter.
+        keyFields:
+          type: array
+          description: Optional. List of columns that form a Primary Key or are used to identify row within a dataset. Key fields are primarily used in error collection reports. For more details on error collection, see Metric Error Collection chapter.
+          items:
+            type: string
+        metadata:
+          type: array
+          description: |-
+            Optional. List of user-defined metadata parameters specific to this virtual source where each parameter is a string in format: `param.name=param.value`.
+          items:
+            type: string
+
+  sqlVirtualSource:
+    type: object
+    description: SQL Virtual Source Configuration
+    properties:
+      kind:
+        type: string
+        description: Required. Sets SQL virtual source type.
+        example: sql
+      query:
+        type: string
+        description: Required. SQL query to build virtual source. Existing sources are referred in SQL query by their IDs.
+
+  joinVirtualSource:
+    type: object
+    description: Join Virtual Source Configuration
+    properties:
+      kind:
+        type: string
+        description: Required. Sets Join virtual source type.
+        example: join
+      joinBy:
+        type: array
+        description: Required. List of columns to join by. Thus, parent sources must have the same column names used for join.
+        items:
+          type: string
+      joinType:
+        type: string
+        description: |-
+          Required. Type of Spark join to apply. Supported join types: inner, outer, cross, full, right, left, semi, anti, fullOuter, rightOuter, leftOuter, leftSemi, leftAnti.
+        example: inner
+
+  filterVirtualSource:
+    type: object
+    description: Filter Virtual Source Configuration
+    properties:
+      kind:
+        type: string
+        description: Required. Sets Filter virtual source type.
+        example: filter
+      expr:
+        type: string
+        description: Required. Sequence of filter SQL expressions applied to parent source.
+
+  selectVirtualSource:
+    type: object
+    description: Select Virtual Source Configuration
+    properties:
+      kind:
+        type: string
+        description: Required. Sets Select virtual source type.
+        example: select
+      expr:
+        type: string
+        description: Required. Sequence of select SQL expressions applied to parent source.
+
+  aggregateVirtualSource:
+    type: object
+    description: Aggregate Virtual Source Configuration
+    properties:
+      kind:
+        type: string
+        description: Required. Sets Aggregate virtual source type.
+        example: aggregate
+      groupBy:
+        type: array
+        description: Required. Sequence of columns used to group rows from parent source.
+        items:
+          type: string
+      expr:
+        type: string
+        description: Required. Sequence of SQL expressions used to get columns with aggregated results.
