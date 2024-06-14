@@ -1,0 +1,12 @@
+description: |-
+      When running Data Quality checks over the streaming data sources it is required to apply transformations to them thus creating 
+      virtual streaming sources. Such sources have to be defined in the virtualStreams section of the job configuration. 
+      Transformations defined in this section are applied only to streaming sources using Spark Structured Streaming API. 
+      More details on running data quality checks over streaming sources are given in Data Quality Checks over Streaming Sources chapter.
+
+      The configuration of virtual streaming sources is the same as for the static ones. See chapter Virtual Sources Configuration for more details. 
+      In addition, the column used as the source of the timestamp for windowing can be redefined and derived from the resultant virtual stream schema. 
+      See Streaming Sources Configurations for more details on how to define the column used as the source of the timestamp.
+
+      It is important to note that not all supported virtual source types can be built from streaming sources. Currently, only filter and select 
+      types of virtual sources are supported in streaming applications.

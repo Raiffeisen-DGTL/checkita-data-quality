@@ -1,0 +1,1686 @@
+description: |-
+    Calculation of various metrics over the data is the main part of Data Quality job. Metrics allow evaluation of various indicators that describe data from both technical and business points of view. Indicators in their turn can signal about problems in the data.
+
+    All metrics are linked to a source over which they are calculated. Such metrics are called regular. Apart from regular metrics, there is a special kind of metrics that can be calculated based on other metrics results, thus allowing metric compositions. These metrics are called composed accordingly.
+
+    Metrics are defined in the metrics section of job configuration. Regular metrics are grouped by their type in the regular subsection, while composed metrics are listed in the composed subsection.
+type: object  
+properties:
+  regular:
+    type: object
+    description: "All regular metrics are defined using the following common parameters:"
+    properties:
+      id:
+        type: string
+        description: Required. Metric ID.
+        example: metric_1
+      description:
+        type: string
+        description: Optional. Metric description.
+        example: Calculating row count
+      source:
+        type: string
+        description: Required. Reference to a source ID over which the metric is calculated.
+        example: source_1
+      columns:
+        type: array
+        description: Required. List of columns over which the metric is calculated. Regular metrics can be calculated for multiple columns. This means that the result of the metrics will be calculated for row values in these columns. There could be a limitation imposed on the number of columns which metric can process. The only exception is Row Count Metric which does not need columns to be specified.
+        items:
+          type: string
+        example:
+          - column_1
+          - column_2
+      params:
+        type: object
+        description: Some of the metrics may require additional parameters to be set. They should be specified within this object. The details on what parameters should be configured for metric are given below for each metric individually. Some metric definitions that require additional parameters also have their default values set. In this case, the params object can be omitted to use default options for all parameters.
+      metadata:
+        type: array
+        description: |-
+          Optional. List of user-defined metadata parameters specific to this metric where each parameter is a string in format: param.name=param.value.
+        items:
+          type: string
+        example:
+          - critical.metric=true
+
+      rowCount:
+        type: object
+        description: |-
+          Calculates the number of rows in the source. This is the only metric for which the columns list should not be specified as it is not required to compute the number of rows. Metric definition does not require additional parameters: params should not be set.
+
+          Metric is not reversible and cannot fail (might only return Error status in case of some runtime exception).
+
+          All row count metrics are defined in the rowCount subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: row_count_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+
+      distinctValues:
+        type: object
+        description: |-
+          Counts the number of unique values in provided columns. When applied to multiple columns, the total number of unique values in these columns is returned. Metric definition does not require additional parameters: params should not be set.
+
+          Metric is not reversible and cannot fail (might only return Error status in case of some runtime exception).
+
+          All distinct values metrics are defined in the distinctValues subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: distinct_values_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+
+      approximateDistinctValues:
+        type: object
+        description: |-
+          Calculates the number of unique values approximately, using the HyperLogLog algorithm.
+
+          This metric works with only one column.
+
+          Metric is not reversible and fails only if the provided value cannot be cast to String.
+
+          All approximate distinct values metrics are defined in the approximateDistinctValues subsection. Additional parameters can be supplied:
+
+          - **accuracyError**: Optional, default is 0.01. Accuracy error for estimating the number of unique values.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: approximate_distinct_values_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+          params:
+            type: object
+            properties:
+              accuracyError:
+                type: number
+                description: Optional, default is 0.01. Accuracy error for estimating the number of unique values.
+                example: 0.01
+
+      nullValues:
+        type: object
+        description: |-
+          Counts the number of null values in the specified columns. When applied to multiple columns, the total number of null values in these columns is returned. Metric definition does not require additional parameters: params should not be set.
+
+          Metric is reversible. By default, the reversed parameter is set to true, i.e., error collection logic is reversed by default. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns are NON-null. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns are null.
+
+          All null values metrics are defined in the nullValues subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: null_values_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is true.
+                example: true
+
+      emptyValues:
+        type: object
+        description: |-
+          Counts the number of empty values in the specified columns (i.e., empty string values). When applied to multiple columns, the total number of empty values in these columns is returned. Metric definition does not require additional parameters: params should not be set.
+
+          Metric is reversible. By default, the reversed parameter is set to true, i.e., error collection logic is reversed by default. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns are non-empty. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns are empty.
+
+          All empty values metrics are defined in the emptyValues subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: empty_values_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is true.
+                example: true
+
+      completeness:
+        type: object
+        description: |-
+          Calculates the measure of completeness in the specified columns: (values_count - null_count) / values_count. When applied to multiple columns, the total number of values and total number of nulls are used in the equation above.
+
+          Additional parameters can be supplied:
+
+          - **includeEmptyStrings**: Optional, default is false. Boolean parameter indicating whether empty string values should be considered as nulls.
+          Metric is reversible. By default, the reversed parameter is set to true, i.e., error collection logic is reversed by default. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns are non-null (or non-empty if includeEmptyStrings is set to true). For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns are null (or empty if includeEmptyStrings is set to true).
+
+          All completeness metrics are defined in the completeness subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: completeness_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              includeEmptyStrings:
+                type: boolean
+                description: Optional. Boolean parameter indicating whether empty string values should be considered as nulls. Default is false.
+                example: false
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is true.
+                example: true
+
+      sequenceCompleteness:
+        type: object
+        description: |-
+          Calculates the measure of completeness of an incremental sequence of integers. In other words, it looks for the missing elements in the sequence and returns the relation: actual number of elements / required number of elements.
+
+          This metric works with only one column.
+
+          The actual number of elements is just the number of unique values in the sequence. This metric defines it exactly, and therefore requires O(N) memory to store these values. Therefore, to prevent OOM errors for extremely large sequences, it is recommended to use the Approximate Sequence Completeness Metric, which uses the HLL probabilistic algorithm to estimate the number of unique values.
+
+          The required number of elements is determined by the formula: (max_value - min_value) / increment + 1, Where:
+          - **min_value**: the minimum value in the sequence;
+          - **max_value**: the maximum value in the sequence;
+          - **increment**: sequence step, default is 1.
+
+          Additional parameters can be supplied:
+
+          - **increment**: Optional, default is 1. Sequence increment step.
+          Metric is not reversible and fails only if the provided column value cannot be cast to a number.
+
+          All sequence completeness metrics are defined in the sequenceCompleteness subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: sequence_completeness_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+          params:
+            type: object
+            properties:
+              increment:
+                type: number
+                description: Optional. Sequence increment step. Default is 1.
+                example: 1
+
+      approximateSequenceCompleteness:
+        type: object
+        description: |-
+          Calculates the measure of completeness of an incremental sequence of integers approximately using the HyperLogLog algorithm. Works in the same way as the Sequence Completeness Metric with the only difference that the actual number of elements in the sequence is determined approximately using the HLL algorithm.
+
+          This metric works with only one column.
+
+          Additional parameters can be supplied:
+
+          - **increment**: Optional, default is 1. Sequence increment step.
+          - **accuracyError**: Optional, default is 0.01. Accuracy error for estimating the number of unique values.
+          Metric is not reversible and fails only if the provided column value cannot be cast to a number.
+
+          All approximate sequence completeness metrics are defined in the approximateSequenceCompleteness subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: approximate_sequence_completeness_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+          params:
+            type: object
+            properties:
+              increment:
+                type: number
+                description: Optional. Sequence increment step. Default is 1.
+                example: 1
+              accuracyError:
+                type: number
+                description: Optional. Accuracy error for estimating the number of unique values. Default is 0.01.
+                example: 0.01
+
+      minString:
+        type: object
+        description: |-
+          Calculates the minimum string length in the values of the specified columns. Metric definition does not require additional parameters: params should not be set.
+
+          Metric increment returns Failure status for rows where all values in the specified columns are not castable to string and, therefore, minimum string length cannot be computed.
+
+          All minimum string metrics are defined in the minString subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: min_string_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+
+      maxString:
+        type: object
+        description: |-
+          Calculates the maximum string length in the values of the specified columns. Metric definition does not require additional parameters: params should not be set.
+
+          Metric is not reversible. Metric increment returns Failure status for rows where all values in the specified columns cannot be cast to string and, therefore, maximum string length cannot be computed.
+
+          All maximum string metrics are defined in the maxString subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: max_string_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+
+      avgString:
+        type: object
+        description: |-
+          Calculates the average string length in the values of the specified columns. Metric definition does not require additional parameters: params should not be set.
+
+          Metric is not reversible. Metric increment returns Failure status for rows where all values in the specified columns cannot be cast to string and, therefore, average string length cannot be computed.
+
+          All average string metrics are defined in the avgString subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: avg_string_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+
+      stringLength:
+        type: object
+        description: |-
+          Calculate the number of values that meet the defined string length criteria. Additional parameters should be supplied:
+
+          - **length**: Required. Required string length threshold.
+          - **compareRule**: Required. Comparison rule used to compare actual value string length with threshold one.
+          Following comparison rules are supported: eq (==), lt (<), lte (<=), gt (>), gte (>=).
+          Metric is reversible. By default, the reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not meet defined string length criteria. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns DO meet defined string length criteria.
+
+          All string length metrics are defined in the stringLength subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: string_length_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              length:
+                type: integer
+                description: Required. Required string length threshold.
+                example: 10
+              compareRule:
+                type: string
+                description: |-
+                  Required. Comparison rule used to compare actual value string length with threshold one. Supported rules: eq (==), lt (<), lte (<=), gt (>), gte (>=).
+                example: eq
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      stringInDomain:
+        type: object
+        description: |-
+          Counts the number of values which fall into the specified set of allowed values. Additional parameters should be supplied:
+
+          - **domain**: Required. List of allowed values.
+          Metric is reversible. By default, the reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not fall into the set of allowed values. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns ARE IN the set of allowed values.
+
+          All string in domain metrics are defined in the stringInDomain subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: string_in_domain_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              domain:
+                type: array
+                description: Required. List of allowed values.
+                items:
+                  type: string
+                example:
+                  - allowed_value_1
+                  - allowed_value_2
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      stringOutDomain:
+        type: object
+        description: |-
+          Counts the number of values which do not fall into the specified set of avoided values. Additional parameters should be supplied:
+
+          - **domain**: Required. List of avoided values.
+          Metric is reversible. By default, the reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns are in the set of avoided values. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns DO NOT fall into the set of avoided values.
+
+          All string out domain metrics are defined in the stringOutDomain subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: string_out_domain_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              domain:
+                type: array
+                description: Required. List of avoided values.
+                items:
+                  type: string
+                example:
+                  - avoided_value_1
+                  - avoided_value_2
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      stringValues:
+        type: object
+        description: |-
+          Counts the number of values that are equal to the value given in metric definition. Additional parameters should be supplied:
+
+          - **compareValue**: Required. String value to compare with.
+          Metric is reversible. By default, the reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not equal the defined compare value. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns DO equal the defined compare value.
+
+          All string values metrics are defined in the stringValues subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: string_values_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              compareValue:
+                type: string
+                description: Required. String value to compare with.
+                example: compare_value_1
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      regexMatch:
+        type: object
+        description: |-
+          Calculates the number of values that match the defined regular expression. Additional parameters should be supplied:
+
+          - **regex**: Required. Regular expression to match.
+          Metric is reversible. By default, the reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not match the defined regular expression. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns DO match the defined regular expression.
+
+          All regex match metrics are defined in the regexMatch subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: regex_match_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              regex:
+                type: string
+                description: Required. Regular expression to match.
+                example: "^[a-zA-Z0-9_]+$"
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      regexMismatch:
+        type: object
+        description: |-
+          Calculates the number of values that do not match the defined regular expression. Additional parameters should be supplied:
+
+          - **regex**: Required. Regular expression that values should not match.
+          Metric is reversible. By default, the reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns DO match the defined regular expression. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns do not match the defined regular expression.
+
+          All regex mismatch metrics are defined in the regexMismatch subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: regex_mismatch_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              regex:
+                type: string
+                description: Required. Regular expression that values should not match.
+                example: "^[a-zA-Z0-9_]+$"
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      formattedDate:
+        type: object
+        description: |-
+          Counts the number of values which have the specified datetime format. Additional parameters can be supplied:
+
+          - **dateFormat**: Optional, default is yyyy-MM-dd'T'HH:mm:ss.SSSZ. Target datetime format. The datetime format must be specified as Java DateTimeFormatter pattern.
+          NOTE: If the specified columns are of type Timestamp, it is assumed that they fit any datetime format and, therefore, the metric will return the total number of non-empty cells. Accordingly, the datetime format does not need to be specified.
+
+          Metric is reversible. By default, the reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not conform to the defined datetime format. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns DO conform to the defined datetime format.
+
+          All formatted date metrics are defined in the formattedDate subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: formatted_date_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              dateFormat:
+                type: string
+                description: Optional. Target datetime format. Default is yyyy-MM-dd'T'HH:mm:ss.SSSZ. The datetime format must be specified as Java DateTimeFormatter pattern.
+                example: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      formattedNumber:
+        type: object
+        description: |-
+          Counts number of values which are numeric and number format satisfy defined number format criteria. Additional parameters should be supplied:
+
+          - **precision**: Required. The total number of digits in the value (excluding the decimal separator).
+          - **scale**: Required. Number of decimal digits in the value.
+          - **compareRule**: Optional, default is inbound. Number format comparison rule:
+            - **inbound**: the value must "fit" into the specified number format: actual precision and scale of the value are less than or equal to given ones.
+            - **outbound**: the value must be outside the specified format: actual precision and scale of the value are strictly greater than given ones.
+          Metric is reversible. By default, reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not satisfy defined number format criteria. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns DO meet defined number format criteria.
+
+          All formatted number metrics are defined in the formattedNumber subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: formatted_number_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              precision:
+                type: integer
+                description: Required. The total number of digits in the value (excluding the decimal separator).
+                example: 10
+              scale:
+                type: integer
+                description: Required. Number of decimal digits in the value.
+                example: 2
+              compareRule:
+                type: string
+                description: Optional, default is inbound. Number format comparison rule.
+                enum:
+                  - inbound
+                  - outbound
+                example: inbound
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      minNumber:
+        type: object
+        description: |-
+          Finds minimum number from the values in the specified columns. Metric definition does not require additional parameters: params should not be set.
+
+          Metrics is not reversible and increment returns Failure status for rows where all values in the specified columns cannot be cast to number and, therefore, minimum number cannot be computed.
+
+          All minimum number metrics are defined in the minNumber subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: min_number_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            description: Parameters should not be set.
+
+      maxNumber:
+        type: object
+        description: |-
+          Finds maximum number from the values in the specified columns. Metric definition does not require additional parameters: params should not be set.
+
+          Metrics is not reversible and increment returns Failure status for rows where all values in the specified columns cannot be cast to number and, therefore, maximum number cannot be computed.
+
+          All maximum number metrics are defined in the maxNumber subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: max_number_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            description: Parameters should not be set.
+
+      sumNumber:
+        type: object
+        description: |-
+          Finds sum of the values in the specified columns. Metric definition does not require additional parameters: params should not be set.
+
+          Metrics is not reversible and increment returns Failure status for rows where some values in the specified columns cannot be cast to number.
+
+          All sum number metrics are defined in the sumNumber subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: sum_number_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            description: Parameters should not be set.
+
+      avgNumber:
+        type: object
+        description: |-
+          Finds average of the values in the specified column. Metric definition does not require additional parameters: params should not be set.
+
+          This metric works with only one column.
+
+          Metric is not reversible and metric increment returns Failure status for rows where value in the specified column cannot be cast to number.
+
+          All average number metrics are defined in the avgNumber subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: avg_number_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+          params:
+            type: object
+            description: Parameters should not be set.
+
+      stdNumber:
+        type: object
+        description: |-
+          Finds standard deviation for the values in the specified column. Metric definition does not require additional parameters: params should not be set.
+
+          This metric works with only one column.
+
+          Metric is not reversible and metric increment returns Failure status for rows where value in the specified column cannot be cast to number.
+
+          All standard deviation number metrics are defined in the stdNumber subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: std_number_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+          params:
+            type: object
+            description: Parameters should not be set.
+
+      castedNumber:
+        type: object
+        description: |-
+          Counts number of values which string value can be converted to a number (double). Metric definition does not require additional parameters: params should not be set.
+
+          Metric is reversible. By default, reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns cannot be cast to number. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns CAN be cast to number.
+
+          All casted number metrics are defined in the castedNumber subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: casted_number_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            description: Parameters should not be set.
+            properties:
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      numberInDomain:
+        type: object
+        description: |-
+          Counts number of values which being cast to number (double) fall into specified set of allowed numbers. Additional parameters should be supplied:
+
+          - **domain**: Required. List of allowed numbers.
+          Metric is reversible. By default, reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not fall into set of allowed numbers. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns ARE IN set of allowed numbers.
+
+          All number in domain metrics are defined in the numberInDomain subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: number_in_domain_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              domain:
+                type: array
+                description: Required. List of allowed numbers.
+                items:
+                  type: number
+                example:
+                  - 1.1
+                  - 2.2
+                  - 3.3
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      numberOutDomain:
+        type: object
+        description: |-
+          Counts number of values which being cast to number (double) do not fall into specified set of avoided numbers. Additional parameters should be supplied:
+
+          - **domain**: Required. List of avoided numbers.
+          Metric is reversible. By default, reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns are in set of allowed numbers. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns do not fall into set of allowed numbers.
+
+          All number out domain metrics are defined in the numberOutDomain subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: number_out_domain_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              domain:
+                type: array
+                description: Required. List of avoided numbers.
+                items:
+                  type: number
+                example:
+                  - 1.1
+                  - 2.2
+                  - 3.3
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      numberLessThan:
+        type: object
+        description: |-
+          Counts number of values which being cast to number (double) are less than (or equal to) the specified value. Additional parameters should be supplied:
+
+          - **compareValue**: Required. Number to compare with.
+          - **includeBound**: Optional, default is false. Specifies whether to include compareValue in the range for comparison.
+          Metric is reversible. By default, reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not satisfy the comparison criteria. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns DO MEET the comparison criteria.
+
+          All number less than metrics are defined in the numberLessThan subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: number_less_than_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              compareValue:
+                type: number
+                description: Required. Number to compare with.
+                example: 100
+              includeBound:
+                type: boolean
+                description: Optional, default is false. Specifies whether to include compareValue in the range for comparison.
+                example: false
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      numberGreaterThan:
+        type: object
+        description: |-
+          Counts number of values which being cast to number (double) are greater than (or equal to) the specified value. Additional parameters should be supplied:
+
+          - **compareValue**: Required. Number to compare with.
+          - **includeBound**: Optional, default is false. Specifies whether to include compareValue in the range for comparison.
+          Metric is reversible. By default, reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not satisfy the comparison criteria. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns DO MEET the comparison criteria.
+
+          All number greater than metrics are defined in the numberGreaterThan subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: number_greater_than_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              compareValue:
+                type: number
+                description: Required. Number to compare with.
+                example: 100
+              includeBound:
+                type: boolean
+                description: Optional, default is false. Specifies whether to include compareValue in the range for comparison.
+                example: false
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      numberBetween:
+        type: object
+        description: |-
+          Counts number of values which being cast to number (double) are within the given interval. Additional parameters should be supplied:
+
+          - **lowerCompareValue**: Required. The lower bound of the interval.
+          - **upperCompareValue**: Required. The upper bound of the interval.
+          - **includeBound**: Optional, default is false. Specifies whether to include interval bounds in the range for comparison.
+          Metric is reversible. By default, reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not satisfy the comparison criteria. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns DO MEET the comparison criteria.
+
+          All number between metrics are defined in the numberBetween subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: number_between_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              lowerCompareValue:
+                type: number
+                description: Required. The lower bound of the interval.
+                example: 10
+              upperCompareValue:
+                type: number
+                description: Required. The upper bound of the interval.
+                example: 20
+              includeBound:
+                type: boolean
+                description: Optional, default is false. Specifies whether to include interval bounds in the range for comparison.
+                example: false
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      numberNotBetween:
+        type: object
+        description: |-
+          Counts number of values which being cast to number (double) are outside the given interval. Additional parameters should be supplied:
+
+          - **lowerCompareValue**: Required. The lower bound of the interval.
+          - **upperCompareValue**: Required. The upper bound of the interval.
+          - **includeBound**: Optional, default is false. Specifies whether to include interval bounds in the range for comparison.
+          Metric is reversible. By default, reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not satisfy the comparison criteria. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns DO MEET the comparison criteria.
+
+          All number not between metrics are defined in the numberNotBetween subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: number_not_between_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              lowerCompareValue:
+                type: number
+                description: Required. The lower bound of the interval.
+                example: 10
+              upperCompareValue:
+                type: number
+                description: Required. The upper bound of the interval.
+                example: 20
+              includeBound:
+                type: boolean
+                description: Optional, default is false. Specifies whether to include interval bounds in the range for comparison.
+                example: false
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      numberValues:
+        type: object
+        description: |-
+          Counts number of values which being cast to number (double) are equal to the number given in metric definition. Additional parameters should be supplied:
+
+          - **compareValue**: Required. Number value to compare with.
+          Metric is reversible. By default, reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not equal to defined compare value. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns DO equal to defined compare value.
+
+          All number values metrics are defined in the numberValues subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: number_values_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              compareValue:
+                type: number
+                description: Required. Number value to compare with.
+                example: 50
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      medianValue:
+        type: object
+        description: |-
+          Calculates median value of the values in the specified column. Metric calculator uses TDigest library for computation of median value.
+
+          This metric works with only one column. Additional parameters can be supplied:
+
+          - **accuracyError**: Optional, default is 0.01. Accuracy error for calculation of median value.
+          Metric is not reversible and metric increment returns Failure status for rows where value in the specified column cannot be cast to number.
+
+          All median value metrics are defined in the medianValue subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: median_value_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+          params:
+            type: object
+            properties:
+              accuracyError:
+                type: number
+                description: Optional, default is 0.01. Accuracy error for calculation of median value.
+                example: 0.01
+
+      firstQuantile:
+        type: object
+        description: |-
+          Calculates first quantile for the values in the specified column. Metric calculator uses TDigest library for computation of first quantile.
+
+          This metric works with only one column. Additional parameters can be supplied:
+
+          - **accuracyError**: Optional, default is 0.01. Accuracy error for calculation of first quantile value.
+          Metric is not reversible and metric increment returns Failure status for rows where value in the specified column cannot be cast to number.
+
+          All first quantile metrics are defined in the firstQuantile subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: first_quantile_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+          params:
+            type: object
+            properties:
+              accuracyError:
+                type: number
+                description: Optional, default is 0.01. Accuracy error for calculation of first quantile value.
+                example: 0.01
+
+      thirdQuantile:
+        type: object
+        description: |-
+          Calculates third quantile for the values in the specified column. Metric calculator uses TDigest library for computation of third quantile.
+
+          This metric works with only one column. Additional parameters can be supplied:
+
+          - **accuracyError**: Optional, default is 0.01. Accuracy error for calculation of third quantile value.
+          Metric is not reversible and metric increment returns Failure status for rows where value in the specified column cannot be cast to number.
+
+          All third quantile metrics are defined in the thirdQuantile subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: third_quantile_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+          params:
+            type: object
+            properties:
+              accuracyError:
+                type: number
+                description: Optional, default is 0.01. Accuracy error for calculation of third quantile value.
+                example: 0.01
+
+      getQuantile:
+        type: object
+        description: |-
+          Calculates an arbitrary quantile for the values in the specified column. Metric calculator uses TDigest library for computation of quantile.
+
+          This metric works with only one column. Additional parameters should be supplied:
+
+          - **accuracyError**: Optional, default is 0.01. Accuracy error for calculation of quantile value.
+          - **target**: Required. A number in the interval [0, 1] corresponding to the quantile that needs to be calculated.
+          Metric is not reversible and metric increment returns Failure status for rows where value in the specified column cannot be cast to number.
+
+          All get quantile metrics are defined in the getQuantile subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: get_quantile_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+          params:
+            type: object
+            properties:
+              accuracyError:
+                type: number
+                description: Optional, default is 0.01. Accuracy error for calculation of quantile value.
+                example: 0.01
+              target:
+                type: number
+                description: Required. A number in the interval [0, 1] corresponding to the quantile that needs to be calculated.
+                example: 0.75
+
+      getPercentile:
+        type: object
+        description: |-
+          This metric is inverse of Get Quantile Metric. It calculates a percentile value (quantile in %) which corresponds to the specified number from the set of values in the column. Metric calculator uses TDigest library for computation of percentile value.
+
+          This metric works with only one column. Additional parameters should be supplied:
+
+          - **accuracyError**: Optional, default is 0.01. Accuracy error for calculation of percentile.
+          - **target**: Required. The number from the set of values in the column, for which percentile is determined.
+          Metric is not reversible and metric increment returns Failure status for rows where value in the specified column cannot be cast to number.
+
+          All get percentile metrics are defined in the getPercentile subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: get_percentile_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+          params:
+            type: object
+            properties:
+              accuracyError:
+                type: number
+                description: Optional, default is 0.01. Accuracy error for calculation of percentile.
+                example: 0.01
+              target:
+                type: number
+                description: Required. The number from the set of values in the column, for which percentile is determined.
+                example: 75
+
+      columnEquality:
+        type: object
+        description: |-
+          Calculates the number of rows where values in the specified columns are equal to each other. Metric definition does not require additional parameters: params should not be set.
+
+          This metric works with at least two columns.
+
+          Metric is reversible. By default, reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns cannot be cast to string or are not equal. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns cannot be cast to string or ARE equal.
+
+          All column equality metrics are defined in the columnEq subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: column_equality_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      dayDistance:
+        type: object
+        description: |-
+          Calculates the number of rows where difference between date in two columns expressed in terms of days is less (strictly less) than the specified threshold value.
+
+          This metric works with exactly two columns. Additional parameters should be supplied:
+
+          - **threshold**: Required. Maximum allowed difference between two dates in days (not included in the range for comparison).
+          - **dateFormat**: Optional, default is yyyy-MM-dd'T'HH:mm:ss.SSSZ. Target datetime format. The datetime format must be specified as Java DateTimeFormatter pattern.
+          NOTE If the specified columns are of type Timestamp, it is assumed that they fit any datetime format and, therefore, metric will return the total number of non-empty cells. Accordingly, the datetime format does not need to be specified.
+
+          Metric is reversible. By default, reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns do not conform to the specified datetime format or when date difference in days is greater than or equal to specified threshold. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns do not conform to the specified datetime format or when date difference in days is lower than specified threshold.
+
+          All day distance metrics are defined in the dayDistance subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: day_distance_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              threshold:
+                type: number
+                description: Required. Maximum allowed difference between two dates in days.
+                example: 7
+              dateFormat:
+                type: string
+                description: Optional, default is yyyy-MM-dd'T'HH:mm:ss.SSSZ. Target datetime format.
+                example: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      levenshteinDistance:
+        type: object
+        description: |-
+          Calculates number of rows where Levenshtein distance between string values in the provided columns is less than (strictly less) specified threshold.
+
+          This metric works with exactly two columns. Additional parameters should be supplied:
+
+          - **threshold**: Required. Maximum allowed Levenshtein distance.
+          - **normalize**: Optional, default is false. Boolean parameter indicating whether the Levenshtein distance should be normalized with respect to the maximum of the two string lengths.
+          IMPORTANT. If Levenshtein distance is normalized then threshold value must be in range [0, 1].
+
+          Metric is reversible. By default, reversed parameter is set to false. For direct error collection logic, metric increment returns Failure status for rows where some values in the specified columns cannot be cast to string or when Levenshtein distance is greater than or equal to specified threshold. For reversed error collection logic (default one), metric increment returns Failure status when some values in the specified columns cannot be cast to string or when Levenshtein distance is lower than specified threshold.
+
+          All levenshtein distance metrics are defined in the levenshteinDistance subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: levenshtein_distance_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+          params:
+            type: object
+            properties:
+              threshold:
+                type: number
+                description: Required. Maximum allowed Levenshtein distance.
+                example: 2
+              normalize:
+                type: boolean
+                description: Optional, default is false. Boolean parameter indicating whether the Levenshtein distance should be normalized with respect to the maximum of the two string lengths.
+                example: false
+              reversed:
+                type: boolean
+                description: Optional. Boolean parameter indicating if error collection logic should be reversed. Default is false.
+                example: false
+
+      coMoment:
+        type: object
+        description: |-
+          Calculates the covariance moment of the values in two columns (co-moment). Metric definition does not require additional parameters: params should not be set.
+
+          This metric works with exactly two columns.
+
+          IMPORTANT. For the metric to be calculated, values in the specified columns must not be empty or null and also can be cast to number (double). If at least one corrupt value is found, then metric calculator returns NaN value.
+
+          Metric is not reversible and metric increment returns Failure status for rows where some values in the specified columns cannot be cast to number.
+
+          All co-moment metrics are defined in the coMoment subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: co_moment_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+
+      covariance:
+        type: object
+        description: |-
+          Calculates the covariance of the values in two columns. Metric definition does not require additional parameters: params should not be set.
+
+          This metric works with exactly two columns.
+
+          IMPORTANT. For the metric to be calculated, values in the specified columns must not be empty or null and also can be cast to number (double). If at least one corrupt value is found, then metric calculator returns NaN value.
+
+          Metric is not reversible and metric increment returns Failure status for rows where some values in the specified columns cannot be cast to number.
+
+          All covariance metrics are defined in the covariance subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: covariance_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+
+      covarianceBessel:
+        type: object
+        description: |-
+          Calculates the covariance of the values in two columns with the Bessel correction. Metric definition does not require additional parameters: params should not be set.
+
+          This metric works with exactly two columns.
+
+          IMPORTANT. For the metric to be calculated, values in the specified columns must not be empty or null and also can be cast to number (double). If at least one corrupt value is found, then metric calculator returns NaN value.
+
+          Metric is not reversible and metric increment returns Failure status for rows where some values in the specified columns cannot be cast to number.
+
+          All covariance metrics are defined in the covarianceBessel subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: covariance_bessel_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+              - column_2
+
+      topN:
+        type: object
+        description: |-
+          This is a specific metric that calculates approximate N most frequently occurring values in a column. The metric calculator uses Twitter Algebird library, which implements abstract algebra methods for Scala.
+
+          This metric works with only one column.
+
+          Additional parameters can be supplied:
+
+          - **targetNumber**: Optional, default is 10. Number N of values to search.
+          - **maxCapacity**: Optional, default is 100. Maximum container size for storing top values.
+          Metric is not reversible and metric increment returns Failure status for rows where some values in the specified columns cannot be cast to string.
+
+          All top N metrics are defined in the topN subsection.
+        properties:
+          id:
+            type: string
+            description: Required. Metric ID.
+            example: top_n_metric_1
+          source:
+            type: string
+            description: Required. Reference to a source ID over which the metric is calculated.
+            example: source_1
+          columns:
+            type: array
+            description: Required. List of columns over which the metric is calculated.
+            items:
+              type: string
+            example:
+              - column_1
+          params:
+            type: object
+            properties:
+              targetNumber:
+                type: number
+                description: Optional, default is 10. Number N of values to search.
+                example: 10
+              maxCapacity:
+                type: number
+                description: Optional, default is 100. Maximum container size for storing top values.
+                example: 100
+
+      composed:
+        type: object
+        description: |-
+          Composed metrics are defined using a formula (specified in the formula field) for their calculation. As composed metrics are intended for using other metric results to compute a derivative result then, these metrics can be referenced in the formula by their IDs.
+
+          Formula must be written using Mustache Template notation, e.g.: {{ metric_1 }} + {{ metric_2 }}.
+
+          Basic (+-*/) and exponentiation (^) math operations are supported, as well as grouping using parentheses.
+
+          Thus, composed metrics are defined in the composed subsection using the following parameters:
+        properties:
+          id:
+            type: string
+            description: Required. Composed metric ID.
+            example: composed_metric_1
+          description:
+            type: string
+            description: Optional. Composed metric description.
+          formula:
+            type: string
+            description: Required. Formula to calculate composed metric.
+            example: '{{ metric_1 }} + {{ metric_2 }}'
+        
