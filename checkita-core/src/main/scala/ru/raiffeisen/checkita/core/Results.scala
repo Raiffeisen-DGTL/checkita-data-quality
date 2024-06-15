@@ -187,20 +187,24 @@ object Results {
    * @param checkId           Check ID
    * @param checkName         Check calculator name
    * @param baseMetric        Base metric used to build check
-   * @param comparedMetric    Metric to compare with
+   * @param comparedMetric    Sequence of metrics to compare with.
    * @param comparedThreshold Threshold to compare with
    * @param lowerBound        Allowed lower bound for base metric value
    * @param upperBound        Allowed upper bound for base metric value
    * @param status            Check status
    * @param message           Check message
    * @param resultType        Type of result
+   *                          
+   * @note Expression checks can utilize multiple metrics. Therefore, compareMetric field is represented as
+   *       sequence: when compare metric is absent the empty sequence will be written, 
+   *       otherwise sequence containing one or more metric IDs will be written.
    */
   final case class CheckCalculatorResult(
                                           checkId: String,
                                           checkName: String,
                                           sourceIds: Seq[String],
                                           baseMetric: String,
-                                          comparedMetric: Option[String],
+                                          comparedMetric: Seq[String],
                                           comparedThreshold: Option[Double],
                                           lowerBound: Option[Double],
                                           upperBound: Option[Double],
@@ -229,7 +233,7 @@ object Results {
         metadata,
         write(sourceIds),
         baseMetric,
-        comparedMetric,
+        Some(write(comparedMetric)),
         comparedThreshold,
         lowerBound,
         upperBound,

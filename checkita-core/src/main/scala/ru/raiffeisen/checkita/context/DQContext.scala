@@ -117,7 +117,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       case None => Seq(
         "* Storage configuration:",
         "  - Configuration is empty. Results will not be saved. " +
-          "Also trend checks execution is impossible and will be skipped."
+          "Also trend metrics and trend checks execution is impossible and will be skipped."
       )
     }
     val logEmailConfig = settings.emailConfig match {

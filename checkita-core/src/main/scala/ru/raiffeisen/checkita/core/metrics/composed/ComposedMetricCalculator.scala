@@ -42,16 +42,6 @@ case class ComposedMetricCalculator(primitiveMetrics: Seq[MetricCalculatorResult
   private def replaceMetricsInFormula(ex: String): String = renderTemplate(ex, metricsResultMap)
   
   /**
-   * Parses the formula and calculates the result
-   * @param formula input formula
-   * @return numeric result
-   */
-  private def calculateFormula(formula: String): Double = {
-    val parsed = parseAll(expr, formula).get
-    eval(parsed)
-  }
-  
-  /**
    * Safely processes composed metric
    * @param ex composed metric to operate with
    * @return composed metric result
@@ -59,7 +49,7 @@ case class ComposedMetricCalculator(primitiveMetrics: Seq[MetricCalculatorResult
   def run(ex: ComposedMetric): MetricCalculatorResult = Try {
     val formulaWithParameters = ex.metricFormula
     val formulaWithValues = replaceMetricsInFormula(formulaWithParameters)
-    val result = calculateFormula(formulaWithValues)
+    val result = evalArithmetic(formulaWithValues)
     val sourceIds = getTokens(formulaWithParameters).flatMap(metricSourceMap).distinct
     (result, sourceIds)
   } match { // scala Parsers also have class Success which shadows scala.util.Success

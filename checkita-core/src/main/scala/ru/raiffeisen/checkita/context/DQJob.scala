@@ -209,22 +209,28 @@ trait DQJob extends Logging {
   protected def calculateTrendMetrics(stage: String)
                                      (implicit jobId: String,
                                       manager: Option[DqStorageManager],
-                                      settings: AppSettings): Result[MetricResults] =
-    if (trendMetrics.nonEmpty) {
-      log.info(s"$stage Calculating trend metrics...")
-      trendMetrics.map { tm =>
-          Try(getLookupMetricInfo(tm.lookupMetricId)).toResult(
-            preMsg = s"Failed to calculate trend metric '${tm.metricId}' due to following error:"
-          ).mapValue {
-            case (resType, sourceIds) => TrendMetricCalculator.run(tm, resType, sourceIds)
-          }
-        }.foldLeft(liftToResult(Seq.empty[MetricCalculatorResult]))((acc, res) => acc.combine(res)(_ :+ _))
-        .mapValue(_.groupBy(_.metricId))
-        .tap(logMetricResults(stage, "trend", _))
-    } else {
-      log.info(s"$stage No trend metrics are defined.")
+                                      settings: AppSettings): Result[MetricResults] = storageManager match {
+    case Some(_) =>
+      if (trendMetrics.nonEmpty) {
+        log.info(s"$stage Calculating trend metrics...")
+        trendMetrics.map { tm =>
+            Try(getLookupMetricInfo(tm.lookupMetricId)).toResult(
+              preMsg = s"Failed to calculate trend metric '${tm.metricId}' due to following error:"
+            ).mapValue {
+              case (resType, sourceIds) => TrendMetricCalculator.run(tm, resType, sourceIds)
+            }
+          }.foldLeft(liftToResult(Seq.empty[MetricCalculatorResult]))((acc, res) => acc.combine(res)(_ :+ _))
+          .mapValue(_.groupBy(_.metricId))
+          .tap(logMetricResults(stage, "trend", _))
+      } else {
+        log.info(s"$stage No trend metrics are defined.")
+        liftToResult(Map.empty)
+      }
+    case None =>
+      log.warn(s"$stage There is no connection to results storage: calculation of all trend metrics will be skipped.")
       liftToResult(Map.empty)
-    }
+  }
+    
 
   /**
    * Performs all load checks

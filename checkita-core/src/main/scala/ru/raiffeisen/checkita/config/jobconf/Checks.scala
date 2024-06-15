@@ -1,9 +1,11 @@
 package ru.raiffeisen.checkita.config.jobconf
 
+import eu.timepit.refined.auto._
 import eu.timepit.refined.types.string.NonEmptyString
 import ru.raiffeisen.checkita.config.Enums.TrendCheckRule
 import ru.raiffeisen.checkita.config.RefinedTypes.{ID, PercentileDouble, PositiveInt, SparkParam}
 import ru.raiffeisen.checkita.core.checks.CheckCalculator
+import ru.raiffeisen.checkita.core.checks.expression.ExpressionCheckCalculator
 import ru.raiffeisen.checkita.core.checks.snapshot._
 import ru.raiffeisen.checkita.core.checks.trend._
 
@@ -282,6 +284,24 @@ object Checks {
   }
 
   /**
+   * Expression check: uses boolean expression to evaluate check condition.
+   *
+   * @param id          Check ID
+   * @param description Check description
+   * @param formula     Check formula: boolean expression referring to metric results.
+   * @param metadata    List of metadata parameters specific to this check.
+   */
+  final case class ExpressionCheck(
+                                    id: ID,
+                                    description: Option[NonEmptyString],
+                                    formula: NonEmptyString,
+                                    metadata: Seq[SparkParam] = Seq.empty
+                                  ) extends CheckConfig {
+    override val metric: NonEmptyString = "unsupported"
+    override def getCalculator: CheckCalculator = ExpressionCheckCalculator(id.value, formula.value)
+  }
+  
+  /**
    * Data Quality job configuration section describing snapshot checks.
    * @param differByLT Sequence of 'differ by less than' checks
    * @param equalTo Sequence of 'equal to' checks
@@ -319,15 +339,19 @@ object Checks {
 
   /**
    * Data Quality job configuration section describing all checks.
-   * @param snapshot Snapshot checks of all subtypes
-   * @param trend Trend checks of all subtypes
+   *
+   * @param snapshot   Snapshot checks of all subtypes
+   * @param trend      Trend checks of all subtypes
+   * @param expression List of expression checks
    */
   final case class ChecksConfig(
                                  snapshot: Option[SnapshotChecks],
-                                 trend: Option[TrendChecks]
+                                 trend: Option[TrendChecks],
+                                 expression: Seq[ExpressionCheck] = Seq.empty
                                ) {
     def getAllChecks: Seq[CheckConfig] =
       snapshot.map(_.getAllSnapShotChecks).getOrElse(Seq.empty).map(_.asInstanceOf[CheckConfig]) ++
-        trend.map(_.getAllTrendChecks).getOrElse(Seq.empty).map(_.asInstanceOf[CheckConfig])
+        trend.map(_.getAllTrendChecks).getOrElse(Seq.empty).map(_.asInstanceOf[CheckConfig]) ++
+        expression.map(_.asInstanceOf[CheckConfig])
   }
 }

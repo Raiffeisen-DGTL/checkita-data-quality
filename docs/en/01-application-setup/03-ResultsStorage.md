@@ -151,6 +151,9 @@ only one set of results per Data Quality job and given reference date.
 
 * Primary key: `(job_id, check_id, reference_date)`;
 * `source_id` contains string representation of lists in format `'[val1,val2,val3]'`.
+* `compare_metric` contains sequence of metrics to compare with `[val1,val2]`. Usually empty list on single metric,
+  but expression checks can use multiple metrics in their formulas, which will be stored in this field,
+  except the very first metric which is considered as base_metric.
 
 | Column Name        | Column Type | Constraint |
 |--------------------|-------------|------------|

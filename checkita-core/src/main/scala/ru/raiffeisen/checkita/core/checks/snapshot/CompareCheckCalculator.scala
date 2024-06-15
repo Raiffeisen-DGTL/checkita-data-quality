@@ -86,7 +86,7 @@ abstract class CompareCheckCalculator extends CheckCalculator {
       checkName.entryName,
       baseMetricCalcRes.sourceIds,
       baseMetric,
-      compareMetric,
+      compareMetric.toSeq,
       Some(compareResult),
       Some(compareResult),
       Some(compareResult),
@@ -123,7 +123,7 @@ abstract class CompareCheckCalculator extends CheckCalculator {
       checkName.entryName,
       baseMetricResults.head.sourceIds,
       baseMetric,
-      compareMetric,
+      compareMetric.toSeq,
       compareResOption(compareMetricCalcRes, compareThreshold),
       lBound(compareMetricCalcRes, compareThreshold),
       uBound(compareMetricCalcRes, compareThreshold),
@@ -144,7 +144,7 @@ abstract class CompareCheckCalculator extends CheckCalculator {
       checkName.entryName,
       Seq.empty,
       baseMetric,
-      compareMetric,
+      compareMetric.toSeq,
       compareThreshold, // if metric value is compared to a threshold its value is used, 
       compareThreshold, // ...
       compareThreshold, // otherwise None as we can't get result for compareMetric
