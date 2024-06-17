@@ -11,7 +11,7 @@ import ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig
 import ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionConfig
 import ru.raiffeisen.checkita.config.jobconf.JobConfig
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
-import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig}
+import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig, TrendMetricConfig}
 import ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig
 import ru.raiffeisen.checkita.config.jobconf.Sources.{SourceConfig, VirtualSourceConfig}
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
@@ -117,7 +117,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       case None => Seq(
         "* Storage configuration:",
         "  - Configuration is empty. Results will not be saved. " +
-          "Also trend checks execution is impossible and will be skipped."
+          "Also trend metrics and trend checks execution is impossible and will be skipped."
       )
     }
     val logEmailConfig = settings.emailConfig match {
@@ -288,7 +288,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    * @param vs      Sequence of unresolved virtual sources
    * @param parents Sequence of resolved parent sources
    * @param idx     Index of virtual sources that being checked at current iteration
-   *                and will be returned of all its parents are resolved.
+   *                and will be returned if all its parents are resolved.
    * @return First virtual source for which all parents are reserved
    *         and the sequence of remaining virtual sources.
    */
@@ -348,16 +348,18 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
 
   /**
    * Fundamental Data Quality batch job builder: builds batch job provided with all job components.
-   * @param jobId Job ID
-   * @param sources Sequence of sources to check
-   * @param metrics Sequence of regular metrics to calculate
+   *
+   * @param jobId           Job ID
+   * @param sources         Sequence of sources to check
+   * @param metrics         Sequence of regular metrics to calculate
    * @param composedMetrics Sequence of composed metrics to calculate on top of regular metrics results.
-   * @param checks Sequence of checks to preform based in metrics results.
-   * @param loadChecks Sequence of load checks to perform directly over the sources (validate source metadata).
-   * @param schemas Sequence of user-defined schemas used primarily to perform loadChecks (i.e. source schema validation).
-   * @param targets Sequence of targets to be send/saved (alternative channels to communicate DQ Job results).
-   * @param connections Sequence of user-defined connections to external data systems (RDBMS, Kafka, etc..).
-   *                    Connections are used primarily to send targets.
+   * @param trendMetrics    Sequence of trend metrics to calculate
+   * @param checks          Sequence of checks to preform based in metrics results.
+   * @param loadChecks      Sequence of load checks to perform directly over the sources (validate source metadata).
+   * @param schemas         Sequence of user-defined schemas used primarily to perform loadChecks (i.e. source schema validation).
+   * @param targets         Sequence of targets to be send/saved (alternative channels to communicate DQ Job results).
+   * @param connections     Sequence of user-defined connections to external data systems (RDBMS, Kafka, etc..).
+   *                        Connections are used primarily to send targets.
    * @return Data Quality batch job instances wrapped into Result[_].
    */
   def buildBatchJob(
@@ -366,6 +368,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
                 sources: Seq[Source],
                 metrics: Seq[RegularMetricConfig] = Seq.empty,
                 composedMetrics: Seq[ComposedMetricConfig] = Seq.empty,
+                trendMetrics: Seq[TrendMetricConfig] = Seq.empty,
                 checks: Seq[CheckConfig] = Seq.empty,
                 loadChecks: Seq[LoadCheckConfig] = Seq.empty,
                 targets: Seq[TargetConfig] = Seq.empty,
@@ -377,7 +380,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     logJobBuildStart
     
     getStorageManager.map(storageManager =>
-      DQBatchJob(jobConfig, sources, metrics, composedMetrics, checks, loadChecks, targets, schemas, connections, storageManager)
+      DQBatchJob(jobConfig, sources, metrics, composedMetrics, trendMetrics, checks, loadChecks, targets, schemas, connections, storageManager)
     )
   }
 
@@ -388,6 +391,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    * @param sources         Sequence of sources to check (streamable sources)
    * @param metrics         Sequence of regular metrics to calculate
    * @param composedMetrics Sequence of composed metrics to calculate on top of regular metrics results.
+   * @param trendMetrics    Sequence of trend metrics to calculate
    * @param checks          Sequence of checks to preform based in metrics results.
    * @param schemas         Sequence of user-defined schemas used primarily to perform loadChecks (i.e. source schema validation).
    * @param targets         Sequence of targets to be send/saved (alternative channels to communicate DQ Job results).
@@ -400,6 +404,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
                      sources: Seq[Source],
                      metrics: Seq[RegularMetricConfig] = Seq.empty,
                      composedMetrics: Seq[ComposedMetricConfig] = Seq.empty,
+                     trendMetrics: Seq[TrendMetricConfig] = Seq.empty,
                      checks: Seq[CheckConfig] = Seq.empty,
                      targets: Seq[TargetConfig] = Seq.empty,
                      schemas: Map[String, SourceSchema] = Map.empty,
@@ -427,6 +432,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
           sources,
           metrics,
           composedMetrics,
+          trendMetrics,
           Seq.empty[LoadCheckConfig], // no load checks are run in streaming jobs
           checks,
           targets,
@@ -460,6 +466,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     
     val regularMetrics: Seq[RegularMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.regular).flatMap(_.getAllRegularMetrics)
     val composedMetrics: Seq[ComposedMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.composed)
+    val trendMetrics: Seq[TrendMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.trend)
     val checks: Seq[CheckConfig] = jobConfig.checks.toSeq.flatMap(_.getAllChecks)
     val loadChecks: Seq[LoadCheckConfig] = jobConfig.loadChecks.toSeq.flatMap(_.getAllLoadChecks)
     val targets: Seq[TargetConfig] = jobConfig.targets.toSeq.flatMap(_.getAllTargets)
@@ -470,6 +477,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
         sources.values.toSeq,
         regularMetrics,
         composedMetrics,
+        trendMetrics,
         checks,
         loadChecks,
         targets,
@@ -527,6 +535,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
 
     val regularMetrics: Seq[RegularMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.regular).flatMap(_.getAllRegularMetrics)
     val composedMetrics: Seq[ComposedMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.composed)
+    val trendMetrics: Seq[TrendMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.trend)
     val checks: Seq[CheckConfig] = jobConfig.checks.toSeq.flatMap(_.getAllChecks)
     val targets: Seq[TargetConfig] = jobConfig.targets.toSeq.flatMap(_.getAllTargets)
 
@@ -536,6 +545,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
         sources.values.toSeq,
         regularMetrics,
         composedMetrics,
+        trendMetrics,
         Seq.empty[LoadCheckConfig], // no load checks are run in streaming jobs
         checks,
         targets,

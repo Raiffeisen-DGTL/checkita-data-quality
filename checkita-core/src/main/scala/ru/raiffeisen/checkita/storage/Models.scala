@@ -85,6 +85,22 @@ object Models {
     val uniqueFieldNames: Seq[String] = Seq("jobId", "metricId", "referenceDate").map(camelToSnakeCase)
   }
 
+  final case class ResultMetricTrend(jobId: String,
+                                     metricId: String,
+                                     metricName: String,
+                                     description: Option[String],
+                                     metadata: Option[String],
+                                     sourceId: String,
+                                     params: Option[String],
+                                     result: Double,
+                                     additionalResult: Option[String],
+                                     referenceDate: Timestamp,
+                                     executionDate: Timestamp) extends MetricResult {
+    val entityType: String = "trendMetricResult"
+    val uniqueFields: GeneralUniqueResult = jobId :: metricId :: referenceDate :: HNil
+    val uniqueFieldNames: Seq[String] = Seq("jobId", "metricId", "referenceDate").map(camelToSnakeCase)
+  }
+
   final case class ResultCheck(jobId: String,
                                checkId: String,
                                checkName: String,
@@ -169,6 +185,7 @@ object Models {
    * Set of all results
    * @param regularMetrics Sequence of regular metric results
    * @param composedMetrics Sequence of composed metric results
+   * @param trendMetrics Sequence of trend metric results
    * @param checks Sequence of check results
    * @param loadChecks Sequence of load check results
    * @param metricErrors Sequence of metric errors
@@ -176,6 +193,7 @@ object Models {
   final case class ResultSet(
                               regularMetrics: Seq[ResultMetricRegular],
                               composedMetrics: Seq[ResultMetricComposed],
+                              trendMetrics: Seq[ResultMetricTrend],
                               checks: Seq[ResultCheck],
                               loadChecks: Seq[ResultCheckLoad],
                               metricErrors: Seq[ResultMetricError],
@@ -189,6 +207,7 @@ object Models {
      * @param numSources Number of sources that was processed.
      * @param regularMetrics Regular metric results
      * @param composedMetrics Compose metric results
+     * @param trendMetrics Trend metric results
      * @param checks Check results
      * @param loadChecks Load check results
      * @param metricErrors Metric errors
@@ -199,6 +218,7 @@ object Models {
     def apply(numSources: Int,
               regularMetrics: Seq[ResultMetricRegular],
               composedMetrics: Seq[ResultMetricComposed],
+              trendMetrics: Seq[ResultMetricTrend],
               checks: Seq[ResultCheck],
               loadChecks: Seq[ResultCheckLoad],
               jobConfig: JobState,
@@ -214,7 +234,7 @@ object Models {
         settings.referenceDateTime.getUtcTS,
         settings.executionDateTime.getUtcTS,
         numSources,
-        regularMetrics.size + composedMetrics.size,
+        regularMetrics.size + composedMetrics.size + trendMetrics.size,
         checks.size,
         loadChecks.size,
         metricsWithErrors.size,
@@ -224,7 +244,7 @@ object Models {
         failedChecks,
         failedLoadChecks
       )
-      ResultSet(regularMetrics, composedMetrics, checks, loadChecks, metricErrors, jobConfig, summary)
+      ResultSet(regularMetrics, composedMetrics, trendMetrics, checks, loadChecks, metricErrors, jobConfig, summary)
     }
   }
 }

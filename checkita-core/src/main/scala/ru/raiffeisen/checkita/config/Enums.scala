@@ -175,6 +175,7 @@ object Enums {
   object ResultTargetType extends Enum[ResultTargetType] {
     case object RegularMetrics extends ResultTargetType
     case object ComposedMetrics extends ResultTargetType
+    case object TrendMetrics extends ResultTargetType
     case object LoadChecks extends ResultTargetType
     case object Checks extends ResultTargetType
     case object JobState extends ResultTargetType

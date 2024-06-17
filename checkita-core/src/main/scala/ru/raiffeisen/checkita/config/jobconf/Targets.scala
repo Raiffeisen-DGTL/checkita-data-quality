@@ -1,7 +1,6 @@
 package ru.raiffeisen.checkita.config.jobconf
 
 import eu.timepit.refined.api.Refined
-import eu.timepit.refined.auto._
 import eu.timepit.refined.collection.NonEmpty
 import eu.timepit.refined.types.string.NonEmptyString
 import ru.raiffeisen.checkita.config.Enums.ResultTargetType

@@ -29,6 +29,7 @@ trait ResultDataFrameBuilder[T <: ResultTargetConfig] extends TargetBuilder[T, D
     val rows = target.resultTypes.value.flatMap {
       case ResultTargetType.RegularMetrics => results.regularMetrics.map(_.toRow)
       case ResultTargetType.ComposedMetrics => results.composedMetrics.map(_.toRow)
+      case ResultTargetType.TrendMetrics => results.trendMetrics.map(_.toRow)
       case ResultTargetType.LoadChecks => results.loadChecks.map(_.toRow)
       case ResultTargetType.Checks => results.checks.map(_.toRow)
       case ResultTargetType.JobState => Seq(results.jobConfig.toRow)

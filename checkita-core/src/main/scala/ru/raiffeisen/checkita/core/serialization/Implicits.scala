@@ -1,6 +1,6 @@
 package ru.raiffeisen.checkita.core.serialization
 
-import ru.raiffeisen.checkita.config.Enums.{CompareRule, PrecisionCompareRule}
+import ru.raiffeisen.checkita.config.Enums.{CompareRule, PrecisionCompareRule, TrendCheckRule}
 import ru.raiffeisen.checkita.config.RefinedTypes.{DateFormat, Email, ID}
 import ru.raiffeisen.checkita.config.jobconf.MetricParams._
 import ru.raiffeisen.checkita.config.jobconf.Metrics._
@@ -15,7 +15,7 @@ import ru.raiffeisen.checkita.core.metrics.rdd.regular.MultiColumnRDDMetrics._
 import ru.raiffeisen.checkita.core.metrics.{MetricName, RegularMetric}
 import ru.raiffeisen.checkita.core.streaming.Checkpoints._
 import ru.raiffeisen.checkita.core.streaming.ProcessorBuffer
-import ru.raiffeisen.checkita.utils.Common.camelToSnakeCase
+import ru.raiffeisen.checkita.utils.Common.{camelToSnakeCase, getPrependVars}
 
 object Implicits extends SerDeTransformations 
   with SerializersBasic 
@@ -134,7 +134,8 @@ object Implicits extends SerDeTransformations
   implicit val metricNameSerDe: SerDe[MetricName] = getEnumSerDe(MetricName)
   implicit val compareRuleSerDe: SerDe[CompareRule] = getEnumSerDe(CompareRule)
   implicit val precisionCompareSerDe: SerDe[PrecisionCompareRule] = getEnumSerDe(PrecisionCompareRule)
-
+  implicit val trendCheckRuleSerDer: SerDe[TrendCheckRule] = getEnumSerDe(TrendCheckRule) 
+  
   // SerDe's for error collection classes:
   implicit val metricStatusSerDe: SerDe[MetricStatus] =
     getProductSerDe(MetricStatus.unapply, MetricStatus.tupled)
@@ -307,6 +308,24 @@ object Implicits extends SerDeTransformations
           getProductSerDe(TopNMetricConfig.unapply, TopNMetricConfig.tupled)
         case MetricName.Composed =>
           getProductSerDe(ComposedMetricConfig.unapply, ComposedMetricConfig.tupled)
+        case MetricName.TrendAvg =>
+          getProductSerDe(AvgTrendMetricConfig.unapply, AvgTrendMetricConfig.tupled)
+        case MetricName.TrendStd =>
+          getProductSerDe(StdTrendMetricConfig.unapply, StdTrendMetricConfig.tupled)
+        case MetricName.TrendMin =>
+          getProductSerDe(MinTrendMetricConfig.unapply, MinTrendMetricConfig.tupled)
+        case MetricName.TrendMax =>
+          getProductSerDe(MaxTrendMetricConfig.unapply, MaxTrendMetricConfig.tupled)
+        case MetricName.TrendSum => 
+          getProductSerDe(SumTrendMetricConfig.unapply, SumTrendMetricConfig.tupled)
+        case MetricName.TrendMedian =>
+          getProductSerDe(MedianTrendMetricConfig.unapply, MedianTrendMetricConfig.tupled)
+        case MetricName.TrendFirstQ =>
+          getProductSerDe(FirstQuartileTrendMetricConfig.unapply, FirstQuartileTrendMetricConfig.tupled)
+        case MetricName.TrendThirdQ =>
+          getProductSerDe(ThirdQuartileTrendMetricConfig.unapply, ThirdQuartileTrendMetricConfig.tupled)
+        case MetricName.TrendQuantile =>
+          getProductSerDe(QuantileTrendMetricConfig.unapply, QuantileTrendMetricConfig.tupled)
       }
       serDe.asInstanceOf[SerDe[RegularMetric]]
     }

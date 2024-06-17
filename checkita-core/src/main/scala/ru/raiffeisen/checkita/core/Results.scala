@@ -23,6 +23,7 @@ object Results {
   object ResultType extends Enum[ResultType] {
     case object RegularMetric extends ResultType
     case object ComposedMetric extends ResultType
+    case object TrendMetric extends ResultType
     case object LoadCheck extends ResultType
     case object Check extends ResultType
 
@@ -117,6 +118,35 @@ object Results {
       )
 
     /**
+     * Converts trend metric calculator result to final trend metric result representation suitable
+     * for storing into results storage and sending via targets.
+     *
+     * @param description Regular metric description
+     * @param params      Regular metric parameters (JSON string)
+     * @param metadata    Metadata parameters specific to this regular metric (JSON List string)
+     * @param jobId       Implicit Job ID
+     * @param settings    Implicit application settings object
+     * @return Finalized trend metric result
+     */
+    def finalizeAsTrend(description: Option[String],
+                        params: Option[String],
+                        metadata: Option[String])(implicit jobId: String,
+                                                  settings: AppSettings): ResultMetricTrend =
+      ResultMetricTrend(
+        jobId,
+        metricId,
+        metricName,
+        description,
+        metadata,
+        write(sourceIds),
+        params,
+        result,
+        additionalResult,
+        settings.referenceDateTime.getUtcTS,
+        settings.executionDateTime.getUtcTS
+      )
+      
+    /**
      * Retrieves sequence of finalized metric errors from metric calculator result
      * that is suitable for storing into results storage and sending via targets.
      *
@@ -157,20 +187,24 @@ object Results {
    * @param checkId           Check ID
    * @param checkName         Check calculator name
    * @param baseMetric        Base metric used to build check
-   * @param comparedMetric    Metric to compare with
+   * @param comparedMetric    Sequence of metrics to compare with.
    * @param comparedThreshold Threshold to compare with
    * @param lowerBound        Allowed lower bound for base metric value
    * @param upperBound        Allowed upper bound for base metric value
    * @param status            Check status
    * @param message           Check message
    * @param resultType        Type of result
+   *                          
+   * @note Expression checks can utilize multiple metrics. Therefore, compareMetric field is represented as
+   *       sequence: when compare metric is absent the empty sequence will be written, 
+   *       otherwise sequence containing one or more metric IDs will be written.
    */
   final case class CheckCalculatorResult(
                                           checkId: String,
                                           checkName: String,
                                           sourceIds: Seq[String],
                                           baseMetric: String,
-                                          comparedMetric: Option[String],
+                                          comparedMetric: Seq[String],
                                           comparedThreshold: Option[Double],
                                           lowerBound: Option[Double],
                                           upperBound: Option[Double],
@@ -199,7 +233,7 @@ object Results {
         metadata,
         write(sourceIds),
         baseMetric,
-        comparedMetric,
+        Some(write(comparedMetric)),
         comparedThreshold,
         lowerBound,
         upperBound,
