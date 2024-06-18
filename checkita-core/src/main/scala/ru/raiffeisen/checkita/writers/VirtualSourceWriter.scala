@@ -21,7 +21,7 @@ object VirtualSourceWriter {
   /**
    * Virtual source writer which requires VSTarget as an input.
    */
-  private object VsWriter extends FileWriter[VSTarget] { protected val targetType: String = "virtualSource" }
+  private class VsWriter(vsId: String) extends FileWriter[VSTarget] { protected val targetType: String = vsId }
 
   /**
    * Safely saves virtual source if save configuration is provided.
@@ -35,6 +35,6 @@ object VirtualSourceWriter {
                                                                  settings: AppSettings,
                                                                  spark: SparkSession): Result[String] =
     if (vs.save.isEmpty) liftToResult("Nothing to save") else {
-      VsWriter.write(VSTarget(vs.save.get), df)
+      new VsWriter(vs.id.value).write(VSTarget(vs.save.get), df)
     }
 }

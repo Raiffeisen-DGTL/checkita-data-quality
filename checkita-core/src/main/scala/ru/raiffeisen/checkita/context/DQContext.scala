@@ -29,6 +29,7 @@ import ru.raiffeisen.checkita.utils.Common.{getPrependVars, prepareConfig}
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
 import ru.raiffeisen.checkita.utils.SparkUtils.{makeFileSystem, makeSparkSession}
+import ru.raiffeisen.checkita.writers.VirtualSourceWriter.saveVirtualSource
 
 import java.io.InputStreamReader
 import scala.annotation.tailrec
@@ -319,7 +320,8 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
   @tailrec
   private def readVirtualSources(virtualSources: Result[Seq[VirtualSourceConfig]],
                                  parentSources: Result[Map[String, Source]],
-                                 readAsStream: Boolean = false): Result[Map[String, Source]] = virtualSources match {
+                                 readAsStream: Boolean = false)
+                                (implicit jobId: String): Result[Map[String, Source]] = virtualSources match {
     case Left(errors) => Left(errors)
     case Right(vs) if vs.isEmpty => parentSources
     case Right(vs) =>
@@ -331,6 +333,18 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
           (if (readAsStream) curVsAndRest._1.readStream(parents) else curVsAndRest._1.read(parents))
             .tap(_ => log.info(s"$virtualSourceStage Success!")) // immediate logging of success state
             .tap(s => log.debug(s.df.schema.treeString)) // debug source schema
+            .flatMap{ s =>
+              val saveStatus = if (curVsAndRest._1.save.nonEmpty && !readAsStream) {
+                val outputDir = curVsAndRest._1.save.get.path.value
+                val outputFmt = curVsAndRest._1.save.get.getClass.getSimpleName.dropRight("FileOutputConfig".length)
+                log.info(
+                  s"$virtualSourceStage Saving virtual source '${curVsAndRest._1.id.value}' to " +
+                    s"$outputDir in $outputFmt format."
+                )
+                saveVirtualSource(curVsAndRest._1, s.df).tap(_ => log.info(s"$virtualSourceStage Success!"))
+              } else liftToResult("Virtual source is not saved.")
+              saveStatus.mapValue(_ => s)
+            } // save virtual source if save option is configured.
             .mapLeft(_.map(e => s"$virtualSourceStage $e")) // update error messages with running stage
         }
         _ <- Try(curVsAndRest._1.persist.foreach{ sLvl =>
