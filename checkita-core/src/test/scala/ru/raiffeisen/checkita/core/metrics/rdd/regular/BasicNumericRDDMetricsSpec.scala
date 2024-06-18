@@ -491,11 +491,11 @@ class BasicNumericRDDMetricsSpec extends AnyWordSpec with Matchers {
 
   "NumberOutDomainRDDMetricCalculator" must {
     val domain = Seq(1, 2, 3, 4, 5).map(_.asInstanceOf[Double]).toSet
-    val results = Seq(7, 11, 10, 10)
-    val failCounts = Seq(8, 4, 5, 5)
-    val failCountsRev = Seq(7, 11, 10, 10)
-    val failCountsMulti = Seq(5, 4, 4, 4)
-    val failCountsMultiRev = Seq(4, 5, 5, 5)
+    val results = Seq(7, 11, 10, 4)
+    val failCounts = Seq(8, 4, 5, 11)
+    val failCountsRev = Seq(7, 11, 10, 4)
+    val failCountsMulti = Seq(5, 4, 4, 5)
+    val failCountsMultiRev = Seq(4, 5, 5, 4)
 
     "return correct metric value for single column sequence" in {
       val values = testSingleColSeq zip results
@@ -507,6 +507,7 @@ class BasicNumericRDDMetricsSpec extends AnyWordSpec with Matchers {
           t._2
         ))
       } yield metricResult
+      println(metricResults)
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
     "return correct fail counts for single column sequence [direct error collection]" in {

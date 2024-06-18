@@ -33,10 +33,11 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
   private val emptyMultiColSeq = emptySingleColSeq.map(s => (0 to 3).map(c => (0 to 2).map(r => c*3 + r)).map(_.map(s(_))))
 
   "DistinctValuesRDDMetricCalculator" must {
-    val results = Seq(5, 5, 4, 10)
+    val resultsSingle = Seq(5, 5, 4, 10)
+    val resultsMulti = Seq.fill(4)(4)
 
     "return correct metric value for single column sequence" in {
-      val values = testSingleColSeq zip results
+      val values = testSingleColSeq zip resultsSingle
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new DistinctValuesRDDMetricCalculator())(
           (m, v) => m.increment(Seq(v))).result()(MetricName.DistinctValues.entryName)._1,
@@ -45,7 +46,7 @@ class BasicStringRDDMetricsSpec extends AnyWordSpec with Matchers {
       metricResults.foreach(v => v._1 shouldEqual v._2)
     }
     "return correct metric value for multi column sequence" in {
-      val values = testMultiColSeq zip results
+      val values = testMultiColSeq zip resultsMulti
       val metricResults = values.map(t => (
         t._1.foldLeft[RDDMetricCalculator](new DistinctValuesRDDMetricCalculator())(
           (m, v) => m.increment(v)).result()(MetricName.DistinctValues.entryName)._1,

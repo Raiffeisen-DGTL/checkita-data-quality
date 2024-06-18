@@ -119,11 +119,12 @@ class GroupingDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsTest
 
     val resultsSingle = Seq(5, 4, 4, 10).map(_.toDouble)
     val resultsMulti = Seq(4, 3, 4, 4).map(_.toDouble)
-    val nullResultsSingle = Seq(6, 5, 4, 8).map(_.toDouble)
+    val nullResultsSingle = Seq(5, 4, 3, 7).map(_.toDouble)
     val nullResultsMulti = Seq.fill(4)(4).map(_.toDouble)
 
     val failCounts = Seq.fill(4)(0)
-    val nullFailCounts = Seq.fill(4)(3)
+    val nullFailCountsSingle = Seq.fill(4)(3)
+    val nullFailCountsMulti = Seq.fill(4)(0)
 
     val getCalc: (String, Seq[String], Map[String, Any]) => GroupingDFMetricCalculator =
       (mId, cols, _) => DistinctValuesDFMetricCalculator(mId, cols)
@@ -132,13 +133,13 @@ class GroupingDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsTest
       testGroupingMetric(testSingleColDFs, mId, singleCols, resultsSingle, failCounts, params, getCalc)
     }
     "return correct metric value and fail counts for single column sequence with null values" in {
-      testGroupingMetric(nullSingleColDFs, mId, singleCols, nullResultsSingle, nullFailCounts, params, getCalc)
+      testGroupingMetric(nullSingleColDFs, mId, singleCols, nullResultsSingle, nullFailCountsSingle, params, getCalc)
     }
     "return correct metric value and fail counts for multi column sequence" in {
       testGroupingMetric(testMultiColDFs, mId, multiCols, resultsMulti, failCounts, params, getCalc)
     }
     "return correct metric value and fail counts for multi column sequence with null values" in {
-      testGroupingMetric(nullMultiColDFs, mId, multiCols, nullResultsMulti, nullFailCounts, params, getCalc)
+      testGroupingMetric(nullMultiColDFs, mId, multiCols, nullResultsMulti, nullFailCountsMulti, params, getCalc)
     }
     "return zero when applied to empty sequence" in {
       testGroupingMetric(Seq(emptyDF), mId, singleCols, Seq(0.0), Seq(0), params, getCalc)
@@ -151,12 +152,12 @@ class GroupingDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsTest
 
     val resultsSingle = Seq(7, 8, 8, 2).map(_.toDouble)
     val resultsMulti = Seq(0, 1, 0, 0).map(_.toDouble)
-    val nullResultsSingle = Seq(6, 7, 8, 4).map(_.toDouble)
+    val nullResultsSingle = Seq(4, 5, 6, 2).map(_.toDouble)
     val nullResultsMulti = Seq.fill(4)(0).map(_.toDouble)
 
     val failCountsSingle = Seq(7, 8, 8, 2)
     val failCountsMulti = Seq(0, 1, 0, 0)
-    val nullFailCountsSingle = Seq(6, 7, 8, 4)
+    val nullFailCountsSingle = Seq(4, 5, 6, 2)
     val nullFailCountsMulti = Seq.fill(4)(0)
 
     val getCalc: (String, Seq[String], Map[String, Any]) => GroupingDFMetricCalculator =

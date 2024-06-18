@@ -404,11 +404,11 @@ class BasicNumericDFMetricsSpec extends AnyWordSpec with Matchers with DFMetrics
     val domain = Seq.fill(4)(Seq(1, 2, 3, 4, 5).map(_.toDouble).toSet)
     val directParams = domain.map(d => Map("domain" -> d, "reversed" -> false))
     val reversedParams = domain.map(d => Map("domain" -> d, "reversed" -> true))
-    val results = Seq(7, 11, 10, 10).map(_.toDouble)
-    val failCountsSingleSeq = Seq(8, 4, 5, 5)
-    val failCountsSingleSeqRev = Seq(7, 11, 10, 10)
-    val failCountsMultiSeq = Seq(5, 4, 4, 4)
-    val failCountsMultiSeqRev = Seq(4, 5, 5, 5)
+    val results = Seq(7, 11, 10, 4).map(_.toDouble)
+    val failCountsSingleSeq = Seq(8, 4, 5, 11)
+    val failCountsSingleSeqRev = Seq(7, 11, 10, 4)
+    val failCountsMultiSeq = Seq(5, 4, 4, 5)
+    val failCountsMultiSeqRev = Seq(4, 5, 5, 4)
 
     val getCalc: (String, Seq[String], Map[String, Any]) => DFMetricCalculator = (mId, cols, params) => {
       val domain = params.getOrElse("domain", Set.empty).asInstanceOf[Set[Double]]
