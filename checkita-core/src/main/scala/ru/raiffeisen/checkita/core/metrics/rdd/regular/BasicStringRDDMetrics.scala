@@ -29,9 +29,12 @@ object BasicStringRDDMetrics {
     // axillary constructor to init metric calculator:
     def this() = this(Set.empty[String])
 
-    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator =
-      DistinctValuesRDDMetricCalculator(uniqueValues ++ values.map(v => seqToString(Seq(v))).toSet, failCount)
-
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = 
+      if (values.forall(_ == null)) copyWithError(
+        CalculatorStatus.Failure,
+        if (values.size == 1) "Column value is null." else "Entire tuple of columns is null."
+      ) else DistinctValuesRDDMetricCalculator(uniqueValues + seqToString(values), failCount)
+    
     protected def copyWithError(status: CalculatorStatus, msg: String, failInc: Long = 1): RDDMetricCalculator =
       this.copy(failCount = failCount + failInc, status = status, failMsg = msg)
 
@@ -70,7 +73,8 @@ object BasicStringRDDMetrics {
     // axillary constructor to init metric calculator:
     def this() = this(0, Set.empty[String])
 
-    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
+    protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = 
+    if (values.forall(_ == null)) this else { // skipping rows where entire tuple of columns is null.
       val valuesString = seqToString(values)
       if (uniqueValues.contains(valuesString)) DuplicateValuesRDDMetricCalculator(
         numDuplicates + 1,
@@ -208,7 +212,7 @@ object BasicStringRDDMetrics {
 
     private val mismatchCounter: Seq[Any] => Int = v => v.count(elem => tryToString(elem) match {
       case Some(x) => !x.matches(regex)
-      case None => true
+      case None => false // null values are omitted
     })
 
     /**

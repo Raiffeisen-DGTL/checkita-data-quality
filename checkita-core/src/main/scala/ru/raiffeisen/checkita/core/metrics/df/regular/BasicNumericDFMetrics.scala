@@ -550,7 +550,7 @@ object BasicNumericDFMetrics {
      * @param colName Column to which the metric condition is applied
      */
     override def metricCondExpr(colName: String): Column =
-      !coalesce(col(colName).cast(DoubleType).isInCollection(domain), lit(false))
+      coalesce(!col(colName).cast(DoubleType).isInCollection(domain), lit(false))
   }
 
   /**

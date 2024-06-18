@@ -353,7 +353,7 @@ object BasicStringDFMetrics {
      */
     protected def resultExpr: Column =
       if (columns.size == 1) length(col(columns.head).cast(StringType))
-      else columns.map(c => coalesce(length(col(c)), lit(0))).foldLeft(lit(0))(_ + _)
+      else columns.map(c => coalesce(length(col(c).cast(StringType)), lit(0))).foldLeft(lit(0))(_ + _)
 
     /**
      * Additional expression to count number of non-null values used to
@@ -361,7 +361,7 @@ object BasicStringDFMetrics {
      * @return Spark row-level expression yielding number of non-null values.
      */
     private def countExpr: Column = columns.map { c =>
-      when(col(c).isNull, lit(0)).otherwise(lit(1))
+      when(col(c).cast(StringType).isNull, lit(0)).otherwise(lit(1))
     }.foldLeft(lit(0))(_ + _)
 
 

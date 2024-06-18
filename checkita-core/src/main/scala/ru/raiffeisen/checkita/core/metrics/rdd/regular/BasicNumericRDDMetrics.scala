@@ -564,8 +564,8 @@ object BasicNumericRDDMetrics {
      * @return updated calculator or throws an exception
      */
     protected def tryToIncrement(values: Seq[Any]): RDDMetricCalculator = {
-      // takes into account non-number values also. these values are removed from sequence during flatMap operation
-      val rowCnt = values.length - values.flatMap(tryToDouble).count(domain.contains)
+      // null values are omitted
+      val rowCnt = values.flatMap(tryToDouble).count(n => !domain.contains(n))
       if (rowCnt == values.length) NumberOutDomainRDDMetricCalculator(
         cnt + rowCnt, domain, reversed, failCount
       )
