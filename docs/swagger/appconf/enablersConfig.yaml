@@ -35,3 +35,14 @@ properties:
     description: Sets the number of partitions when writing outputs
     default: 1
     example: 4
+  metricEngineAPI:
+    type: string
+    description: |-
+      Sets engine to be used for regular metric processing: RDD- or DF-engines are
+      available. It is recommended to use DF-engine for batch applications while streaming applications support only
+      RDD-engine.
+    default: rdd
+    example: df
+    enum:
+      - rdd
+      - df

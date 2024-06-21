@@ -1,3 +1,0 @@
-# Streaming Sources Configurations
-
-tbd

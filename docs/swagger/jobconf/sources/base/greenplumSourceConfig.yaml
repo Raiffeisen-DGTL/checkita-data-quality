@@ -1,0 +1,12 @@
+type: object
+required:
+  - connection
+properties:
+  connection:
+    type: string
+    description: Connection ID to use for table source. Connection ID must refer to  Greenplum pivotal connection.
+    example: gp_connection
+  table:
+    type: string
+    description: Table to read
+    example: gp_table

@@ -1,0 +1,6 @@
+type: object
+properties:
+  schema:
+    type: string
+    description: Schema ID used to read avro file. It is possible to use schema of any definition type.
+    example: avro_file_schema

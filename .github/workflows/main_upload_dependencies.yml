@@ -21,6 +21,6 @@ jobs:
           distribution: 'temurin'
           cache: 'sbt'
       - name: Set SBT Options
-        run: echo "-DSPARK_VERSION=3.5.0" > .sbtopts
+        run: echo "-DSPARK_VERSION=3.5.1" > .sbtopts
       - name: Upload Dependency Graph
         uses: scalacenter/sbt-dependency-submission@v2.2.0      

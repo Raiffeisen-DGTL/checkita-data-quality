@@ -1,0 +1,26 @@
+type: object
+required:
+  - kind
+  - path
+properties:
+  kind:
+    type: string
+    description: |-
+      File type. Defines file format that will be read. Thus, set of fields used to define file 
+      source configuration depends on file type.
+    enum:
+      - fixed
+      - delimited
+      - orc
+      - parquet
+      - avro
+    example: delimited
+  path:
+    type: string
+    description: |-
+      File path. Can be a path to a directory or a S3-bucket. In this case all files from this
+      directory/bucket will be read (assuming they all have the same schema). 
+      Note, that when reading from file system which is not spark default file system, 
+      it is required to add FS prefix to the path, e.g. `file://` to read from local FS, 
+      or `s3a://` to read from S3.
+    example: /path/to/directory/to/read/from

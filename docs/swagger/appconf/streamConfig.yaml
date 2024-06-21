@@ -37,3 +37,7 @@ properties:
       type of message.
     default: false
     example: true
+  checkpointDir:
+    type: string
+    description: Checkpoint directory location. If empty, then checkpoints will not be written.
+    example: path/to/checkpoint/directory

@@ -1,0 +1,20 @@
+type: object
+required:
+  - format
+properties:
+  format:
+    type: string
+    description: Spark DataFrame reader format that is used to read from the given source.
+    example: jdbc
+  path:
+    type: string
+    description: Path to read data from (if required).
+  schema:
+    type: string
+    description: Explicit schema to be applied to data from the given source (if required).
+  options:
+    type: array
+    description: Additional Spark parameters used to read data from the given source.
+    items:
+      type: string
+      description: Spark parameter in format of `spark.param.name=spark.param.value`

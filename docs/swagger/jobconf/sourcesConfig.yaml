@@ -1,315 +1,77 @@
 description: |-
+  Section holding all sources configurations.
   Reading sources is a critical part of a Data Quality job in Checkita. During execution, Checkita reads all sources into Spark DataFrames, 
   which are then processed to calculate metrics and perform quality checks. Additionally, dataframes' metadata is used to perform load checks 
   ensuring the source has the expected structure. Checkita supports reading from file systems, object storage (HDFS, S3), Hive catalogs, RDBMS, 
-  Kafka, Greenplum, and custom sources. Configuration details for each type of source are provided below.
+  Kafka, Greenplum, and custom sources.
 type: object
 properties:
-  fileSources:
-    description: |-
-      Configuration for reading file sources. Supported file types are fixed-width text files, delimited text files (CSV, TSV), ORC, Parquet, and Avro.
-    type: object
-    properties:
-      id:
-        type: string
-        description: |-
-          Unique identifier for the source.
-      description:
-        type: string
-        description: |-
-          Optional description of the source.
-      kind:
-        type: string
-        description: |-
-          File type. Must be one of the following: fixed, delimited, orc, parquet, avro.
-        enum:
-          - fixed
-          - delimited
-          - orc
-          - parquet
-          - avro
-      path:
-        type: string
-        description: |-
-          Path to the file or directory to read. Can include FS prefixes (e.g., file:// for local FS, s3a:// for S3).
-      keyFields:
-        type: array
-        description: |-
-          Optional list of columns that form a Primary Key or are used to identify rows within a dataset.
-        items:
-          type: string
-      metadata:
-        type: array
-        description: |-
-          Optional list of user-defined metadata parameters specific to this source.
-        items:
-          type: string
-      schema:
-        type: string
-        description: |-
-          Required for fixed-width and optionally for delimited and Avro files. Schema ID used to parse the file.
-      header:
-        type: boolean
-        description: |-
-          For delimited files. Indicates if the schema should be inferred from the file header.
-        default: false
-      delimiter:
-        type: string
-        description: |-
-          For delimited files. Column delimiter.
-        default: ","
-      quote:
-        type: string
-        description: |-
-          For delimited files. Column enclosing character.
-        default: "\""
-      escape:
-        type: string
-        description: |-
-          For delimited files. Escape character.
-        default: "\\"
-  hiveSources:
-    description: |-
-      Configuration for reading Hive table sources.
-    type: object
-    properties:
-      id:
-        type: string
-        description: |-
-          Unique identifier for the source.
-      description:
-        type: string
-        description: |-
-          Optional description of the source.
-      schema:
-        type: string
-        description: |-
-          Required. Hive schema.
-      table:
-        type: string
-        description: |-
-          Required. Hive table.
-      partitions:
-        type: array
-        description: |-
-          Optional list of partitions to read. Each partition includes a column name, SQL expression, and values.
-        items:
-          type: object
-          properties:
-            name:
-              type: string
-              description: |-
-                Partition column name.
-            expr:
-              type: string
-              description: |-
-                SQL expression to filter partitions.
-            values:
-              type: array
-              description: |-
-                List of partition column values to read.
-              items:
-                type: string
-      keyFields:
-        type: array
-        description: |-
-          Optional list of columns that form a Primary Key or are used to identify rows within a dataset.
-        items:
-          type: string
-      metadata:
-        type: array
-        description: |-
-          Optional list of user-defined metadata parameters specific to this source.
-        items:
-          type: string
-  tableSources:
-    description: |-
-      Configuration for reading table sources from RDBMS via JDBC connection. Options include reading the entire table or executing a query.
-    type: object
-    properties:
-      id:
-        type: string
-        description: |-
-          Unique identifier for the source.
-      description:
-        type: string
-        description: |-
-          Optional description of the source.
-      connection:
-        type: string
-        description: |-
-          Required. Connection ID referring to the RDBMS connection configuration.
-      table:
-        type: string
-        description: |-
-          Optional. Table to read.
-      query:
-        type: string
-        description: |-
-          Optional. Query to execute. Query result is read as the table source.
-      keyFields:
-        type: array
-        description: |-
-          Optional list of columns that form a Primary Key or are used to identify rows within a dataset.
-        items:
-          type: string
-      metadata:
-        type: array
-        description: |-
-          Optional list of user-defined metadata parameters specific to this source.
-        items:
-          type: string
-  kafkaSources:
-    description: |-
-      Configuration for reading Kafka topics.
-    type: object
-    properties:
-      id:
-        type: string
-        description: |-
-          Unique identifier for the source.
-      description:
-        type: string
-        description: |-
-          Optional description of the source.
-      connection:
-        type: string
-        description: |-
-          Required. Connection ID referring to the Kafka connection configuration.
-      topics:
-        type: array
-        description: |-
-          Optional. List of topics to read. Topics can be specified without partitions (e.g., ["topic1", "topic2"]) or with partitions (e.g., ["topic1@[0, 1]", "topic2@[2, 4]"]).
-        items:
-          type: string
-      topicPattern:
-        type: string
-        description: |-
-          Optional. Topic pattern name to read all matching topics.
-      startingOffsets:
-        type: string
-        description: |-
-          Optional. JSON string setting starting offsets. Default is "earliest".
-        default: "earliest"
-      endingOffsets:
-        type: string
-        description: |-
-          Optional. JSON string setting ending offsets. Default is "latest".
-        default: "latest"
-      keyFormat:
-        type: string
-        description: |-
-          Optional. Format to decode message key. Default is "string".
-        default: "string"
-      valueFormat:
-        type: string
-        description: |-
-          Optional. Format to decode message value. Default is "string".
-        default: "string"
-      keySchema:
-        type: string
-        description: |-
-          Optional. Schema ID to parse message key if format is not string.
-      valueSchema:
-        type: string
-        description: |-
-          Optional. Schema ID to parse message value if format is not string.
-      subtractSchemaId:
-        type: boolean
-        description: |-
-          Optional. Indicates if the Kafka message schema ID is encoded into its value.
-        default: false
-      options:
-        type: array
-        description: |-
-          Optional. Additional Spark parameters for reading Kafka messages.
-        items:
-          type: string
-      keyFields:
-        type: array
-        description: |-
-          Optional list of columns that form a Primary Key or are used to identify rows within a dataset.
-        items:
-          type: string
-      metadata:
-        type: array
-        description: |-
-          Optional list of user-defined metadata parameters specific to this source.
-        items:
-          type: string
-  greenplumSources:
-    description: |-
-      Configuration for reading Greenplum table sources using the Pivotal Greenplum connector.
-    type: object
-    properties:
-      id:
-        type: string
-        description: |-
-          Unique identifier for the source.
-      description:
-        type: string
-        description: |-
-          Optional description of the source.
-      connection:
-        type: string
-        description: |-
-          Required. Connection ID referring to the Greenplum connection configuration.
-      table:
-        type: string
-        description: |-
-          Optional. Table to read.
-      keyFields:
-        type: array
-        description: |-
-          Optional list of columns that form a Primary Key or are used to identify rows within a dataset.
-        items:
-          type: string
-      metadata:
-        type: array
-        description: |-
-          Optional list of user-defined metadata parameters specific to this source.
-        items:
-          type: string
-  customSources:
-    description: |-
-      Configuration for reading custom sources not explicitly supported. Requires Spark DataFrame reader format and other optional parameters.
-    type: object
-    properties:
-      id:
-        type: string
-        description: |-
-          Unique identifier for the source.
-      description:
-        type: string
-        description: |-
-          Optional description of the source.
-      format:
-        type: string
-        description: |-
-          Required. Spark DataFrame reader format to read the source.
-      path:
-        type: string
-        description: |-
-          Optional. Path to read data from.
-      schema:
-        type: string
-        description: |-
-          Optional. Explicit schema to be applied.
-      options:
-        type: array
-        description: |-
-          Optional. Additional Spark parameters used to read data from the source.
-        items:
-          type: string
-      keyFields:
-        type: array
-        description: |-
-          Optional list of columns that form a Primary Key or are used to identify rows within a dataset.
-        items:
-          type: string
-      metadata:
-        type: array
-        description: |-
-          Optional list of user-defined metadata parameters specific to this source.
-        items:
-          type: string
+  file:
+    description: Section holding all file sources configurations.
+    type: array
+    default: [ ]
+    items:
+      oneOf:
+        - title: fixed
+          allOf:
+            - $ref: 'sources/base/baseSourceConfig.yaml'
+            - $ref: 'sources/base/baseFileSourceConfig.yaml'
+            - $ref: 'sources/base/fixedFileSourceConfig.yaml'
+        - title: delimited
+          allOf:
+            - $ref: 'sources/base/baseSourceConfig.yaml'
+            - $ref: 'sources/base/baseFileSourceConfig.yaml'
+            - $ref: 'sources/base/delimitedFileSourceConfig.yaml'
+        - title: avro
+          allOf:
+            - $ref: 'sources/base/baseSourceConfig.yaml'
+            - $ref: 'sources/base/baseFileSourceConfig.yaml'
+            - $ref: 'sources/base/avroFileSourceConfig.yaml'
+        - title: orc
+          allOf:
+            - $ref: 'sources/base/baseSourceConfig.yaml'
+            - $ref: 'sources/base/baseFileSourceConfig.yaml'
+        - title: parquet
+          allOf:
+            - $ref: 'sources/base/baseSourceConfig.yaml'
+            - $ref: 'sources/base/baseFileSourceConfig.yaml'
+  hive:
+    description: Section holding all hive sources configurations.
+    type: array
+    default: [ ]
+    items:
+      allOf:
+        - $ref: 'sources/base/baseSourceConfig.yaml'
+        - $ref: 'sources/base/hiveSourceConfig.yaml'
+  table:
+    description: Section holding all table sources configurations.
+    type: array
+    default: [ ]
+    items:
+      allOf:
+        - $ref: 'sources/base/baseSourceConfig.yaml'
+        - $ref: 'sources/base/tableSourceConfig.yaml'
+  kafka:
+    description: Section holding all kafka sources configurations.
+    type: array
+    default: [ ]
+    items:
+      allOf:
+        - $ref: 'sources/base/baseSourceConfig.yaml'
+        - $ref: 'sources/base/kafkaSourceConfig.yaml'
+  greenplum:
+    description: Section holding all greenplum sources configurations.
+    type: array
+    default: [ ]
+    items:
+      allOf:
+        - $ref: 'sources/base/baseSourceConfig.yaml'
+        - $ref: 'sources/base/greenplumSourceConfig.yaml'
+  custom:
+    description: Section holding all custom sources configurations.
+    type: array
+    default: [ ]
+    items:
+      allOf:
+        - $ref: 'sources/base/baseSourceConfig.yaml'
+        - $ref: 'sources/base/customSourceConfig.yaml'

@@ -1,40 +1,104 @@
 openapi: 3.0.3
 info:
-  title: Checkita Data Quality - Configuration Schemas
+  title: Checkita Data Quality - API Methods and Configuration Schemas
   description: |-
-    This page provides Checkita Data Quality configuration schemas for both 
-    application configuration and job configuration files.
-  version: 1.6.0
+    This page provides Checkita Data Quality API server methods 
+    and configuration schemas for both application configuration 
+    and job configuration files.
+  version: 2.0.0
+servers:
+  - url: http://127.0.0.1:8081/api
+    description: local
 tags:
-  - name: dummy
-    description: Dummy endpoints to review Checkita configurations
+  - name: configuration
+    description: Endpoints used to validate application and job configurations
+  - name: storage
+    description: Endpoints used to fetch results from Checkita DQ Storage.
 paths: 
-  /appConfig:
-    get:
+  /validation/app-config/:
+    post:
       tags:
-        - dummy
-      summary: Checkita Application Configuration
-      description: '**DUMMY** endpoint to review Checkita Application Configuration'
+        - configuration
+      summary: Validate Checkita application configuration
+      description: Posts application configuration for validation and returns response with validation result.
+      requestBody:
+        description: Application configuration to validate
+        content:
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/ApplicationConfiguration'
+      parameters:
+        - name: extra-vars
+          in: query
+          description: List of additional variables to perpend to configuration prior parsing.
+          required: false
+          schema:
+            type: string
+            example: "DQ_CONN_USER,DQ_CONN_PASSWORD"
       responses:
-        '200':
-          description: Application Configuration
+        200:
+          description: Valid configuration response.
           content:
-            application/hocon:
+            text/plain:
               schema:
-                $ref: '#/components/schemas/ApplicationConfiguration'
-  /jobConfig:
-    get:
+                type: string
+                example: Success. Configuration is valid.
+        406:
+          description: Validation error response.
+          content: 
+            text/plain:
+              schema:
+                type: string
+                example: 'Unable to validate configuration due to following errors: <list of validation errors>.'
+        400:
+          description: Bad request in case when query parameters cannon be parsed.
+          content: 
+            text/plain:
+              schema:
+                type: string
+                example: 'Unable to parse arguments: <list of argument parsing errors>.'
+  /validation/job-config/:
+    post:
       tags:
-        - dummy
-      summary: Checkita Job Configuration
-      description: '**DUMMY** endpoint to review Checkita Job Configuration'
+        - configuration
+      summary: Validate Checkita job configuration
+      description: Posts job configuration for validation and returns response with validation result.
+      requestBody:
+        description: Job configuration to validate
+        content:
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/JobConfiguration'
+      parameters:
+        - name: extra-vars
+          in: query
+          description: List of additional variables to perpend to configuration prior parsing.
+          required: false
+          schema:
+            type: string
+            example: "DQ_CONN_USER,DQ_CONN_PASSWORD"
       responses:
-        '200':
-          description: Job Configuration
+        200:
+          description: Valid configuration response.
           content:
-            application/hocon:
+            text/plain:
               schema:
-                $ref: '#/components/schemas/JobConfiguration'
+                type: string
+                example: Success. Configuration is valid.
+        406:
+          description: Validation error response.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Unable to validate configuration due to following errors: <list of validation errors>.'
+        400:
+          description: Bad request in case when query parameters cannon be parsed.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Unable to parse arguments: <list of argument parsing errors>.'
 components:
   schemas:
     ApplicationConfiguration:

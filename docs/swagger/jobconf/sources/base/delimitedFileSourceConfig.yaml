@@ -1,0 +1,29 @@
+type: object
+properties:
+  schema:
+    type: string
+    description: |-
+      Schema ID used to parse delimited file. It is possible to use schema of any definition type 
+      as long as it has flat structure (nested columns are not supported for delimited text files).
+    example: delimited_schema
+  header:
+    type: boolean
+    description: Boolean parameter indicating whether schema should be inferred from file header.
+    default: false
+    example: true
+  delimiter:
+    type: string
+    description: Column delimiter.
+    default: ','
+    example: ';'
+  quote:
+    type: string
+    description: Column enclosing character.
+    default: '"'
+    example: "'"
+  escape:
+    type: string
+    description: Escape character.
+    default: '\'
+    example: '|'
+          

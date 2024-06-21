@@ -1,0 +1,15 @@
+title: fixed
+allOf:
+  - $ref: '../base/baseSourceConfig.yaml'
+  - $ref: '../base/baseFileSourceConfig.yaml'
+  - $ref: '../base/windowByConfig.yaml'
+  - type: object
+    required:
+      - schema
+    properties:
+      schema:
+        type: string
+        description: |-
+          Schema ID used to parse fixed-width file. 
+          The schema definition type should be either `fixedFull` or `fixedShort`.
+        example: fixed_full_schema

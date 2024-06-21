@@ -1,3 +1,0 @@
-# Load Checks Configuration
-
-tbd

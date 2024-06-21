@@ -1,3 +1,0 @@
-# File Output Configuration
-
-tbd
