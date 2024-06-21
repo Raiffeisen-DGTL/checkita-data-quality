@@ -117,7 +117,7 @@ class DQContextSpec extends AnyWordSpec with Matchers with PrivateMethodTester {
       }
 
       // test how readVirtualSources function reads virtual sources:
-      val results = vsSequences.map(vsSeq => context invokePrivate vsReader(vsSeq, parents, false))
+      val results = vsSequences.map(vsSeq => context invokePrivate vsReader(vsSeq, parents, false, jobId))
 
       results.foreach { r =>
         r.isRight shouldEqual true

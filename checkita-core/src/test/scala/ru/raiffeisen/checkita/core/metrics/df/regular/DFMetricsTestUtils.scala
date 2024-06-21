@@ -64,7 +64,8 @@ trait DFMetricsTestUtils { this: AnyWordSpec with Matchers =>
         val (result, errorsNum) = runDFMetricCalc(df, calculator)
 
         if (res.isNaN) result.isNaN shouldEqual true
-        else result shouldEqual res
+        else math.round(result * 10e6) shouldEqual math.round(res * 10e6) 
+        // there is some floating number errors during test. lets check if results are the same up to 6th digit.
 
         errorsNum shouldEqual fc
     }
