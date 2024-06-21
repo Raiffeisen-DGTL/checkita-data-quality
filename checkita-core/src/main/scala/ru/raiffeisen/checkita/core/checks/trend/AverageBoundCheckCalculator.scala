@@ -82,22 +82,24 @@ abstract class AverageBoundCheckCalculator extends CheckCalculator with WindowPa
     val historyResults = baseMetricCalcRes.resultType match {
       case ResultType.RegularMetric => mgr.loadMetricResults[ResultMetricRegular](
         jobId, Seq(baseMetricCalcRes.metricId), rule, settings.referenceDateTime, windowSize, windowOffset
-      ).map(_.result)
+      )
       case ResultType.ComposedMetric => mgr.loadMetricResults[ResultMetricComposed](
         jobId, Seq(baseMetricCalcRes.metricId), rule, settings.referenceDateTime, windowSize, windowOffset
-      ).map(_.result)
+      )
       case other => throw new IllegalArgumentException(
         s"Trend check '${checkName.entryName}' requires that either source or composed metric results to be provided." + 
           s" Got following results instead: '${other.entryName}'."
       )
     }
-    
-    if (historyResults.isEmpty) throw new IllegalArgumentException(
+
+    val resultVals = historyResults.map(_.result).filterNot(_.isNaN)
+
+    if (resultVals.isEmpty) throw new IllegalArgumentException(
       s"There ara no historical results found to perform ${checkName.entryName} check '$checkId'."
     )
-    
+
     val baseResult = baseMetricCalcRes.result
-    val avgResult = historyResults.sum / historyResults.length
+    val avgResult = resultVals.sum / resultVals.length
 
     val (status, statusString) =
       if (compareFunc(baseResult, avgResult))
