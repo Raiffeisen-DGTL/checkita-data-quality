@@ -11,11 +11,21 @@ import scala.collection.immutable
 sealed abstract class MetricName(override val entryName: String) extends EnumEntry with Serializable
 object MetricName extends Enum[MetricName] {
   case object Composed extends MetricName("COMPOSED")
+  case object TrendAvg extends MetricName("TREND_AVG")
+  case object TrendStd extends MetricName("TREND_STD")
+  case object TrendMin extends MetricName("TREND_MIN")
+  case object TrendMax extends MetricName("TREND_MAX")
+  case object TrendSum extends MetricName("TREND_SUM")
+  case object TrendMedian extends MetricName("TREND_MEDIAN")
+  case object TrendFirstQ extends MetricName("TREND_FIRST_QUARTILE")
+  case object TrendThirdQ extends MetricName("TREND_THIRD_QUARTILE")
+  case object TrendQuantile extends MetricName("TREND_Quantile")
   case object RowCount extends MetricName("ROW_COUNT")
   case object NullValues extends MetricName("NULL_VALUES")
   case object EmptyValues extends MetricName("EMPTY_VALUES")
   case object DuplicateValues extends MetricName("DUPLICATE_VALUES")
   case object Completeness extends MetricName("COMPLETENESS")
+  case object Emptiness extends MetricName("EMPTINESS")
   case object SequenceCompleteness extends MetricName("SEQUENCE_COMPLETENESS")
   case object ApproximateSequenceCompleteness extends MetricName("APPROXIMATE_SEQUENCE_COMPLETENESS")
   case object DistinctValues extends MetricName("DISTINCT_VALUES")
@@ -57,5 +67,5 @@ object MetricName extends Enum[MetricName] {
   case object LevenshteinDistance extends MetricName("LEVENSHTEIN_DISTANCE")
   case object TopN extends MetricName("TOP_N")
   
-  override val values: immutable.IndexedSeq[MetricName] = findValues
+  override def values: immutable.IndexedSeq[MetricName] = findValues
 }

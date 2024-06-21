@@ -8,7 +8,7 @@ import java.io.{FileInputStream, InputStream}
 import java.nio.charset.StandardCharsets
 import java.util.Properties
 import scala.util.Try
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
  * Logging trait that is mixed to the classes that do logging.

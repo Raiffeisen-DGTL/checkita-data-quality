@@ -27,6 +27,7 @@ trait ResultJsonBuilder[T <: ResultTargetConfig] extends TargetBuilder[T, Seq[St
     target.resultTypes.value.flatMap {
       case ResultTargetType.RegularMetrics => results.regularMetrics.map(_.toJson)
       case ResultTargetType.ComposedMetrics => results.composedMetrics.map(_.toJson)
+      case ResultTargetType.TrendMetrics => results.trendMetrics.map(_.toJson)
       case ResultTargetType.LoadChecks => results.loadChecks.map(_.toJson)
       case ResultTargetType.Checks => results.checks.map(_.toJson)
       case ResultTargetType.JobState => Seq(results.jobConfig.toJson)

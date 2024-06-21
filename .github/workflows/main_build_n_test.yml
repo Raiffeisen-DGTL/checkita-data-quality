@@ -12,7 +12,8 @@ jobs:
   build_n_test:
     strategy:
       matrix:
-        version: ["2.4.0", "3.0.3", "3.1.3", "3.2.4", "3.3.3", "3.4.1", "3.5.0"] # spark versions
+        scala-version: ['2.12', '2.13']
+        spark-version: ["3.2.0", "3.2.4", "3.3.3", "3.4.1", "3.5.1"]
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -28,5 +29,5 @@ jobs:
           echo "-Xmx2G" > .jvmopts
           echo "-Xms1G" >> .jvmopts
           echo "-Xss100m" >> .jvmopts
-      - name: Compile and Test for Spark ${{ matrix.version }}
-        run: sbt -DASSY_MODE=WITHSPARK -DSPARK_VERSION=${{ matrix.version }} -Duser.timezone="Europe/Moscow" checkita-core/clean checkita-core/compile checkita-core/test
+      - name: Compile and Test for Scala ${{ matrix.scala-version }} and Spark ${{ matrix.spark-version }}
+        run: sbt -DASSY_MODE=WITHSPARK -DSCALA_VERSION=${{ matrix.scala-version }} -DSPARK_VERSION=${{ matrix.spark-version }} -Duser.timezone="Europe/Moscow" checkita-core/clean checkita-core/compile checkita-core/test

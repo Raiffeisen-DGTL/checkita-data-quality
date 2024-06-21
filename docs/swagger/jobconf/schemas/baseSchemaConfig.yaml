@@ -1,0 +1,33 @@
+type: object
+required:
+  - id
+  - kind
+properties:
+  id:
+    type: string
+    description: Schema ID
+    example: delimited_file_schema
+  description:
+    type: string
+    description: Optional. Schema description
+    example: Schema for delimited file.
+  kind:
+    type: string
+    description: |-
+      Kind of schema definition. Defines format in which schema is defined.
+      Thus, schemas can be defined in different ways and set of fields used
+      for schema configuration depends on its format.
+    enum:
+      - delimited
+      - fixedShort
+      - fixedFull
+      - avro
+      - hive
+    example: delimited
+  metadata:
+    type: array
+    description: Optional list of arbitrary user-defined metadata parameters specific to this schema.
+    items:
+      type: string
+      description: Metadata parameter string in format of `param.name=param.value`
+    default: [ ]

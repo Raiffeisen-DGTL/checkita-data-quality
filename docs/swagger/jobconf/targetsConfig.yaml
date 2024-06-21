@@ -1,0 +1,261 @@
+description: |-
+  Targets provide alternative channels for sending results, notifications, and alerts. They include result targets, error collection targets, 
+  summary targets, and check alert targets. Each target type can save or send data to different destinations like file systems, Hive, Kafka, email, 
+  and Mattermost.
+type: object
+properties:
+  results:
+    type: array
+    description: Result targets save results to file systems, Hive, or Kafka.
+    items:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of result target.
+          enum:
+            - file
+            - hive
+            - kafka
+        resultTypes:
+          type: array
+          description: List of result types to save or send.
+          items:
+            type: string
+            enum:
+              - regularMetrics
+              - composedMetrics
+              - loadChecks
+              - checks
+              - jobState
+        save:
+          type: object
+          description: File output configuration for saving results.
+          properties:
+            path:
+              type: string
+              description: Path to save the file.
+        schema:
+          type: string
+          description: Hive schema for saving results.
+        table:
+          type: string
+          description: Hive table for saving results.
+        connection:
+          type: string
+          description: Kafka connection ID.
+        topic:
+          type: string
+          description: Kafka topic to send results to.
+        options:
+          type: array
+          description: Additional Kafka parameters.
+          items:
+            type: string
+            description: Kafka parameter in the format parameterName=parameterValue.
+
+  errorCollection:
+    type: array
+    description: Error collection targets save metric errors to file systems, Hive, or Kafka.
+    items:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of error collection target.
+          enum:
+            - file
+            - hive
+            - kafka
+        metrics:
+          type: array
+          description: List of metrics for which errors will be saved.
+          items:
+            type: string
+        dumpSize:
+          type: integer
+          description: Maximum number of errors saved per metric.
+        save:
+          type: object
+          description: File output configuration for saving errors.
+          properties:
+            path:
+              type: string
+              description: Path to save the file.
+        schema:
+          type: string
+          description: Hive schema for saving errors.
+        table:
+          type: string
+          description: Hive table for saving errors.
+        connection:
+          type: string
+          description: Kafka connection ID.
+        topic:
+          type: string
+          description: Kafka topic to send errors to.
+        options:
+          type: array
+          description: Additional Kafka parameters.
+          items:
+            type: string
+            description: Kafka parameter in the format parameterName=parameterValue.
+
+  summary:
+    type: array
+    description: Summary targets send summary reports via email, Mattermost, or Kafka.
+    items:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of summary target.
+          enum:
+            - email
+            - mattermost
+            - kafka
+        attachMetricErrors:
+          type: boolean
+          description: Attach report with collected metric errors.
+        attachFailedChecks:
+          type: boolean
+          description: Attach report with failed checks.
+        metrics:
+          type: array
+          description: List of metrics for which errors will be saved.
+          items:
+            type: string
+        dumpSize:
+          type: integer
+          description: Maximum number of errors saved per metric.
+        recipients:
+          type: array
+          description: List of recipients' emails or Mattermost recipients.
+          items:
+            type: string
+        template:
+          type: string
+          description: HTML or Markdown template to build message body.
+        templateFile:
+          type: string
+          description: Location of the file with HTML or Markdown template.
+        connection:
+          type: string
+          description: Kafka connection ID.
+        topic:
+          type: string
+          description: Kafka topic to send summary to.
+        options:
+          type: array
+          description: Additional Kafka parameters.
+          items:
+            type: string
+            description: Kafka parameter in the format parameterName=parameterValue.
+
+  checkAlert:
+    type: array
+    description: Check alert targets send notifications for failed checks via email or Mattermost.
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of check alert.
+        checks:
+          type: array
+          description: List of watched checks.
+          items:
+            type: string
+        type:
+          type: string
+          description: Type of check alert target.
+          enum:
+            - email
+            - mattermost
+        recipients:
+          type: array
+          description: List of recipients' emails or Mattermost recipients.
+          items:
+            type: string
+        template:
+          type: string
+          description: HTML or Markdown template to build message body.
+        templateFile:
+          type: string
+          description: Location of the file with HTML or Markdown template.
+
+  unifiedTargetSchema:
+    description: |-
+      All targets saved to file or sent to Kafka conform to a unified schema, enabling results from various types to be sent together as a single file or Kafka message. This approach avoids the "small files" problem and simplifies parsing of Kafka messages.
+    type: object
+    properties:
+      jobId:
+        type: string
+        description: ID of Data Quality Job.
+      referenceDate:
+        type: string
+        description: Reference datetime for which job is run.
+      executionDate:
+        type: string
+        description: Datetime of actual job start.
+      entityType:
+        type: string
+        description: Type of result.
+      data:
+        type: string
+        description: JSON string with content varying based on entityType.
+      
+  jobSummaryParameters:
+    description: |-
+      Parameters available for substitution in HTML or Markdown templates for job summary reports and check alerts. Templates support Mustache Template notation for parameter substitution.
+    type: object
+    properties:
+      jobId:
+        type: string
+        description: ID of the current Data Quality job.
+      jobStatus:
+        type: string
+        description: 
+        Job status: Success if all checks are passed, Failure otherwise.
+      referenceDate:
+        type: string
+        description: Reference datetime for which job is run.
+      executionDate:
+        type: string
+        description: Datetime of actual job start.
+      numSources:
+        type: integer
+        description: Total number of sources in the job.
+      numMetrics:
+        type: integer
+        description: Total number of metrics in the job.
+      numChecks:
+        type: integer
+        description: Total number of checks in the job.
+      numLoadChecks:
+        type: integer
+        description: Total number of load checks in the job.
+      numMetricsWithErrors:
+        type: integer
+        description: Number of metrics that yielded errors during their computation.
+      numFailedChecks:
+        type: integer
+        description: Number of failed checks.
+      numFailedLoadChecks:
+        type: integer
+        description: Number of failed load checks.
+      listMetricsWithErrors:
+        type: array
+        description: List of all metrics that yielded errors during their computation.
+        items:
+          type: string
+      listFailedChecks:
+        type: array
+        description: List of failed checks.
+        items:
+          type: string
+      listFailedLoadChecks:
+        type: array
+        description: List of failed load checks.
+        items:
+          type: string

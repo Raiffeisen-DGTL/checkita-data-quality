@@ -1,0 +1,76 @@
+type: object
+required:
+  - connection
+properties:
+  connection:
+    type: string
+    description: |-
+      Connection ID to use for kafka source. Connection ID must refer to 
+      Kafka connection configuration.
+    example: some_connection
+  topics:
+    type: array
+    description: |-
+      List of topics to read. Topics can be specified in either of two formats:
+        * List of topics without indication of partitions to read (read all topic partitions): `["topic1", "topic2"]`;
+        * List of topics with indication of partitions to read: `["topic1@[0, 1]", "topic2@[2, 4]"]`.
+        * *All topics must be defined using the same format.*
+    example: ["topic1", "topic2"]
+    items:
+      type: string
+      description: Topic to read.
+  topicPattern:
+    type: string
+    description: 'Topic pattern: read all topics that match pattern.'
+    example: topic_app_one*
+  startingOffsets:
+    type: string
+    description: Json string setting starting offsets to read from topic. By default, all topic is read.
+    default: earliest
+  endingOffsets:
+    type: string
+    description: Json string setting ending offset until which to read from topic. By default, read topic till the end.
+    default: latest
+  keyFormat:
+    type: string
+    description: Format used to decode message key.
+    default: string
+    example: json
+    enum:
+      - binary
+      - string
+      - xml
+      - json
+      - avro
+  valueFormat:
+    type: string
+    description: Format used to decode message value.
+    default: string
+    example: json
+    enum:
+      - binary
+      - string
+      - xml
+      - json
+      - avro
+  keySchema:
+    type: string
+    description: Schema ID used to parse message key. If key format other than `string` then schema must be provided.
+    example: kafka_key_schema
+  valueSchema:
+    type: string
+    description: Schema ID used to parse message value. If value format other than `string` then schema must be provided.
+    example: kafka_value_schema
+  subtractSchemaId:
+    type: boolean
+    default: false
+    description: |-
+      Boolean flag indicating whether a kafka message schema ID is encoded into its value, 
+      i.e. `[1 Magic Byte] + [4 Schema ID Bytes] + [Message Value Binary Data]`.
+      If set to `true`, then first five bytes are subtracted before value parsing.
+    options:
+      type: array
+      description: |-
+        Additional Spark parameters related to reading messages from Kafka topics.
+        Parameters are provided as a strings in format of `parameterName=parameterValue`.
+      example: failOnDataLoss=true

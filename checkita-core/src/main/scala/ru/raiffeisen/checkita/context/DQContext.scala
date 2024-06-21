@@ -11,26 +11,28 @@ import ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig
 import ru.raiffeisen.checkita.config.jobconf.Connections.ConnectionConfig
 import ru.raiffeisen.checkita.config.jobconf.JobConfig
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
-import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig}
+import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig, TrendMetricConfig}
 import ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig
 import ru.raiffeisen.checkita.config.jobconf.Sources.{SourceConfig, VirtualSourceConfig}
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.core.Source
+import ru.raiffeisen.checkita.core.streaming.CheckpointIO
+import ru.raiffeisen.checkita.core.streaming.Checkpoints.Checkpoint
 import ru.raiffeisen.checkita.readers.ConnectionReaders._
 import ru.raiffeisen.checkita.readers.SchemaReaders._
 import ru.raiffeisen.checkita.readers.SourceReaders._
 import ru.raiffeisen.checkita.readers.VirtualSourceReaders.VirtualSourceReaderOps
 import ru.raiffeisen.checkita.storage.Connections.DqStorageConnection
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
-import ru.raiffeisen.checkita.utils.Common.prepareConfig
+import ru.raiffeisen.checkita.utils.Common.{getPrependVars, prepareConfig}
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
 import ru.raiffeisen.checkita.utils.SparkUtils.{makeFileSystem, makeSparkSession}
+import ru.raiffeisen.checkita.writers.VirtualSourceWriter.saveVirtualSource
 
 import java.io.InputStreamReader
 import scala.annotation.tailrec
-import scala.collection.JavaConverters._
 import scala.util.Try
 
 /**
@@ -53,12 +55,13 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
   private val schemaStage: String = RunStage.ReadSchemas.entryName
   private val sourceStage: String = RunStage.ReadSources.entryName
   private val virtualSourceStage: String = RunStage.ReadVirtualSources.entryName
+  private val checkpointStage: String = RunStage.CheckpointStage.entryName
 
   /**
    * Trick here is that this value needs to be evaluated when DQ context is created.
    * Thus, evaluation of this value forces logger initialization and app settings logging.
    */
-  private val _: Unit = {
+  locally {
     initLogger(settings.loggingLevel)
     val logGeneral = Seq(
       "General Checkita Data Quality configuration:",
@@ -87,7 +90,8 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       s"  - Window duration:     ${settings.streamConfig.window.toString}",
       s"  - Trigger interval:    ${settings.streamConfig.trigger.toString}",
       s"  - Watermark interval:  ${settings.streamConfig.watermark.toString}",
-      s"  - Allow empty windows: ${settings.streamConfig.allowEmptyWindows}"
+      s"  - Allow empty windows: ${settings.streamConfig.allowEmptyWindows}",
+      s"  - Checkpoint location: ${settings.streamConfig.checkpointDir.map(_.value).getOrElse("Not specified.")}"
     )
     val logEnablers = Seq(
       "* Enablers settings:",
@@ -96,7 +100,8 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       s"  - aggregatedKafkaOutput:    ${settings.aggregatedKafkaOutput}",
       s"  - enableCaseSensitivity:    ${settings.enableCaseSensitivity}",
       s"  - errorDumpSize:            ${settings.errorDumpSize}",
-      s"  - outputRepartition:        ${settings.outputRepartition}"   
+      s"  - outputRepartition:        ${settings.outputRepartition}",
+      s"  - metricEngineAPI:          ${settings.metricEngineAPI.entryName}"
     )
     val logStorageConf = settings.storageConfig match {
       case Some(conf) => Seq(
@@ -113,7 +118,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       case None => Seq(
         "* Storage configuration:",
         "  - Configuration is empty. Results will not be saved. " +
-          "Also trend checks execution is impossible and will be skipped."
+          "Also trend metrics and trend checks execution is impossible and will be skipped."
       )
     }
     val logEmailConfig = settings.emailConfig match {
@@ -136,7 +141,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     val logMMConfig = settings.mattermostConfig match {
       case Some(conf) => Seq(
         "* Mattermost configuration:",
-        s"  - API URL: ${conf.host.value} (API token is not shown intentionally"        
+        s"  - API URL: ${conf.host.value} (API token is not shown intentionally"
       )
       case None => Seq(
         "* Mattermost configuration:",
@@ -158,21 +163,21 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
         s"  - Encrypt metric errors row data: ${eCfg.encryptErrorData}",
       )
     }.getOrElse(Seq("  - Encryption configuration is not set and, therefore, results will not be encrypted."))
-    
-    (
-      logGeneral ++ 
-      logSparkConf ++ 
-      logTimePref ++
-      logStreamingPref ++
-      logEnablers ++ 
-      logStorageConf ++ 
-      logEmailConfig ++ 
-      logMMConfig ++
-      logExtraVars ++
-      logEncryption
-    ).foreach(msg => log.info(s"$settingsStage $msg"))
-  }
 
+    (
+      logGeneral ++
+        logSparkConf ++
+        logTimePref ++
+        logStreamingPref ++
+        logEnablers ++
+        logStorageConf ++
+        logEmailConfig ++
+        logMMConfig ++
+        logExtraVars ++
+        logEncryption
+      ).foreach(msg => log.info(s"$settingsStage $msg"))
+  }
+  
   private def logJobBuildStart(implicit jobId: String): Unit = {
     log.warn("************************************************************************")
     log.warn(s"                   Starting build of job '$jobId'")
@@ -260,9 +265,11 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
   private def readSources(sources: Seq[SourceConfig],
                           schemas: Map[String, SourceSchema],
                           connections: Map[String, DQConnection],
-                          readAsStream: Boolean = false): Result[Map[String, Source]] = {
+                          readAsStream: Boolean = false,
+                          checkpoints: Map[String, Checkpoint] = Map.empty): Result[Map[String, Source]] = {
     implicit val sc: Map[String, SourceSchema] = schemas
     implicit val c: Map[String, DQConnection] = connections
+    implicit val chk: Map[String, Checkpoint] = checkpoints
     
     reduceToMap(sources.map{ srcConf =>
       log.info(s"$sourceStage Reading source '${srcConf.id.value}'...")
@@ -282,7 +289,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    * @param vs      Sequence of unresolved virtual sources
    * @param parents Sequence of resolved parent sources
    * @param idx     Index of virtual sources that being checked at current iteration
-   *                and will be returned of all its parents are resolved.
+   *                and will be returned if all its parents are resolved.
    * @return First virtual source for which all parents are reserved
    *         and the sequence of remaining virtual sources.
    */
@@ -313,7 +320,8 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
   @tailrec
   private def readVirtualSources(virtualSources: Result[Seq[VirtualSourceConfig]],
                                  parentSources: Result[Map[String, Source]],
-                                 readAsStream: Boolean = false): Result[Map[String, Source]] = virtualSources match {
+                                 readAsStream: Boolean = false)
+                                (implicit jobId: String): Result[Map[String, Source]] = virtualSources match {
     case Left(errors) => Left(errors)
     case Right(vs) if vs.isEmpty => parentSources
     case Right(vs) =>
@@ -325,6 +333,18 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
           (if (readAsStream) curVsAndRest._1.readStream(parents) else curVsAndRest._1.read(parents))
             .tap(_ => log.info(s"$virtualSourceStage Success!")) // immediate logging of success state
             .tap(s => log.debug(s.df.schema.treeString)) // debug source schema
+            .flatMap{ s =>
+              val saveStatus = if (curVsAndRest._1.save.nonEmpty && !readAsStream) {
+                val outputDir = curVsAndRest._1.save.get.path.value
+                val outputFmt = curVsAndRest._1.save.get.getClass.getSimpleName.dropRight("FileOutputConfig".length)
+                log.info(
+                  s"$virtualSourceStage Saving virtual source '${curVsAndRest._1.id.value}' to " +
+                    s"$outputDir in $outputFmt format."
+                )
+                saveVirtualSource(curVsAndRest._1, s.df).tap(_ => log.info(s"$virtualSourceStage Success!"))
+              } else liftToResult("Virtual source is not saved.")
+              saveStatus.mapValue(_ => s)
+            } // save virtual source if save option is configured.
             .mapLeft(_.map(e => s"$virtualSourceStage $e")) // update error messages with running stage
         }
         _ <- Try(curVsAndRest._1.persist.foreach{ sLvl =>
@@ -342,16 +362,18 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
 
   /**
    * Fundamental Data Quality batch job builder: builds batch job provided with all job components.
-   * @param jobId Job ID
-   * @param sources Sequence of sources to check
-   * @param metrics Sequence of regular metrics to calculate
+   *
+   * @param jobId           Job ID
+   * @param sources         Sequence of sources to check
+   * @param metrics         Sequence of regular metrics to calculate
    * @param composedMetrics Sequence of composed metrics to calculate on top of regular metrics results.
-   * @param checks Sequence of checks to preform based in metrics results.
-   * @param loadChecks Sequence of load checks to perform directly over the sources (validate source metadata).
-   * @param schemas Sequence of user-defined schemas used primarily to perform loadChecks (i.e. source schema validation).
-   * @param targets Sequence of targets to be send/saved (alternative channels to communicate DQ Job results).
-   * @param connections Sequence of user-defined connections to external data systems (RDBMS, Kafka, etc..).
-   *                    Connections are used primarily to send targets.
+   * @param trendMetrics    Sequence of trend metrics to calculate
+   * @param checks          Sequence of checks to preform based in metrics results.
+   * @param loadChecks      Sequence of load checks to perform directly over the sources (validate source metadata).
+   * @param schemas         Sequence of user-defined schemas used primarily to perform loadChecks (i.e. source schema validation).
+   * @param targets         Sequence of targets to be send/saved (alternative channels to communicate DQ Job results).
+   * @param connections     Sequence of user-defined connections to external data systems (RDBMS, Kafka, etc..).
+   *                        Connections are used primarily to send targets.
    * @return Data Quality batch job instances wrapped into Result[_].
    */
   def buildBatchJob(
@@ -360,6 +382,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
                 sources: Seq[Source],
                 metrics: Seq[RegularMetricConfig] = Seq.empty,
                 composedMetrics: Seq[ComposedMetricConfig] = Seq.empty,
+                trendMetrics: Seq[TrendMetricConfig] = Seq.empty,
                 checks: Seq[CheckConfig] = Seq.empty,
                 loadChecks: Seq[LoadCheckConfig] = Seq.empty,
                 targets: Seq[TargetConfig] = Seq.empty,
@@ -371,7 +394,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     logJobBuildStart
     
     getStorageManager.map(storageManager =>
-      DQBatchJob(jobConfig, sources, metrics, composedMetrics, checks, loadChecks, targets, schemas, connections, storageManager)
+      DQBatchJob(jobConfig, sources, metrics, composedMetrics, trendMetrics, checks, loadChecks, targets, schemas, connections, storageManager)
     )
   }
 
@@ -382,6 +405,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
    * @param sources         Sequence of sources to check (streamable sources)
    * @param metrics         Sequence of regular metrics to calculate
    * @param composedMetrics Sequence of composed metrics to calculate on top of regular metrics results.
+   * @param trendMetrics    Sequence of trend metrics to calculate
    * @param checks          Sequence of checks to preform based in metrics results.
    * @param schemas         Sequence of user-defined schemas used primarily to perform loadChecks (i.e. source schema validation).
    * @param targets         Sequence of targets to be send/saved (alternative channels to communicate DQ Job results).
@@ -394,6 +418,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
                      sources: Seq[Source],
                      metrics: Seq[RegularMetricConfig] = Seq.empty,
                      composedMetrics: Seq[ComposedMetricConfig] = Seq.empty,
+                     trendMetrics: Seq[TrendMetricConfig] = Seq.empty,
                      checks: Seq[CheckConfig] = Seq.empty,
                      targets: Seq[TargetConfig] = Seq.empty,
                      schemas: Map[String, SourceSchema] = Map.empty,
@@ -421,6 +446,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
           sources,
           metrics,
           composedMetrics,
+          trendMetrics,
           Seq.empty[LoadCheckConfig], // no load checks are run in streaming jobs
           checks,
           targets,
@@ -454,6 +480,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     
     val regularMetrics: Seq[RegularMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.regular).flatMap(_.getAllRegularMetrics)
     val composedMetrics: Seq[ComposedMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.composed)
+    val trendMetrics: Seq[TrendMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.trend)
     val checks: Seq[CheckConfig] = jobConfig.checks.toSeq.flatMap(_.getAllChecks)
     val loadChecks: Seq[LoadCheckConfig] = jobConfig.loadChecks.toSeq.flatMap(_.getAllLoadChecks)
     val targets: Seq[TargetConfig] = jobConfig.targets.toSeq.flatMap(_.getAllTargets)
@@ -464,6 +491,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
         sources.values.toSeq,
         regularMetrics,
         composedMetrics,
+        trendMetrics,
         checks,
         loadChecks,
         targets,
@@ -489,12 +517,31 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     implicit val jobId: String = jobConfig.jobId.value
 
     logJobBuildStart
-
+    
+    log.info(s"$checkpointStage Reading checkpoint.")
+    val bufferCheckpoint = jobConfig.getJobHash.mapValue { jh =>
+      settings.streamConfig.checkpointDir match {
+        case Some(dir) => CheckpointIO.readCheckpoint(dir.value, jobId, jh)
+        case None => 
+          log.info(s"$checkpointStage Checkpoint directory is not set.")
+          None
+      }
+    }.tap{
+      case Some(_) => log.info(s"$checkpointStage Checkpoints retrieved successfully.")
+      case None => log.info(s"$checkpointStage No checkpoint was retrieved. Proceed with empty stream processor buffer.")
+    }.mapLeft(_.map(e => s"$checkpointStage $e")) // update error messages with running stage
+    
+    val checkpoints = bufferCheckpoint.map(optBuffer =>
+      optBuffer.map(_.checkpoints.readOnlySnapshot().toMap).getOrElse(Map.empty)
+    )
+    
     val connections = establishConnections(jobConfig.connections.map(_.getAllConnections).getOrElse(Seq.empty))
     val schemas = readSchemas(jobConfig.schemas)
-    val regularSources = connections.combine(schemas)((c, s) => (c, s)).flatMap {
-      case (conn, sch) => readSources(
-        jobConfig.streams.map(_.getAllSources).getOrElse(Seq.empty), sch, conn, readAsStream = true
+    val regularSources = connections.union(schemas, checkpoints).flatMap {
+      case (conn, sch, checkpoints) => readSources(
+        jobConfig.streams.map(_.getAllSources).getOrElse(Seq.empty), sch, conn, 
+        readAsStream = true,
+        checkpoints = checkpoints
       )
     }
 
@@ -502,21 +549,24 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
 
     val regularMetrics: Seq[RegularMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.regular).flatMap(_.getAllRegularMetrics)
     val composedMetrics: Seq[ComposedMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.composed)
+    val trendMetrics: Seq[TrendMetricConfig] = jobConfig.metrics.toSeq.flatMap(_.trend)
     val checks: Seq[CheckConfig] = jobConfig.checks.toSeq.flatMap(_.getAllChecks)
     val targets: Seq[TargetConfig] = jobConfig.targets.toSeq.flatMap(_.getAllTargets)
 
-    allSources.combineT3(connections, schemas, getStorageManager)(
-      (sources, conn, _, manager) => DQStreamJob(
+    allSources.combineT4(connections, schemas, getStorageManager, bufferCheckpoint)(
+      (sources, conn, _, manager, buffer) => DQStreamJob(
         jobConfig,
         sources.values.toSeq,
         regularMetrics,
         composedMetrics,
+        trendMetrics,
         Seq.empty[LoadCheckConfig], // no load checks are run in streaming jobs
         checks,
         targets,
         Map.empty[String, SourceSchema], // as no need to run load checks then schemas are not needed as well
         conn,
-        manager
+        manager,
+        buffer
       )
     ).mapLeft(_.distinct) // there is some error message duplication that needs to be eliminated.
   }
@@ -629,11 +679,7 @@ object DQContext {
             doMigration: Boolean = false,
             extraVariables: Map[String, String] = Map.empty, // no limitations on variables names.
             logLvl: Level = Level.INFO): Result[DQContext] = {
-    val variablesRegex = "^(?i)(DQ)[a-z0-9_-]+$" // system variables must match the given regex.
-    val systemVariables = System.getProperties.asScala.filterKeys(_ matches variablesRegex)
-    val prependVariables = (systemVariables ++ extraVariables).map {
-      case (k, v) => k + ": \"" + v + "\""
-      }.mkString("", "\n", "\n")
+    val prependVariables = getPrependVars(extraVariables)
     AppSettings.build(appConfig, referenceDate, isLocal, isShared, doMigration, prependVariables, logLvl)
       .flatMap(settings => build(settings))
   }

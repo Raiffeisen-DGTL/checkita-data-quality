@@ -3,19 +3,21 @@ package ru.raiffeisen.checkita.connections.kafka
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
-import org.apache.spark.sql.avro.from_avro
+import org.apache.spark.sql.avro.functions.from_avro
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 import org.json.XML
+import org.json4s.jackson.Serialization.write
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.Enums.KafkaTopicFormat
 import ru.raiffeisen.checkita.config.jobconf.Connections.KafkaConnectionConfig
 import ru.raiffeisen.checkita.config.jobconf.Sources.KafkaSourceConfig
 import ru.raiffeisen.checkita.connections.{DQConnection, DQStreamingConnection}
+import ru.raiffeisen.checkita.core.streaming.Checkpoints.{Checkpoint, KafkaCheckpoint}
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
-import ru.raiffeisen.checkita.utils.Common.paramsSeqToMap
+import ru.raiffeisen.checkita.utils.Common.{jsonFormats, paramsSeqToMap}
 import ru.raiffeisen.checkita.utils.ResultUtils._
 import ru.raiffeisen.checkita.utils.SparkUtils.DataFrameOps
 
@@ -165,17 +167,33 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
    * @param settings     Implicit application settings object
    * @param spark        Implicit spark session object
    * @param schemas      Implicit Map of all explicitly defined schemas (schemaId -> SourceSchema)
+   * @param checkpoints Map of initial checkpoints read from checkpoint directory
    * @return Spark Streaming DataFrame
    */
   def loadDataStream(sourceConfig: SourceType)
                     (implicit settings: AppSettings,
                      spark: SparkSession,
-                     schemas: Map[String, SourceSchema]): DataFrame = {
+                     schemas: Map[String, SourceSchema],
+                     checkpoints: Map[String, Checkpoint]): DataFrame = {
+    
+    val startingOffsets = checkpoints.get(sourceConfig.id.value)
+      .map(_.asInstanceOf[KafkaCheckpoint])
+      .map{ chk =>
+        val offsets = chk.currentOffsets
+          .groupBy(t => t._1._1)
+          .map {
+            case (k, im) => k -> im.map(t => t._1._2.toString -> (t._2 + 1))
+          }
+        write(offsets)
+      }
+      .orElse(sourceConfig.startingOffsets.map(_.value))
+      .getOrElse("latest")
+    
     val allOptions = kafkaParams ++
       paramsSeqToMap(sourceConfig.options.map(_.value)) +
       getSubscribeOption(
         sourceConfig.id.value, sourceConfig.topics.map(_.value).toList, sourceConfig.topicPattern.map(_.value)
-      ) + ("startingOffsets" -> sourceConfig.startingOffsets.map(_.value).getOrElse("latest"))
+      ) + ("startingOffsets" -> startingOffsets)
 
     val rawStream = spark.readStream.format("kafka").options(allOptions).load()
 
@@ -183,8 +201,9 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
     val valueColumn = decodeColumn(
       "value", sourceConfig.valueFormat, sourceConfig.valueSchema.map(_.value), sourceConfig.subtractSchemaId
     )
+    val offsetColumn = struct(col("topic"), col("partition"), col("offset")).as(settings.streamConfig.checkpointCol)
 
-    rawStream.select(keyColumn, valueColumn, col("timestamp")).prepareStream(sourceConfig.windowBy)
+    rawStream.select(keyColumn, valueColumn, offsetColumn, col("timestamp")).prepareStream(sourceConfig.windowBy)
   }
 
   /**

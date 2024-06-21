@@ -1,0 +1,42 @@
+type: object
+required:
+  - schema
+  - table
+properties:
+  schema:
+    type: string
+    description: Hive schema.
+    example: hive_db
+  table:
+    type: string
+    description: Hive table.
+    example: hive_table
+  partitions:
+    type: array
+    default: []
+    items:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Partition column name
+          example: "dttm"
+        expr:
+          type: string
+          description: |-
+            SQL expression used to filter partitions to read.
+            This SQL expression must contain only reference to partition column 
+            that is being filtered (one that is defined in `name` field). 
+            References to other columns are not allowed as well as any SQL sub-queries. 
+            It is allowed to use all types of SQL functions and literals.
+            If parameterless function is used, it should be called with empty parentheses, e.g.: current_date()
+          example: "dttm = current_date()"
+        values:
+          type: array
+          description: List of partition column values to read.
+          default: []
+          items:
+            type: string
+            description: Partition value to read

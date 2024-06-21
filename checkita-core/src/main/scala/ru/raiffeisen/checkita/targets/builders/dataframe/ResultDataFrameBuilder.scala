@@ -9,7 +9,7 @@ import ru.raiffeisen.checkita.storage.Serialization.ResultsSerializationOps
 import ru.raiffeisen.checkita.targets.builders.TargetBuilder
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 trait ResultDataFrameBuilder[T <: ResultTargetConfig] extends TargetBuilder[T, DataFrame] {
@@ -29,6 +29,7 @@ trait ResultDataFrameBuilder[T <: ResultTargetConfig] extends TargetBuilder[T, D
     val rows = target.resultTypes.value.flatMap {
       case ResultTargetType.RegularMetrics => results.regularMetrics.map(_.toRow)
       case ResultTargetType.ComposedMetrics => results.composedMetrics.map(_.toRow)
+      case ResultTargetType.TrendMetrics => results.trendMetrics.map(_.toRow)
       case ResultTargetType.LoadChecks => results.loadChecks.map(_.toRow)
       case ResultTargetType.Checks => results.checks.map(_.toRow)
       case ResultTargetType.JobState => Seq(results.jobConfig.toRow)

@@ -1,0 +1,14 @@
+oneOf:
+  - title: delimited
+    allOf:
+      - $ref: 'baseFileOutputConfig.yaml'
+      - $ref: 'delimitedFileOutputConfig.yaml'
+  - title: avro
+    allOf:
+      - $ref: 'baseFileOutputConfig.yaml'
+  - title: orc
+    allOf:
+      - $ref: 'baseFileOutputConfig.yaml'
+  - title: parquet
+    allOf:
+      - $ref: 'baseFileOutputConfig.yaml'

@@ -7,17 +7,18 @@ import ru.raiffeisen.checkita.config.appconf.StreamConfig
 import ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig
 import ru.raiffeisen.checkita.config.jobconf.JobConfig
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
-import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig}
+import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig, TrendMetricConfig}
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.core.Source
+import ru.raiffeisen.checkita.core.metrics.BasicMetricProcessor.MetricResults
 import ru.raiffeisen.checkita.core.metrics.ErrorCollection.AccumulatedErrors
-import ru.raiffeisen.checkita.core.metrics.MetricProcessor.{GroupedCalculators, MetricResults}
-import ru.raiffeisen.checkita.core.metrics.MetricStreamProcessor.{ProcessorBuffer, processWindowResults}
+import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricProcessor.GroupedCalculators
+import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricStreamProcessor.processWindowResults
+import ru.raiffeisen.checkita.core.streaming.{CheckpointIO, ProcessorBuffer}
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
 import ru.raiffeisen.checkita.storage.Models.ResultSet
-import ru.raiffeisen.checkita.utils.EnrichedDT
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import scala.util.Try
@@ -33,6 +34,7 @@ import scala.util.Try
  * @param sources         Sequence of sources to process
  * @param metrics         Sequence of metrics to calculate
  * @param composedMetrics Sequence of composed metrics to calculate
+ * @param trendMetrics    Sequence of trend metrics to calculate
  * @param loadChecks      Sequence of load checks to perform
  * @param checks          Sequence of checks to perform
  * @param targets         Sequence of targets to send
@@ -50,6 +52,7 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
                                    sources: Seq[Source],
                                    metrics: Seq[RegularMetricConfig],
                                    composedMetrics: Seq[ComposedMetricConfig] = Seq.empty,
+                                   trendMetrics: Seq[TrendMetricConfig] = Seq.empty,
                                    checks: Seq[CheckConfig] = Seq.empty,
                                    loadChecks: Seq[LoadCheckConfig] = Seq.empty,
                                    targets: Seq[TargetConfig] = Seq.empty,
@@ -77,8 +80,8 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
    */
   private def copySettings(windowId: Long): AppSettings = settings.copy(
     executionDateTime = settings.executionDateTime.resetToCurrentTime,
-    referenceDateTime = EnrichedDT.fromEpoch(
-      windowId, settings.referenceDateTime.dateFormat, settings.referenceDateTime.timeZone)
+    referenceDateTime = settings.referenceDateTime.setTo(windowId)
+    //EnrichedDT(settings.referenceDateTime.dateFormat, settings.referenceDateTime.timeZone, windowId)
   )
 
   /**
@@ -89,7 +92,7 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
    */
   private def getWindowsToProcess: Seq[Long] = {
     val currentWatermarks = buffer.watermarks.readOnlySnapshot()
-      .filterKeys(processedSources.contains)
+      .filter{ case (k, _) => processedSources.contains(k) }
       .filter{ case (_, v) => v != Long.MinValue }
       .values.toSeq
 
@@ -192,19 +195,38 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
 
             val resSet: Result[ResultSet] = processAll(regularMetricsProcessor, migrationState, Some(windowStage))
 
-            resSet match {
+            val windowStatus = resSet.mapValue { _ => // cleaning buffer
+              log.info(s"$windowStage DQ Results processed successfully. Cleaning processor buffer...")
+              resultsPerWindow.map(_._1).foreach { sId =>
+                log.info(s"$windowStage Removing key ($sId, $wId) from buffer...")
+                buffer.calculators.remove(sId -> wId)
+                buffer.errors.remove(sId -> wId)
+              }
+              log.info(s"$windowStage Successfully removed results for this window from processor buffer.")
+              log.debug(s"$windowStage CALCULATORS buffer now contains following windows: ${buffer.calculators.keys.toSeq}")
+              log.debug(s"$windowStage ERRORS buffer now contains following windows: ${buffer.calculators.keys.toSeq}")
+            }.union(jobConfig.getJobHash).flatMap { // writing checkpoint
+              case (_, jh) => windowSettings.streamConfig.checkpointDir match {
+                case Some(dir) =>
+                  log.info(s"$windowStage Writing checkpoint to ${dir.value}/$jobId ...")
+                  CheckpointIO.writeCheckpoint(
+                    buffer,
+                    windowSettings.executionDateTime.getUtcTS.toInstant.toEpochMilli,
+                    dir.value,
+                    jobId,
+                    jh
+                  )
+                case None => liftToResult(
+                  log.info(s"$windowStage Checkpoint directory is not set. Continuing without checkpoints.")
+                )
+              }
+            }
+
+            windowStatus match {
               case Right(_) =>
-                log.info(s"$windowStage DQ Results processed successfully. Cleaning processor buffer...")
-                resultsPerWindow.map(_._1).foreach { sId =>
-                  log.info(s"$windowStage Removing key ($sId, $wId) from buffer...")
-                  buffer.calculators.remove(sId -> wId)
-                  buffer.errors.remove(sId -> wId)
-                }
-                log.info(s"$windowStage Successfully removed results for this window from processor buffer.")
-                log.debug(s"$windowStage CALCULATORS buffer now contains following windows: ${buffer.calculators.keys.toSeq}")
-                log.debug(s"$windowStage ERRORS buffer now contains following windows: ${buffer.calculators.keys.toSeq}")
+                log.info(s"$windowStage Window results processed successfully.")
               case Left(errs) =>
-                log.error(s"$windowStage Results processing yielded following errors:")
+                log.error(s"$windowStage Window results processing yielded following errors:")
                 errs.foreach(log.error)
                 Try(spark.streams.active.head.stop()) // todo: implement a graceful query stop with status reporting to main application
                 continueRun = false

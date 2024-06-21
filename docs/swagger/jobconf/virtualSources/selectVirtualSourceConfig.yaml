@@ -1,0 +1,15 @@
+type: object
+required:
+  - expr
+properties:
+  expr:
+    type: array
+    description: Sequence of select SQL expressions applied to parent source.
+    example:
+      - 'coalesce(id, -1) as non_null_id'
+    items:
+      type: string
+      description: Select SQL expression
+
+      
+    

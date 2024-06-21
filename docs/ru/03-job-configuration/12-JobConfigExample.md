@@ -1,3 +1,0 @@
-# Job Configuration Example
-
-tbd

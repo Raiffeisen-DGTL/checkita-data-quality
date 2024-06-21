@@ -4,7 +4,7 @@ import com.github.mustachejava.codes.ValueCode
 import com.github.mustachejava.{DefaultMustacheFactory, Mustache, MustacheException}
 
 import java.io.{StringReader, StringWriter, Writer}
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
 
 object Templating {

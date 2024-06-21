@@ -1,6 +1,6 @@
 package ru.raiffeisen.checkita.config
 
-import com.typesafe.config.Config
+import com.typesafe.config.{Config, ConfigRenderOptions}
 import pureconfig.generic.auto.{exportReader, exportWriter}
 import pureconfig.{ConfigReader, ConfigSource, ConfigWriter}
 import ru.raiffeisen.checkita.config.Parsers._
@@ -193,4 +193,12 @@ object IO {
       .flatMap(encryptor.decryptConfig)
       .flatMap(parse[JobConfig](_, "job", "jobConfig"))
       .flatMap(runPostValidation)
+      
+  
+  object RenderOptions {
+    val COMPACT: ConfigRenderOptions = 
+      ConfigRenderOptions.defaults().setComments(false).setOriginComments(false).setFormatted(false)
+    val FORMATTED: ConfigRenderOptions =
+      ConfigRenderOptions.defaults().setComments(false).setOriginComments(false).setFormatted(true)
+  }
 }

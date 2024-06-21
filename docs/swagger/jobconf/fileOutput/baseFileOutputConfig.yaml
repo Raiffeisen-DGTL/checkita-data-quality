@@ -1,0 +1,22 @@
+type: object
+required:
+  - kind
+  - path
+properties:
+  kind:
+    type: string
+    description: |-
+      File type. Defines file format that will be saved.
+    enum:
+      - delimited
+      - orc
+      - parquet
+      - avro
+    example: delimited
+  path:
+    type: string
+    description: |-
+      File path. Spark DataFrame writer is used under hood to save outputs. 
+      Therefore, path, that is provided should point to a directory. 
+      If directory non-empty then content is overwritten.
+    example: /path/to/directory/to/save/output/

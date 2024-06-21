@@ -4,11 +4,12 @@ object Dependencies {
 
   val pureConfig = "com.github.pureconfig" %% "pureconfig" % "0.17.3"
   val enumeratum = "com.beachape" %% "enumeratum" % "1.7.2"
-  val isarn = "org.isarnproject" %% "isarn-sketches" % "0.3.0"
+  val isarn = "org.isarnproject" % "isarn-sketches-java" % "0.3.0"
   val algebird = "com.twitter" %% "algebird-core" % "0.13.9"
   val commonsText = "org.apache.commons" % "commons-text" % "1.10.0"
   val commonsMail = "org.apache.commons" % "commons-email" % "1.5"
   val commonsValidators = "commons-validator" % "commons-validator" % "1.8.0"
+  val commonsMath = "org.apache.commons" % "commons-math3" % "3.6.1"
   val mustache = "com.github.spullara.mustache.java" % "compiler" % "0.9.10"
 
   // XML support in json4s published in a separate package,
@@ -45,10 +46,22 @@ object Dependencies {
   val flywayOracle = "org.flywaydb" % "flyway-database-oracle" % flywayVersion
   val flywayMSSQL = "org.flywaydb" % "flyway-sqlserver" % flywayVersion
 
-//  // Schema Registry:
+  // Schema Registry:
   val schemaRegistry = "io.confluent" % "kafka-schema-registry-client" % "7.6.0"
   
+  // HTTP4S
+  val http4sVersion = "0.23.23"
+  val http4sDsl = "org.http4s" %% "http4s-dsl" % http4sVersion
+  val http4sCirce = "org.http4s" %% "http4s-circe" % http4sVersion
+  val http4sServer = "org.http4s" %% "http4s-ember-server" % http4sVersion
+
+  // Circe
+  val circeVersion = "0.14.5"
+  val circe = "io.circe" %% "circe-generic" % circeVersion
+  val circeParser = "io.circe" %% "circe-parser" % circeVersion
+  
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.15" % Test
+  val scalaCollCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0"
   
   val checkita_core: Seq[ModuleID] = Seq(
     pureConfig,
@@ -58,6 +71,7 @@ object Dependencies {
     commonsText,
     commonsMail,
     commonsValidators,
+    commonsMath,
     mustache,
     jsonJava,
     refined,
@@ -78,12 +92,17 @@ object Dependencies {
     flywayOracle,
     flywayMSSQL,
     schemaRegistry,
-    scalaTest
+    scalaTest,
+    scalaCollCompat
   )
 
-
-//   val refinedCats = "eu.timepit" %% "refined-cats" % Versions.refined
-//   val refinedEval = "eu.timepit" %% "refined-eval" % Versions.refined
-//   val catsCore = "org.typelevel" %% "cats-core" % Versions.cats
-//   val scalate = "org.scalatra.scalate" %% "scalate-core" % Versions.scalate
+  val checkita_api: Seq[ModuleID] = Seq(
+    http4sDsl,
+    http4sCirce,
+    http4sServer,
+    circe,
+    circeParser,
+    scalaTest,
+    scalaCollCompat
+  )
 }

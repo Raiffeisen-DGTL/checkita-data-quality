@@ -2,6 +2,7 @@ package ru.raiffeisen.checkita.appsettings
 
 import org.apache.logging.log4j.Level
 import org.apache.spark.SparkConf
+import ru.raiffeisen.checkita.config.Enums.MetricEngineAPI
 import ru.raiffeisen.checkita.config.IO.readAppConfig
 import ru.raiffeisen.checkita.config.Parsers._
 import ru.raiffeisen.checkita.config.appconf._
@@ -25,6 +26,7 @@ import scala.util.Try
  * @param enableCaseSensitivity Enables columns case sensitivity
  * @param errorDumpSize         Maximum number of errors to be collected per single metric.
  * @param outputRepartition     Sets the number of partitions when writing outputs. By default writes single file.
+ * @param metricEngineAPI       Metric processor API used to process metrics: either Spark RDD or Spark DF.
  * @param storageConfig         Configuration of connection to Data Quality Storage
  * @param emailConfig           Configuration of connection to SMTP server
  * @param mattermostConfig      Configuration of connection to Mattermost API
@@ -48,6 +50,7 @@ final case class AppSettings(
                               enableCaseSensitivity: Boolean,
                               errorDumpSize: Int,
                               outputRepartition: Int,
+                              metricEngineAPI: MetricEngineAPI,
                               storageConfig: Option[StorageConfig],
                               emailConfig: Option[EmailConfig],
                               mattermostConfig: Option[MattermostConfig],
@@ -131,6 +134,7 @@ object AppSettings {
         appConfig.enablers.enableCaseSensitivity,
         appConfig.enablers.errorDumpSize.value,
         appConfig.enablers.outputRepartition.value,
+        appConfig.enablers.metricEngineAPI,
         appConfig.storage,
         appConfig.email,
         appConfig.mattermost,
@@ -205,6 +209,7 @@ object AppSettings {
       defaultAppConf.enablers.enableCaseSensitivity,
       defaultAppConf.enablers.errorDumpSize.value,
       defaultAppConf.enablers.outputRepartition.value,
+      defaultAppConf.enablers.metricEngineAPI,
       defaultAppConf.storage,
       defaultAppConf.email,
       defaultAppConf.mattermost,

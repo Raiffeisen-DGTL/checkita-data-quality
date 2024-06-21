@@ -33,7 +33,7 @@ abstract class AverageBoundCheckCalculator extends CheckCalculator with WindowPa
     checkName.entryName,
     sourceIds,
     baseMetric,
-    compareMetric,
+    compareMetric.toSeq,
     lThreshold.orElse(uThreshold),
     None,
     None,
@@ -93,11 +93,11 @@ abstract class AverageBoundCheckCalculator extends CheckCalculator with WindowPa
     }
 
     val resultVals = historyResults.map(_.result).filterNot(_.isNaN)
-
+    
     if (resultVals.isEmpty) throw new IllegalArgumentException(
       s"There ara no historical results found to perform ${checkName.entryName} check '$checkId'."
     )
-
+    
     val baseResult = baseMetricCalcRes.result
     val avgResult = resultVals.sum / resultVals.length
 
@@ -112,7 +112,7 @@ abstract class AverageBoundCheckCalculator extends CheckCalculator with WindowPa
       checkName.entryName,
       baseMetricCalcRes.sourceIds,
       baseMetric,
-      compareMetric,
+      compareMetric.toSeq,
       lThreshold.orElse(uThreshold),
       lBound(avgResult),
       uBound(avgResult),

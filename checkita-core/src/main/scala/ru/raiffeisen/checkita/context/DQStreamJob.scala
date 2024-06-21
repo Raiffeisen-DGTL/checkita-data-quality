@@ -8,11 +8,12 @@ import ru.raiffeisen.checkita.config.appconf.StreamConfig
 import ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig
 import ru.raiffeisen.checkita.config.jobconf.JobConfig
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
-import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig}
+import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig, TrendMetricConfig}
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.core.Source
-import ru.raiffeisen.checkita.core.metrics.MetricStreamProcessor.{ProcessorBuffer, processRegularMetrics}
+import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricStreamProcessor.processRegularMetrics
+import ru.raiffeisen.checkita.core.streaming.ProcessorBuffer
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
 import ru.raiffeisen.checkita.utils.Logging
@@ -25,30 +26,34 @@ import scala.util.Try
  * Data Quality Streaming Job: provides all required functionality to calculate quality metrics, perform checks,
  * save results and send targets for streaming data sources.
  *
- * @param sources         Sequence of sources to process
- * @param metrics         Sequence of metrics to calculate
- * @param composedMetrics Sequence of composed metrics to calculate
- * @param loadChecks      Sequence of load checks to perform
- * @param checks          Sequence of checks to perform
- * @param targets         Sequence of targets to send
- * @param schemas         Map of user-defined schemas (used for load checks evaluation)
- * @param connections     Map of connections to external systems (used to send targets)
- * @param storageManager  Data Quality Storage manager (used to save results)
- * @param jobId           Implicit job ID
- * @param settings        Implicit application settings object
- * @param spark           Implicit spark session object
- * @param fs              Implicit hadoop file system object
+ * @param sources          Sequence of sources to process
+ * @param metrics          Sequence of metrics to calculate
+ * @param composedMetrics  Sequence of composed metrics to calculate
+ * @param trendMetrics     Sequence of trend metrics to calculate
+ * @param loadChecks       Sequence of load checks to perform
+ * @param checks           Sequence of checks to perform
+ * @param targets          Sequence of targets to send
+ * @param schemas          Map of user-defined schemas (used for load checks evaluation)
+ * @param connections      Map of connections to external systems (used to send targets)
+ * @param storageManager   Data Quality Storage manager (used to save results)
+ * @param bufferCheckpoint Buffer state from last checkpoint for this job. 
+ * @param jobId            Implicit job ID
+ * @param settings         Implicit application settings object
+ * @param spark            Implicit spark session object
+ * @param fs               Implicit hadoop file system object
  */
 final case class DQStreamJob(jobConfig: JobConfig,
                              sources: Seq[Source],
                              metrics: Seq[RegularMetricConfig],
                              composedMetrics: Seq[ComposedMetricConfig] = Seq.empty,
+                             trendMetrics: Seq[TrendMetricConfig] = Seq.empty,
                              loadChecks: Seq[LoadCheckConfig] = Seq.empty,
                              checks: Seq[CheckConfig] = Seq.empty,
                              targets: Seq[TargetConfig] = Seq.empty,
                              schemas: Map[String, SourceSchema] = Map.empty,
                              connections: Map[String, DQConnection] = Map.empty,
-                             storageManager: Option[DqStorageManager] = None
+                             storageManager: Option[DqStorageManager] = None,
+                             bufferCheckpoint: Option[ProcessorBuffer] = None
                             )(implicit jobId: String,
                               settings: AppSettings,
                               spark: SparkSession,
@@ -89,7 +94,9 @@ final case class DQStreamJob(jobConfig: JobConfig,
     // necessary to create foreachBatch sink for the parent one.
     val processedSources = sources.filter(src => metricsBySources.contains(src.id))
 
-    implicit val processorBuffer: ProcessorBuffer = ProcessorBuffer.init(processedSources.map(_.id))
+    implicit val processorBuffer: ProcessorBuffer = bufferCheckpoint.getOrElse(
+      ProcessorBuffer.init(processedSources.map(_.id))
+    )
 
     val windowJob = DQStreamWindowJob(
       jobConfig,
@@ -97,6 +104,7 @@ final case class DQStreamJob(jobConfig: JobConfig,
       sources,
       metrics,
       composedMetrics,
+      trendMetrics,
       checks,
       Seq.empty[LoadCheckConfig], // no load checks are run within window job
       targets,
@@ -111,7 +119,7 @@ final case class DQStreamJob(jobConfig: JobConfig,
       src.df.writeStream
         .queryName(src.id)
         .trigger(Trigger.ProcessingTime(streamConfig.trigger))
-        .foreachBatch(processRegularMetrics(src.id, src.keyFields, metricsBySources(src.id)))
+        .foreachBatch(processRegularMetrics(src.id, src.keyFields, metricsBySources(src.id), src.checkpoint))
         .start()
     )
     streamSinks.foreach(q => log.info(s"[STARTING STREAMING QUERY] Starting query '${q.name}'..."))

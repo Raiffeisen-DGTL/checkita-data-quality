@@ -1,15 +1,25 @@
 package ru.raiffeisen.checkita.config.jobconf
 
 import eu.timepit.refined.types.string.NonEmptyString
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
 import org.json4s.jackson.Serialization.write
+import ru.raiffeisen.checkita.config.Enums.TrendCheckRule
 import ru.raiffeisen.checkita.config.RefinedTypes._
 import ru.raiffeisen.checkita.config.jobconf.MetricParams._
-import ru.raiffeisen.checkita.core.metrics.regular.AlgebirdMetrics._
-import ru.raiffeisen.checkita.core.metrics.regular.BasicNumericMetrics._
-import ru.raiffeisen.checkita.core.metrics.regular.BasicStringMetrics._
-import ru.raiffeisen.checkita.core.metrics.regular.FileMetrics._
-import ru.raiffeisen.checkita.core.metrics.regular.MultiColumnMetrics._
 import ru.raiffeisen.checkita.core.metrics._
+import ru.raiffeisen.checkita.core.metrics.df.DFMetricCalculator
+import ru.raiffeisen.checkita.core.metrics.df.regular.ApproxCardinalityDFMetrics._
+import ru.raiffeisen.checkita.core.metrics.df.regular.BasicNumericDFMetrics._
+import ru.raiffeisen.checkita.core.metrics.df.regular.BasicStringDFMetrics._
+import ru.raiffeisen.checkita.core.metrics.df.regular.FileDFMetrics._
+import ru.raiffeisen.checkita.core.metrics.df.regular.GroupingDFMetrics._
+import ru.raiffeisen.checkita.core.metrics.df.regular.MultiColumnDFMetrics._
+import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricCalculator
+import ru.raiffeisen.checkita.core.metrics.rdd.regular.BasicStringRDDMetrics._
+import ru.raiffeisen.checkita.core.metrics.rdd.regular.BasicNumericRDDMetrics._
+import ru.raiffeisen.checkita.core.metrics.rdd.regular.AlgebirdRDDMetrics._
+import ru.raiffeisen.checkita.core.metrics.rdd.regular.MultiColumnRDDMetrics._
+import ru.raiffeisen.checkita.core.metrics.rdd.regular.FileRDDMetrics._
 import ru.raiffeisen.checkita.utils.Common.{getFieldsMap, jsonFormats}
 
 
@@ -24,7 +34,7 @@ object Metrics {
 
   /**
    * Base class for all regular metric configurations (except row count metric). All regular metrics must have a
-   * reference to source ID over which the metric is being calculated. In addition, column metrics must have non-empty
+   * reference to source ID over which the metric is being calculated. In addition, regular metrics must have non-empty
    * sequence of columns over which the metric is being calculated.
    * Metric error collection logic might be reversed provided with corresponding boolean flag set to `true`.
    */
@@ -41,28 +51,28 @@ object Metrics {
     val paramString: Option[String]
   }
 
-  /** Base class for column metrics that works with any number of columns.
+  /** Base class for regular metrics that works with any number of columns.
     */
   sealed abstract class AnyColumnRegularMetricConfig extends RegularMetricConfig {
     val columns: NonEmptyStringSeq
     val metricColumns: Seq[String] = columns.value
   }
 
-  /** Base class for column metrics that works only with single column.
+  /** Base class for regular metrics that works only with single column.
     */
   sealed abstract class SingleColumnRegularMetricConfig extends RegularMetricConfig {
     val columns: SingleElemStringSeq
     val metricColumns: Seq[String] = columns.value
   }
 
-  /** Base class for column metrics that works only with two columns.
+  /** Base class for regular metrics that works only with two columns.
     */
   sealed abstract class DoubleColumnRegularMetricConfig extends RegularMetricConfig {
     val columns: DoubleElemStringSeq
     val metricColumns: Seq[String] = columns.value
   }
 
-  /** Base class for column metrics that works with at least two columns.
+  /** Base class for regular metrics that works with at least two columns.
     */
   sealed abstract class MultiColumnRegularMetricConfig extends RegularMetricConfig {
     val columns: MultiElemStringSeq
@@ -87,6 +97,20 @@ object Metrics {
     val metricFormula: String = formula.value
   }
 
+  /**
+   * Base class for trend metrics that computes statistics over historical metric results.
+   */
+  sealed abstract class TrendMetricConfig extends MetricConfig with TrendMetric {
+    val lookupMetric: ID
+    val windowSize: NonEmptyString
+    val windowOffset: Option[NonEmptyString]
+    val paramString: Option[String]
+    
+    override val lookupMetricId: String = lookupMetric.value
+    override val wSize: String = windowSize.value
+    override val wOffset: Option[String] = windowOffset.map(_.value)
+  }
+  
   /** Row count metric configuration
    *
    * @param id          Metric ID
@@ -103,10 +127,11 @@ object Metrics {
     val metricColumns: Seq[String]             = Seq.empty[String]
     val metricName: MetricName                 = MetricName.RowCount
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new RowCountMetricCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new RowCountRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = RowCountDFMetricCalculator(metricId)
   }
 
-  /** Duplicate values column metric configuration
+  /** Duplicate values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -123,10 +148,11 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.DuplicateValues
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new DuplicateValuesMetricCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new DuplicateValuesRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = DuplicateValuesDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Distinct values column metric configuration
+  /** Distinct values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -143,10 +169,11 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.DistinctValues
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new DistinctValuesMetricCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new DistinctValuesRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = DistinctValuesDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Approximate distinct values column metric configuration
+  /** Approximate distinct values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -165,11 +192,14 @@ object Metrics {
   ) extends SingleColumnRegularMetricConfig {
     val metricName: MetricName      = MetricName.ApproximateDistinctValues
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new HyperLogLogMetricCalculator(params.accuracyError.value)
+    def initRDDMetricCalculator: RDDMetricCalculator =
+      new HyperLogLogRDDMetricCalculator(params.accuracyError.value)
+    def initDFMetricCalculator: DFMetricCalculator = ApproximateDistinctValuesDFMetricCalculator(
+      metricId, metricColumns, params.accuracyError.value
+    )
   }
 
-  /** Null values column metric configuration
+  /** Null values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -177,8 +207,6 @@ object Metrics {
    * @param columns     Sequence of columns which are used for metric calculation
    * @param metadata    List of metadata parameters specific to this metric
    * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
-   *                    When reversed is set to `true` then any non-null values are considered as metric failure.
-   *                    Otherwise, null values are collected as metric failure.
    */
   final case class NullValuesMetricConfig(
       id: ID,
@@ -190,10 +218,13 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName                 = MetricName.NullValues
     val paramString: Option[String]            = None
-    def initMetricCalculator: ReversibleMetricCalculator = new NullValuesMetricCalculator(reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator = new NullValuesRDDMetricCalculator(reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = NullValuesDFMetricCalculator(
+      metricId, metricColumns, reversed
+    )
   }
 
-  /** Empty values column metric configuration
+  /** Empty values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -212,10 +243,13 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName                 = MetricName.EmptyValues
     val paramString: Option[String]            = None
-    def initMetricCalculator: ReversibleMetricCalculator = new EmptyStringValuesMetricCalculator(reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator = new EmptyValuesRDDMetricCalculator(reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = EmptyValuesDFMetricCalculator(
+      metricId, metricColumns, reversed
+    )
   }
 
-  /** Completeness column metric configuration
+  /** Completeness regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -236,11 +270,42 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.Completeness
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new CompletenessMetricCalculator(params.includeEmptyStrings, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new CompletenessRDDMetricCalculator(params.includeEmptyStrings, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = CompletenessDFMetricCalculator(
+      metricId, metricColumns, params.includeEmptyStrings, reversed
+    )
   }
 
-  /** Sequence completeness column metric configuration
+  /** Emptiness regular metric configuration
+   *
+   * @param id          Metric ID
+   * @param description Metric description
+   * @param source      Source ID over which metric is being calculated
+   * @param columns     Sequence of columns which are used for metric calculation
+   * @param params      Metric parameters
+   * @param metadata    List of metadata parameters specific to this metric
+   * @param reversed    Boolean flag indicating whether error collection logic should be reversed for this metric
+   */
+  final case class EmptinessMetricConfig(
+                                          id: ID,
+                                          description: Option[NonEmptyString],
+                                          source: NonEmptyString,
+                                          columns: NonEmptyStringSeq,
+                                          params: CompletenessParams = CompletenessParams(),
+                                          metadata: Seq[SparkParam] = Seq.empty,
+                                          reversed: Boolean = true
+                                        ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
+    val metricName: MetricName      = MetricName.Emptiness
+    val paramString: Option[String] = Some(write(getFieldsMap(params)))
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new EmptinessRDDMetricCalculator(params.includeEmptyStrings, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = EmptinessDFMetricCalculator(
+      metricId, metricColumns, params.includeEmptyStrings, reversed
+    )
+  }
+
+  /** Sequence completeness regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -259,11 +324,13 @@ object Metrics {
   ) extends SingleColumnRegularMetricConfig {
     val metricName: MetricName      = MetricName.SequenceCompleteness
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new SequenceCompletenessMetricCalculator(params.increment.value)
+    def initRDDMetricCalculator: RDDMetricCalculator =
+      new SequenceCompletenessRDDMetricCalculator(params.increment.value)
+    def initDFMetricCalculator: DFMetricCalculator =
+      SequenceCompletenessDFMetricCalculator(metricId, metricColumns, params.increment.value)
   }
 
-  /** Sequence completeness column metric configuration
+  /** Sequence completeness regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -282,11 +349,14 @@ object Metrics {
   ) extends SingleColumnRegularMetricConfig {
     val metricName: MetricName      = MetricName.ApproximateSequenceCompleteness
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new HLLSequenceCompletenessMetricCalculator(params.accuracyError.value, params.increment.value)
+    def initRDDMetricCalculator: RDDMetricCalculator =
+      new HLLSequenceCompletenessRDDMetricCalculator(params.accuracyError.value, params.increment.value)
+    def initDFMetricCalculator: DFMetricCalculator = ApproximateSequenceCompletenessDFMetricCalculator(
+      metricId, metricColumns, params.accuracyError.value, params.increment.value
+    )
   }
 
-  /** Min string column metric configuration
+  /** Min string regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -303,10 +373,11 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.MinString
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new MinStringValueMetricCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new MinStringRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = MinStringDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Max string column metric configuration
+  /** Max string regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -323,10 +394,11 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.MaxString
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new MaxStringValueMetricCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new MaxStringRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = MaxStringDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Average string column metric configuration
+  /** Average string regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -343,10 +415,11 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.AvgString
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new AvgStringValueMetricCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new AvgStringRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = AvgStringDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** String length column metric configuration
+  /** String length regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -367,11 +440,14 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.StringLength
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new StringLengthValuesMetricCalculator(params.length.value, params.compareRule.toString.toLowerCase, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new StringLengthRDDMetricCalculator(params.length.value, params.compareRule.toString.toLowerCase, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = StringLengthDFMetricCalculator(
+      metricId, metricColumns, params.length.value, params.compareRule.toString.toLowerCase, reversed
+    )
   }
 
-  /** String in domain column metric configuration
+  /** String in domain regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -392,11 +468,14 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.StringInDomain
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new StringInDomainValuesMetricCalculator(params.domain.value.toSet, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new StringInDomainRDDMetricCalculator(params.domain.value.toSet, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = StringInDomainDFMetricCalculator(
+      metricId, metricColumns, params.domain.value.toSet, reversed
+    )
   }
 
-  /** String out domain column metric configuration
+  /** String out domain regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -417,11 +496,14 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.StringOutDomain
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new StringOutDomainValuesMetricCalculator(params.domain.value.toSet, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new StringOutDomainRDDMetricCalculator(params.domain.value.toSet, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = StringOutDomainDFMetricCalculator(
+      metricId, metricColumns, params.domain.value.toSet, reversed
+    )
   }
 
-  /** String values column metric configuration
+  /** String values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -442,11 +524,14 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.StringValues
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new StringValuesMetricCalculator(params.compareValue.value, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new StringValuesRDDMetricCalculator(params.compareValue.value, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = StringValuesDFMetricCalculator(
+      metricId, metricColumns, params.compareValue.value, reversed
+    )
   }
 
-  /** Regex match column metric configuration
+  /** Regex match regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -467,11 +552,14 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName                 = MetricName.RegexMatch
     val paramString: Option[String]            = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new RegexMatchMetricCalculator(params.regex.value, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new RegexMatchRDDMetricCalculator(params.regex.value, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = RegexMatchDFMetricCalculator(
+      metricId, metricColumns, params.regex.value, reversed
+    )
   }
 
-  /** Regex mismatch column metric configuration
+  /** Regex mismatch regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -492,11 +580,14 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName                 = MetricName.RegexMismatch
     val paramString: Option[String]            = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new RegexMismatchMetricCalculator(params.regex.value, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new RegexMismatchRDDMetricCalculator(params.regex.value, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = RegexMismatchDFMetricCalculator(
+      metricId, metricColumns, params.regex.value, reversed
+    )
   }
 
-  /** Formatted date column metric configuration
+  /** Formatted date regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -517,11 +608,14 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.FormattedDate
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new DateFormattedValuesMetricCalculator(params.dateFormat.pattern, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new FormattedDateRDDMetricCalculator(params.dateFormat.pattern, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = FormattedDateDFMetricCalculator(
+      metricId, metricColumns, params.dateFormat.pattern, reversed
+    )
   }
 
-  /** Formatted number column metric configuration
+  /** Formatted number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -542,7 +636,15 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.FormattedNumber
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator = new NumberFormattedValuesMetricCalculator(
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator = new FormattedNumberRDDMetricCalculator(
+      params.precision.value,
+      params.scale.value,
+      params.compareRule.toString.toLowerCase,
+      reversed
+    )
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = FormattedNumberDFMetricCalculator(
+      metricId,
+      metricColumns,
       params.precision.value,
       params.scale.value,
       params.compareRule.toString.toLowerCase,
@@ -550,7 +652,7 @@ object Metrics {
     )
   }
 
-  /** Min number column metric configuration
+  /** Min number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -567,10 +669,11 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.MinNumber
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new MinNumericValueMetricCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new MinNumberRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = MinNumberDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Max number column metric configuration
+  /** Max number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -587,10 +690,11 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.MaxNumber
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new MaxNumericValueMetricCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new MaxNumberRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = MaxNumberDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Sum number column metric configuration
+  /** Sum number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -607,10 +711,11 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.SumNumber
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new SumNumericValueMetricCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new SumNumberRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = SumNumberDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Average number column metric configuration
+  /** Average number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -627,10 +732,11 @@ object Metrics {
   ) extends SingleColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.AvgNumber
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new StdAvgNumericValueCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new StdAvgNumberRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = AvgNumberDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Standard deviation number column metric configuration
+  /** Standard deviation number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -647,10 +753,11 @@ object Metrics {
   ) extends SingleColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.StdNumber
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new StdAvgNumericValueCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new StdAvgNumberRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = StdNumberDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Casted number column metric configuration
+  /** Casted number regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -669,11 +776,13 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName                 = MetricName.CastedNumber
     val paramString: Option[String]            = None
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new NumberCastValuesMetricCalculator(reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new CastedNumberRDDMetricCalculator(reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator =
+      CastedNumberDFMetricCalculator(metricId, metricColumns, reversed)
   }
 
-  /** Number in domain column metric configuration
+  /** Number in domain regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -694,11 +803,13 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberInDomain
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new NumberInDomainValuesMetricCalculator(params.domain.value.toSet, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new NumberInDomainRDDMetricCalculator(params.domain.value.toSet, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator =
+      NumberInDomainDFMetricCalculator(metricId, metricColumns, params.domain.value.toSet, reversed)
   }
 
-  /** Number out domain column metric configuration
+  /** Number out domain regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -719,11 +830,13 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberOutDomain
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new NumberOutDomainValuesMetricCalculator(params.domain.value.toSet, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new NumberOutDomainRDDMetricCalculator(params.domain.value.toSet, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator =
+      NumberOutDomainDFMetricCalculator(metricId, metricColumns, params.domain.value.toSet, reversed)
   }
 
-  /** Number less than column metric configuration
+  /** Number less than regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -744,11 +857,13 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberLessThan
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new NumberLessThanMetricCalculator(params.compareValue, params.includeBound, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new NumberLessThanRDDMetricCalculator(params.compareValue, params.includeBound, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator =
+      NumberLessThanDFMetricCalculator(metricId, metricColumns, params.compareValue, params.includeBound, reversed)
   }
 
-  /** Number greater than column metric configuration
+  /** Number greater than regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -769,11 +884,13 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberGreaterThan
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new NumberGreaterThanMetricCalculator(params.compareValue, params.includeBound, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new NumberGreaterThanRDDMetricCalculator(params.compareValue, params.includeBound, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator =
+      NumberGreaterThanDFMetricCalculator(metricId, metricColumns, params.compareValue, params.includeBound, reversed)
   }
 
-  /** Number between column metric configuration
+  /** Number between regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -794,12 +911,15 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberBetween
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator = new NumberBetweenMetricCalculator(
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator = new NumberBetweenRDDMetricCalculator(
       params.lowerCompareValue, params.upperCompareValue, params.includeBound, reversed
+    )
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = NumberBetweenDFMetricCalculator(
+      metricId, metricColumns, params.lowerCompareValue, params.upperCompareValue, params.includeBound, reversed
     )
   }
 
-  /** Number not between column metric configuration
+  /** Number not between regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -820,12 +940,15 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberNotBetween
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator = new NumberNotBetweenMetricCalculator(
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator = new NumberNotBetweenRDDMetricCalculator(
       params.lowerCompareValue, params.upperCompareValue, params.includeBound, reversed
+    )
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = NumberNotBetweenDFMetricCalculator(
+      metricId, metricColumns, params.lowerCompareValue, params.upperCompareValue, params.includeBound, reversed
     )
   }
 
-  /** Number values column metric configuration
+  /** Number values regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -846,11 +969,14 @@ object Metrics {
   ) extends AnyColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.NumberValues
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new NumberValuesMetricCalculator(params.compareValue, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new NumberValuesRDDMetricCalculator(params.compareValue, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = NumberValuesDFMetricCalculator(
+      metricId, metricColumns, params.compareValue, reversed
+    )
   }
 
-  /** TDigest Median value column metric configuration
+  /** TDigest Median value regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -869,11 +995,14 @@ object Metrics {
   ) extends SingleColumnRegularMetricConfig {
     val metricName: MetricName      = MetricName.MedianValue
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new TDigestMetricCalculator(params.accuracyError.value, 0)
+    def initRDDMetricCalculator: RDDMetricCalculator =
+      new TDigestRDDMetricCalculator(params.accuracyError.value, 0)
+    def initDFMetricCalculator: DFMetricCalculator = MedianValueDFMetricCalculator(
+      metricId, metricColumns, params.accuracyError.value
+    )
   }
 
-  /** TDigest First quantile column metric configuration
+  /** TDigest First quantile regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -892,11 +1021,14 @@ object Metrics {
   ) extends SingleColumnRegularMetricConfig {
     val metricName: MetricName      = MetricName.FirstQuantile
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new TDigestMetricCalculator(params.accuracyError.value, 0)
+    def initRDDMetricCalculator: RDDMetricCalculator =
+      new TDigestRDDMetricCalculator(params.accuracyError.value, 0)
+    def initDFMetricCalculator: DFMetricCalculator = FirstQuantileDFMetricCalculator(
+      metricId, metricColumns, params.accuracyError.value
+    )
   }
 
-  /** TDigest Third quantile column metric configuration
+  /** TDigest Third quantile regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -915,11 +1047,14 @@ object Metrics {
   ) extends SingleColumnRegularMetricConfig {
     val metricName: MetricName      = MetricName.ThirdQuantile
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new TDigestMetricCalculator(params.accuracyError.value, 0)
+    def initRDDMetricCalculator: RDDMetricCalculator =
+      new TDigestRDDMetricCalculator(params.accuracyError.value, 0)
+    def initDFMetricCalculator: DFMetricCalculator = ThirdQuantileDFMetricCalculator(
+      metricId, metricColumns, params.accuracyError.value
+    )
   }
 
-  /** TDigest Get quantile column metric configuration
+  /** TDigest Get quantile regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -938,11 +1073,14 @@ object Metrics {
   ) extends SingleColumnRegularMetricConfig {
     val metricName: MetricName      = MetricName.GetQuantile
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new TDigestMetricCalculator(params.accuracyError.value, params.target.value)
+    def initRDDMetricCalculator: RDDMetricCalculator =
+      new TDigestRDDMetricCalculator(params.accuracyError.value, params.target.value)
+    def initDFMetricCalculator: DFMetricCalculator = GetQuantileDFMetricCalculator(
+      metricId, metricColumns, params.accuracyError.value, params.target.value
+    )
   }
 
-  /** TDigest Get percentile column metric configuration
+  /** TDigest Get percentile regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -961,8 +1099,11 @@ object Metrics {
   ) extends SingleColumnRegularMetricConfig {
     val metricName: MetricName      = MetricName.GetPercentile
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new TDigestMetricCalculator(params.accuracyError.value, params.target)
+    def initRDDMetricCalculator: RDDMetricCalculator =
+      new TDigestRDDMetricCalculator(params.accuracyError.value, params.target)
+    def initDFMetricCalculator: DFMetricCalculator = GetPercentileDFMetricCalculator(
+      metricId, metricColumns, params.accuracyError.value, params.target
+    )
   }
 
   /** Column equality metric configuration
@@ -984,10 +1125,12 @@ object Metrics {
   ) extends MultiColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName                 = MetricName.ColumnEq
     val paramString: Option[String]            = None
-    def initMetricCalculator: ReversibleMetricCalculator = new EqualStringColumnsMetricCalculator(reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator = new ColumnEqRDDMetricCalculator(reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator =
+      ColumnEqDFMetricCalculator(metricId, metricColumns, reversed)
   }
 
-  /** Day distance column metric configuration
+  /** Day distance regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1008,11 +1151,14 @@ object Metrics {
   ) extends DoubleColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.DayDistance
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new DayDistanceMetricCalculator(params.dateFormat.pattern, params.threshold.value, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new DayDistanceRDDMetricCalculator(params.dateFormat.pattern, params.threshold.value, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = DayDistanceDFMetricCalculator(
+      metricId, metricColumns, params.dateFormat.pattern, params.threshold.value, reversed
+    )
   }
 
-  /** Levenshtein distance column metric configuration
+  /** Levenshtein distance regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1033,11 +1179,14 @@ object Metrics {
   ) extends DoubleColumnRegularMetricConfig with ReversibleMetric {
     val metricName: MetricName      = MetricName.LevenshteinDistance
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: ReversibleMetricCalculator =
-      new LevenshteinDistanceMetricCalculator(params.threshold, params.normalize, reversed)
+    def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
+      new LevenshteinDistanceRDDMetricCalculator(params.threshold, params.normalize, reversed)
+    def initDFMetricCalculator: ReversibleDFMetricCalculator = LevenshteinDistanceDFMetricCalculator(
+      metricId, metricColumns, params.threshold, params.normalize, reversed
+    )
   }
 
-  /** Co-moment column metric configuration
+  /** Co-moment regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1054,10 +1203,11 @@ object Metrics {
   ) extends DoubleColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.CoMoment
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new CovarianceMetricCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new CovarianceRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = CoMomentDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Covariance column metric configuration
+  /** Covariance regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1074,10 +1224,11 @@ object Metrics {
   ) extends DoubleColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.Covariance
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new CovarianceMetricCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new CovarianceRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = CovarianceDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** Covariance Bessel column metric configuration
+  /** Covariance Bessel regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1094,10 +1245,11 @@ object Metrics {
   ) extends DoubleColumnRegularMetricConfig {
     val metricName: MetricName                 = MetricName.CovarianceBessel
     val paramString: Option[String]            = None
-    def initMetricCalculator: MetricCalculator = new CovarianceMetricCalculator()
+    def initRDDMetricCalculator: RDDMetricCalculator = new CovarianceRDDMetricCalculator()
+    def initDFMetricCalculator: DFMetricCalculator = CovarianceBesselDFMetricCalculator(metricId, metricColumns)
   }
 
-  /** TopN column metric configuration
+  /** TopN regular metric configuration
    *
    * @param id          Metric ID
    * @param description Metric description
@@ -1116,11 +1268,241 @@ object Metrics {
   ) extends SingleColumnRegularMetricConfig {
     val metricName: MetricName      = MetricName.TopN
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
-    def initMetricCalculator: MetricCalculator =
-      new TopKMetricCalculator(params.maxCapacity.value, params.targetNumber.value)
+    def initRDDMetricCalculator: RDDMetricCalculator =
+      new TopKRDDMetricCalculator(params.maxCapacity.value, params.targetNumber.value)
+    def initDFMetricCalculator: DFMetricCalculator = TopNDFMetricCalculator(
+      metricId, metricColumns, params.maxCapacity.value, params.targetNumber.value
+    )
   }
 
-  /** Data Quality job configuration section describing column metrics
+  /**
+   * Average trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class AvgTrendMetricConfig(
+                                         id: ID,
+                                         description: Option[NonEmptyString],
+                                         lookupMetric: ID,
+                                         rule: TrendCheckRule,
+                                         windowSize: NonEmptyString,
+                                         windowOffset: Option[NonEmptyString],
+                                         metadata: Seq[SparkParam] = Seq.empty
+                                       ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getMean
+    val metricName: MetricName = MetricName.TrendAvg
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Standard deviation trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class StdTrendMetricConfig(
+                                         id: ID,
+                                         description: Option[NonEmptyString],
+                                         lookupMetric: ID,
+                                         rule: TrendCheckRule,
+                                         windowSize: NonEmptyString,
+                                         windowOffset: Option[NonEmptyString],
+                                         metadata: Seq[SparkParam] = Seq.empty
+                                       ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getStandardDeviation
+    val metricName: MetricName = MetricName.TrendStd
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Min trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class MinTrendMetricConfig(
+                                         id: ID,
+                                         description: Option[NonEmptyString],
+                                         lookupMetric: ID,
+                                         rule: TrendCheckRule,
+                                         windowSize: NonEmptyString,
+                                         windowOffset: Option[NonEmptyString],
+                                         metadata: Seq[SparkParam] = Seq.empty
+                                       ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getMin
+    val metricName: MetricName = MetricName.TrendMin
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Max trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class MaxTrendMetricConfig(
+                                         id: ID,
+                                         description: Option[NonEmptyString],
+                                         lookupMetric: ID,
+                                         rule: TrendCheckRule,
+                                         windowSize: NonEmptyString,
+                                         windowOffset: Option[NonEmptyString],
+                                         metadata: Seq[SparkParam] = Seq.empty
+                                       ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getMax
+    val metricName: MetricName = MetricName.TrendMax
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Sum trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class SumTrendMetricConfig(
+                                         id: ID,
+                                         description: Option[NonEmptyString],
+                                         lookupMetric: ID,
+                                         rule: TrendCheckRule,
+                                         windowSize: NonEmptyString,
+                                         windowOffset: Option[NonEmptyString],
+                                         metadata: Seq[SparkParam] = Seq.empty
+                                       ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getSum
+    val metricName: MetricName = MetricName.TrendSum
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Median trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class MedianTrendMetricConfig(
+                                            id: ID,
+                                            description: Option[NonEmptyString],
+                                            lookupMetric: ID,
+                                            rule: TrendCheckRule,
+                                            windowSize: NonEmptyString,
+                                            windowOffset: Option[NonEmptyString],
+                                            metadata: Seq[SparkParam] = Seq.empty
+                                          ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getPercentile(50)
+    val metricName: MetricName = MetricName.TrendMedian
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * First Quartile trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class FirstQuartileTrendMetricConfig(
+                                                   id: ID,
+                                                   description: Option[NonEmptyString],
+                                                   lookupMetric: ID,
+                                                   rule: TrendCheckRule,
+                                                   windowSize: NonEmptyString,
+                                                   windowOffset: Option[NonEmptyString],
+                                                   metadata: Seq[SparkParam] = Seq.empty
+                                                 ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getPercentile(25)
+    val metricName: MetricName = MetricName.TrendFirstQ
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Third Quartile trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class ThirdQuartileTrendMetricConfig(
+                                                   id: ID,
+                                                   description: Option[NonEmptyString],
+                                                   lookupMetric: ID,
+                                                   rule: TrendCheckRule,
+                                                   windowSize: NonEmptyString,
+                                                   windowOffset: Option[NonEmptyString],
+                                                   metadata: Seq[SparkParam] = Seq.empty
+                                                 ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getPercentile(75)
+    val metricName: MetricName = MetricName.TrendThirdQ
+    val paramString: Option[String] = None
+  }
+
+  /**
+   * Quantile trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param quantile     Quantile to compute over historical metric results (must be a number in range [0, 1]).
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class QuantileTrendMetricConfig(
+                                              id: ID,
+                                              description: Option[NonEmptyString],
+                                              lookupMetric: ID,
+                                              quantile: PercentileDouble,
+                                              rule: TrendCheckRule,
+                                              windowSize: NonEmptyString,
+                                              windowOffset: Option[NonEmptyString],
+                                              metadata: Seq[SparkParam] = Seq.empty
+                                            ) extends TrendMetricConfig {
+    val aggFunc: DescriptiveStatistics => Double = stats => stats.getPercentile(quantile.value * 100)
+    val metricName: MetricName = MetricName.TrendQuantile
+    val paramString: Option[String] = Some(write(Map("quantile" -> quantile.value)))
+  }
+  
+  /** Data Quality job configuration section describing regular metrics
     *
     * @param rowCount
     *   Sequence of rowCount metrics
@@ -1217,6 +1599,7 @@ object Metrics {
       emptyValues: Seq[EmptyValuesMetricConfig] = Seq.empty,
       duplicateValues: Seq[DuplicateValuesMetricConfig] = Seq.empty,
       completeness: Seq[CompletenessMetricConfig] = Seq.empty,
+      emptiness: Seq[EmptinessMetricConfig] = Seq.empty,
       sequenceCompleteness: Seq[SequenceCompletenessMetricConfig] = Seq.empty,
       approximateSequenceCompleteness: Seq[ApproxSequenceCompletenessMetricConfig] = Seq.empty,
       minString: Seq[MinStringMetricConfig] = Seq.empty,
@@ -1261,14 +1644,14 @@ object Metrics {
   }
 
   /** Data Quality job configuration section describing all metrics
-    *
-    * @param regular
-    *   Regular metrics of all subtypes
-    * @param composed
-    *   Sequence of composed metrics
-    */
+   *
+   * @param regular  Regular metrics of all subtypes
+   * @param composed Sequence of composed metrics
+   * @param trend    Sequence of trend metrics
+   */
   final case class MetricsConfig(
       regular: Option[RegularMetricsConfig],
-      composed: Seq[ComposedMetricConfig] = Seq.empty
+      composed: Seq[ComposedMetricConfig] = Seq.empty,
+      trend: Seq[TrendMetricConfig] = Seq.empty
   )
 }

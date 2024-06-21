@@ -1,0 +1,18 @@
+type: object
+required:
+  - connection
+properties:
+  connection:
+    type: string
+    description: |-
+      Connection ID to use for table source. Connection ID must refer to 
+      connection configuration for one of the supported RDBMS.
+    example: some_connection
+  table:
+    type: string
+    description: Table to read
+    example: pg_table
+  query:
+    type: string
+    description: Query to execute. Query result is read as table source.
+    example: SELECT * FROM pg_table WHERE id IS NOT NULL;

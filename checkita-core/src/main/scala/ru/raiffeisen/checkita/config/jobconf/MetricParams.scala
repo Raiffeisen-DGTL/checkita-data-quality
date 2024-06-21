@@ -88,10 +88,7 @@ object MetricParams {
    * @param dateFormat Required datetime format pattern. Default: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
    */
   final case class FormattedDateParams(
-                                        dateFormat: DateFormat = DateFormat(
-                                          pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
-                                          formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-                                        )
+                                        dateFormat: DateFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
                                       ) extends Params
 
   /**
@@ -165,10 +162,7 @@ object MetricParams {
    */
   final case class DayDistanceParams(
                                       threshold: PositiveInt,
-                                      dateFormat: DateFormat = DateFormat(
-                                        pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
-                                        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-                                      )
+                                      dateFormat: DateFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
                                     ) extends Params
 
   /**

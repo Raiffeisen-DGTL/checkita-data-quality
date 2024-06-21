@@ -24,11 +24,9 @@ trait FileWriter[T <: SaveToFileConfig] extends OutputWriter[DataFrame, T] {
                                         spark: SparkSession,
                                         connections: Map[String, DQConnection]): Result[String] = Try {
     
-    val filePath =
-      s"${target.save.path.value}/${jobId}_${targetType}_${settings.referenceDateTime.render}_${settings.executionDateTime.render}"
-        .replace(" ", "-")
-        .replace(":", "-")
-        .replace("'", "")
+    val targetDir = s"${jobId}_${targetType}_${settings.referenceDateTime.render}_${settings.executionDateTime.render}"
+      .replaceAll("""\W""", "")
+    val filePath = s"${target.save.path.value}/$targetDir"
 
     val dfWriter = result.repartition(settings.outputRepartition).write.mode(SaveMode.Overwrite)
     target.save match {

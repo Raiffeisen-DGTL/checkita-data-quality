@@ -15,5 +15,5 @@ object CalculatorStatus extends Enum[CalculatorStatus] {
   case object Success extends CalculatorStatus
   case object Failure extends CalculatorStatus
   case object Error extends CalculatorStatus
-  override val values: immutable.IndexedSeq[CalculatorStatus] = findValues
+  override def values: immutable.IndexedSeq[CalculatorStatus] = findValues
 }

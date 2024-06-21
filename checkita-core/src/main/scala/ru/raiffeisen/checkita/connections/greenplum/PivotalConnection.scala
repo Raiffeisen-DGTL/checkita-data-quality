@@ -12,7 +12,7 @@ import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.sql.DriverManager
 import java.util.Properties
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 
@@ -76,6 +76,6 @@ case class PivotalConnection(config: GreenplumConnectionConfig) extends DQConnec
     props.put("url", connectionUrl)
     props.put("dbschema", currentSchema.get)
     props.put("dbtable", sourceConfig.table.map(_.value).get)
-    spark.read.format("greenplum").options(props.asScala).load
+    spark.read.format("greenplum").options(props.asScala).load()
   }
 }

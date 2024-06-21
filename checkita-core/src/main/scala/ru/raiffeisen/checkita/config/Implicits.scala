@@ -10,6 +10,7 @@ import pureconfig.{CamelCase, ConfigConvert, ConfigFieldMapping}
 import ru.raiffeisen.checkita.config.Enums._
 import ru.raiffeisen.checkita.config.Parsers.idParser
 import ru.raiffeisen.checkita.config.RefinedTypes.{DateFormat, Email, ID}
+import ru.raiffeisen.checkita.config.jobconf.Metrics.TrendMetricConfig
 import ru.raiffeisen.checkita.config.jobconf.Outputs.FileOutputConfig
 import ru.raiffeisen.checkita.config.jobconf.Schemas.SchemaConfig
 import ru.raiffeisen.checkita.config.jobconf.Sources.{FileSourceConfig, VirtualSourceConfig}
@@ -46,14 +47,17 @@ object Implicits {
   )
 
   implicit val dateFormatConverter: ConfigConvert[DateFormat] =
-    ConfigConvert[String].xmap[DateFormat](DateFormat.fromString, _.pattern)
+    ConfigConvert[String].xmap[DateFormat](DateFormat, _.pattern)
 
   implicit val timeZoneConverter: ConfigConvert[ZoneId] =
     ConfigConvert[String].xmap[ZoneId](
       s => TimeZone.getTimeZone(s).toZoneId,
       tz => TimeZone.getTimeZone(tz).getDisplayName
     )
-    
+
+  implicit val metricEnginAPIConverter: ConfigConvert[MetricEngineAPI] =
+    ConfigConvert[String].xmap[MetricEngineAPI](MetricEngineAPI.withNameInsensitive, _.toString.toLowerCase)
+
   implicit val dqStorageTypeConverter: ConfigConvert[DQStorageType] =
     ConfigConvert[String].xmap[DQStorageType](DQStorageType.withNameInsensitive, _.toString.toLowerCase)
     
@@ -106,7 +110,12 @@ object Implicits {
     new FieldCoproductHint[FileOutputConfig]("kind") {
       override def fieldValue(name: String): String = dropRight("FileOutputConfig")(name)
     }
-
+  
+  implicit val trendMetricHint: FieldCoproductHint[TrendMetricConfig] =
+    new FieldCoproductHint[TrendMetricConfig]("kind") {
+      override def fieldValue(name: String): String = dropRight("TrendMetricConfig")(name)
+    }
+    
   implicit val jointTypeConverter: ConfigConvert[SparkJoinType] =
     ConfigConvert[String].xmap[SparkJoinType](
       SparkJoinType.withNameInsensitive,

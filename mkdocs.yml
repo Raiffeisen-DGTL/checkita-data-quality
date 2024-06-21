@@ -32,86 +32,45 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets:
       base_path: docs
-      
+   
 plugins:
   - search
-  - i18n:
-      docs_structure: folder
-      reconfigure_material: true
-      reconfigure_search: true
-      languages:
-        - locale: en
-          default: true
-          name: English
-          build: true
-          nav:
-            - Home: en/index.md
-            - Application Setup:
-                - en/01-application-setup/index.md
-                - en/01-application-setup/01-ApplicationSettings.md
-                - en/01-application-setup/02-ApplicationSubmit.md
-                - en/01-application-setup/03-ResultsStorage.md
-            - General Concepts:
-                - en/02-general-concepts/index.md
-                - en/02-general-concepts/01-WorkingWithDateTime.md
-                - en/02-general-concepts/02-EnvironmentAndExtraVariables.md
-                - en/02-general-concepts/03-StatusModel.md
-                - en/02-general-concepts/04-ErrorCollection.md
-                - en/02-general-concepts/05-StreamingMode.md
-            - Job Configuration:
-                - en/03-job-configuration/index.md
-                - en/03-job-configuration/01-Connections.md
-                - en/03-job-configuration/02-Schemas.md
-                - en/03-job-configuration/03-Sources.md
-                - en/03-job-configuration/04-Streams.md
-                - en/03-job-configuration/05-VirtualSources.md
-                - en/03-job-configuration/06-VirtualStreams.md
-                - en/03-job-configuration/07-LoadChecks.md
-                - en/03-job-configuration/08-Metrics.md
-                - en/03-job-configuration/09-Checks.md
-                - en/03-job-configuration/10-Targets.md
-                - en/03-job-configuration/11-FileOutputs.md
-                - en/03-job-configuration/12-JobConfigExample.md
-            - Changelog: changelog/CHANGELOG.md
-            - Contribution:
-                - contribution/index.md
-                - contribution/code-of-conduct.md
-                - contribution/contribution.md
-            - Scala API Doc: api/index.html
-        - locale: ru
-          name: Русский
-          build: true
-          nav:
-            - Home: ru/index.md
-            - Application Setup:
-                - ru/01-application-setup/index.md
-                - ru/01-application-setup/01-ApplicationSettings.md
-                - ru/01-application-setup/02-ApplicationSubmit.md
-                - ru/01-application-setup/03-ResultsStorage.md
-            - General Concepts:
-                - ru/02-general-concepts/index.md
-                - ru/02-general-concepts/01-WorkingWithDateTime.md
-                - ru/02-general-concepts/02-EnvironmentAndExtraVariables.md
-                - ru/02-general-concepts/03-StatusModel.md
-                - ru/02-general-concepts/04-ErrorCollection.md
-                - ru/02-general-concepts/05-StreamingMode.md
-            - Job Configuration:
-                - ru/03-job-configuration/index.md
-                - ru/03-job-configuration/01-Connections.md
-                - ru/03-job-configuration/02-Schemas.md
-                - ru/03-job-configuration/03-Sources.md
-                - ru/03-job-configuration/04-Streams.md
-                - ru/03-job-configuration/05-VirtualSources.md
-                - ru/03-job-configuration/06-VirtualStreams.md
-                - ru/03-job-configuration/07-LoadChecks.md
-                - ru/03-job-configuration/08-Metrics.md
-                - ru/03-job-configuration/09-Checks.md
-                - ru/03-job-configuration/10-Targets.md
-                - ru/03-job-configuration/11-FileOutputs.md
-                - ru/03-job-configuration/12-JobConfigExample.md
-            - Changelog: changelog/CHANGELOG.md
-            - Contribution:
-                - contribution/index.md
-                - contribution/code-of-conduct.md
-                - contribution/contribution.md
-            - Scala API Doc: api/index.html
+  - swagger-ui-tag
+              
+nav:
+  - Home: index.md
+  - Application Setup:
+      - 01-application-setup/index.md
+      - 01-application-setup/01-ApplicationSettings.md
+      - 01-application-setup/02-ApplicationSubmit.md
+      - 01-application-setup/03-ResultsStorage.md
+  - General Information:
+      - 02-general-information/index.md
+      - 02-general-information/01-WorkingWithDateTime.md
+      - 02-general-information/02-EnvironmentAndExtraVariables.md
+      - 02-general-information/03-StatusModel.md
+      - 02-general-information/04-ErrorCollection.md
+      - 02-general-information/05-StreamingMode.md
+      - 02-general-information/06-MetricSQLEquivalency.md
+      - 02-general-information/07-MetricCalculatorEngines.md
+  - Job Configuration:
+      - 03-job-configuration/index.md
+      - 03-job-configuration/01-Connections.md
+      - 03-job-configuration/02-Schemas.md
+      - 03-job-configuration/03-Sources.md
+      - 03-job-configuration/04-Streams.md
+      - 03-job-configuration/05-VirtualSources.md
+      - 03-job-configuration/06-VirtualStreams.md
+      - 03-job-configuration/07-LoadChecks.md
+      - 03-job-configuration/08-Metrics.md
+      - 03-job-configuration/09-Checks.md
+      - 03-job-configuration/10-Targets.md
+      - 03-job-configuration/11-FileOutputs.md
+      - 03-job-configuration/12-JobConfigExample.md
+  - Changelog: changelog/CHANGELOG.md
+  - Contribution:
+      - contribution/index.md
+      - contribution/code-of-conduct.md
+      - contribution/contribution.md
+  - Scala API Doc: api/index.html
+  - Swagger Doc: swagger/index.md

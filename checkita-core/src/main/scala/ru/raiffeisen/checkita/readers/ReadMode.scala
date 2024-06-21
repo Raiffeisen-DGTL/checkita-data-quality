@@ -11,5 +11,5 @@ sealed trait ReadMode extends EnumEntry
 object ReadMode extends Enum[ReadMode] {
   case object Batch extends ReadMode
   case object Stream extends ReadMode
-  override val values: immutable.IndexedSeq[ReadMode] = findValues
+  override def values: immutable.IndexedSeq[ReadMode] = findValues
 }

@@ -19,6 +19,25 @@ object ResultUtils {
    * @return Result of value type
    */
   def liftToResult[T](value: T): Result[T] = Right(value).toResult(Vector.empty)
+
+  /**
+   * Implicit traversable for Throwable.
+   * Holds method for getting stack trace as a string.
+   * @param value Throwable
+   */
+  implicit class ThrowableOps(value: Throwable) {
+    
+    /**
+     * Function to print stack trace to string maintaining its formatting.
+     *
+     * @return Stack trace string
+     */
+    def getStackTraceAsString: String = {
+      val sw = new StringWriter
+      value.printStackTrace(new PrintWriter(sw))
+      sw.toString
+    }
+  }
   
   /**
    * Implicit conversion for Try[T] with extra methods
@@ -27,18 +46,6 @@ object ResultUtils {
    * @tparam T Type of Try value
    */
   implicit class TryOps[T](value: Try[T]) {
-
-    /**
-     * Function to print stack trace to string maintaining its formatting.
-     *
-     * @param e Throwable
-     * @return Stack trace string
-     */
-    private def getStackTraceAsString(e: Throwable) = {
-      val sw = new StringWriter
-      e.printStackTrace(new PrintWriter(sw))
-      sw.toString
-    }
 
     /**
      * Converts Try[T] into a Result[T]
@@ -51,7 +58,7 @@ object ResultUtils {
       value match {
         case Success(v) => Right(v)
         case Failure(e) =>
-          val msg = if (includeStackTrace) preMsg + "\n" + getStackTraceAsString(e) else preMsg + "\n" + e.getMessage
+          val msg = if (includeStackTrace) preMsg + "\n" + e.getStackTraceAsString else preMsg + "\n" + e.getMessage
           Left(Vector(msg))
       }
   }
@@ -73,7 +80,7 @@ object ResultUtils {
       case Right(r) => Right(r)
       case Left(l) => Left(f(l))
     }
-
+    
     /**
      * Converts either value to a Result value.
      * @param f Function that converts left value to Vector of log messages: Vector[LogMsg]
@@ -203,5 +210,41 @@ object ResultUtils {
       val g2: (T, (R1, R2, R3, R4, R5)) => S = (v, t) => f(v, t._1, t._2, t._3, t._4, t._5)
       value.combine(r1.combineT4(r2, r3, r4, r5)(g1))(g2)
     }
+
+    def combineT6[R1, R2, R3, R4, R5, R6, S](r1: Result[R1], r2: Result[R2], r3: Result[R3], r4: Result[R4], r5: Result[R5], r6: Result[R6])
+                                            (f: (T, R1, R2, R3, R4, R5, R6) => S): Result[S] = {
+      val g1 = (v1: R1, v2: R2, v3: R3, v4: R4, v5: R5, v6: R6) => (v1, v2, v3, v4, v5, v6)
+      val g2: (T, (R1, R2, R3, R4, R5, R6)) => S = (v, t) => f(v, t._1, t._2, t._3, t._4, t._5, t._6)
+      value.combine(r1.combineT5(r2, r3, r4, r5, r6)(g1))(g2)
+    }
+    
+    def union[R](r: Result[R]): Result[(T, R)] = value.combine(r)((v, v1) => (v, v1))
+    
+    def union[R1, R2](r1: Result[R1], r2: Result[R2]): Result[(T, R1, R2)] = 
+      value.combineT2(r1, r2)((v, v1, v2) => (v, v1, v2))
+      
+    def union[R1, R2, R3](r1: Result[R1], r2: Result[R2], r3: Result[R3]): Result[(T, R1, R2, R3)] =
+      value.combineT3(r1, r2, r3)((v, v1, v2, v3) => (v, v1, v2, v3))
+      
+    def union[R1, R2, R3, R4](r1: Result[R1], 
+                              r2: Result[R2], 
+                              r3: Result[R3], 
+                              r4: Result[R4]): Result[(T, R1, R2, R3, R4)] =
+      value.combineT4(r1, r2, r3, r4)((v, v1, v2, v3, v4) => (v, v1, v2, v3, v4))
+      
+    def union[R1, R2, R3, R4, R5](r1: Result[R1],
+                                  r2: Result[R2],
+                                  r3: Result[R3],
+                                  r4: Result[R4],
+                                  r5: Result[R5]): Result[(T, R1, R2, R3, R4, R5)] =
+      value.combineT5(r1, r2, r3, r4, r5)((v, v1, v2, v3, v4, v5) => (v, v1, v2, v3, v4, v5))
+
+    def union[R1, R2, R3, R4, R5, R6](r1: Result[R1],
+                                      r2: Result[R2],
+                                      r3: Result[R3],
+                                      r4: Result[R4],
+                                      r5: Result[R5],
+                                      r6: Result[R6]): Result[(T, R1, R2, R3, R4, R5, R6)] =
+      value.combineT6(r1, r2, r3, r4, r5, r6)((v, v1, v2, v3, v4, v5, v6) => (v, v1, v2, v3, v4, v5, v6))
   }
 }

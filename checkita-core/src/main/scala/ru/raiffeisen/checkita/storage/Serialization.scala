@@ -10,6 +10,7 @@ import ru.raiffeisen.checkita.storage.Models.DQEntity
 import ru.raiffeisen.checkita.storage.Serialization.ResultsSerializationOps.unifiedSchema
 import ru.raiffeisen.checkita.utils.Common.jsonFormats
 
+import java.sql.Timestamp
 import scala.reflect.runtime.universe._
 import scala.util.Try
 
@@ -30,9 +31,9 @@ object Serialization {
      * For the purpose of the serialization timestamps are replaces with string
      * representation of referenceData and executionDate with pre-configured format.
      */
-    private lazy val dateReplacement: Map[String, String] = Map(
-      "referenceDate" -> settings.referenceDateTime.render,
-      "executionDate" -> settings.executionDateTime.render
+    private lazy val dateReplacement: Map[String, Timestamp => String] = Map(
+      ("referenceDate", (ts: Timestamp) => settings.referenceDateTime.setTo(ts).render),
+      ("executionDate", (ts: Timestamp) => settings.executionDateTime.setTo(ts).render)
     )
 
     /**
@@ -119,7 +120,10 @@ object Serialization {
         .foldLeft(Seq.empty[(String, Any)]){ (s, f) =>
           f.setAccessible(true)
           val n = f.getName
-          val v = dateReplacement.getOrElse(n, f.get(value).asInstanceOf[Any])
+          val v = dateReplacement.get(n)
+            .map(g => g(f.get(value).asInstanceOf[Timestamp]))
+            .getOrElse(f.get(value).asInstanceOf[Any])
+          
           s :+ (n -> v)
         }
     }
@@ -154,7 +158,7 @@ object Serialization {
      * Gets flattened map of field name to string representation of field values.
      * @return Map fieldName -> fieldValue as string
      */
-    def getFieldsMap: Map[String, String] = flatRepr.toMap.mapValues(JValueToString)
+    def getFieldsMap: Map[String, String] = flatRepr.map{ case (k, v) => (k, JValueToString(v)) }.toMap
     
     /** Getter to retrieve TSV header (conforms to flattened tsv string) */
     def getTsvHeader: String = getFields.mkString("\t")

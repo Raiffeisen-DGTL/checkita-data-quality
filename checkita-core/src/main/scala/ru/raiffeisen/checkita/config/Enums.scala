@@ -11,6 +11,16 @@ import scala.collection.immutable
 object Enums {
 
   /**
+   * Metrics can be processed either with use of Spark RDD API or Spark DF API.
+   */
+  sealed trait MetricEngineAPI extends EnumEntry
+  object MetricEngineAPI extends Enum[MetricEngineAPI] {
+    case object DF extends MetricEngineAPI
+    case object RDD extends MetricEngineAPI
+    override def values: immutable.IndexedSeq[MetricEngineAPI] = findValues
+  }
+
+  /**
    * Allowed systems for use as data quality history storage
    */
   sealed trait DQStorageType extends EnumEntry
@@ -23,7 +33,7 @@ object Enums {
     case object SQLite extends DQStorageType
     case object Hive extends DQStorageType
     case object File extends DQStorageType
-    override val values: immutable.IndexedSeq[DQStorageType] = findValues
+    override def values: immutable.IndexedSeq[DQStorageType] = findValues
   }
   
   /**
@@ -37,7 +47,7 @@ object Enums {
     case object Json extends KafkaTopicFormat
     case object Avro extends KafkaTopicFormat
 
-    override val values: immutable.IndexedSeq[KafkaTopicFormat] = findValues
+    override def values: immutable.IndexedSeq[KafkaTopicFormat] = findValues
   }
 
   /**
@@ -82,7 +92,7 @@ object Enums {
     case object Orc extends FileType
     case object Parquet extends FileType
 
-    override val values: immutable.IndexedSeq[FileType] = findValues
+    override def values: immutable.IndexedSeq[FileType] = findValues
   }
 
   /**
@@ -135,7 +145,7 @@ object Enums {
 
     override def values: immutable.IndexedSeq[CompareRule] = findValues
   }
-
+  
   /**
    * Precision compare rules for formatted number metric parameters
    */
@@ -165,6 +175,7 @@ object Enums {
   object ResultTargetType extends Enum[ResultTargetType] {
     case object RegularMetrics extends ResultTargetType
     case object ComposedMetrics extends ResultTargetType
+    case object TrendMetrics extends ResultTargetType
     case object LoadChecks extends ResultTargetType
     case object Checks extends ResultTargetType
     case object JobState extends ResultTargetType
@@ -176,6 +187,6 @@ object Enums {
   object TemplateFormat extends Enum[TemplateFormat] {
     case object Markdown extends TemplateFormat
     case object Html extends TemplateFormat
-    override val values: immutable.IndexedSeq[TemplateFormat] = findValues
+    override def values: immutable.IndexedSeq[TemplateFormat] = findValues
   }
 }

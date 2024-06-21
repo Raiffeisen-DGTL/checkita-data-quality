@@ -3,15 +3,18 @@ package ru.raiffeisen.checkita.context
 import org.apache.hadoop.fs.FileSystem
 import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.AppSettings
+import ru.raiffeisen.checkita.config.Enums.MetricEngineAPI
 import ru.raiffeisen.checkita.config.jobconf.Checks.CheckConfig
 import ru.raiffeisen.checkita.config.jobconf.JobConfig
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
-import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig}
+import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig, TrendMetricConfig}
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
 import ru.raiffeisen.checkita.connections.DQConnection
 import ru.raiffeisen.checkita.core.Source
-import ru.raiffeisen.checkita.core.metrics.MetricBatchProcessor.processRegularMetrics
-import ru.raiffeisen.checkita.core.metrics.MetricProcessor.MetricResults
+import ru.raiffeisen.checkita.core.metrics.rdd.RDDMetricBatchProcessor.{processRegularMetrics => processRegularMetricsRDD}
+import ru.raiffeisen.checkita.core.metrics.df.DFMetricProcessor.{processRegularMetrics => processRegularMetricsDF}
+import ru.raiffeisen.checkita.core.metrics.BasicMetricProcessor.MetricResults
+import ru.raiffeisen.checkita.core.metrics.RegularMetric
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
 import ru.raiffeisen.checkita.storage.Models.ResultSet
@@ -26,6 +29,7 @@ import scala.language.higherKinds
  * @param sources         Sequence of sources to process
  * @param metrics         Sequence of metrics to calculate
  * @param composedMetrics Sequence of composed metrics to calculate
+ * @param trendMetrics    Sequence of trend metrics to calculate
  * @param checks          Sequence of checks to perform
  * @param loadChecks      Sequence of load checks to perform
  * @param targets         Sequence of targets to send
@@ -41,6 +45,7 @@ final case class DQBatchJob(jobConfig: JobConfig,
                             sources: Seq[Source],
                             metrics: Seq[RegularMetricConfig],
                             composedMetrics: Seq[ComposedMetricConfig] = Seq.empty,
+                            trendMetrics: Seq[TrendMetricConfig] = Seq.empty,
                             checks: Seq[CheckConfig] = Seq.empty,
                             loadChecks: Seq[LoadCheckConfig] = Seq.empty,
                             targets: Seq[TargetConfig] = Seq.empty,
@@ -66,6 +71,26 @@ final case class DQBatchJob(jobConfig: JobConfig,
     log.info(s"               Finishing execution of job '$jobId'")
     log.info("************************************************************************")
   }
+
+  /**
+   * Redirects regular metric processing to processor with
+   * requested Spark API.
+   *
+   * @param source        Source to process metrics for
+   * @param sourceMetrics Sequence of metrics defined for the given source
+   * @param dumpSize      Implicit value of maximum number of metric failure (or errors) to be collected
+   *                      (per metric and per partition). Used to prevent OOM errors.
+   * @param caseSensitive Implicit flag defining whether column names are case sensitive or not.
+   * @return Map of metricId to a sequence of metric results for this metricId (some metrics yield multiple results).
+   */
+  private def processRegularMetrics(source: Source,
+                                    sourceMetrics: Seq[RegularMetric])
+                                   (implicit dumpSize: Int,
+                                    caseSensitive: Boolean): Result[MetricResults] =
+    settings.metricEngineAPI match {
+      case MetricEngineAPI.RDD => processRegularMetricsRDD(source, sourceMetrics)
+      case MetricEngineAPI.DF => processRegularMetricsDF(source, sourceMetrics)
+    }
 
   /**
    * Regular metric processor used to calculate metrics over a static data sources.

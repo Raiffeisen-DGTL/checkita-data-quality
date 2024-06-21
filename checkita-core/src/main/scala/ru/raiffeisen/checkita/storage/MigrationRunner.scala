@@ -3,7 +3,7 @@ package ru.raiffeisen.checkita.storage
 import org.flywaydb.core.Flyway
 import ru.raiffeisen.checkita.storage.Connections.DqStorageJdbcConnection
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class MigrationRunner(ds: DqStorageJdbcConnection) {
   

@@ -1,0 +1,77 @@
+description: |-
+  Section holding all sources configurations.
+  Reading sources is a critical part of a Data Quality job in Checkita. During execution, Checkita reads all sources into Spark DataFrames, 
+  which are then processed to calculate metrics and perform quality checks. Additionally, dataframes' metadata is used to perform load checks 
+  ensuring the source has the expected structure. Checkita supports reading from file systems, object storage (HDFS, S3), Hive catalogs, RDBMS, 
+  Kafka, Greenplum, and custom sources.
+type: object
+properties:
+  file:
+    description: Section holding all file sources configurations.
+    type: array
+    default: [ ]
+    items:
+      oneOf:
+        - title: fixed
+          allOf:
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'sources/fixedFileSourceConfig.yaml'
+        - title: delimited
+          allOf:
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'sources/delimitedFileSourceConfig.yaml'
+        - title: avro
+          allOf:
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'sources/avroFileSourceConfig.yaml'
+        - title: orc
+          allOf:
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+        - title: parquet
+          allOf:
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+  hive:
+    description: Section holding all hive sources configurations.
+    type: array
+    default: [ ]
+    items:
+      allOf:
+        - $ref: 'sources/baseSourceConfig.yaml'
+        - $ref: 'sources/hiveSourceConfig.yaml'
+  table:
+    description: Section holding all table sources configurations.
+    type: array
+    default: [ ]
+    items:
+      allOf:
+        - $ref: 'sources/baseSourceConfig.yaml'
+        - $ref: 'sources/tableSourceConfig.yaml'
+  kafka:
+    description: Section holding all kafka sources configurations.
+    type: array
+    default: [ ]
+    items:
+      allOf:
+        - $ref: 'sources/baseSourceConfig.yaml'
+        - $ref: 'sources/kafkaSourceConfig.yaml'
+  greenplum:
+    description: Section holding all greenplum sources configurations.
+    type: array
+    default: [ ]
+    items:
+      allOf:
+        - $ref: 'sources/baseSourceConfig.yaml'
+        - $ref: 'sources/greenplumSourceConfig.yaml'
+  custom:
+    description: Section holding all custom sources configurations.
+    type: array
+    default: [ ]
+    items:
+      allOf:
+        - $ref: 'sources/baseSourceConfig.yaml'
+        - $ref: 'sources/customSourceConfig.yaml'

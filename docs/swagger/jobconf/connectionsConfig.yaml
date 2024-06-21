@@ -1,0 +1,58 @@
+description: |-
+  Section holding all connections configurations.
+type: object
+properties:
+  sqlite:
+    type: array
+    description: List of connections configurations to SQLite databases.
+    items:
+      $ref: 'connections/sqliteConfig.yaml'
+    default: []
+  postgres:
+    type: array
+    description: List of connections configurations to PostgreSQL databases.
+    items:
+      $ref: 'connections/postgresConfig.yaml'
+    default: []
+  oracle:
+    type: array
+    description: List of connections configurations to Oracle databases.
+    items:
+      $ref: 'connections/oracleConfig.yaml'
+    default: []
+  mysql:
+    type: array
+    description: List of connections configurations to MySQL databases.
+    items:
+      $ref: 'connections/mysqlConfig.yaml'
+    default: []
+  mssql:
+    type: array
+    description: List of connections configurations to MS SQL databases.
+    items:
+      $ref: 'connections/mssqlConfig.yaml'
+    default: []
+  h2:
+    type: array
+    description: List of connections configurations to H2 databases.
+    items:
+      $ref: 'connections/h2Config.yaml'
+    default: []
+  clickhouse:
+    type: array
+    description: List of connections configurations to ClickHouse databases.
+    items:
+      $ref: 'connections/clickhouseConfig.yaml'
+    default: []
+  greenplum:
+    type: array
+    description: List of connections configurations to Greenplum databases.
+    items:
+      $ref: 'connections/greenplumConfig.yaml'
+    default: []
+  kafka:
+    type: array
+    description: List of connections configurations to Kafka clusters.
+    items:
+      $ref: 'connections/kafkaConfig.yaml'
+    default: []

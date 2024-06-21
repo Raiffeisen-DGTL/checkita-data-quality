@@ -2,7 +2,7 @@
 
 **Latest Version: 1.7.2**
 
-**Checkita** is a data quality framework written is Scala 2.12 and uses Spark 2.4+ as a computation core.
+**Checkita** is a data quality framework written is Scala 2 which uses Spark 3.2+ as a computation core.
 This framework is used to perform parallel and distributed quality checks on big data environments.
 Its functionality allows calculating various metrics over the large datasets and perform multiple checks to ensure quality of these datasets.
 
@@ -12,7 +12,8 @@ For more information, please see the [Documentation](https://raiffeisen-dgtl.git
 
 Project is built using SBT. There are several JVM variables available to make builds more flexible:
 
-* `-DPSARK_VERSION` - version of spark to build for. (support spark versions are: 2.4.x and 3.x.x);
+* `-DSCALA_VERSION` - version of Scala used to build the project: either `2.12` or `2.13`.
+* `-DPSARK_VERSION` - version of spark to build for. (support spark versions are: 3.2.0 and newer);
 * `-DPKG_TYPE` - type of the package to build: `SNAPSHOT`, `DEV`, `RELEASE`.
   In addition, release candidate types are available: `RC1` - `RC5`.
 * `-DPUBLISH_REALM` and `-DPUBLISH_URL` - type of the repository to publish package and its url.
@@ -31,7 +32,7 @@ Thus, depending on environment, it is possible to build:
   Spark and Scala libraries (use `-DASSY_MODE=NOSPARK` to exclude spark libraries from uber jar). Following sbt command
   need to be executed to assemble uber-jar with Checkita dependencies only: `checkita-core / assemblyPackageDependency`.
 * As all framework dependencies are available via the spark library class path, it is only required to submit jar file
-  with Checkita itself. One can be packages using sbt command `checkita-core / package`.
+  with Checkita itself. One can be packaged using sbt command `checkita-core / package`.
 
 ## Contribution
 

@@ -1,3 +1,0 @@
-# Targets Configuration
-
-tbd

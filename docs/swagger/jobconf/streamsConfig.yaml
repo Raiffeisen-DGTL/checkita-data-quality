@@ -1,0 +1,52 @@
+description: |-
+  Section holding all streaming sources configurations.
+  Streaming sources defined in this section are read as streaming dataframes using Spark Structured Streaming API.
+  The configuration of streaming sources is the same as for the static ones.
+  It is important to note that not all supported sources can be read in streaming mode. 
+  Currently, only `file` and `kafka` sources can be read as streams.
+  The only additional parameter that is required to be defined for all streaming sources is `windowBy`.
+type: object
+properties:
+  file:
+    description: Section holding all file streams configurations.
+    type: array
+    default: [ ]
+    items:
+      oneOf:
+        - title: fixed
+          allOf:
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'sources/fixedFileSourceConfig.yaml'
+            - $ref: 'streams/windowByConfig.yaml'
+        - title: delimited
+          allOf:
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'sources/delimitedFileSourceConfig.yaml'
+            - $ref: 'streams/windowByConfig.yaml'
+        - title: avro
+          allOf:
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'sources/avroFileSourceConfig.yaml'
+            - $ref: 'streams/windowByConfig.yaml'
+        - title: orc
+          allOf:
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'streams/windowByConfig.yaml'
+        - title: parquet
+          allOf:
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'streams/windowByConfig.yaml'
+  kafka:
+    description: Section holding all kafka streams configurations.
+    type: array
+    default: [ ]
+    items:
+      allOf:
+        - $ref: 'sources/baseSourceConfig.yaml'
+        - $ref: 'sources/kafkaSourceConfig.yaml'
+        - $ref: 'streams/windowByConfig.yaml'

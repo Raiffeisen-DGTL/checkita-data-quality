@@ -12,6 +12,7 @@ import scala.collection.immutable
  */
 sealed abstract class CheckName(override val entryName: String, val needStorage: Boolean) extends EnumEntry
 object CheckName extends Enum[CheckName] {
+  case object Expression extends CheckName("EXPRESSION", false)
   case object DifferByLT extends CheckName("DIFFER_BY_LT", false)
   case object EqualTo extends CheckName("EQUAL_TO", false)
   case object GreaterThan extends CheckName("GREATER_THAN", false)
@@ -22,5 +23,5 @@ object CheckName extends Enum[CheckName] {
   case object AverageBoundRange extends CheckName("AVERAGE_BOUND_RANGE", true)
   case object TopNRank extends CheckName("TOP_N_RANK", true)
   
-  override val values: immutable.IndexedSeq[CheckName] = findValues
+  override def values: immutable.IndexedSeq[CheckName] = findValues
 }

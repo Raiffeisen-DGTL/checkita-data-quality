@@ -118,7 +118,7 @@ object Managers {
             .orderBy(col("reference_date").desc, col("metric_name"))
 
           preDF.filter(col("reference_date") < startDT.getUtcTS)
-            .withColumn("row_number", row_number.over(w))
+            .withColumn("row_number", row_number().over(w))
             .filter(col("row_number") <= numRows + offset && col("row_number") > offset)
             .select(schema.map(c => col(c.name)) : _*)
             .as[R](encoder).collect().toSeq
@@ -154,7 +154,7 @@ object Managers {
     import profile.api._
     
     implicit val ec: ExecutionContextExecutor = ExecutionContext.fromExecutor(Executors.newWorkStealingPool(4))
-    private val db = Database.forDataSource(ds.getDataSource, Some(ds.getMaxConnections))
+    protected val db: profile.backend.DatabaseDef = Database.forDataSource(ds.getDataSource, Some(ds.getMaxConnections))
     val tables: Tables = new Tables(profile)
 
     private def runUpsert[R <: DQEntity : TypeTag](data: Seq[R],

@@ -1,0 +1,15 @@
+allOf:
+  - $ref: 'baseConnectionConfig.yaml'
+  - type: object
+    description: Connection configuration to Kafka cluster
+    required:
+      - servers
+    properties:
+      servers:
+        type: array
+        description: List of broker servers to connect to.
+        items:
+          type: string
+        example:
+          - "server1:9092"
+          - "server2:9092"

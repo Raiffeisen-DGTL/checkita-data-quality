@@ -1,29 +1,31 @@
 package ru.raiffeisen.checkita.context
 
-import com.typesafe.config.ConfigRenderOptions
 import org.apache.hadoop.fs.FileSystem
 import org.apache.spark.sql.SparkSession
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.ConfigEncryptor
+import ru.raiffeisen.checkita.config.IO.{RenderOptions, writeEncryptedJobConfig, writeJobConfig}
 import ru.raiffeisen.checkita.config.jobconf.Checks.{CheckConfig, SnapshotCheckConfig, TrendCheckConfig}
+import ru.raiffeisen.checkita.config.jobconf.JobConfig
 import ru.raiffeisen.checkita.config.jobconf.LoadChecks.LoadCheckConfig
-import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig}
+import ru.raiffeisen.checkita.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig, TopNMetricConfig, TrendMetricConfig}
 import ru.raiffeisen.checkita.config.jobconf.Targets.TargetConfig
 import ru.raiffeisen.checkita.connections.DQConnection
-import ru.raiffeisen.checkita.core.Results.ResultType
+import ru.raiffeisen.checkita.core.Results.{MetricCalculatorResult, ResultType}
+import ru.raiffeisen.checkita.core.metrics.BasicMetricProcessor.{MetricResults, processComposedMetrics}
+import ru.raiffeisen.checkita.core.metrics.trend.TrendMetricCalculator
 import ru.raiffeisen.checkita.core.{CalculatorStatus, Source}
-import ru.raiffeisen.checkita.core.metrics.MetricProcessor.{MetricResults, processComposedMetrics}
 import ru.raiffeisen.checkita.readers.SchemaReaders.SourceSchema
 import ru.raiffeisen.checkita.storage.Connections.DqStorageJdbcConnection
 import ru.raiffeisen.checkita.storage.Managers.DqStorageManager
 import ru.raiffeisen.checkita.storage.MigrationRunner
-import ru.raiffeisen.checkita.targets.TargetProcessors._
 import ru.raiffeisen.checkita.storage.Models._
+import ru.raiffeisen.checkita.targets.TargetProcessors._
 import ru.raiffeisen.checkita.utils.Logging
 import ru.raiffeisen.checkita.utils.ResultUtils._
-import ru.raiffeisen.checkita.config.IO.{writeEncryptedJobConfig, writeJobConfig}
-import ru.raiffeisen.checkita.config.jobconf.JobConfig
+import ru.raiffeisen.checkita.utils.Templating.getTokens
 
+import scala.annotation.tailrec
 import scala.reflect.runtime.universe.TypeTag
 import scala.util.Try
 
@@ -36,6 +38,7 @@ trait DQJob extends Logging {
   val sources: Seq[Source]
   val metrics: Seq[RegularMetricConfig]
   val composedMetrics: Seq[ComposedMetricConfig]
+  val trendMetrics: Seq[TrendMetricConfig]
   val checks: Seq[CheckConfig]
   val loadChecks: Seq[LoadCheckConfig]
   val targets: Seq[TargetConfig]
@@ -46,6 +49,7 @@ trait DQJob extends Logging {
   protected val loadChecksBySources: Map[String, Seq[LoadCheckConfig]] = loadChecks.groupBy(_.source.value)
   protected val metricsMap: Map[String, RegularMetricConfig] = metrics.map(m => m.id.value -> m).toMap
   protected val composedMetricsMap: Map[String, ComposedMetricConfig] = composedMetrics.map(m => m.id.value -> m).toMap
+  protected val trendMetricsMap: Map[String, TrendMetricConfig] = trendMetrics.map(m => m.id.value -> m).toMap
   protected val metricsBySources: Map[String, Seq[RegularMetricConfig]] = metrics.groupBy(_.metricSource)
 
   implicit val jobId: String
@@ -148,6 +152,85 @@ trait DQJob extends Logging {
         Map.empty
       }
     }
+
+  /**
+   * Looks for lookup metric information in metric configurations.
+   *
+   * @param lookupMetric Lookup metric ID.
+   * @return Result type of lookup metric and list of its source IDs.
+   */
+  private def getLookupMetricInfo(lookupMetric: String): (ResultType, Seq[String]) = {
+    
+    // trend metrics cannot refer to TopN metrics as these metrics yield multiple results:
+    if (metricsMap.get(lookupMetric).exists(_.isInstanceOf[TopNMetricConfig])) throw new IllegalArgumentException(
+      "Trend metrics cannot refer to TopN regular metric since the latter produces multiple results, " +
+        s"but trend metric '$lookupMetric' DOES refer to TopN metric."
+    )
+
+    // in order to fetch result type we just need to find the type lookup metric definition:
+    val resultType = metricsMap.get(lookupMetric).map(_ => ResultType.RegularMetric)
+      .orElse(composedMetricsMap.get(lookupMetric).map(_ => ResultType.ComposedMetric))
+      .orElse(trendMetricsMap.get(lookupMetric).map(_ => ResultType.TrendMetric))
+      .getOrElse(throw new IllegalArgumentException(
+        s"Unable to find metric configuration for lookup metric ID '$lookupMetric'."
+      ))
+
+    @tailrec
+    def loop(lookupMetrics: Seq[String], acc: Seq[String] = Seq.empty): Seq[String] =
+      if (lookupMetrics.isEmpty) acc.distinct
+      else {
+        val currMet = lookupMetrics.head
+        // metric can be found within either regular, composed or trend metric configurations:
+        (metricsMap.get(currMet), composedMetricsMap.get(currMet), trendMetricsMap.get(currMet)) match {
+          case (Some(regMet), None, None) => 
+            loop(lookupMetrics.tail, acc :+ regMet.source.value)
+          case (None, Some(comMet), None) => 
+            loop(lookupMetrics.tail ++ getTokens(comMet.formula.value).distinct, acc)
+          case (None, None, Some(trendMet)) => 
+            loop(lookupMetrics.tail :+ trendMet.lookupMetricId, acc)
+          case _ => throw new IllegalArgumentException(
+            s"Unable to find metric configuration for lookup metric ID '$currMet'."
+          )
+        }
+      }
+    
+    (resultType, loop(Seq(lookupMetric)))
+  }
+  
+  /**
+   * Calculates all trend metrics provided with regular and composed metric results.
+   *
+   * @param stage                Stage indication used for logging.
+   * @param jobId                Implicit current job ID.
+   * @param manager              Implicit storage manager used to load historical results.
+   * @param settings             Implicit application settings object.
+   * @return Either a map of trend metric results or a list of calculation errors.
+   */
+  protected def calculateTrendMetrics(stage: String)
+                                     (implicit jobId: String,
+                                      manager: Option[DqStorageManager],
+                                      settings: AppSettings): Result[MetricResults] = storageManager match {
+    case Some(_) =>
+      if (trendMetrics.nonEmpty) {
+        log.info(s"$stage Calculating trend metrics...")
+        trendMetrics.map { tm =>
+            Try(getLookupMetricInfo(tm.lookupMetricId)).toResult(
+              preMsg = s"Failed to calculate trend metric '${tm.metricId}' due to following error:"
+            ).mapValue {
+              case (resType, sourceIds) => TrendMetricCalculator.run(tm, resType, sourceIds)
+            }
+          }.foldLeft(liftToResult(Seq.empty[MetricCalculatorResult]))((acc, res) => acc.combine(res)(_ :+ _))
+          .mapValue(_.groupBy(_.metricId))
+          .tap(logMetricResults(stage, "trend", _))
+      } else {
+        log.info(s"$stage No trend metrics are defined.")
+        liftToResult(Map.empty)
+      }
+    case None =>
+      log.warn(s"$stage There is no connection to results storage: calculation of all trend metrics will be skipped.")
+      liftToResult(Map.empty)
+  }
+    
 
   /**
    * Performs all load checks
@@ -291,6 +374,29 @@ trait DQJob extends Logging {
     }
 
   /**
+   * Finalizes trend metric results: selects only trend metrics results and converts them to
+   * final trend metric results representation ready for writing into storage DB or sending via targets.
+   *
+   * @param stage         Stage indication used for logging.
+   * @param metricResults Map with all metric results
+   * @param settings      Implicit application settings object
+   * @return Either a finalized sequence of trend metric results or a list of conversion errors.
+   */
+  protected def finalizeTrendMetrics(stage: String, metricResults: Result[MetricResults])
+                                    (implicit settings: AppSettings): Result[Seq[ResultMetricTrend]] =
+    metricResults.mapValue { metResults =>
+      log.info(s"$stage Finalize trend metric results...")
+      metResults.toSeq.flatMap(_._2).filter(_.resultType == ResultType.TrendMetric)
+        .map { r =>
+          val mConfig = metricsMap.get(r.metricId)
+          val desc = mConfig.flatMap(_.description).map(_.value)
+          val params = mConfig.flatMap(_.paramString)
+          val metadata = mConfig.flatMap(_.metadataString)
+          r.finalizeAsTrend(desc, params, metadata)
+        }
+    }
+
+  /**
    * Finalizes metric errors: retrieves metrics errors from results and converts them to
    * final metric errors representation ready for writing into storage DB or sending via targets.
    *
@@ -351,8 +457,6 @@ trait DQJob extends Logging {
   protected def finalizeJobState(jobConfig: JobConfig)
                                 (implicit settings: AppSettings, jobId: String): Result[JobState] = {
 
-    val renderOpts = ConfigRenderOptions.defaults().setComments(false).setOriginComments(false).setFormatted(false)
-
     val writeFunc = (jc: JobConfig) => settings.encryption match {
       case Some(e) => writeEncryptedJobConfig(jc)(new ConfigEncryptor(e.secret, e.keyFields))
       case None => writeJobConfig(jc)
@@ -360,7 +464,7 @@ trait DQJob extends Logging {
 
     writeFunc(jobConfig).map(jc => JobState(
       jobId,
-      jc.root().render(renderOpts),
+      jc.root().render(RenderOptions.COMPACT),
       settings.versionInfo.asJsonString,
       settings.referenceDateTime.getUtcTS,
       settings.executionDateTime.getUtcTS
@@ -376,6 +480,7 @@ trait DQJob extends Logging {
    * @param checkResults          Sequence of check results (wrapped into Either)
    * @param regularMetricResults  Sequence of regular metric results (wrapped into Either)
    * @param composedMetricResults Sequence of composed metric results (wrapped into Either)
+   * @param trendMetricResults    Sequence of trend metrics results (wrapped into Either)
    * @param metricErrors          Sequence of metric errors (wrapped into Either)
    * @param settings              Implicit application settings object
    * @return Combined results in form of ResultSet
@@ -386,14 +491,15 @@ trait DQJob extends Logging {
                                jobState: Result[JobState],
                                regularMetricResults: Result[Seq[ResultMetricRegular]],
                                composedMetricResults: Result[Seq[ResultMetricComposed]],
+                               trendMetricResults: Result[Seq[ResultMetricTrend]],
                                metricErrors: Result[Seq[ResultMetricError]])
                               (implicit settings: AppSettings): Result[ResultSet] =
-    liftToResult(loadCheckResults).combineT5(
-      checkResults, jobState, regularMetricResults, composedMetricResults, metricErrors
+    liftToResult(loadCheckResults).combineT6(
+      checkResults, jobState, regularMetricResults, composedMetricResults, trendMetricResults, metricErrors
     ) {
-      case (lcChkRes, chkRes, jobRes, regMetRes, compMetRes, metErrs) =>
+      case (lcChkRes, chkRes, jobRes, regMetRes, compMetRes, trendMetRes, metErrs) =>
         log.info(s"$stage Summarize results...")
-        ResultSet(sources.size, regMetRes, compMetRes, chkRes, lcChkRes, jobRes, metErrs)
+        ResultSet(sources.size, regMetRes, compMetRes, trendMetRes, chkRes, lcChkRes, jobRes, metErrs)
     }
 
   /**
@@ -429,6 +535,7 @@ trait DQJob extends Logging {
           Seq(
             saveWithLogs(results.regularMetrics, "regular metrics"),
             saveWithLogs(results.composedMetrics, "composed metrics"),
+            saveWithLogs(results.trendMetrics, "trend metrics"),
             saveWithLogs(results.loadChecks, "load checks"),
             saveWithLogs(results.checks, "checks"),
             saveWithLogs(Seq(results.jobConfig), "job state"),
@@ -495,23 +602,36 @@ trait DQJob extends Logging {
     // Calculate regular metric results:
     val regMetCalcResults = regularMetricsProcessor.run(getStage(metricStage))
 
+    // Calculate trend metric results:
+    val trendMetCalcResults = calculateTrendMetrics(getStage(metricStage))
+    
+    // Combine regular and composed metric results together:
+    val regAndTrendCalcResults = regMetCalcResults.combine(trendMetCalcResults)(_ ++ _)
+    
     // Calculate composed metrics results:
-    val compMetCalcResults: Result[MetricResults] =
-      calculateComposedMetrics(getStage(metricStage), regMetCalcResults)
-
+    val compMetCalcResults = calculateComposedMetrics(getStage(metricStage), regAndTrendCalcResults)
+    
     // Combine all metric results together:
-    val allMetricCalcResults = regMetCalcResults.combine(compMetCalcResults)(_ ++ _)
-
+    val allMetricCalcResults = regAndTrendCalcResults.combine(compMetCalcResults)(_ ++ _)
+    
     // Perform checks:
     val checkResults = performChecks(getStage(checksStage), allMetricCalcResults)
     // Finalize results:
     val regularMetricResults = finalizeRegularMetrics(getStage(storageStage), allMetricCalcResults)
     val composedMetricResults = finalizeComposedMetrics(getStage(storageStage), allMetricCalcResults)
+    val trendMetricResults = finalizeTrendMetrics(getStage(storageStage), allMetricCalcResults)
     val metricErrors = finalizeMetricErrors(getStage(storageStage), allMetricCalcResults)
     val jobState = finalizeJobState(jobConfig)
     // Combine all results:
     val resSet = combineResults(
-      getStage(storageStage), loadCheckResults, checkResults, jobState, regularMetricResults, composedMetricResults, metricErrors
+      getStage(storageStage), 
+      loadCheckResults, 
+      checkResults, 
+      jobState, 
+      regularMetricResults, 
+      composedMetricResults, 
+      trendMetricResults,
+      metricErrors
     )
     // Save results to storage
     val resSaveState = migrationState.flatMap(_ => saveResults(getStage(storageStage), resSet))

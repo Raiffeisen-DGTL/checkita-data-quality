@@ -1,0 +1,33 @@
+type: object
+required:
+  - joinBy
+  - joinType
+properties:
+  joinBy:
+    type: array
+    description: List of columns to join by. Thus, parent sources must have the same columns names used for join.
+    example:
+      - id
+      - load_date
+    items:
+      type: string
+      description: Column name
+  joinType:
+    type: string
+    description: Type of Spark join to apply.
+    enum:
+      - inner
+      - outer
+      - cross
+      - full
+      - right
+      - left
+      - semi
+      - anti
+      - fullOuter
+      - rightOuter
+      - leftOuter
+      - leftSemi
+      - leftAnti
+      
+    

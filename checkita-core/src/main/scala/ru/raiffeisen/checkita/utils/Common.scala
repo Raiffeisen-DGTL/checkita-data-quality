@@ -10,7 +10,10 @@ import ru.raiffeisen.checkita.utils.ResultUtils._
 
 import java.io.{File, InputStreamReader, SequenceInputStream, Serializable}
 import java.nio.charset.StandardCharsets
-import scala.reflect.runtime.universe.{MethodSymbol, TypeTag, typeOf}
+import java.security.MessageDigest
+import scala.jdk.CollectionConverters._
+import scala.collection.compat.immutable.ArraySeq
+import scala.reflect.runtime.universe._
 import scala.util.Try
 
 object Common {
@@ -31,6 +34,14 @@ object Common {
       }
     })
 
+  /**
+   * Builds MD5 hash for input string.
+   * @param s String to build has for.
+   * @return MD5 hash string.
+   */
+  def getStringHash(s: String): String =
+    MessageDigest.getInstance("MD5").digest(s.getBytes).map("%02x".format(_)).mkString
+  
   /**
    * Converts sequence of parameter strings with format "k=v" into a Map(k -> v)
    * @param paramsSeq Sequence of parameter strings
@@ -67,6 +78,26 @@ object Common {
   }
 
   /**
+   * Retrieves DQ variables from environment, combines them with explicitly provided variables
+   * and then converts them into a string that will be prepended to a configuration prior reading.
+   *
+   * @param extraVariables Explicitly provided extra variables.
+   * @return String with variables to be prepended to configuration.
+   *
+   * @note Variables are collected from system and java-runtime environment and retained only those that are related to
+   *       Checkita Data Quality Framework: following regex is used to find such variables: `^(?i)(DQ)[a-z0-9_-]+$`.
+   *       These variables are combined with the ones provided in `extraVariables` argument and further used during
+   *       configuration files parsing.
+   */
+  def getPrependVars(extraVariables: Map[String, String]): String = {
+    val variablesRegex = "^(?i)(DQ)[a-z0-9_-]+$" // system variables must match the given regex.
+    val systemVariables = System.getProperties.asScala.filter{ case (k, _) => k matches variablesRegex }
+    (systemVariables ++ extraVariables).map {
+      case (k, v) => k + ": \"" + v + "\""
+    }.mkString("", "\n", "\n")
+  }
+
+  /**
    * Prepares configuration files for reading. The idea here is following:
    *   - system and user-provided variables are need to be prepended to the configuration file(s)
    *   - HOCON support configuration merging, and, therefore, we also allows multiple files for input.
@@ -84,4 +115,9 @@ object Common {
         new SequenceInputStream(stream, openInputStream(new File(config)))
       })
     }.toResult(preMsg = s"Unable to prepare $confName configuration for reading with following error:")
+    
+  
+  implicit class UnsafeArraySeqOps[T](value: Array[T]) {
+    def toSeqUnsafe: ArraySeq[T] = ArraySeq.unsafeWrapArray(value)
+  }
 }
