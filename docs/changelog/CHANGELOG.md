@@ -1,3 +1,35 @@
+## [2.0.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.2...v2.0.0) (2024-06-21)
+
+
+### Features
+
+* Checkita 2.0 release ([#45](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/45)) ([e747659](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/e7476598ada2b681ee6be478e5dce0e913799b0f))
+
+
+### BREAKING CHANGES
+
+* major updates to Checkita Core that enables new
+functionality and enhances existing one.
+
+* new metrics engine based on Spark DF-API: improves stability and
+performance of regular metrics computation. Supported in batch-jobs
+only.
+* checkpointing for streaming application: restart your application from
+the same point where it stopped (or crushed).
+* Checkita API Server - experimental MVP service that provides basic
+functionality to work with configurations and DQ Storage.
+* regular metrics refactoring to comply with SQL standards.
+* new type of metrics: TREND metrics. Enables computing various
+statistics over historical metric results.
+* new type of checks: EXPRESSION. Allows to define check pass condition
+using arbitrary boolean expression.
+* enhanced formulas (for both composed metrics and expression checks):
+formulas now supports basic mathematical functions.
+* new Swagger documentation covering both Checkita Configurations and
+API methods (still in development, will be completed shortly)
+* support of Confluent Schema Registry to read schemas from.
+* minor bug fixes.
+
 ## [1.7.2](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.1...v1.7.2) (2024-06-21)
 
 
