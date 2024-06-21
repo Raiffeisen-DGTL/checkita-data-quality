@@ -1,5 +1,0 @@
-title: orc
-allOf:
-  - $ref: '../base/baseSourceConfig.yaml'
-  - $ref: '../base/baseFileSourceConfig.yaml'
-  - $ref: '../base/windowByConfig.yaml'

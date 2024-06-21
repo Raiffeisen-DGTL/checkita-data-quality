@@ -14,64 +14,64 @@ properties:
       oneOf:
         - title: fixed
           allOf:
-            - $ref: 'sources/base/baseSourceConfig.yaml'
-            - $ref: 'sources/base/baseFileSourceConfig.yaml'
-            - $ref: 'sources/base/fixedFileSourceConfig.yaml'
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'sources/fixedFileSourceConfig.yaml'
         - title: delimited
           allOf:
-            - $ref: 'sources/base/baseSourceConfig.yaml'
-            - $ref: 'sources/base/baseFileSourceConfig.yaml'
-            - $ref: 'sources/base/delimitedFileSourceConfig.yaml'
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'sources/delimitedFileSourceConfig.yaml'
         - title: avro
           allOf:
-            - $ref: 'sources/base/baseSourceConfig.yaml'
-            - $ref: 'sources/base/baseFileSourceConfig.yaml'
-            - $ref: 'sources/base/avroFileSourceConfig.yaml'
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'sources/avroFileSourceConfig.yaml'
         - title: orc
           allOf:
-            - $ref: 'sources/base/baseSourceConfig.yaml'
-            - $ref: 'sources/base/baseFileSourceConfig.yaml'
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
         - title: parquet
           allOf:
-            - $ref: 'sources/base/baseSourceConfig.yaml'
-            - $ref: 'sources/base/baseFileSourceConfig.yaml'
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
   hive:
     description: Section holding all hive sources configurations.
     type: array
     default: [ ]
     items:
       allOf:
-        - $ref: 'sources/base/baseSourceConfig.yaml'
-        - $ref: 'sources/base/hiveSourceConfig.yaml'
+        - $ref: 'sources/baseSourceConfig.yaml'
+        - $ref: 'sources/hiveSourceConfig.yaml'
   table:
     description: Section holding all table sources configurations.
     type: array
     default: [ ]
     items:
       allOf:
-        - $ref: 'sources/base/baseSourceConfig.yaml'
-        - $ref: 'sources/base/tableSourceConfig.yaml'
+        - $ref: 'sources/baseSourceConfig.yaml'
+        - $ref: 'sources/tableSourceConfig.yaml'
   kafka:
     description: Section holding all kafka sources configurations.
     type: array
     default: [ ]
     items:
       allOf:
-        - $ref: 'sources/base/baseSourceConfig.yaml'
-        - $ref: 'sources/base/kafkaSourceConfig.yaml'
+        - $ref: 'sources/baseSourceConfig.yaml'
+        - $ref: 'sources/kafkaSourceConfig.yaml'
   greenplum:
     description: Section holding all greenplum sources configurations.
     type: array
     default: [ ]
     items:
       allOf:
-        - $ref: 'sources/base/baseSourceConfig.yaml'
-        - $ref: 'sources/base/greenplumSourceConfig.yaml'
+        - $ref: 'sources/baseSourceConfig.yaml'
+        - $ref: 'sources/greenplumSourceConfig.yaml'
   custom:
     description: Section holding all custom sources configurations.
     type: array
     default: [ ]
     items:
       allOf:
-        - $ref: 'sources/base/baseSourceConfig.yaml'
-        - $ref: 'sources/base/customSourceConfig.yaml'
+        - $ref: 'sources/baseSourceConfig.yaml'
+        - $ref: 'sources/customSourceConfig.yaml'

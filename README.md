@@ -2,7 +2,7 @@
 
 **Latest Version: 1.7.2**
 
-**Checkita** is a data quality framework written is Scala 2.12 and uses Spark 2.4+ as a computation core.
+**Checkita** is a data quality framework written is Scala 2 which uses Spark 3.2+ as a computation core.
 This framework is used to perform parallel and distributed quality checks on big data environments.
 Its functionality allows calculating various metrics over the large datasets and perform multiple checks to ensure quality of these datasets.
 

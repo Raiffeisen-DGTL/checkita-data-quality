@@ -15,38 +15,38 @@ properties:
       oneOf:
         - title: fixed
           allOf:
-            - $ref: 'sources/base/baseSourceConfig.yaml'
-            - $ref: 'sources/base/baseFileSourceConfig.yaml'
-            - $ref: 'sources/base/fixedFileSourceConfig.yaml'
-            - $ref: 'sources/base/windowByConfig.yaml'
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'sources/fixedFileSourceConfig.yaml'
+            - $ref: 'streams/windowByConfig.yaml'
         - title: delimited
           allOf:
-            - $ref: 'sources/base/baseSourceConfig.yaml'
-            - $ref: 'sources/base/baseFileSourceConfig.yaml'
-            - $ref: 'sources/base/delimitedFileSourceConfig.yaml'
-            - $ref: 'sources/base/windowByConfig.yaml'
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'sources/delimitedFileSourceConfig.yaml'
+            - $ref: 'streams/windowByConfig.yaml'
         - title: avro
           allOf:
-            - $ref: 'sources/base/baseSourceConfig.yaml'
-            - $ref: 'sources/base/baseFileSourceConfig.yaml'
-            - $ref: 'sources/base/avroFileSourceConfig.yaml'
-            - $ref: 'sources/base/windowByConfig.yaml'
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'sources/avroFileSourceConfig.yaml'
+            - $ref: 'streams/windowByConfig.yaml'
         - title: orc
           allOf:
-            - $ref: 'sources/base/baseSourceConfig.yaml'
-            - $ref: 'sources/base/baseFileSourceConfig.yaml'
-            - $ref: 'sources/base/windowByConfig.yaml'
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'streams/windowByConfig.yaml'
         - title: parquet
           allOf:
-            - $ref: 'sources/base/baseSourceConfig.yaml'
-            - $ref: 'sources/base/baseFileSourceConfig.yaml'
-            - $ref: 'sources/base/windowByConfig.yaml'
+            - $ref: 'sources/baseSourceConfig.yaml'
+            - $ref: 'sources/baseFileSourceConfig.yaml'
+            - $ref: 'streams/windowByConfig.yaml'
   kafka:
     description: Section holding all kafka streams configurations.
     type: array
     default: [ ]
     items:
       allOf:
-        - $ref: 'sources/base/baseSourceConfig.yaml'
-        - $ref: 'sources/base/kafkaSourceConfig.yaml'
-        - $ref: 'sources/base/windowByConfig.yaml'
+        - $ref: 'sources/baseSourceConfig.yaml'
+        - $ref: 'sources/kafkaSourceConfig.yaml'
+        - $ref: 'streams/windowByConfig.yaml'
