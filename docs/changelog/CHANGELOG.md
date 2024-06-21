@@ -1,3 +1,10 @@
+## [1.7.2](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.1...v1.7.2) (2024-06-21)
+
+
+### Bug Fixes
+
+* filter NaN values from historical metric results in trend checks to avoid errors during computation of average metric value. ([#44](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/44)) ([d6da0f1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/d6da0f1c0d1259602def9ea39639186bc12fd31a))
+
 ## [1.7.1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.0...v1.7.1) (2024-05-27)
 
 
