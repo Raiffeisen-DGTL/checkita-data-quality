@@ -252,7 +252,25 @@
         <a title="Case class to represent configuration field" href="PostValidation$$Field.html"><span class="name">Field</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="value">value: <span class="extype" name="scala.Any">Any</span></span>, <span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Case class to represent configuration field</p><div class="fullcomment"><div class="comment cmt"><p>Case class to represent configuration field</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name of the configuration field</p></dd><dt class="param">value</dt><dd class="cmt"><p>Value of the configuration field</p></dd><dt class="param">path</dt><dd class="cmt"><p>Path to a configuration field from the root</p></dd></dl></div>
+      <p class="shortcomment cmt">Case class to represent configuration field
+</p><div class="fullcomment"><div class="comment cmt"><p>Case class to represent configuration field
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name of the configuration field</p></dd><dt class="param">value</dt><dd class="cmt"><p>Value of the configuration field</p></dd><dt class="param">path</dt><dd class="cmt"><p>Path to a configuration field from the root</p></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation.Reference" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ReferenceextendsAnyRef"></a><a id="Reference:Reference"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/validation/PostValidation$$Reference.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a title="Class to represent cross reference used in configuration." href="PostValidation$$Reference.html"><span class="name">Reference</span></a><span class="result"> extends <a href="../../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Class to represent cross reference used in configuration.</p>
     </li></ol>
             </div>
 
@@ -420,6 +438,26 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#findCycles" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="findCycles[N](graph:Map[N,List[N]]):List[List[N]]"></a><a id="findCycles[N](Map[N,List[N]]):List[List[N]]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/validation/PostValidation$.html#findCycles[N](graph:Map[N,List[N]]):List[List[N]]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">findCycles</span><span class="tparams">[<span name="N">N</span>]</span><span class="params">(<span name="graph">graph: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="ru.raiffeisen.checkita.config.validation.PostValidation.findCycles.N">N</span>, <a href="../../../../../scala/index.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<span class="extype" name="ru.raiffeisen.checkita.config.validation.PostValidation.findCycles.N">N</span>]]</span>)</span><span class="result">: <a href="../../../../../scala/index.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<a href="../../../../../scala/index.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<span class="extype" name="ru.raiffeisen.checkita.config.validation.PostValidation.findCycles.N">N</span>]]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Tail recursive DFS to find cycles in directed graph stored in adjacent list format:
+Map(node -&gt; List(adjacent node))
+</p><div class="fullcomment"><div class="comment cmt"><p>Tail recursive DFS to find cycles in directed graph stored in adjacent list format:
+Map(node -&gt; List(adjacent node))
+</p></div><dl class="paramcmts block"><dt class="tparam">N</dt><dd class="cmt"><p>Type of the graph nodes.</p></dd><dt class="param">graph</dt><dd class="cmt"><p>Graph to traverse for cycles.</p></dd><dt>returns</dt><dd class="cmt"><p>List of cyclic paths in the graph.</p></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
@@ -577,7 +615,7 @@
       
       <p class="shortcomment cmt">Validation to check if DQ job configuration contains both
 batch and streaming sources defined.</p>
-    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateComposedMetrics" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateComposedMetrics" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="validateComposedMetrics:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateComposedMetrics:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
       <span class="permalink">
       <a href="../../../../../ru/raiffeisen/checkita/config/validation/PostValidation$.html#validateComposedMetrics:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]" title="Permalink">
@@ -592,7 +630,25 @@ batch and streaming sources defined.</p>
         <span class="name">validateComposedMetrics</span><span class="result">: (<span class="extype" name="com.typesafe.config.ConfigObject">ConfigObject</span>) ⇒ <a href="../../../../../scala/index.html#Vector[+A]=scala.collection.immutable.Vector[A]" class="extmbr" name="scala.Vector">Vector</a>[<span class="extype" name="pureconfig.error.ConfigReaderFailure">ConfigReaderFailure</span>]</span>
       </span>
       
-      <p class="shortcomment cmt">Validation to check if DQ job configuration contains errors in composed metric formulas:</p><div class="fullcomment"><div class="comment cmt"><p>Validation to check if DQ job configuration contains errors in composed metric formulas:</p><ul><li>missing reference to source metrics</li><li>wrong equation that can be parsed
+      <p class="shortcomment cmt">Validation to check if DQ job configuration contains errors in composed metric formulas:
+wrong equation that cannot be parsed
+</p>
+    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateExpressionCheckRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="validateExpressionCheckRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateExpressionCheckRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/validation/PostValidation$.html#validateExpressionCheckRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateExpressionCheckRefs</span><span class="result">: (<span class="extype" name="com.typesafe.config.ConfigObject">ConfigObject</span>) ⇒ <a href="../../../../../scala/index.html#Vector[+A]=scala.collection.immutable.Vector[A]" class="extmbr" name="scala.Vector">Vector</a>[<span class="extype" name="pureconfig.error.ConfigReaderFailure">ConfigReaderFailure</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Validation to check if DQ job configuration contains errors in expression check formulas:</p><div class="fullcomment"><div class="comment cmt"><p>Validation to check if DQ job configuration contains errors in expression check formulas:</p><ul><li>missing reference to metrics</li><li>wrong equation that cannot be parsed
 </li></ul></div></div>
     </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateGreenplumSourceRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="validateGreenplumSourceRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateGreenplumSourceRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
@@ -680,8 +736,10 @@ from kafka topics sources to kafka connections
       </span>
       
       <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
-from load checks to sources</p><div class="fullcomment"><div class="comment cmt"><p>Validation to check if DQ job configuration contains missing references
-from load checks to sources</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Load checks are not applied to streaming sources</p></span></dd></dl></div>
+from load checks to sources
+</p><div class="fullcomment"><div class="comment cmt"><p>Validation to check if DQ job configuration contains missing references
+from load checks to sources
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Load checks are not applied to streaming sources</p></span></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateLoadCheckSchemaRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="validateLoadCheckSchemaRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateLoadCheckSchemaRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
       <span class="permalink">
@@ -700,6 +758,42 @@ from load checks to sources</p></div><dl class="attributes block"> <dt>Note</dt>
       <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
 from schema match load checks to schemas
 </p>
+    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateMetricCrossReferences" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="validateMetricCrossReferences:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateMetricCrossReferences:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/validation/PostValidation$.html#validateMetricCrossReferences:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateMetricCrossReferences</span><span class="result">: (<span class="extype" name="com.typesafe.config.ConfigObject">ConfigObject</span>) ⇒ <a href="../../../../../scala/index.html#Vector[+A]=scala.collection.immutable.Vector[A]" class="extmbr" name="scala.Vector">Vector</a>[<span class="extype" name="pureconfig.error.ConfigReaderFailure">ConfigReaderFailure</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Validation to check if composed and trend metrics definitions does not create reference cycles.</p><div class="fullcomment"><div class="comment cmt"><p>Validation to check if composed and trend metrics definitions does not create reference cycles.
+Metric computation must be acyclic.
+</p></div></div>
+    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateRegularMetricRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="validateRegularMetricRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateRegularMetricRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/validation/PostValidation$.html#validateRegularMetricRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateRegularMetricRefs</span><span class="result">: (<span class="extype" name="com.typesafe.config.ConfigObject">ConfigObject</span>) ⇒ <a href="../../../../../scala/index.html#Vector[+A]=scala.collection.immutable.Vector[A]" class="extmbr" name="scala.Vector">Vector</a>[<span class="extype" name="pureconfig.error.ConfigReaderFailure">ConfigReaderFailure</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
+from regular metrics to sources
+</p>
     </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateSnapshotCheckRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="validateSnapshotCheckRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateSnapshotCheckRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
       <span class="permalink">
@@ -717,24 +811,6 @@ from schema match load checks to schemas
       
       <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
 from snapshot checks to metrics
-</p>
-    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateSourceMetricRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="validateSourceMetricRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateSourceMetricRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
-      <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/validation/PostValidation$.html#validateSourceMetricRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">validateSourceMetricRefs</span><span class="result">: (<span class="extype" name="com.typesafe.config.ConfigObject">ConfigObject</span>) ⇒ <a href="../../../../../scala/index.html#Vector[+A]=scala.collection.immutable.Vector[A]" class="extmbr" name="scala.Vector">Vector</a>[<span class="extype" name="pureconfig.error.ConfigReaderFailure">ConfigReaderFailure</span>]</span>
-      </span>
-      
-      <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
-from source metrics to sources
 </p>
     </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateSourceSchemaRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="validateSourceSchemaRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateSourceSchemaRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
@@ -826,6 +902,25 @@ from targets to metrics
       <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
 from trend checks to metrics
 </p>
+    </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateTrendMetricWindowSettings" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="validateTrendMetricWindowSettings:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateTrendMetricWindowSettings:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/validation/PostValidation$.html#validateTrendMetricWindowSettings:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateTrendMetricWindowSettings</span><span class="result">: (<span class="extype" name="com.typesafe.config.ConfigObject">ConfigObject</span>) ⇒ <a href="../../../../../scala/index.html#Vector[+A]=scala.collection.immutable.Vector[A]" class="extmbr" name="scala.Vector">Vector</a>[<span class="extype" name="pureconfig.error.ConfigReaderFailure">ConfigReaderFailure</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Ensure that windowSize and windowOffset parameters in trend metrics do comply with rule:</p><div class="fullcomment"><div class="comment cmt"><p>Ensure that windowSize and windowOffset parameters in trend metrics do comply with rule:</p><ul><li>if rule is record then windowSize and windowOffset must be non-negative integers</li><li>if rule is datetime then windowSize and windowOffset must be valid non-negative durations
+</li></ul></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>This check is run at post-validation stage, as it is quite difficult to derive
+      pureconfig readers for sealed trait families (thus approach is used to define kinded configurations)
+      to run check during config parsing.</p></span></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateVirtualSourceRefs" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="validateVirtualSourceRefs:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateVirtualSourceRefs:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
       <span class="permalink">
@@ -844,7 +939,8 @@ from trend checks to metrics
       <p class="shortcomment cmt">Validation to check if DQ job configuration contains missing references
 from virtual sources to already defined sources.</p><div class="fullcomment"><div class="comment cmt"><p>Validation to check if DQ job configuration contains missing references
 from virtual sources to already defined sources.
-Check is recursive: virtual sources can also refer to other virtual sources defined above.</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>batch and streaming sources are checked separately.</p></span></dd></dl></div>
+Check is recursive: virtual sources can also refer to other virtual sources defined above.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>batch and streaming sources are checked separately.</p></span></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.validation.PostValidation#validateVirtualStreams" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="validateVirtualStreams:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateVirtualStreams:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
       <span class="permalink">

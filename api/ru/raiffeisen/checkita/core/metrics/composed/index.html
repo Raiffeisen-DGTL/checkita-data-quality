@@ -169,10 +169,10 @@
                         <span class="separator"></span>
                         <a class="class" href="ComposedMetricCalculator.html" title="Takes all metric results and then calculates new ones with formulas"></a>
                         <a href="ComposedMetricCalculator.html" title="Takes all metric results and then calculates new ones with formulas">ComposedMetricCalculator</a>
-                      </li><li name="ru.raiffeisen.checkita.core.metrics.regular" visbl="pub" class="indented6 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="regular"></a><a id="regular:regular"></a>
+                      </li><li name="ru.raiffeisen.checkita.core.metrics.df" visbl="pub" class="indented6 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="df"></a><a id="df:df"></a>
       <span class="permalink">
-      <a href="../../../../../../ru/raiffeisen/checkita/core/metrics/regular/index.html" title="Permalink">
+      <a href="../../../../../../ru/raiffeisen/checkita/core/metrics/df/index.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -181,7 +181,39 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../regular/index.html"><span class="name">regular</span></a>
+        <a title="" href="../df/index.html"><span class="name">df</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="ru.raiffeisen.checkita.core.metrics">metrics</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.core.metrics.rdd" visbl="pub" class="indented6 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="rdd"></a><a id="rdd:rdd"></a>
+      <span class="permalink">
+      <a href="../../../../../../ru/raiffeisen/checkita/core/metrics/rdd/index.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="../rdd/index.html"><span class="name">rdd</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="ru.raiffeisen.checkita.core.metrics">metrics</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.core.metrics.trend" visbl="pub" class="indented6 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="trend"></a><a id="trend:trend"></a>
+      <span class="permalink">
+      <a href="../../../../../../ru/raiffeisen/checkita/core/metrics/trend/index.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="../trend/index.html"><span class="name">trend</span></a>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="ru.raiffeisen.checkita.core.metrics">metrics</a></dd></dl></div>
@@ -236,7 +268,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Takes all metric results and then calculates new ones with formulas" href="ComposedMetricCalculator.html"><span class="name">ComposedMetricCalculator</span></a><span class="params">(<span name="primitiveMetrics">primitiveMetrics: <a href="../../../../../../scala/index.html#Iterable[+A]=Iterable[A]" class="extmbr" name="scala.Iterable">Iterable</a>[<a href="../../Results$$MetricCalculatorResult.html" class="extype" name="ru.raiffeisen.checkita.core.Results.MetricCalculatorResult">MetricCalculatorResult</a>]</span>)</span><span class="result"> extends <a href="../../../utils/FormulaParser.html" class="extype" name="ru.raiffeisen.checkita.utils.FormulaParser">FormulaParser</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Takes all metric results and then calculates new ones with formulas" href="ComposedMetricCalculator.html"><span class="name">ComposedMetricCalculator</span></a><span class="params">(<span name="primitiveMetrics">primitiveMetrics: <a href="../../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../../Results$$MetricCalculatorResult.html" class="extype" name="ru.raiffeisen.checkita.core.Results.MetricCalculatorResult">MetricCalculatorResult</a>]</span>)</span><span class="result"> extends <a href="../../../utils/FormulaParser.html" class="extype" name="ru.raiffeisen.checkita.utils.FormulaParser">FormulaParser</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       <p class="shortcomment cmt">Takes all metric results and then calculates new ones with formulas</p><div class="fullcomment"><div class="comment cmt"><p>Takes all metric results and then calculates new ones with formulas</p></div><dl class="paramcmts block"><dt class="param">primitiveMetrics</dt><dd class="cmt"><p>Metric results to operate with</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>TopN metric cannot be used in composed metric calculation due to it yields multiple results</p></span></dd></dl></div>

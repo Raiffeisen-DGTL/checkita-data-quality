@@ -1,0 +1,11 @@
+allOf:
+  - $ref: 'baseConnectionConfig.yaml'
+  - type: object
+    description: Connection configuration to SQLite database
+    required:
+      - url
+    properties:
+      url:
+        type: string
+        description: Path to SQLite database file
+        example: /data/db.sqlite

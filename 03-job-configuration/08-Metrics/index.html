@@ -1,214 +1,104 @@
 
-<!doctype html>
-<html lang="en" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-      
-      
-        <link rel="canonical" href="https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/08-Metrics/">
-      
-      
-        <link rel="prev" href="../07-LoadChecks/">
-      
-      
-        <link rel="next" href="../09-Checks/">
-      
-      
-      <link rel="icon" href="../../logo/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.27">
-    
-    
-      
-        <title>Metrics Configuration - Checkita Data Quality</title>
-      
-    
-    
-      <link rel="stylesheet" href="../../assets/stylesheets/main.6543a935.min.css">
-      
-        
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
-      
-      
+<!DOCTYPE html>
 
-
-    
-    
-      
-    
-    
-      
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
-
-    
-    
-    
-  </head>
-  
-  
-    
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="yellow" data-md-color-accent="indigo">
-  
-    
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#metrics-configuration" class="md-skip">
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<link href="https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/08-Metrics/" rel="canonical"/>
+<link href="../07-LoadChecks/" rel="prev"/>
+<link href="../09-Checks/" rel="next"/>
+<link href="../../logo/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.0, mkdocs-material-9.5.27" name="generator"/>
+<title>Metrics Configuration - Checkita Data Quality</title>
+<link href="../../assets/stylesheets/main.6543a935.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="yellow" data-md-color-scheme="slate" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#metrics-configuration">
           Skip to content
         </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
-
-  
-
+</div>
+<div data-md-component="announce">
+</div>
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Checkita Data Quality" class="md-header__button md-logo" aria-label="Checkita Data Quality" data-md-component="logo">
-      
-  <img src="../../logo/logo.png" alt="logo">
-
-    </a>
-    <label class="md-header__button md-icon" for="__drawer">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
-    </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Checkita Data Quality" class="md-header__button md-logo" data-md-component="logo" href="../.." title="Checkita Data Quality">
+<img alt="logo" src="../../logo/logo.png"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
             Checkita Data Quality
           </span>
-        </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
             
               Metrics Configuration
             
           </span>
-        </div>
-      </div>
-    </div>
-    
-      
-    
-    
-    
-      <div class="md-header__option">
-  <div class="md-select">
-    
-    <button class="md-header__button md-icon" aria-label="Select language">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
-    </button>
-    <div class="md-select__inner">
-      <ul class="md-select__list">
-        
-          <li class="md-select__item">
-            <a href="./" hreflang="en" class="md-select__link">
-              English
-            </a>
-          </li>
-        
-          <li class="md-select__item">
-            <a href="../../ru/03-job-configuration/08-Metrics/" hreflang="ru" class="md-select__link">
-              Русский
-            </a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
 </div>
-    
-    
-      <label class="md-header__button md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
-      <label class="md-search__icon md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-      </label>
-      <nav class="md-search__options" aria-label="Search">
-        
-        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
-        </button>
-      </nav>
-      
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
+</div>
+</div>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list" role="presentation"></ol>
-        </div>
-      </div>
-    </div>
-  </div>
+<ol class="md-search-result__list" role="presentation"></ol>
 </div>
-    
-    
-      <div class="md-header__source">
-        <a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository" class="md-source" data-md-component="source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
-  </div>
-  <div class="md-source__repository">
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
     checkita-data-quality
   </div>
 </a>
-      </div>
-    
-  </nav>
-  
-    
-      
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-grid">
-    <ul class="md-tabs__list">
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+</div>
+</nav>
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../..">
         
   
     
@@ -216,18 +106,9 @@
   Home
 
       </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../01-application-setup/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../01-application-setup/">
           
   
     
@@ -235,41 +116,19 @@
   Application Setup
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../02-general-concepts/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../02-general-information/">
           
   
     
   
-  General Concepts
+  General Information
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-    
-  
-  
-    
-    
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../">
           
   
     
@@ -277,17 +136,9 @@
   Job Configuration
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../changelog/CHANGELOG/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../changelog/CHANGELOG/">
         
   
     
@@ -295,18 +146,9 @@
   Changelog
 
       </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../contribution/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../contribution/">
           
   
     
@@ -314,17 +156,9 @@
   Contribution
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../api/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../api/">
         
   
     
@@ -332,1388 +166,727 @@
   Scala API Doc
 
       </a>
-    </li>
-  
-
-      
-    </ul>
-  </div>
-</nav>
-    
-  
-</header>
-    
-    <div class="md-container" data-md-component="container">
-      
-      
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../swagger/">
         
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
-            
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-
   
-
-
+    
   
+  Swagger Doc
 
-<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Checkita Data Quality" class="md-nav__button md-logo" aria-label="Checkita Data Quality" data-md-component="logo">
-      
-  <img src="../../logo/logo.png" alt="logo">
-
-    </a>
+      </a>
+</li>
+</ul>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Checkita Data Quality" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="Checkita Data Quality">
+<img alt="logo" src="../../logo/logo.png"/>
+</a>
     Checkita Data Quality
   </label>
-  
-    <div class="md-nav__source">
-      <a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository" class="md-source" data-md-component="source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
-  </div>
-  <div class="md-source__repository">
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
     checkita-data-quality
   </div>
 </a>
-    </div>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+<span class="md-ellipsis">
     Home
   </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
-        
-          
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../01-application-setup/" class="md-nav__link ">
-              
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../01-application-setup/">
+<span class="md-ellipsis">
     Application Setup
   </span>
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
             Application Setup
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../01-application-setup/01-ApplicationSettings/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../01-application-setup/01-ApplicationSettings/">
+<span class="md-ellipsis">
     Application Settings
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../01-application-setup/02-ApplicationSubmit/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../01-application-setup/02-ApplicationSubmit/">
+<span class="md-ellipsis">
     Submitting Data Quality Application
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../01-application-setup/03-ResultsStorage/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../01-application-setup/03-ResultsStorage/">
+<span class="md-ellipsis">
     Data Quality Results Storage
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../02-general-concepts/" class="md-nav__link ">
-              
-  
-  <span class="md-ellipsis">
-    General Concepts
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../02-general-information/">
+<span class="md-ellipsis">
+    General Information
   </span>
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            General Concepts
+</a>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            General Information
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../02-general-concepts/01-WorkingWithDateTime/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-general-information/01-WorkingWithDateTime/">
+<span class="md-ellipsis">
     Working with Date and Time
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../02-general-concepts/02-EnvironmentAndExtraVariables/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-general-information/02-EnvironmentAndExtraVariables/">
+<span class="md-ellipsis">
     Usage of Environment Variables and Extra Variables
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../02-general-concepts/03-StatusModel/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-general-information/03-StatusModel/">
+<span class="md-ellipsis">
     Status Model used in Results
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../02-general-concepts/04-ErrorCollection/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-general-information/04-ErrorCollection/">
+<span class="md-ellipsis">
     Metric Error Collection
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../02-general-concepts/05-StreamingMode/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-general-information/05-StreamingMode/">
+<span class="md-ellipsis">
     Data Quality Checks over Streaming Sources
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-      
-        
-        
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
-        
-          
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
-              
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-general-information/06-MetricSQLEquivalency/">
+<span class="md-ellipsis">
+    Metrics SQL Equivalency
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-general-information/07-MetricCalculatorEngines/">
+<span class="md-ellipsis">
+    Metric Calculator Engines Overview and Benchmarking
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../">
+<span class="md-ellipsis">
     Job Configuration
   </span>
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="true" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
             Job Configuration
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../01-Connections/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../01-Connections/">
+<span class="md-ellipsis">
     Connections Configuration
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../02-Schemas/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../02-Schemas/">
+<span class="md-ellipsis">
     Schemas Configuration
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../03-Sources/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../03-Sources/">
+<span class="md-ellipsis">
     Sources Configuration
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../04-Streams/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../04-Streams/">
+<span class="md-ellipsis">
     Streaming Sources Configurations
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../05-VirtualSources/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../05-VirtualSources/">
+<span class="md-ellipsis">
     Virtual Sources Configuration
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../06-VirtualStreams/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../06-VirtualStreams/">
+<span class="md-ellipsis">
     Virtual Streaming Sources Configuration
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../07-LoadChecks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../07-LoadChecks/">
+<span class="md-ellipsis">
     Load Checks Configuration
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
     Metrics Configuration
   </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  <span class="md-ellipsis">
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
     Metrics Configuration
   </span>
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#regular-metrics" class="md-nav__link">
-    <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#regular-metrics">
+<span class="md-ellipsis">
       Regular Metrics
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Regular Metrics">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#reversible-metrics" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="Regular Metrics" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reversible-metrics">
+<span class="md-ellipsis">
       Reversible Metrics
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#row-count-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#row-count-metric">
+<span class="md-ellipsis">
       Row Count Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#distinct-values-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#duplicate-values-metric">
+<span class="md-ellipsis">
+      Duplicate Values Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#distinct-values-metric">
+<span class="md-ellipsis">
       Distinct Values Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#approximate-distinct-values-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#approximate-distinct-values-metric">
+<span class="md-ellipsis">
       Approximate Distinct Values Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#null-values-metrics" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#null-values-metrics">
+<span class="md-ellipsis">
       Null Values Metrics
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#empty-values-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#empty-values-metric">
+<span class="md-ellipsis">
       Empty Values Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#completeness-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#completeness-metric">
+<span class="md-ellipsis">
       Completeness Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#sequence-completeness-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#emptiness-metric">
+<span class="md-ellipsis">
+      Emptiness Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sequence-completeness-metric">
+<span class="md-ellipsis">
       Sequence Completeness Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#approximate-sequence-completeness-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#approximate-sequence-completeness-metric">
+<span class="md-ellipsis">
       Approximate Sequence Completeness Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#minimum-string-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#minimum-string-metric">
+<span class="md-ellipsis">
       Minimum String Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#maximum-string-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#maximum-string-metric">
+<span class="md-ellipsis">
       Maximum String Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#average-string-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#average-string-metric">
+<span class="md-ellipsis">
       Average String Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#string-length-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#string-length-metric">
+<span class="md-ellipsis">
       String Length Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#string-in-domain-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#string-in-domain-metric">
+<span class="md-ellipsis">
       String In Domain Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#string-out-domain-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#string-out-domain-metric">
+<span class="md-ellipsis">
       String Out Domain Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#string-values-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#string-values-metric">
+<span class="md-ellipsis">
       String Values Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#regex-match" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#regex-match">
+<span class="md-ellipsis">
       Regex Match
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#regex-mismatch" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#regex-mismatch">
+<span class="md-ellipsis">
       Regex Mismatch
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#formatted-date-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#formatted-date-metric">
+<span class="md-ellipsis">
       Formatted Date Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#formatted-number-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#formatted-number-metric">
+<span class="md-ellipsis">
       Formatted Number Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#minimum-number-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#minimum-number-metric">
+<span class="md-ellipsis">
       Minimum Number Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#maximum-number-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#maximum-number-metric">
+<span class="md-ellipsis">
       Maximum Number Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#sum-number-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sum-number-metric">
+<span class="md-ellipsis">
       Sum Number Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#average-number-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#average-number-metric">
+<span class="md-ellipsis">
       Average Number Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#standard-deviation-number-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#standard-deviation-number-metric">
+<span class="md-ellipsis">
       Standard Deviation Number Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#casted-number-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#casted-number-metric">
+<span class="md-ellipsis">
       Casted Number Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#number-in-domain-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-in-domain-metric">
+<span class="md-ellipsis">
       Number In Domain Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#number-out-domain-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-out-domain-metric">
+<span class="md-ellipsis">
       Number Out Domain Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#number-less-than-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-less-than-metric">
+<span class="md-ellipsis">
       Number Less Than Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#number-greater-than-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-greater-than-metric">
+<span class="md-ellipsis">
       Number Greater Than Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#number-between-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-between-metric">
+<span class="md-ellipsis">
       Number Between Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#number-not-between-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-not-between-metric">
+<span class="md-ellipsis">
       Number Not Between Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#number-values-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-values-metric">
+<span class="md-ellipsis">
       Number Values Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#median-value-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#median-value-metric">
+<span class="md-ellipsis">
       Median Value Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#first-quantile-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#first-quantile-metric">
+<span class="md-ellipsis">
       First Quantile Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#third-quantile-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#third-quantile-metric">
+<span class="md-ellipsis">
       Third Quantile Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#get-quantile-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-quantile-metric">
+<span class="md-ellipsis">
       Get Quantile Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#get-percentile-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-percentile-metric">
+<span class="md-ellipsis">
       Get Percentile Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#column-equality-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#column-equality-metric">
+<span class="md-ellipsis">
       Column Equality Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#day-distance-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#day-distance-metric">
+<span class="md-ellipsis">
       Day Distance Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#levenshtein-distance-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#levenshtein-distance-metric">
+<span class="md-ellipsis">
       Levenshtein Distance Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#comoment-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#comoment-metric">
+<span class="md-ellipsis">
       CoMoment Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#covariance-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#covariance-metric">
+<span class="md-ellipsis">
       Covariance Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#covariance-bessel-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#covariance-bessel-metric">
+<span class="md-ellipsis">
       Covariance Bessel Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#top-n-metric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#top-n-metric">
+<span class="md-ellipsis">
       Top N Metric
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#composed-metrics" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#composed-metrics">
+<span class="md-ellipsis">
       Composed Metrics
     </span>
-  </a>
-  
+</a>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#metrics-configuration-example" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#trend-metrics">
+<span class="md-ellipsis">
+      Trend Metrics
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#metrics-configuration-example">
+<span class="md-ellipsis">
       Metrics Configuration Example
     </span>
-  </a>
-  
+</a>
 </li>
-      
-    </ul>
-  
+</ul>
 </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../09-Checks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../09-Checks/">
+<span class="md-ellipsis">
     Checks Configurations
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../10-Targets/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../10-Targets/">
+<span class="md-ellipsis">
     Targets Configuration
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../11-FileOutputs/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../11-FileOutputs/">
+<span class="md-ellipsis">
     File Output Configuration
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../12-JobConfigExample/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../12-JobConfigExample/">
+<span class="md-ellipsis">
     Job Configuration Example
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../changelog/CHANGELOG/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../changelog/CHANGELOG/">
+<span class="md-ellipsis">
     Changelog
   </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
-        
-          
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../contribution/" class="md-nav__link ">
-              
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../contribution/">
+<span class="md-ellipsis">
     Contribution
   </span>
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
             Contribution
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../contribution/code-of-conduct/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../contribution/code-of-conduct/">
+<span class="md-ellipsis">
     Code of Conduct
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../contribution/contribution/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../contribution/contribution/">
+<span class="md-ellipsis">
     Contribution Guide
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api/">
+<span class="md-ellipsis">
     Scala API Doc
   </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-  </ul>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../swagger/">
+<span class="md-ellipsis">
+    Swagger Doc
+  </span>
+</a>
+</li>
+</ul>
 </nav>
-                  </div>
-                </div>
-              </div>
-            
-            
-          
-          
-            <div class="md-content" data-md-component="content">
-              <article class="md-content__inner md-typeset">
-                
-                  
-
-  
-  
-
-
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
 <h1 id="metrics-configuration">Metrics Configuration</h1>
 <p>Calculation of various metrics over the data is the main part of Data Quality job. Metrics allow evaluation of 
 various indicators that describe data from both technical and business points of view. Indicators in their turn can
 signal about problems in the data.</p>
-<p>All metrics are linked to a source over which they are calculated. Such metrics are called <code>regular</code>. Apart from regular
-metrics there is a special kind of metrics that can be calculated based on other metrics results thus allowing metric
-compositions. These metrics are called <code>composed</code> accordingly.</p>
+<p>All metrics are linked to a source over which they are calculated. Most of the metrics are computed directly over 
+the data source. Such metrics are called <code>regular</code>. Apart from regular metrics there are two special kinds of metrics:</p>
+<ul>
+<li><code>composed</code> metrics - can be calculated based on other metrics results thus allowing metric compositions.</li>
+<li><code>trend</code> metrics - calculated using historical results of lookup metric thus allowing to compute some statistics over
+  historical metric results.</li>
+</ul>
 <p>Metrics are defined in <code>metrics</code> section of job configuration. Regular metrics are grouped by their type in
-<code>regular</code> subsection while composed metrics are listed in <code>composed</code> subsection.</p>
+<code>regular</code> subsection. Composed and trend metrics are listed in <code>composed</code> and <code>trend</code> subsections respectively. </p>
 <h2 id="regular-metrics">Regular Metrics</h2>
 <p>All regular metrics are defined using following common parameters: </p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Metric ID;</li>
 <li><code>description</code> - <em>Optional</em>. Metric description.</li>
-<li><code>source</code> - <em>Required</em>. Reference to a source ID over which metric is caclulated;</li>
+<li><code>source</code> - <em>Required</em>. Reference to a source ID over which metric is calculated;</li>
 <li><code>columns</code> - <em>Required</em>. List of columns over which metric is calculated. Regular metrics can be calculated for 
   multiple columns. This means that the result of the metrics will be calculated for row values in these columns.
   There could be a limitation imposed on number of columns which metric can process. 
@@ -1739,24 +912,40 @@ condition is not met, then <code>Failure</code> status is returned for this part
 <code>reversed</code> parameter is set to <code>true</code> metric will fail when its condition IS met.</p>
 <p>Regular metrics that do not have logical condition can also fail, but their failure logic is not reversible.</p>
 <p>Scenario when metric can yield <code>Failure</code> status are explicitly described for each metric below.
-See <a href="../../02-general-concepts/03-StatusModel/">Status Model used in Results</a> chapter for more information on status model.</p>
+See <a href="../../02-general-information/03-StatusModel/">Status Model used in Results</a> chapter for more information on status model.</p>
 <h3 id="row-count-metric">Row Count Metric</h3>
 <p>Calculates number of rows in the source. This is the only metric for which columns list should not be
 specified as it is not required to compute number of rows. Metric definition does not require additional parameters:
 <code>params</code> should not be set.</p>
 <p>Metric is not reversible and cannot fail (might only return <code>Error</code> status in case of some runtime exception).</p>
 <p>All row count metrics are defined in <code>rowCount</code> subsection.</p>
+<h3 id="duplicate-values-metric">Duplicate Values Metric</h3>
+<p>Counts number of duplicate values in provided columns. When applied to multiple columns, number of duplicate
+tuples is returned. Metric definition does not require additional parameters:
+<code>params</code> should not be set.</p>
+<p>Metric is not reversible and fails only when duplicate value (or tuple for multi-column definition) is found.</p>
+<p>All duplicate values metrics are defined in <code>duplicateValues</code> subsection.</p>
+<blockquote>
+<p><strong>IMPORTANT</strong>. When using RDD-engine, calculation of exact number of duplicate values required O(N) memory. 
+Therefore, computing exact number of duplicates might cause OOM errors. Consider using DF-engine if exact number
+of duplicates is required. DF-engine uses Spark shuffle mechanism to group data by column (or columns) of interest and
+count duplicated values. Alternatively, there is an option to calculate approximate number of distinct values
+using HLL-based metric calculator <a href="#approximate-distinct-values-metric">Approximate Distinct Values Metric</a>.
+Comparing number of distinct values to total number of rows can yield estimated number of duplicate values.</p>
+</blockquote>
 <h3 id="distinct-values-metric">Distinct Values Metric</h3>
 <p>Counts number of unique values in provided columns. When applied to multiple columns, total
-number of unique values in these columns is returned. Metric definition does not require additional parameters:
+number of unique tuples is returned. Metric definition does not require additional parameters:
 <code>params</code> should not be set.</p>
-<p>Metric is not reversible and cannot fail (might only return <code>Error</code> status in case of some runtime exception).</p>
+<p>Metric is not reversible and fails only when null value (or tuple) is found.</p>
 <p>All distinct values metrics are defined in <code>distinctValues</code> subsection.</p>
 <blockquote>
 <p><strong>IMPORTANT</strong>. Calculation of exact number of unique values required O(N) memory. Therefore, to prevent OOM errors
 when working with extremely large dataset and with high-cardinality columns it is recommended to use
 <a href="#approximate-distinct-values-metric">Approximate Distinct Values Metric</a> which uses HLL probabilistic algorithm
-to estimate number of unique values.</p>
+to estimate number of unique values. Alternatively, consider switching to DF-engine to compute exact number of 
+distinct values. This engine uses Spark shuffle mechanism to group data by column (or columns) of interest and
+count distinct values.</p>
 </blockquote>
 <h3 id="approximate-distinct-values-metric">Approximate Distinct Values Metric</h3>
 <p>Calculates number of unique values approximately, using 
@@ -1803,6 +992,21 @@ specified columns are non-noll (or non-empty if <code>includeEmptyStrings</code>
 For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values 
 in the specified columns are null (or empty if <code>includeEmptyStrings</code> is set to <code>true</code>).</p>
 <p>All completeness metrics are defined in <code>completeness</code> subsection.</p>
+<h3 id="emptiness-metric">Emptiness Metric</h3>
+<p>Calculates the measure of emptiness in the specified columns: <code>null_count / values_count</code>.
+When applied to multiple columns, total number of values and total number of nulls are used in the equation above.</p>
+<p>Additional parameters can be supplied:</p>
+<ul>
+<li><code>includeEmptyStrings</code> - <em>Optional, default is <code>false</code></em>. Boolean parameter indicating whether empty string values
+  should be considered as nulls.</li>
+</ul>
+<p>Metric is reversible. <strong>By default, <code>reversed</code> parameter is set to <code>true</code>,
+i.e. error collection logic is reversed by default.</strong>
+For direct error collection logic, metric increment returns <code>Failure</code> status for rows where some values in the
+specified columns are non-noll (or non-empty if <code>includeEmptyStrings</code> is set to <code>true</code>).
+For reversed error collection logic (default one), metric increment returns <code>Failure</code> status when some values
+in the specified columns are null (or empty if <code>includeEmptyStrings</code> is set to <code>true</code>).</p>
+<p>All completeness metrics are defined in <code>emptiness</code> subsection.</p>
 <h3 id="sequence-completeness-metric">Sequence Completeness Metric</h3>
 <p>Calculates measure of completeness of an incremental sequence of integers. In other words, it looks for the missing 
 elements in the sequence and returns the relation: <code>actual number of elements / required number of elements</code>.</p>
@@ -2261,17 +1465,53 @@ which implements abstract algebra methods for Scala.</p>
 columns cannot be cast to string.</p>
 <p>All top N metrics are defined in <code>topN</code> subsection.</p>
 <h2 id="composed-metrics">Composed Metrics</h2>
-<p>Composed metrics are defined using a formula (specified in the <code>formula</code> field) for their calculation. 
+<p>Composed metrics are defined using a formula (arithmetic expression specified in the <code>formula</code> field) for their calculation. 
 As composed metric are intended for using other metric results to compute a derivative result then, these metrics
 can be referenced in the formula by their IDs. </p>
 <p>Formula must be written using <a href="https://mustache.github.io/mustache.5.html">Mustache Template</a> notation, e.g.:
 <code>{{ metric_1 }} + {{ metic_2 }}</code>.</p>
-<p>Basic (+-*/) and exponentiation (^) math operations are supported, as well as grouping using parentheses.</p>
-<p>This, composed metrics are defined in the <code>composed</code> subsection using following parameters:</p>
+<p>There are following operations supported to build arithmetic expressions:</p>
+<ul>
+<li>Basic <code>+-*/</code> and exponentiation <code>^</code> math operations.</li>
+<li>Grouping using parentheses.</li>
+<li>Mathematical functions of single argument:
+  <code>abs</code>, <code>sqrt</code>, <code>floor</code>, <code>ceil</code>, <code>round</code> (rounds to the closest integer), <code>ln</code> (natural logarithm), <code>lg</code> (decimal logarithm), <code>exp</code>.</li>
+<li>Mathematical functions of two arguments: <code>max</code> and <code>min</code>.</li>
+</ul>
+<p>Thus, composed metrics are defined in the <code>composed</code> subsection using following parameters:</p>
 <ul>
 <li><code>id</code> - <em>Required</em>. Composed metric ID;</li>
 <li><code>description</code> - <em>Optional</em>. Composed metric description.</li>
 <li><code>formula</code> - <em>Required</em>. Formula to calculate composed metric</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this metric where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
+</ul>
+<h2 id="trend-metrics">Trend Metrics</h2>
+<p>Trend metrics allows computing statistic over historical metric results and are primarily intended to detect anomalies
+in the data. In order to compute statistic over historical metric results it is required to define a lookup metric
+which results are pulled from DQ storage and also a time window for which to compute the desired statistic.</p>
+<p>Thus, trend metrics are defined <code>trend</code> subsection using following set of parameters:</p>
+<ul>
+<li><code>id</code> - <em>Required</em>. Trend metric ID;</li>
+<li><code>description</code> - <em>Optional</em>. Trend metric description.</li>
+<li><code>kind</code> - <em>Required</em>. Kind of statistic to be calculated over historical metric results. </li>
+<li>Available trend metric kinds are: <code>avg</code>, <code>std</code>, <code>min</code>, <code>max</code>, <code>sum</code>, <code>median</code>, <code>firstQuartile</code>, <code>thirdQuartile</code>, <code>quantile</code>.</li>
+<li><code>quantile</code> - <em>Required</em>. <strong>ONLY FOR <code>quantile</code> TREND METRIC</strong>. Quantile to compute over historical metric results
+  (must be a number in range <code>[0, 1]</code>).</li>
+<li><code>lookupMetric</code> - <em>Required</em>. Lookup metric ID: metric which results will be pulled from DQ storage.</li>
+<li><code>rule</code> - <em>Required</em>. The rule for loading historical metric results from DQ storage. There are two rules supported:</li>
+<li><code>record</code> - loads specified number of historical metric result records.</li>
+<li><code>datetime</code> - loads historical metric results for configured datetime window.</li>
+<li><code>windowSize</code> - <em>Required</em>. Size of the window for which historical results are loaded:</li>
+<li>If <code>rule</code> is set to <code>record</code> then window size is the number of records to retrieve.</li>
+<li>If <code>rule</code> is set to <code>datetime</code> then window size is a duration string which should conform to Scala Duration.</li>
+<li><code>windowOffset</code> - <em>Optional, default is <code>0</code> or <code>0s</code></em>. Set window offset back from current reference date
+  (see <a href="../../02-general-information/01-WorkingWithDateTime/">Working with Date and Time</a> chapter for more details on
+  reference date). By default, offset is absent and window start from current reference date (not including it).</li>
+<li>If <code>rule</code> is set to <code>record</code> then window offset is the number of records to skip from reference date.</li>
+<li>If <code>rule</code> is set to <code>datetime</code> then window offset is a duration string which should conform to Scala Duration.</li>
+<li><code>metadata</code> - <em>Optional</em>. List of user-defined metadata parameters specific to this metric where each parameter
+  is a string in format: <code>param.name=param.value</code>.</li>
 </ul>
 <h2 id="metrics-configuration-example">Metrics Configuration Example</h2>
 <p>As it is shown in the example below, regular metrics of the same type are grouped within subsections named after the 
@@ -2281,120 +1521,167 @@ Composed metrics are listed in the separate subsection.</p>
 </span><span id="__span-0-2">  metrics: {
 </span><span id="__span-0-3">    regular: {
 </span><span id="__span-0-4">      rowCount: [
-</span><span id="__span-0-5">        {id: &quot;hive_table_row_cnt&quot;, description: &quot;Row count in hive_source_1&quot;, source: &quot;hive_source_1&quot;},
-</span><span id="__span-0-6">        {id: &quot;csv_file_row_cnt&quot;, description: &quot;Row count in hdfs_delimited_source&quot;, source: &quot;hdfs_delimited_source&quot;}
+</span><span id="__span-0-5">        {id: "hive_table_row_cnt", description: "Row count in hive_source_1", source: "hive_source_1"},
+</span><span id="__span-0-6">        {id: "csv_file_row_cnt", description: "Row count in hdfs_delimited_source", source: "hdfs_delimited_source"}
 </span><span id="__span-0-7">      ]
 </span><span id="__span-0-8">      distinctValues: [
 </span><span id="__span-0-9">        {
-</span><span id="__span-0-10">          id: &quot;fixed_file_dist_name&quot;, description: &quot;Distinct values in hdfs_fixed_file&quot;,
-</span><span id="__span-0-11">          source: &quot;hdfs_fixed_file&quot;, columns: [&quot;colA&quot;],
+</span><span id="__span-0-10">          id: "fixed_file_dist_name", description: "Distinct values in hdfs_fixed_file",
+</span><span id="__span-0-11">          source: "hdfs_fixed_file", columns: ["colA"],
 </span><span id="__span-0-12">          metadata: [
-</span><span id="__span-0-13">            &quot;requestor=some.person@some.domain&quot;
-</span><span id="__span-0-14">            &quot;critical.metric=true&quot;
+</span><span id="__span-0-13">            "requestor=some.person@some.domain"
+</span><span id="__span-0-14">            "critical.metric=true"
 </span><span id="__span-0-15">          ]
 </span><span id="__span-0-16">        }
 </span><span id="__span-0-17">      ]
 </span><span id="__span-0-18">      nullValues: [
-</span><span id="__span-0-19">        {id: &quot;hive_table_nulls&quot;, description: &quot;Null values in columns id and name&quot;, source: &quot;hive_source_1&quot;, columns: [&quot;id&quot;, &quot;name&quot;]}
+</span><span id="__span-0-19">        {id: "hive_table_nulls", description: "Null values in columns id and name", source: "hive_source_1", columns: ["id", "name"]}
 </span><span id="__span-0-20">      ]
 </span><span id="__span-0-21">      completeness: [
-</span><span id="__span-0-22">        {id: &quot;orc_data_compl&quot;, description: &quot;Completness of column id&quot;, source: &quot;hdfs_orc_source&quot;, columns: [&quot;id&quot;]}
+</span><span id="__span-0-22">        {id: "orc_data_compl", description: "Completness of column id", source: "hdfs_orc_source", columns: ["id"]}
 </span><span id="__span-0-23">        {
-</span><span id="__span-0-24">          id: &quot;hive_table_nulls&quot;, 
-</span><span id="__span-0-25">          description: &quot;Completness of columns id and name&quot;, 
-</span><span id="__span-0-26">          source: &quot;hive_source_1&quot;, 
-</span><span id="__span-0-27">          columns: [&quot;id&quot;, &quot;name&quot;]
+</span><span id="__span-0-24">          id: "hive_table_nulls", 
+</span><span id="__span-0-25">          description: "Completness of columns id and name", 
+</span><span id="__span-0-26">          source: "hive_source_1", 
+</span><span id="__span-0-27">          columns: ["id", "name"]
 </span><span id="__span-0-28">        }
 </span><span id="__span-0-29">      ]
 </span><span id="__span-0-30">      avgNumber: [
-</span><span id="__span-0-31">        {id: &quot;avro_file1_avg_bal&quot;, description: &quot;Avg number of column balance&quot;, source: &quot;hdfs_avro_source&quot;, columns: [&quot;balance&quot;]}
+</span><span id="__span-0-31">        {id: "avro_file1_avg_bal", description: "Avg number of column balance", source: "hdfs_avro_source", columns: ["balance"]}
 </span><span id="__span-0-32">      ]
 </span><span id="__span-0-33">      regexMatch: [
 </span><span id="__span-0-34">        {
-</span><span id="__span-0-35">          id: &quot;table_source1_inn_regex&quot;, description: &quot;Regex match for inn column&quot;, source: &quot;table_source_1&quot;,
-</span><span id="__span-0-36">          columns: [&quot;inn&quot;], params: {regex: &quot;&quot;&quot;^\d{10}$&quot;&quot;&quot;}, reversed: true
+</span><span id="__span-0-35">          id: "table_source1_inn_regex", description: "Regex match for inn column", source: "table_source_1",
+</span><span id="__span-0-36">          columns: ["inn"], params: {regex: """^\d{10}$"""}, reversed: true
 </span><span id="__span-0-37">        }
 </span><span id="__span-0-38">      ]
 </span><span id="__span-0-39">      stringInDomain: [
 </span><span id="__span-0-40">        {
-</span><span id="__span-0-41">          id: &quot;orc_data_segment_domain&quot;, source: &quot;hdfs_orc_source&quot;,
-</span><span id="__span-0-42">          columns: [&quot;segment&quot;], params: {domain: [&quot;FI&quot;, &quot;MID&quot;, &quot;SME&quot;, &quot;INTL&quot;, &quot;CIB&quot;]}
+</span><span id="__span-0-41">          id: "orc_data_segment_domain", source: "hdfs_orc_source",
+</span><span id="__span-0-42">          columns: ["segment"], params: {domain: ["FI", "MID", "SME", "INTL", "CIB"]}
 </span><span id="__span-0-43">          reversed: true
 </span><span id="__span-0-44">        }
 </span><span id="__span-0-45">      ]
 </span><span id="__span-0-46">      topN: [
 </span><span id="__span-0-47">        {
-</span><span id="__span-0-48">          id: &quot;filterVS_top3_currency&quot;, description: &quot;Top 3 currency in filterVS&quot;, source: &quot;filterVS&quot;,
-</span><span id="__span-0-49">          columns: [&quot;id&quot;], params: {targetNumber: 3, maxCapacity: 10}
+</span><span id="__span-0-48">          id: "filterVS_top3_currency", description: "Top 3 currency in filterVS", source: "filterVS",
+</span><span id="__span-0-49">          columns: ["id"], params: {targetNumber: 3, maxCapacity: 10}
 </span><span id="__span-0-50">        }
 </span><span id="__span-0-51">      ],
 </span><span id="__span-0-52">      levenshteinDistance: [
 </span><span id="__span-0-53">        {
-</span><span id="__span-0-54">          id: &quot;lvnstDist&quot;, source: &quot;table_source_2&quot;, columns: [&quot;col1&quot;, &quot;col2&quot;],
+</span><span id="__span-0-54">          id: "lvnstDist", source: "table_source_2", columns: ["col1", "col2"],
 </span><span id="__span-0-55">          params: {normalize: true, threshold: 0.3}
 </span><span id="__span-0-56">        }
 </span><span id="__span-0-57">      ]
 </span><span id="__span-0-58">    }
 </span><span id="__span-0-59">    composed: [
 </span><span id="__span-0-60">      {
-</span><span id="__span-0-61">        id: &quot;pct_of_null&quot;, description: &quot;Percent of null values in hive_table1&quot;,
-</span><span id="__span-0-62">        formula: &quot;100 * {{ hive_table_nulls }} ^ 2 / ( {{ hive_table_row_cnt }} + 1)&quot;
+</span><span id="__span-0-61">        id: "pct_of_null", description: "Percent of null values in hive_table1",
+</span><span id="__span-0-62">        formula: "100 * {{ hive_table_nulls }} ^ 2 / ( {{ hive_table_row_cnt }} + 1)"
 </span><span id="__span-0-63">      }
 </span><span id="__span-0-64">    ]
-</span><span id="__span-0-65">  }
-</span><span id="__span-0-66">}
+</span><span id="__span-0-65">    trend: [
+</span><span id="__span-0-66">      {
+</span><span id="__span-0-67">        id: "avg_completeness",
+</span><span id="__span-0-68">        kind: "avg",
+</span><span id="__span-0-69">        lookupMetric: "orc_data_compl",
+</span><span id="__span-0-70">        description: "Average completeness of column id for last 14 days"
+</span><span id="__span-0-71">        rule: "datetime"
+</span><span id="__span-0-72">        windowSize: "14d"
+</span><span id="__span-0-73">      }
+</span><span id="__span-0-74">    ]
+</span><span id="__span-0-75">  }
+</span><span id="__span-0-76">}
 </span></code></pre></div>
-
-
-
-
-
-
-
-
-
-
-
-
-                
-              </article>
-            </div>
-          
-          
+</article>
+</div>
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
-        </div>
-        
-      </main>
-      
-        <footer class="md-footer">
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-copyright">
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
   
   
     Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
       Material for MkDocs
     </a>
-  
 </div>
-      
-    </div>
-  </div>
+</div>
+</div>
 </footer>
-      
-    </div>
-    <div class="md-dialog" data-md-component="dialog">
-      <div class="md-dialog__inner md-typeset"></div>
-    </div>
-    
-    
-    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
-    
-    
-      <script src="../../assets/javascripts/bundle.ad660dcc.min.js"></script>
-      
-    
-  </body>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../../assets/javascripts/bundle.ad660dcc.min.js"></script>
+<script>document$.subscribe(() => {
+            window.update_swagger_ui_iframe_height = function (id) {
+                var iFrameID = document.getElementById(id);
+                if (iFrameID) {
+                    full_height = (iFrameID.contentWindow.document.body.scrollHeight + 80) + "px";
+                    iFrameID.height = full_height;
+                    iFrameID.style.height = full_height;
+                }
+            }
+        
+            let iframe_id_list = []
+            var iframes = document.getElementsByClassName("swagger-ui-iframe");
+            for (var i = 0; i < iframes.length; i++) { 
+                iframe_id_list.push(iframes[i].getAttribute("id"))
+            }
+        
+            let ticking = true;
+            
+            document.addEventListener('scroll', function(e) {
+                if (!ticking) {
+                    window.requestAnimationFrame(()=> {
+                        let half_vh = window.innerHeight/2;
+                        for(var i = 0; i < iframe_id_list.length; i++) {
+                            let element = document.getElementById(iframe_id_list[i])
+                            if(element==null){
+                                return
+                            }
+                            let diff = element.getBoundingClientRect().top
+                            if(element.contentWindow.update_top_val){
+                                element.contentWindow.update_top_val(half_vh - diff)
+                            }
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        
+            const dark_scheme_name = "slate"
+            
+            window.scheme = document.body.getAttribute("data-md-color-scheme")
+            const options = {
+                attributeFilter: ['data-md-color-scheme'],
+            };
+            function color_scheme_callback(mutations) {
+                for (let mutation of mutations) {
+                    if (mutation.attributeName === "data-md-color-scheme") {
+                        scheme = document.body.getAttribute("data-md-color-scheme")
+                        var iframe_list = document.getElementsByClassName("swagger-ui-iframe")
+                        for(var i = 0; i < iframe_list.length; i++) {
+                            var ele = iframe_list.item(i);
+                            if (ele) {
+                                if (scheme === dark_scheme_name) {
+                                    ele.contentWindow.enable_dark_mode();
+                                } else {
+                                    ele.contentWindow.disable_dark_mode();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            observer = new MutationObserver(color_scheme_callback);
+            observer.observe(document.body, options);
+            })</script></body>
 </html>

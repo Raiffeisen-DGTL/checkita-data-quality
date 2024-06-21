@@ -1,0 +1,34 @@
+description: |-
+  Section holding configurations used to encrypt and decrypt sensitive information in job configuration
+  or raw data excerpts in metric errors when storing these entities in DQ results storage.
+  If this section is missing then any sensitive information will not be encrypted.
+type: object
+properties:
+  secret:
+    type: string
+    description: |-
+      Secret string used to encrypt/decrypt sensitive fields. 
+      This string should contain at least 32 characters.
+    example: some-very-very-very-very-very-very-long-secret-key
+  keyFields:
+    type: array
+    items:
+      type: string
+    description: List of key fields used to identify fields that requires encryption/decryption.
+    default:
+      - password
+      - secret
+    example:
+      - password
+      - secret
+      - token
+      - url
+  encryptErrorData:
+    type: boolean
+    description: |-
+      Boolean flag indicating whether it is necessary to encrypt
+      data excerpts within collected metric errors
+    default: false
+    example: true
+required:
+  - secret

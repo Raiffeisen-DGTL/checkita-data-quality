@@ -143,8 +143,8 @@
                         <a href="" title="Wrapper over datetime string with predefined format and time zone.">EnrichedDT</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="trait" href="FormulaParser.html" title="Recursively creates a tree of operations and executes it"></a>
-                        <a href="FormulaParser.html" title="Recursively creates a tree of operations and executes it">FormulaParser</a>
+                        <a class="trait" href="FormulaParser.html" title="Recursively creates a tree of operations and executes it."></a>
+                        <a href="FormulaParser.html" title="Recursively creates a tree of operations and executes it.">FormulaParser</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="trait" href="Logging.html" title="Logging trait that is mixed to the classes that do logging."></a>
@@ -183,20 +183,20 @@
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">EnrichedDT</span><span class="params">(<span name="dateFormat">dateFormat: <a href="../config/RefinedTypes$$DateFormat.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat">DateFormat</a></span>, <span name="timeZone">timeZone: <span class="extype" name="java.time.ZoneId">ZoneId</span></span>, <span name="dateString">dateString: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">None</a></span></span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">EnrichedDT</span><span class="result"> extends <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
       </span>
       </h4>
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Wrapper over datetime string with predefined format and time zone.
-Used to yield various datetime objects and operate with them.</p></div><dl class="paramcmts block"><dt class="param">dateFormat</dt><dd class="cmt"><p>Datetime format</p></dd><dt class="param">timeZone</dt><dd class="cmt"><p>Time zone</p></dd><dt class="param">dateString</dt><dd class="cmt"><p>Datetime string</p></dd></dl><div class="toggleContainer block">
+Used to yield various datetime objects and operate with them.</p></div><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -222,7 +222,7 @@ Used to yield various datetime objects and operate with them.</p></div><dl class
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="ru.raiffeisen.checkita.utils.EnrichedDT"><span>EnrichedDT</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="ru.raiffeisen.checkita.utils.EnrichedDT"><span>EnrichedDT</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -243,9 +243,9 @@ Used to yield various datetime objects and operate with them.</p></div><dl class
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.utils.EnrichedDT#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(dateFormat:ru.raiffeisen.checkita.config.RefinedTypes.DateFormat,timeZone:java.time.ZoneId,dateString:Option[String]):ru.raiffeisen.checkita.utils.EnrichedDT"></a><a id="&lt;init&gt;:EnrichedDT"></a>
+      <a id="&lt;init&gt;(dateFormat:ru.raiffeisen.checkita.config.RefinedTypes.DateFormat,timeZone:java.time.ZoneId,zonedDT:java.time.ZonedDateTime):ru.raiffeisen.checkita.utils.EnrichedDT"></a><a id="&lt;init&gt;:EnrichedDT"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/utils/EnrichedDT.html#&lt;init&gt;(dateFormat:ru.raiffeisen.checkita.config.RefinedTypes.DateFormat,timeZone:java.time.ZoneId,dateString:Option[String]):ru.raiffeisen.checkita.utils.EnrichedDT" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/EnrichedDT.html#&lt;init&gt;(dateFormat:ru.raiffeisen.checkita.config.RefinedTypes.DateFormat,timeZone:java.time.ZoneId,zonedDT:java.time.ZonedDateTime):ru.raiffeisen.checkita.utils.EnrichedDT" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -254,10 +254,10 @@ Used to yield various datetime objects and operate with them.</p></div><dl class
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">EnrichedDT</span><span class="params">(<span name="dateFormat">dateFormat: <a href="../config/RefinedTypes$$DateFormat.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat">DateFormat</a></span>, <span name="timeZone">timeZone: <span class="extype" name="java.time.ZoneId">ZoneId</span></span>, <span name="dateString">dateString: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">None</a></span></span></span>)</span>
+        <span class="name">EnrichedDT</span><span class="params">(<span name="dateFormat">dateFormat: <a href="../config/RefinedTypes$$DateFormat.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat">DateFormat</a></span>, <span name="timeZone">timeZone: <span class="extype" name="java.time.ZoneId">ZoneId</span></span>, <span name="zonedDT">zonedDT: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dateFormat</dt><dd class="cmt"><p>Datetime format</p></dd><dt class="param">timeZone</dt><dd class="cmt"><p>Time zone</p></dd><dt class="param">dateString</dt><dd class="cmt"><p>Datetime string</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dateFormat</dt><dd class="cmt"><p>Datetime format</p></dd><dt class="param">timeZone</dt><dd class="cmt"><p>Time zone</p></dd><dt class="param">zonedDT</dt><dd class="cmt"><p>Zoned date time wrapped into EnrichedDT instance.</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -372,22 +372,6 @@ Used to yield various datetime objects and operate with them.</p></div><dl class
       </span>
       
       
-    </li><li name="ru.raiffeisen.checkita.utils.EnrichedDT#dateString" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="dateString:Option[String]"></a>
-      <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/utils/EnrichedDT.html#dateString:Option[String]" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">dateString</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
-      </span>
-      
-      
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -404,6 +388,22 @@ Used to yield various datetime objects and operate with them.</p></div><dl class
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#equals" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(x$1:Any):Boolean"></a><a id="equals(Any):Boolean"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/EnrichedDT.html#equals(x$1:Any):Boolean" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
@@ -493,6 +493,25 @@ Used to yield various datetime objects and operate with them.</p></div><dl class
       </span>
       
       <p class="shortcomment cmt">Offsets current datetime back for a given offset and transforms new value to timestamp at UTC time zone.</p><div class="fullcomment"><div class="comment cmt"><p>Offsets current datetime back for a given offset and transforms new value to timestamp at UTC time zone.</p></div><dl class="paramcmts block"><dt class="param">offset</dt><dd class="cmt"><p>Offset from current datetime (duration)</p></dd><dt>returns</dt><dd class="cmt"><p>Timestamp at UTC tz with offset</p></dd></dl></div>
+    </li><li name="scala.AnyRef#hashCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hashCode():Int"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/EnrichedDT.html#hashCode():Int" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
+                <span class="name">@native</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -597,6 +616,54 @@ Used to yield various datetime objects and operate with them.</p></div><dl class
       <p class="shortcomment cmt">Returns a new EnrichedDT instance with the same date format and time zone, but with time
 being set to current time.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a new EnrichedDT instance with the same date format and time zone, but with time
 being set to current time.</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>New instance of EnrichedDT for current time.</p></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.utils.EnrichedDT#setTo" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="setTo(instant:java.time.Instant):ru.raiffeisen.checkita.utils.EnrichedDT"></a><a id="setTo(Instant):EnrichedDT"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/EnrichedDT.html#setTo(instant:java.time.Instant):ru.raiffeisen.checkita.utils.EnrichedDT" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setTo</span><span class="params">(<span name="instant">instant: <span class="extype" name="java.time.Instant">Instant</span></span>)</span><span class="result">: <a href="" class="extype" name="ru.raiffeisen.checkita.utils.EnrichedDT">EnrichedDT</a></span>
+      </span>
+      
+      
+    </li><li name="ru.raiffeisen.checkita.utils.EnrichedDT#setTo" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="setTo(epoch:Long):ru.raiffeisen.checkita.utils.EnrichedDT"></a><a id="setTo(Long):EnrichedDT"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/EnrichedDT.html#setTo(epoch:Long):ru.raiffeisen.checkita.utils.EnrichedDT" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setTo</span><span class="params">(<span name="epoch">epoch: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <a href="" class="extype" name="ru.raiffeisen.checkita.utils.EnrichedDT">EnrichedDT</a></span>
+      </span>
+      
+      
+    </li><li name="ru.raiffeisen.checkita.utils.EnrichedDT#setTo" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="setTo(ts:java.sql.Timestamp):ru.raiffeisen.checkita.utils.EnrichedDT"></a><a id="setTo(Timestamp):EnrichedDT"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/EnrichedDT.html#setTo(ts:java.sql.Timestamp):ru.raiffeisen.checkita.utils.EnrichedDT" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setTo</span><span class="params">(<span name="ts">ts: <span class="extype" name="java.sql.Timestamp">Timestamp</span></span>)</span><span class="result">: <a href="" class="extype" name="ru.raiffeisen.checkita.utils.EnrichedDT">EnrichedDT</a></span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
@@ -629,6 +696,22 @@ being set to current time.</p></div><dl class="paramcmts block"><dt>returns</dt>
       </span>
       
       
+    </li><li name="scala.AnyRef#toString" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString():String"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/EnrichedDT.html#toString():String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
@@ -697,6 +780,39 @@ being set to current time.</p></div><dl class="paramcmts block"><dt>returns</dt>
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.utils.EnrichedDT#withOffset" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="withOffset(offset:scala.concurrent.duration.Duration):ru.raiffeisen.checkita.utils.EnrichedDT"></a><a id="withOffset(Duration):EnrichedDT"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/EnrichedDT.html#withOffset(offset:scala.concurrent.duration.Duration):ru.raiffeisen.checkita.utils.EnrichedDT" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">withOffset</span><span class="params">(<span name="offset">offset: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span></span>)</span><span class="result">: <a href="" class="extype" name="ru.raiffeisen.checkita.utils.EnrichedDT">EnrichedDT</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Creates new EnrichedDT instance by offsetting current one by offset duration.</p><div class="fullcomment"><div class="comment cmt"><p>Creates new EnrichedDT instance by offsetting current one by offset duration.
+Maximum offset precision is seconds.</p></div><dl class="paramcmts block"><dt class="param">offset</dt><dd class="cmt"><p>Offset duration (backwards)</p></dd><dt>returns</dt><dd class="cmt"><p>New EnrichedDT instance with offset</p></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.utils.EnrichedDT#zonedDT" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="zonedDT:java.time.ZonedDateTime"></a><a id="zonedDT:ZonedDateTime"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/EnrichedDT.html#zonedDT:java.time.ZonedDateTime" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">zonedDT</span><span class="result">: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li>
               </ol>
             </div>
@@ -707,15 +823,7 @@ being set to current time.</p></div><dl class="paramcmts block"><dt>returns</dt>
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="scala.Product">
-              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
-            </div><div class="parent" name="scala.Equals">
-              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>

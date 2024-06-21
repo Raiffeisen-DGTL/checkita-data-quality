@@ -1,0 +1,26 @@
+type: object
+required:
+  - expr
+  - groupBy
+properties:
+  groupBy:
+    type: array
+    description: Sequence of columns used to group rows from parent source.
+    example:
+      - id
+      - load_date
+    items:
+      type: string
+      description: Column name.
+  expr:
+    type: array
+    description: Sequence of SQL expressions used to get columns with aggregated results.
+    example:
+      - 'sum(amount) as total_amount'
+      - 'avg(price) as average_price'
+    items:
+      type: string
+      description: SQL expression to get aggregated column result.
+
+      
+    

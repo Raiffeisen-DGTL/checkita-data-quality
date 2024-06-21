@@ -1,0 +1,43 @@
+description: |-
+  Section holding configurations that are only applicable to streaming Data Quality
+  applications and define various aspects of running data quality checks for streaming sources.
+  If this section is missing in configuration file then default values are used
+  for all parameters within.
+type: object
+properties:
+  trigger:
+    type: string
+    description: |-
+      Trigger interval: defines time interval for which micro-batches are collected.
+      Must be a Java/Scala duration string.
+    default: 10s
+    example: 1m
+  window:
+    type: string
+    description: |-
+      Window interval: defines tabbing window size used to accumulate metrics. 
+      All metrics results and checks are evaluated per each window once it is finalised.
+      Must be a Java/Scala duration string.
+    default: 10m
+    example: 30m
+  watermark:
+    type: string
+    description: |-
+      Watermark level: defines time interval after which late records are no longer processed.
+      Must be a Java/Scala duration string.
+    default: 5m
+    example: 10m
+  allowEmptyWindows:
+    type: boolean
+    description: |-
+      Boolean flag indicating whether empty windows are allowed. Thus, in situation when window 
+      is below watermark and for some of the processed streams there are no results 
+      then all related checks will be skipped if this flag is set to true. 
+      Otherwise, checks will be processed and will return error status with `... metric results were not found ...` 
+      type of message.
+    default: false
+    example: true
+  checkpointDir:
+    type: string
+    description: Checkpoint directory location. If empty, then checkpoints will not be written.
+    example: path/to/checkpoint/directory

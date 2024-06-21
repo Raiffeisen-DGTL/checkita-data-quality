@@ -1,0 +1,17 @@
+description: |-
+  Section holding parameters defining connection to Mattermost API which is used to send notifications via Mattermost.
+  If this section is missing then corresponding notifications cannot be sent. 
+  If ones were configured in job configuration, then exception would be thrown at runtime.
+type: object
+properties:
+  host:
+    type: string
+    description: Mattermost API host.
+    example: https://mattermost.somedomain.com
+  token:
+    type: string
+    description: Mattermost API token (using Bot accounts for notifications is preferable).
+    example: someMattermostToken!123
+required:
+  - host
+  - token

@@ -204,7 +204,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">StreamConfig</span><span class="params">(<span name="trigger">trigger: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Duration(&quot;10s&quot;)</a></span></span></span>, <span name="window">window: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Duration(&quot;10m&quot;)</a></span></span></span>, <span name="watermark">watermark: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Duration(&quot;5m&quot;)</a></span></span></span>, <span name="allowEmptyWindows">allowEmptyWindows: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">StreamConfig</span><span class="params">(<span name="trigger">trigger: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Duration(&quot;10s&quot;)</a></span></span></span>, <span name="window">window: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Duration(&quot;10m&quot;)</a></span></span></span>, <span name="watermark">watermark: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Duration(&quot;5m&quot;)</a></span></span></span>, <span name="allowEmptyWindows">allowEmptyWindows: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="checkpointDir">checkpointDir: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">None</a></span></span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -213,7 +213,8 @@
 </p></div><dl class="paramcmts block"><dt class="param">trigger</dt><dd class="cmt"><p>Trigger interval: defines time interval for which micro-batches are collected.</p></dd><dt class="param">window</dt><dd class="cmt"><p>Window interval: defines tabbing window size used to accumulate metrics.</p></dd><dt class="param">watermark</dt><dd class="cmt"><p>Watermark level: defines time interval after which late records are no longer processed.</p></dd><dt class="param">allowEmptyWindows</dt><dd class="cmt"><p>Boolean flag indicating whether empty windows are allowed. Thus, in situation when
                          window is below watermark and for some of the processed streams there are no results then
                          all related checks will be skipped if this flag is set to 'true'. Otherwise, checks will
-                         be processed and return error status with 'metric results were not found' message.</p></dd></dl><div class="toggleContainer block">
+                         be processed and return error status with 'metric results were not found' message.</p></dd><dt class="param">checkpointDir</dt><dd class="cmt"><p>Checkpoint directory.
+                         If not set, then checkpoints in streaming applications will not be saved.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -264,9 +265,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.appconf.StreamConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(trigger:scala.concurrent.duration.Duration,window:scala.concurrent.duration.Duration,watermark:scala.concurrent.duration.Duration,allowEmptyWindows:Boolean):ru.raiffeisen.checkita.config.appconf.StreamConfig"></a><a id="&lt;init&gt;:StreamConfig"></a>
+      <a id="&lt;init&gt;(trigger:scala.concurrent.duration.Duration,window:scala.concurrent.duration.Duration,watermark:scala.concurrent.duration.Duration,allowEmptyWindows:Boolean,checkpointDir:Option[ru.raiffeisen.checkita.config.RefinedTypes.URI]):ru.raiffeisen.checkita.config.appconf.StreamConfig"></a><a id="&lt;init&gt;:StreamConfig"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/appconf/StreamConfig.html#&lt;init&gt;(trigger:scala.concurrent.duration.Duration,window:scala.concurrent.duration.Duration,watermark:scala.concurrent.duration.Duration,allowEmptyWindows:Boolean):ru.raiffeisen.checkita.config.appconf.StreamConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/appconf/StreamConfig.html#&lt;init&gt;(trigger:scala.concurrent.duration.Duration,window:scala.concurrent.duration.Duration,watermark:scala.concurrent.duration.Duration,allowEmptyWindows:Boolean,checkpointDir:Option[ru.raiffeisen.checkita.config.RefinedTypes.URI]):ru.raiffeisen.checkita.config.appconf.StreamConfig" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -275,13 +276,14 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">StreamConfig</span><span class="params">(<span name="trigger">trigger: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Duration(&quot;10s&quot;)</a></span></span></span>, <span name="window">window: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Duration(&quot;10m&quot;)</a></span></span></span>, <span name="watermark">watermark: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Duration(&quot;5m&quot;)</a></span></span></span>, <span name="allowEmptyWindows">allowEmptyWindows: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span>
+        <span class="name">StreamConfig</span><span class="params">(<span name="trigger">trigger: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Duration(&quot;10s&quot;)</a></span></span></span>, <span name="window">window: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Duration(&quot;10m&quot;)</a></span></span></span>, <span name="watermark">watermark: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Duration(&quot;5m&quot;)</a></span></span></span>, <span name="allowEmptyWindows">allowEmptyWindows: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="checkpointDir">checkpointDir: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">None</a></span></span></span>)</span>
       </span>
       
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">trigger</dt><dd class="cmt"><p>Trigger interval: defines time interval for which micro-batches are collected.</p></dd><dt class="param">window</dt><dd class="cmt"><p>Window interval: defines tabbing window size used to accumulate metrics.</p></dd><dt class="param">watermark</dt><dd class="cmt"><p>Watermark level: defines time interval after which late records are no longer processed.</p></dd><dt class="param">allowEmptyWindows</dt><dd class="cmt"><p>Boolean flag indicating whether empty windows are allowed. Thus, in situation when
                          window is below watermark and for some of the processed streams there are no results then
                          all related checks will be skipped if this flag is set to 'true'. Otherwise, checks will
-                         be processed and return error status with 'metric results were not found' message.</p></dd></dl></div>
+                         be processed and return error status with 'metric results were not found' message.</p></dd><dt class="param">checkpointDir</dt><dd class="cmt"><p>Checkpoint directory.
+                         If not set, then checkpoints in streaming applications will not be saved.</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -372,6 +374,38 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.appconf.StreamConfig#checkpointCol" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="checkpointCol:String"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/appconf/StreamConfig.html#checkpointCol:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">checkpointCol</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      
+    </li><li name="ru.raiffeisen.checkita.config.appconf.StreamConfig#checkpointDir" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="checkpointDir:Option[ru.raiffeisen.checkita.config.RefinedTypes.URI]"></a><a id="checkpointDir:Option[URI]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/appconf/StreamConfig.html#checkpointDir:Option[ru.raiffeisen.checkita.config.RefinedTypes.URI]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">checkpointDir</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../RefinedTypes$.html#URI=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.Uri]" class="extmbr" name="ru.raiffeisen.checkita.config.RefinedTypes.URI">URI</a>]</span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">

@@ -1,0 +1,28 @@
+type: object
+required:
+  - id
+properties:
+  id:
+    type: string
+    description: Source ID
+    example: delimited_file_source
+  description:
+    type: string
+    description: Optional. Source description
+    example: Delimited file source.
+  keyFields:
+    type: array
+    description: |-
+      Optional list of column that form a Primary Key or are used to identify row within a dataset.
+      Key fields are primarily used in error collection reports.
+    items:
+      type: string
+      description: Column name
+    default: [ ]
+  metadata:
+    type: array
+    description: Optional list of arbitrary user-defined metadata parameters specific to this schema.
+    items:
+      type: string
+      description: Metadata parameter string in format of `param.name=param.value`
+    default: [ ]

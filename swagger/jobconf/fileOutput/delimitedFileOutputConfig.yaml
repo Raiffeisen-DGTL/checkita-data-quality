@@ -1,0 +1,23 @@
+type: object
+properties:
+  header:
+    type: boolean
+    description: Boolean parameter indicating whether schema should be inferred from file header.
+    default: false
+    example: true
+  delimiter:
+    type: string
+    description: Column delimiter.
+    default: ','
+    example: ';'
+  quote:
+    type: string
+    description: Column enclosing character.
+    default: '"'
+    example: "'"
+  escape:
+    type: string
+    description: Escape character.
+    default: '\'
+    example: '|'
+          

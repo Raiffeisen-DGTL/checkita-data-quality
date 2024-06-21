@@ -1,0 +1,2030 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<link href="https://raiffeisen-dgtl.github.io/checkita-data-quality/02-general-information/06-MetricSQLEquivalency/" rel="canonical"/>
+<link href="../05-StreamingMode/" rel="prev"/>
+<link href="../07-MetricCalculatorEngines/" rel="next"/>
+<link href="../../logo/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.0, mkdocs-material-9.5.27" name="generator"/>
+<title>Metrics SQL Equivalency - Checkita Data Quality</title>
+<link href="../../assets/stylesheets/main.6543a935.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="yellow" data-md-color-scheme="slate" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#metrics-sql-equivalency">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Checkita Data Quality" class="md-header__button md-logo" data-md-component="logo" href="../.." title="Checkita Data Quality">
+<img alt="logo" src="../../logo/logo.png"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Checkita Data Quality
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Metrics SQL Equivalency
+            
+          </span>
+</div>
+</div>
+</div>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    checkita-data-quality
+  </div>
+</a>
+</div>
+</nav>
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../..">
+        
+  
+    
+  
+  Home
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../01-application-setup/">
+          
+  
+    
+  
+  Application Setup
+
+        </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../">
+          
+  
+    
+  
+  General Information
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../03-job-configuration/">
+          
+  
+    
+  
+  Job Configuration
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../changelog/CHANGELOG/">
+        
+  
+    
+  
+  Changelog
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../contribution/">
+          
+  
+    
+  
+  Contribution
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../api/">
+        
+  
+    
+  
+  Scala API Doc
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../swagger/">
+        
+  
+    
+  
+  Swagger Doc
+
+      </a>
+</li>
+</ul>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Checkita Data Quality" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="Checkita Data Quality">
+<img alt="logo" src="../../logo/logo.png"/>
+</a>
+    Checkita Data Quality
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    checkita-data-quality
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+<span class="md-ellipsis">
+    Home
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../01-application-setup/">
+<span class="md-ellipsis">
+    Application Setup
+  </span>
+</a>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            Application Setup
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../01-application-setup/01-ApplicationSettings/">
+<span class="md-ellipsis">
+    Application Settings
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../01-application-setup/02-ApplicationSubmit/">
+<span class="md-ellipsis">
+    Submitting Data Quality Application
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../01-application-setup/03-ResultsStorage/">
+<span class="md-ellipsis">
+    Data Quality Results Storage
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../">
+<span class="md-ellipsis">
+    General Information
+  </span>
+</a>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="true" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            General Information
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../01-WorkingWithDateTime/">
+<span class="md-ellipsis">
+    Working with Date and Time
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../02-EnvironmentAndExtraVariables/">
+<span class="md-ellipsis">
+    Usage of Environment Variables and Extra Variables
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../03-StatusModel/">
+<span class="md-ellipsis">
+    Status Model used in Results
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../04-ErrorCollection/">
+<span class="md-ellipsis">
+    Metric Error Collection
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../05-StreamingMode/">
+<span class="md-ellipsis">
+    Data Quality Checks over Streaming Sources
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    Metrics SQL Equivalency
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    Metrics SQL Equivalency
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sample-table">
+<span class="md-ellipsis">
+      Sample Table
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#row-count-metric">
+<span class="md-ellipsis">
+      Row Count Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#distinct-values-metric">
+<span class="md-ellipsis">
+      Distinct Values Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#null-values-metric">
+<span class="md-ellipsis">
+      Null Values Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#empty-values-metric">
+<span class="md-ellipsis">
+      Empty Values Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#completeness-metric">
+<span class="md-ellipsis">
+      Completeness Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#emptiness-metric">
+<span class="md-ellipsis">
+      Emptiness Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sequence-completeness-metric">
+<span class="md-ellipsis">
+      Sequence Completeness Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#minimum-string-metric">
+<span class="md-ellipsis">
+      Minimum String Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#max-string-metric">
+<span class="md-ellipsis">
+      Max String Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#average-string-metric">
+<span class="md-ellipsis">
+      Average String Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#string-length-metric">
+<span class="md-ellipsis">
+      String Length Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#string-in-domain-metric">
+<span class="md-ellipsis">
+      String In Domain Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#string-out-domain-metric">
+<span class="md-ellipsis">
+      String Out Domain Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#string-values-metric">
+<span class="md-ellipsis">
+      String Values Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#regex-match-metric">
+<span class="md-ellipsis">
+      Regex Match Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#regex-mismatch-metric">
+<span class="md-ellipsis">
+      Regex Mismatch Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#formatted-date-metric">
+<span class="md-ellipsis">
+      Formatted Date Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#formatted-number-metric">
+<span class="md-ellipsis">
+      Formatted Number Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#minimum-number-metric">
+<span class="md-ellipsis">
+      Minimum Number Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#maximum-number-metric">
+<span class="md-ellipsis">
+      Maximum Number Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sum-number-metric">
+<span class="md-ellipsis">
+      Sum Number Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#avg-number-metric">
+<span class="md-ellipsis">
+      Avg Number Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#std-number-metric">
+<span class="md-ellipsis">
+      Std Number Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#casted-number-metric">
+<span class="md-ellipsis">
+      Casted Number Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-in-domain-metric">
+<span class="md-ellipsis">
+      Number In Domain Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-out-domain-metric">
+<span class="md-ellipsis">
+      Number Out Domain Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-less-than-metric">
+<span class="md-ellipsis">
+      Number Less Than Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-greater-than-metric">
+<span class="md-ellipsis">
+      Number Greater Than Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-between-metric">
+<span class="md-ellipsis">
+      Number Between Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-not-between-metric">
+<span class="md-ellipsis">
+      Number Not Between Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#number-values-metric">
+<span class="md-ellipsis">
+      Number Values Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#t-digest-metrics">
+<span class="md-ellipsis">
+      T-Digest Metrics
+    </span>
+</a>
+<nav aria-label="T-Digest Metrics" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#median-value-metric">
+<span class="md-ellipsis">
+      Median Value Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#first-quantile-metric">
+<span class="md-ellipsis">
+      First Quantile Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#third-quantile-metric">
+<span class="md-ellipsis">
+      Third Quantile Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-quantile-metric">
+<span class="md-ellipsis">
+      Get Quantile Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-percentile-metric">
+<span class="md-ellipsis">
+      Get Percentile Metric
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#column-equality-metric">
+<span class="md-ellipsis">
+      Column Equality Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#column-equality-metric_1">
+<span class="md-ellipsis">
+      Column Equality Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#day-distance-metric">
+<span class="md-ellipsis">
+      Day Distance Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#levenshtein-distance-metric">
+<span class="md-ellipsis">
+      Levenshtein Distance Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#comoment-metric">
+<span class="md-ellipsis">
+      CoMoment Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#covariance-metric">
+<span class="md-ellipsis">
+      Covariance Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#covariance-bessel-metric">
+<span class="md-ellipsis">
+      Covariance Bessel Metric
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#top-n-metric">
+<span class="md-ellipsis">
+      Top N Metric
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../07-MetricCalculatorEngines/">
+<span class="md-ellipsis">
+    Metric Calculator Engines Overview and Benchmarking
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../03-job-configuration/">
+<span class="md-ellipsis">
+    Job Configuration
+  </span>
+</a>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            Job Configuration
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-job-configuration/01-Connections/">
+<span class="md-ellipsis">
+    Connections Configuration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-job-configuration/02-Schemas/">
+<span class="md-ellipsis">
+    Schemas Configuration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-job-configuration/03-Sources/">
+<span class="md-ellipsis">
+    Sources Configuration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-job-configuration/04-Streams/">
+<span class="md-ellipsis">
+    Streaming Sources Configurations
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-job-configuration/05-VirtualSources/">
+<span class="md-ellipsis">
+    Virtual Sources Configuration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-job-configuration/06-VirtualStreams/">
+<span class="md-ellipsis">
+    Virtual Streaming Sources Configuration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-job-configuration/07-LoadChecks/">
+<span class="md-ellipsis">
+    Load Checks Configuration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-job-configuration/08-Metrics/">
+<span class="md-ellipsis">
+    Metrics Configuration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-job-configuration/09-Checks/">
+<span class="md-ellipsis">
+    Checks Configurations
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-job-configuration/10-Targets/">
+<span class="md-ellipsis">
+    Targets Configuration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-job-configuration/11-FileOutputs/">
+<span class="md-ellipsis">
+    File Output Configuration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-job-configuration/12-JobConfigExample/">
+<span class="md-ellipsis">
+    Job Configuration Example
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../changelog/CHANGELOG/">
+<span class="md-ellipsis">
+    Changelog
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../contribution/">
+<span class="md-ellipsis">
+    Contribution
+  </span>
+</a>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+            Contribution
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../contribution/code-of-conduct/">
+<span class="md-ellipsis">
+    Code of Conduct
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../contribution/contribution/">
+<span class="md-ellipsis">
+    Contribution Guide
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api/">
+<span class="md-ellipsis">
+    Scala API Doc
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../swagger/">
+<span class="md-ellipsis">
+    Swagger Doc
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="metrics-sql-equivalency">Metrics SQL Equivalency</h1>
+<p>The purpose of this chapter is to bring more transparency on how metric calculation is performed by providing an
+equivalent SQL queries which can be used to get the same result over the same data.</p>
+<blockquote>
+<p><strong>Note</strong>: Spark SQL notation is used to provide equivalent SQL queries.</p>
+</blockquote>
+<p>All SQL queries will be written for test data table show below.</p>
+<h2 id="sample-table">Sample Table</h2>
+<table>
+<thead>
+<tr>
+<th>textCol1<br/>(text)</th>
+<th>textCol2<br/>(text)</th>
+<th>textCol3<br/>(text)</th>
+<th>numCol1<br/>(double)</th>
+<th>rangeCol<br/>(integer)</th>
+<th>dateCol1<br/>(text)</th>
+<th>dateCol2<br/>(text)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"monkey"</td>
+<td>""</td>
+<td>"4"</td>
+<td>5.94</td>
+<td>1</td>
+<td>"2022-01-01"</td>
+<td>"2022-01-01"</td>
+</tr>
+<tr>
+<td>"monkey"</td>
+<td>"7.71"</td>
+<td>"3.14"</td>
+<td>1.72</td>
+<td>2</td>
+<td>"1999-12-31"</td>
+<td>"2000-01-01"</td>
+</tr>
+<tr>
+<td>"turtle"</td>
+<td>"2.54"</td>
+<td>"foo"</td>
+<td>null</td>
+<td>null</td>
+<td>"2005-03-03"</td>
+<td>""</td>
+</tr>
+<tr>
+<td>"rabbit"</td>
+<td>"2.16"</td>
+<td>"3.0"</td>
+<td>5.87</td>
+<td>3</td>
+<td>null</td>
+<td>"2010-10-18"</td>
+</tr>
+<tr>
+<td>"monkey"</td>
+<td>null</td>
+<td>"-25.321"</td>
+<td>2.54</td>
+<td>4</td>
+<td>"2022-01-01"</td>
+<td>"2022-01-01"</td>
+</tr>
+<tr>
+<td>""</td>
+<td>"2.54"</td>
+<td>"-25.321"</td>
+<td>5.94</td>
+<td>5</td>
+<td>"01-12-2012"</td>
+<td>"01-12-2012"</td>
+</tr>
+<tr>
+<td>null</td>
+<td>"2.54"</td>
+<td>"[12, 35]"</td>
+<td>5.94</td>
+<td>7</td>
+<td>"12-05-2005"</td>
+<td>"25-04-2024"</td>
+</tr>
+<tr>
+<td>"turtle"</td>
+<td>"7.71"</td>
+<td>"true"</td>
+<td>1.72</td>
+<td>8</td>
+<td>"2022-01-01 12:31:48"</td>
+<td>"2022-01-01 07:12:34"</td>
+</tr>
+<tr>
+<td>"rabbit"</td>
+<td>"2.16"</td>
+<td>null</td>
+<td>5.87</td>
+<td>9</td>
+<td>"2001-05-25 09:03:13"</td>
+<td>"2001-05-25 09:03:13"</td>
+</tr>
+<tr>
+<td>"turtle"</td>
+<td>"7.71"</td>
+<td>"4"</td>
+<td>1.72</td>
+<td>10</td>
+<td>"2011-04-07 19:48:32"</td>
+<td>"2003-09-01 12:11:10"</td>
+</tr>
+<tr>
+<td>"jaguar"</td>
+<td>"6.85"</td>
+<td>"bar"</td>
+<td>8.26</td>
+<td>12</td>
+<td>"13:03:51"</td>
+<td>"06:33:07"</td>
+</tr>
+<tr>
+<td>"jaguar"</td>
+<td>"6.85"</td>
+<td>"3123dasd"</td>
+<td>8.26</td>
+<td>13</td>
+<td>"15:16:17"</td>
+<td>"15:16:17"</td>
+</tr>
+</tbody>
+</table>
+<h2 id="row-count-metric">Row Count Metric</h2>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1">rowCount: [{id: "row_count", source: "sample_table"}]
+</span></code></pre></div></li>
+<li>Equivalent SQL query:
+  <div class="language-SQL highlight"><pre><span></span><code><span id="__span-1-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 12</strong></li>
+</ul>
+<h2 id="distinct-values-metric">Distinct Values Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1">distinctValues: [{id: "distinct_values", source: "sample_table", columns: ["textCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-3-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">textCol1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">distinct_values</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 5</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1">distinctValues: [{id: "distinct_values", source: "sample_table", columns: ["textCol1", "textCol3"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-5-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">distinct_values</span><span class="w"> </span>
+</span><span id="__span-5-2"><span class="k">FROM</span><span class="w"> </span><span class="p">(</span>
+</span><span id="__span-5-3"><span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="n">textCol1</span><span class="p">,</span><span class="w"> </span><span class="n">textCol3</span>
+</span><span id="__span-5-4"><span class="w">  </span><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span>
+</span><span id="__span-5-5"><span class="w">  </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">textCol1</span><span class="p">,</span><span class="w"> </span><span class="n">textCol3</span>
+</span><span id="__span-5-6"><span class="p">)</span>
+</span><span id="__span-5-7"><span class="k">WHERE</span><span class="w"> </span><span class="k">NOT</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">textCol3</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="p">);</span>
+</span></code></pre></div><blockquote>
+<p><strong>Note:</strong> Rows where entire tuple of columns is null are omitted from the results in 
+the same way is it is done by <code>COUNT(DISTINCT col_name)</code> expression.</p>
+</blockquote>
+</li>
+<li><strong>Metric Result: 12</strong></li>
+</ul>
+<h2 id="null-values-metric">Null Values Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1">nullValues: [{id: "null_values", source: "sample_table", columns: ["textCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-7-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-7-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">textCol1</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-7-3"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">null_values</span>
+</span><span id="__span-7-4"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 1</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-8-1">nullValues: [{id: "null_values", source: "sample_table", columns: ["textCol1", "textCol3"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-9-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-9-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">textCol1</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+</span><span id="__span-9-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">textCol3</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-9-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">null_values</span>
+</span><span id="__span-9-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div><blockquote>
+<p><strong>Note:</strong> Each cell value of each requested column is considered separately and total number of null values is returned.</p>
+</blockquote>
+</li>
+<li><strong>Metric Result: 2</strong></li>
+</ul>
+<h2 id="empty-values-metric">Empty Values Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-10-1">emptyValues: [{id: "empty_values", source: "sample_table", columns: ["textCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-11-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-11-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">''</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-11-3"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">null_values</span>
+</span><span id="__span-11-4"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 1</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-12-1">emptyValues: [{id: "empty_values", source: "sample_table", columns: ["textCol1", "textCol2"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-13-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-13-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">''</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-13-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">''</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-13-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">null_values</span>
+</span><span id="__span-13-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 2</strong></li>
+</ul>
+<h2 id="completeness-metric">Completeness Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-14-1">completeness: [{id: "completeness", source: "sample_table", columns: ["textCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-15-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-15-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">textCol1</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-15-3"><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">completeness</span>
+</span><span id="__span-15-4"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 0.91666</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-16-1">completeness: [{id: "completeness", source: "sample_table", columns: ["textCol1", "textCol2"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-17-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-17-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">textCol1</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-17-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">textCol2</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-17-4"><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">completeness</span>
+</span><span id="__span-17-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 0.91666</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: If <code>includeEmptyStrings = true</code>, then case-when expression for each column changes to:
+<code>CASE WHEN COALESCE(CAST(&lt;columnName&gt; AS STRING), '') = '' THEN 0 ELSE 1 END</code> and metric will yield result
+of 0.83333 for the cases above.</p>
+</blockquote>
+<h2 id="emptiness-metric">Emptiness Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-18-1">emptiness: [{id: "emptiness", source: "sample_table", columns: ["textCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-19-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-19-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">textCol1</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-19-3"><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">completeness</span>
+</span><span id="__span-19-4"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 0.08333</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-20-1">emptiness: [{id: "emptiness", source: "sample_table", columns: ["textCol1", "textCol2"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-21-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-21-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">textCol1</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-21-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">textCol2</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-21-4"><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">completeness</span>
+</span><span id="__span-21-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 0.08333</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: If <code>includeEmptyStrings = true</code>, then case-when expression for each column changes to:
+<code>CASE WHEN COALESCE(CAST(&lt;columnName&gt; AS STRING), '') = '' THEN 1 ELSE 0 END</code> and metric will yield result
+of 0.16666 for the cases above.</p>
+</blockquote>
+<h2 id="sequence-completeness-metric">Sequence Completeness Metric</h2>
+<p><strong>This metric works with only one column.</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-22-1">sequenceCompleteness: [{id: "seqCompleteness", source: "sample_table", columns: ["rangeCol"], params: {increment: 1}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-23-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">((</span><span class="k">MAX</span><span class="p">(</span><span class="n">long_num</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="k">MIN</span><span class="p">(</span><span class="n">long_num</span><span class="p">))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">seq_comp</span><span class="w"> </span><span class="c1">-- denominator of 1 === increment of 1</span>
+</span><span id="__span-23-2"><span class="k">FROM</span><span class="w"> </span><span class="p">(</span>
+</span><span id="__span-23-3"><span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">rangeCol</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">LONG</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">long_num</span>
+</span><span id="__span-23-4"><span class="w">  </span><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span>
+</span><span id="__span-23-5"><span class="w">  </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">rangeCol</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">LONG</span><span class="p">)</span>
+</span><span id="__span-23-6"><span class="p">)</span><span class="w"> </span><span class="n">t</span>
+</span><span id="__span-23-7"><span class="k">WHERE</span><span class="w"> </span><span class="n">long_num</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 0.84615</strong></li>
+</ul>
+<h2 id="minimum-string-metric">Minimum String Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-24-1">minString: [{id: "min_string", source: "sample_table", columns: ["textCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-25-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">MIN</span><span class="p">(</span><span class="k">LENGTH</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">min_string</span>
+</span><span id="__span-25-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 0.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-26-1">minString: [{id: "min_string", source: "sample_table", columns: ["textCol1", "textCol2"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-27-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">MIN</span><span class="p">(</span><span class="n">LEAST</span><span class="p">(</span>
+</span><span id="__span-27-2"><span class="w">  </span><span class="k">LENGTH</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)),</span><span class="w"> </span>
+</span><span id="__span-27-3"><span class="w">  </span><span class="k">LENGTH</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">))</span>
+</span><span id="__span-27-4"><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">min_string</span>
+</span><span id="__span-27-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 0.0</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Each cell of each requested column is considered separately and minimum string length is returned.</p>
+</blockquote>
+<h2 id="max-string-metric">Max String Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-28-1">maxString: [{id: "max_string", source: "sample_table", columns: ["textCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-29-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">MAX</span><span class="p">(</span><span class="k">LENGTH</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">max_string</span>
+</span><span id="__span-29-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 6.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-30-1">maxString: [{id: "max_string", source: "sample_table", columns: ["textCol1", "textCol2"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-31-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">MAX</span><span class="p">(</span><span class="n">GREATEST</span><span class="p">(</span>
+</span><span id="__span-31-2"><span class="w">  </span><span class="k">LENGTH</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)),</span><span class="w"> </span>
+</span><span id="__span-31-3"><span class="w">  </span><span class="k">LENGTH</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">))</span>
+</span><span id="__span-31-4"><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">max_string</span>
+</span><span id="__span-31-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 6.0</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Each cell of each requested column is considered separately and maximum string length is returned.</p>
+</blockquote>
+<h2 id="average-string-metric">Average String Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-32-1">avgString: [{id: "avg_string", source: "sample_table", columns: ["textCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-33-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">AVG</span><span class="p">(</span><span class="k">LENGTH</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_string</span>
+</span><span id="__span-33-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 5.4545</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: <code>AVG</code> function omits null values.</p>
+</blockquote>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-34-1">avgString: [{id: "avg_string", source: "sample_table", columns: ["textCol1", "textCol2"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-35-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-35-2"><span class="w">  </span><span class="k">COALESCE</span><span class="p">(</span><span class="k">LENGTH</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+</span><span id="__span-35-3"><span class="w">  </span><span class="k">COALESCE</span><span class="p">(</span><span class="k">LENGTH</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-35-4"><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-35-5"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-35-6"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-35-7"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_string</span>
+</span><span id="__span-35-8"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 4.5454</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Each cell of each requested column is considered separately and average string length is returned. 
+Cells that become null after casting to string(text) type are omitted.</p>
+</blockquote>
+<h2 id="string-length-metric">String Length Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-36-1">stringLength: [{id: "string_length", source: "sample_table", columns: ["textCol2"], params: {length: 4, compareRule: "eq"}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-37-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">COALESCE</span><span class="p">(</span><span class="k">LENGTH</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">string_length</span>
+</span><span id="__span-37-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 10.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-38-1">stringLength: [{id: "string_length", source: "sample_table", columns: ["textCol2", "textCol3"], params: {length: 4, compareRule: "eq"}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-39-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-39-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">COALESCE</span><span class="p">(</span><span class="k">LENGTH</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+</span><span id="__span-39-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">COALESCE</span><span class="p">(</span><span class="k">LENGTH</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol3</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-39-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">string_length</span>
+</span><span id="__span-39-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 12.0</strong></li>
+</ul>
+<h2 id="string-in-domain-metric">String In Domain Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-40-1">stringInDomain: [{id: "string_in_domain", source: "sample_table", columns: ["textCol1"], params: {domain: ["rabbit", "jaguar"]}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-41-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">'rabbit'</span><span class="p">,</span><span class="w"> </span><span class="s1">'jaguar'</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">string_in_domain</span>
+</span><span id="__span-41-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 4.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-42-1">stringInDomain: [{id: "string_in_domain", source: "sample_table", columns: ["textCol1", "textCol2"], params: {domain: ["rabbit", "jaguar", "2.16"]}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-43-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-43-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">'rabbit'</span><span class="p">,</span><span class="w"> </span><span class="s1">'jaguar'</span><span class="p">,</span><span class="w"> </span><span class="s1">'2.16'</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-43-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">'rabbit'</span><span class="p">,</span><span class="w"> </span><span class="s1">'jaguar'</span><span class="p">,</span><span class="w"> </span><span class="s1">'2.16'</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-43-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">string_in_domain</span>
+</span><span id="__span-43-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 6.0</strong></li>
+</ul>
+<h2 id="string-out-domain-metric">String Out Domain Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-44-1">stringOutDomain: [{id: "string_out_domain", source: "sample_table", columns: ["textCol1"], params: {domain: ["rabbit", "jaguar"]}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-45-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">'rabbit'</span><span class="p">,</span><span class="w"> </span><span class="s1">'jaguar'</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">string_in_domain</span>
+</span><span id="__span-45-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 7.0</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Null values are omitted. Thus, only 7 not null values are out of provided domain.</p>
+</blockquote>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-46-1">stringOutDomain: [{id: "string_out_domain", source: "sample_table", columns: ["textCol1", "textCol2"], params: {domain: ["rabbit", "jaguar", "2.16"]}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-47-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-47-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">'rabbit'</span><span class="p">,</span><span class="w"> </span><span class="s1">'jaguar'</span><span class="p">,</span><span class="w"> </span><span class="s1">'2.16'</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-47-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">'rabbit'</span><span class="p">,</span><span class="w"> </span><span class="s1">'jaguar'</span><span class="p">,</span><span class="w"> </span><span class="s1">'2.16'</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-47-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">string_in_domain</span>
+</span><span id="__span-47-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 16.0</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Null values are omitted. Thus, only 16 not null values are out of provided domain.</p>
+</blockquote>
+<h2 id="string-values-metric">String Values Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-48-1">stringValues: [{id: "string_values", source: "sample_table", columns: ["dateCol1"], params: {compareValue: "2022-01-01"}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-49-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">dateCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'2022-01-01'</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">string_values</span>
+</span><span id="__span-49-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 2.0</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Null values are omitted. Thus, only 7 not null values are out of provided domain.</p>
+</blockquote>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-50-1">stringValues: [{id: "string_values", source: "sample_table", columns: ["dateCol1", "dateCol2"], params: {compareValue: "2022-01-01"}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-51-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-51-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">dateCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'2022-01-01'</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-51-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">dateCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'2022-01-01'</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-51-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">string_values</span>
+</span><span id="__span-51-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 4.0</strong></li>
+</ul>
+<h2 id="regex-match-metric">Regex Match Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-52-1">regexMatch: [{id: "regex_match", source: "sample_table", columns: ["textCol2"], params: {regex: """^2\.[0-9]+$"""}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-53-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">RLIKE</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">),</span><span class="w"> </span><span class="s1">'^2\.[0-9]+$'</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">regex_match</span>
+</span><span id="__span-53-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 5.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-54-1">regexMatch: [{id: "regex_match", source: "sample_table", columns: ["textCol2", "numCol1"], params: {regex: """^2\.[0-9]+$"""}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-55-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-55-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">RLIKE</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">),</span><span class="w"> </span><span class="s1">'^2\.[0-9]+$'</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-55-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">RLIKE</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">),</span><span class="w"> </span><span class="s1">'^2\.[0-9]+$'</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-55-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">regex_match</span>
+</span><span id="__span-55-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 6.0</strong></li>
+</ul>
+<h2 id="regex-mismatch-metric">Regex Mismatch Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-56-1">regexMismatch: [{id: "regex_mismatch", source: "sample_table", columns: ["textCol2"], params: {regex: """^2\.[0-9]+$"""}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-57-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="n">RLIKE</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">),</span><span class="w"> </span><span class="s1">'^2\.[0-9]+$'</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">regex_mismatch</span>
+</span><span id="__span-57-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 6.0</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Null values are omitted. Thus, only 6 not null values mismatched provided regex expression.</p>
+</blockquote>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-58-1">regexMismatch: [{id: "regex_mismatch", source: "sample_table", columns: ["textCol2", "numCol1"], params: {regex: """^2\.[0-9]+$"""}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-59-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-59-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="n">RLIKE</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">),</span><span class="w"> </span><span class="s1">'^2\.[0-9]+$'</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-59-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="n">RLIKE</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">),</span><span class="w"> </span><span class="s1">'^2\.[0-9]+$'</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-59-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">regex_mismatch</span>
+</span><span id="__span-59-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 16.0</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Null values are omitted. Thus, only 16 not null values mismatched provided regex expression.</p>
+</blockquote>
+<h2 id="formatted-date-metric">Formatted Date Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-60-1">formattedDate: [{id: "formatted_date", source: "sample_table", columns: ["dateCol1"], params: {dateFormat: "yyyy-MM-dd"}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-61-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">to_timestamp</span><span class="p">(</span><span class="n">dateCol1</span><span class="p">,</span><span class="w"> </span><span class="s1">'yyyy-MM-dd'</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">formatted_date</span>
+</span><span id="__span-61-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 4.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-62-1">formattedDate: [{id: "formatted_date", source: "sample_table", columns: ["dateCol1", "dateCol2"], params: {dateFormat: "yyyy-MM-dd"}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-63-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-63-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">to_timestamp</span><span class="p">(</span><span class="n">dateCol1</span><span class="p">,</span><span class="w"> </span><span class="s1">'yyyy-MM-dd'</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-63-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">to_timestamp</span><span class="p">(</span><span class="n">dateCol2</span><span class="p">,</span><span class="w"> </span><span class="s1">'yyyy-MM-dd'</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-63-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">formatted_date</span>
+</span><span id="__span-63-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 8.0</strong></li>
+</ul>
+<h2 id="formatted-number-metric">Formatted Number Metric</h2>
+<p>Formatted number metric does not have SQL equivalent since it works directly with Java BigDecimal type:
+metric calculator attempts to convert cell value to Java BigDecimal value. If conversion is successful, 
+then big decimal precision and scale are checked to meet bounds provided in metric definition.
+If requirement is met then calculator is incremented by 1. For all other situation calculator is not incremented.</p>
+<h2 id="minimum-number-metric">Minimum Number Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-64-1">minNumber: [{id: "min_number", source: "sample_table", columns: ["numCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-65-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">MIN</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">min_number</span>
+</span><span id="__span-65-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 1.72</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-66-1">minNumber: [{id: "min_number", source: "sample_table", columns: ["textCol2", "numCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-67-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">MIN</span><span class="p">(</span><span class="n">LEAST</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">),</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">min_number</span>
+</span><span id="__span-67-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 1.72</strong></li>
+</ul>
+<h2 id="maximum-number-metric">Maximum Number Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-68-1">maxNumber: [{id: "max_number", source: "sample_table", columns: ["numCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-69-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">MAX</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">max_number</span>
+</span><span id="__span-69-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 8.26</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-70-1">maxNumber: [{id: "max_number", source: "sample_table", columns: ["textCol2", "numCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-71-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">MAX</span><span class="p">(</span><span class="n">GREATEST</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">),</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">max_number</span>
+</span><span id="__span-71-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 8.26</strong></li>
+</ul>
+<h2 id="sum-number-metric">Sum Number Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-72-1">sumNumber: [{id: "sum_number", source: "sample_table", columns: ["numCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-73-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">sum_number</span>
+</span><span id="__span-73-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 53.78</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-74-1">sumNumber: [{id: "sum_number", source: "sample_table", columns: ["textCol2", "numCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-75-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-75-2"><span class="w">  </span><span class="k">COALESCE</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+</span><span id="__span-75-3"><span class="w">  </span><span class="k">COALESCE</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-75-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">sum_number</span>
+</span><span id="__span-75-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 102.55</strong></li>
+</ul>
+<h2 id="avg-number-metric">Avg Number Metric</h2>
+<p><strong>This metric works with only one column.</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-76-1">avgNumber: [{id: "avg_number", source: "sample_table", columns: ["numCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-77-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">AVG</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_number</span>
+</span><span id="__span-77-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 4.889</strong></li>
+</ul>
+<h2 id="std-number-metric">Std Number Metric</h2>
+<p><strong>This metric works with only one column.</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-78-1">stdNumber: [{id: "std_number", source: "sample_table", columns: ["numCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-79-1"><span class="k">SELECT</span><span class="w"> </span><span class="n">STDDEV_POP</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">std_number</span>
+</span><span id="__span-79-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 2.40475</strong></li>
+</ul>
+<h2 id="casted-number-metric">Casted Number Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-80-1">castedNumber: [{id: "casted_number", source: "sample_table", columns: ["textCol3"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-81-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol3</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">casted_number</span>
+</span><span id="__span-81-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 6.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-82-1">castedNumber: [{id: "casted_number", source: "sample_table", columns: ["textCol2", "textCol3"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-83-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-83-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-83-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol3</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-83-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">casted_number</span>
+</span><span id="__span-83-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 16.0</strong></li>
+</ul>
+<h2 id="number-in-domain-metric">Number In Domain Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-84-1">numberInDomain: [{id: "number_in_domain", source: "sample_table", columns: ["textCol2"], params: {domain: [7.71, 6.85]}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-85-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="mi">7</span><span class="p">.</span><span class="mi">71</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">.</span><span class="mi">85</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_in_domain</span>
+</span><span id="__span-85-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 5.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-86-1">numberInDomain: [{id: "number_in_domain", source: "sample_table", columns: ["textCol2", "textCol3"], params: {domain: [7.71, 6.85, -25.321]}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-87-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-87-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="mi">7</span><span class="p">.</span><span class="mi">71</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">.</span><span class="mi">85</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">25</span><span class="p">.</span><span class="mi">321</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+</span><span id="__span-87-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol3</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="mi">7</span><span class="p">.</span><span class="mi">71</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">.</span><span class="mi">85</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">25</span><span class="p">.</span><span class="mi">321</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-87-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_in_domain</span>
+</span><span id="__span-87-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 7.0</strong></li>
+</ul>
+<h2 id="number-out-domain-metric">Number Out Domain Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-88-1">numberOutDomain: [{id: "number_out_domain", source: "sample_table", columns: ["textCol2"], params: {domain: [7.71, 6.85]}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-89-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="mi">7</span><span class="p">.</span><span class="mi">71</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">.</span><span class="mi">85</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_out_domain</span>
+</span><span id="__span-89-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 5.0</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Null values are omitted. Thus, only 5 not null values are out of provided domain.</p>
+</blockquote>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-90-1">numberOutDomain: [{id: "number_out_domain", source: "sample_table", columns: ["textCol2", "textCol3"], params: {domain: [7.71, 6.85, -25.321]}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-91-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-91-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="mi">7</span><span class="p">.</span><span class="mi">71</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">.</span><span class="mi">85</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">25</span><span class="p">.</span><span class="mi">321</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+</span><span id="__span-91-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol3</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="mi">7</span><span class="p">.</span><span class="mi">71</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">.</span><span class="mi">85</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">25</span><span class="p">.</span><span class="mi">321</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-91-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_out_domain</span>
+</span><span id="__span-91-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 9.0</strong></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Null values are omitted. Thus, only 9 not null values are out of provided domain.</p>
+</blockquote>
+<h2 id="number-less-than-metric">Number Less Than Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-92-1">numberLessThan: [{id: "number_less_than", source: "sample_table", columns: ["textCol2"], params: {compareValue: 4.0, includeBound: false}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-93-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_less_than</span>
+</span><span id="__span-93-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 5.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-94-1">numberLessThan: [{id: "number_less_than", source: "sample_table", columns: ["textCol2", "numCol1"], params: {compareValue: 4.0, includeBound: false}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-95-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-95-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-95-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-95-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_less_than</span>
+</span><span id="__span-95-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 9.0</strong></li>
+</ul>
+<h2 id="number-greater-than-metric">Number Greater Than Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-96-1">numberGreaterThan: [{id: "number_greater_than", source: "sample_table", columns: ["textCol2"], params: {compareValue: 4.0, includeBound: false}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-97-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_greater_than</span>
+</span><span id="__span-97-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 5.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-98-1">numberGreaterThan: [{id: "number_greater_than", source: "sample_table", columns: ["textCol2", "numCol1"], params: {compareValue: 4.0, includeBound: false}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-99-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-99-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-99-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-99-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_greater_than</span>
+</span><span id="__span-99-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 12.0</strong></li>
+</ul>
+<h2 id="number-between-metric">Number Between Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-100-1">numberBetween: [{id: "number_between", source: "sample_table", columns: ["textCol2"], params: {lowerCompareValue: 3.0, upperCompareValue: 7.0, includeBound: true}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-101-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_between</span>
+</span><span id="__span-101-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 2.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-102-1">numberBetween: [{id: "number_between", source: "sample_table", columns: ["textCol2", "numCol1"], params: {lowerCompareValue: 3.0, upperCompareValue: 7.0, includeBound: true}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-103-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-103-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-103-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-103-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_between</span>
+</span><span id="__span-103-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 7.0</strong></li>
+</ul>
+<h2 id="number-not-between-metric">Number Not Between Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-104-1">numberNotBetween: [{id: "number_not_between", source: "sample_table", columns: ["textCol2"], params: {lowerCompareValue: 3.0, upperCompareValue: 7.0, includeBound: true}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-105-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_between</span>
+</span><span id="__span-105-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 8.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-106-1">numberNotBetween: [{id: "number_not_between", source: "sample_table", columns: ["textCol2", "numCol1"], params: {lowerCompareValue: 3.0, upperCompareValue: 7.0, includeBound: true}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-107-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-107-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-107-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-107-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_between</span>
+</span><span id="__span-107-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 14.0</strong></li>
+</ul>
+<h2 id="number-values-metric">Number Values Metric</h2>
+<p><strong>Single column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-108-1">numberValues: [{id: "number_values", source: "sample_table", columns: ["textCol2"], params: {compareValue: 7.71}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-109-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span><span class="p">.</span><span class="mi">71</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_between</span>
+</span><span id="__span-109-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 3.0</strong></li>
+</ul>
+<p><strong>Multiple column definition:</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-110-1">numberValues: [{id: "number_values", source: "sample_table", columns: ["textCol2", "numCol1"], params: {compareValue: 7.71}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-111-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-111-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span><span class="p">.</span><span class="mi">71</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w"> </span><span class="o">+</span>
+</span><span id="__span-111-3"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span><span class="p">.</span><span class="mi">71</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-111-4"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_between</span>
+</span><span id="__span-111-5"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 3.0</strong></li>
+</ul>
+<h2 id="t-digest-metrics">T-Digest Metrics</h2>
+<p>All metrics computing rank-based statistics implement T-Digest algorithm under the hood, to compute
+their values during single-pass over the data. The resultant metric value is not precise and has some error,
+which is controlled by <code>accuracyError</code> parameter. Equivalent SQL query utilize functions available in Spark SQL
+for precise computing of corresponding rank-based statistic. In all T-Digest metrics, null values are omitted from
+computation of metric result.</p>
+<blockquote>
+<p><strong>Note</strong> T-Digest yields high error for small collections of numbers and provides quite accurate results for large ones.</p>
+</blockquote>
+<p><strong>All T-Digest metrics work with only one column.</strong></p>
+<h3 id="median-value-metric">Median Value Metric</h3>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-112-1">medianValue: [{id: "median_value", source: "sample_table", columns: ["numCol1"], params: {accuracyError: 0.001}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-113-1"><span class="k">SELECT</span><span class="w"> </span><span class="n">MEDIAN</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">median_value</span>
+</span><span id="__span-113-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 5.87 (both metric result using T-Digest and exact calculation)</strong></li>
+</ul>
+<h3 id="first-quantile-metric">First Quantile Metric</h3>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-114-1">firstQuantile: [{id: "first_quantile", source: "sample_table", columns: ["numCol1"], params: {accuracyError: 0.001}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-115-1"><span class="k">SELECT</span><span class="w"> </span><span class="n">PERCENTILE</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">25</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">first_quantile</span>
+</span><span id="__span-115-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 2.36 (metric result using T-Digest); 2.13 (exact calculation)</strong></li>
+</ul>
+<h3 id="third-quantile-metric">Third Quantile Metric</h3>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-116-1">thirdQuantile: [{id: "third_quantile", source: "sample_table", columns: ["numCol1"], params: {accuracyError: 0.001}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-117-1"><span class="k">SELECT</span><span class="w"> </span><span class="n">PERCENTILE</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">75</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">first_quantile</span>
+</span><span id="__span-117-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 5.94 (both metric result using T-Digest and exact calculation)</strong></li>
+</ul>
+<h3 id="get-quantile-metric">Get Quantile Metric</h3>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-118-1">getQuantile: [{id: "get_quantile", source: "sample_table", columns: ["numCol1"], params: {accuracyError: 0.001, target: 0.85}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-119-1"><span class="k">SELECT</span><span class="w"> </span><span class="n">PERCENTILE</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">85</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">get_quantile</span>
+</span><span id="__span-119-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 7.166 (metric result using T-Digest); 7.1 (exact calculation)</strong></li>
+</ul>
+<h3 id="get-percentile-metric">Get Percentile Metric</h3>
+<p>There is no equivalent Spark SQL function to calculate percentile value for provided number from collection.
+But the general process remains the same: value is cast to number and omitted from computation if casting yields null.
+After that T-Digest calculator is incremented with resultant numeric value and, after all values are consumed, the final
+result of the calculator is returned.</p>
+<h2 id="column-equality-metric">Column Equality Metric</h2>
+<p><strong>This metric works with at least two columns.</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-120-1">columnEq: [{id: "column_eq", source: "sample_table", columns: ["dateCol1", "dateCol2"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-121-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-121-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">dateCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">dateCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-121-3"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">column_eq</span>
+</span><span id="__span-121-4"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 5.0</strong></li>
+</ul>
+<h2 id="column-equality-metric_1">Column Equality Metric</h2>
+<p><strong>This metric works with at least two columns.</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-122-1">columnEq: [{id: "column_eq", source: "sample_table", columns: ["dateCol1", "dateCol2"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-123-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-123-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">dateCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">dateCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-123-3"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">column_eq</span>
+</span><span id="__span-123-4"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 5.0</strong></li>
+</ul>
+<h2 id="day-distance-metric">Day Distance Metric</h2>
+<p><strong>This metric works with exactly two columns.</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-124-1">dayDistance: [{id: "day_distance", source: "sample_table", columns: ["dateCol1", "dateCol2"], params: {threshold: 3, dateFormat: "yyyy-MM-dd"}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-125-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">COALESCE</span><span class="p">(</span>
+</span><span id="__span-125-2"><span class="w">  </span><span class="k">ABS</span><span class="p">(</span><span class="n">DATE_DIFF</span><span class="p">(</span>
+</span><span id="__span-125-3"><span class="w">    </span><span class="n">TO_TIMESTAMP</span><span class="p">(</span><span class="n">dateCol1</span><span class="p">,</span><span class="w"> </span><span class="s1">'yyyy-MM-dd'</span><span class="p">),</span><span class="w"> </span>
+</span><span id="__span-125-4"><span class="w">    </span><span class="n">TO_TIMESTAMP</span><span class="p">(</span><span class="n">dateCol2</span><span class="p">,</span><span class="w"> </span><span class="s1">'yyyy-MM-dd'</span><span class="p">)</span>
+</span><span id="__span-125-5"><span class="w">  </span><span class="p">)),</span><span class="w"> </span><span class="mi">2147483647</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="w">  </span><span class="c1">-- use integer max value if day distance is null</span>
+</span><span id="__span-125-6"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">day_distance</span>
+</span><span id="__span-125-7"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 3.0</strong></li>
+</ul>
+<h2 id="levenshtein-distance-metric">Levenshtein Distance Metric</h2>
+<p><strong>This metric works with exactly two columns.</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-126-1">levenshteinDistance: [{id: "levenshtein_distance", source: "sample_table", columns: ["textCol2", "numCol1"], params: {threshold: 3, normalize: false}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-127-1"><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-127-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">LEVENSHTEIN</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">),</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">))</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-127-3"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">levenshtein_distance</span>
+</span><span id="__span-127-4"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: 5.0</strong></li>
+</ul>
+<h2 id="comoment-metric">CoMoment Metric</h2>
+<p><strong>This metric works with exactly two columns.</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-128-1">coMoment: [{id: "co_moment", source: "sample_table", columns: ["textCol2", "numCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-129-1"><span class="k">SELECT</span><span class="w"> </span><span class="n">COVAR_POP</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">),</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">))</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span>
+</span><span id="__span-129-2"><span class="w">  </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span>
+</span><span id="__span-129-3"><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">co_moment</span>
+</span><span id="__span-129-4"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: -24.2118</strong></li>
+</ul>
+<h2 id="covariance-metric">Covariance Metric</h2>
+<p><strong>This metric works with exactly two columns.</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-130-1">covariance: [{id: "covariance", source: "sample_table", columns: ["textCol2", "numCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-131-1"><span class="k">SELECT</span><span class="w"> </span><span class="n">COVAR_POP</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">),</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">covariance</span>
+</span><span id="__span-131-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: -2.69</strong></li>
+</ul>
+<h2 id="covariance-bessel-metric">Covariance Bessel Metric</h2>
+<p><strong>This metric works with exactly two columns.</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-132-1">covarianceBessel: [{id: "covariance_bessel", source: "sample_table", columns: ["textCol2", "numCol1"]}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-133-1"><span class="k">SELECT</span><span class="w"> </span><span class="n">COVAR_SAMP</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol2</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">),</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">numCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">DOUBLE</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">covariance_bessel</span>
+</span><span id="__span-133-2"><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: -3.026</strong></li>
+</ul>
+<h2 id="top-n-metric">Top N Metric</h2>
+<p>This metric calculate the N most frequently occurring values in a column and corresponding occurrence frequency.
+All calculations are done approximately using <a href="https://github.com/twitter/algebird">Twitter Algebird</a> library.
+This, there is no equivalent SQL query for this metric calculator. </p>
+<p>Nevertheless, below SQL query shows an example of exact top-N values and their occurrence frequency calculation.</p>
+<p><strong>This metric works with only one column.</strong></p>
+<ul>
+<li>Metric configuration:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-134-1">covarianceBessel: [{id: "covariance_bessel", source: "sample_table", columns: ["textCol1"], params: {targetNumber: 2, maxCapacity: 10}}]
+</span></code></pre></div></li>
+<li>Equivalent SQL Query:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-135-1"><span class="k">SELECT</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">num_occurrences</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">row_cnt</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">freq</span>
+</span><span id="__span-135-2"><span class="k">FROM</span><span class="w"> </span><span class="p">(</span>
+</span><span id="__span-135-3"><span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">value</span><span class="p">,</span>
+</span><span id="__span-135-4"><span class="w">         </span><span class="k">COUNT</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">num_occurrences</span>
+</span><span id="__span-135-5"><span class="w">  </span><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span>
+</span><span id="__span-135-6"><span class="w">  </span><span class="k">WHERE</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span>
+</span><span id="__span-135-7"><span class="w">  </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span>
+</span><span id="__span-135-8"><span class="p">)</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">CROSS</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="p">(</span>
+</span><span id="__span-135-9"><span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">row_cnt</span>
+</span><span id="__span-135-10"><span class="w">  </span><span class="k">FROM</span><span class="w"> </span><span class="n">sample_table</span>
+</span><span id="__span-135-11"><span class="w">  </span><span class="k">WHERE</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">textCol1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span>
+</span><span id="__span-135-12"><span class="p">)</span><span class="w"> </span><span class="n">t2</span>
+</span><span id="__span-135-13"><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">num_occurrences</span><span class="w"> </span><span class="k">DESC</span>
+</span><span id="__span-135-14"><span class="k">LIMIT</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>Metric Result: <code>[(turtle, 0.2727), (monkey, 0.2727)]</code></strong></li>
+</ul>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../../assets/javascripts/bundle.ad660dcc.min.js"></script>
+<script>document$.subscribe(() => {
+            window.update_swagger_ui_iframe_height = function (id) {
+                var iFrameID = document.getElementById(id);
+                if (iFrameID) {
+                    full_height = (iFrameID.contentWindow.document.body.scrollHeight + 80) + "px";
+                    iFrameID.height = full_height;
+                    iFrameID.style.height = full_height;
+                }
+            }
+        
+            let iframe_id_list = []
+            var iframes = document.getElementsByClassName("swagger-ui-iframe");
+            for (var i = 0; i < iframes.length; i++) { 
+                iframe_id_list.push(iframes[i].getAttribute("id"))
+            }
+        
+            let ticking = true;
+            
+            document.addEventListener('scroll', function(e) {
+                if (!ticking) {
+                    window.requestAnimationFrame(()=> {
+                        let half_vh = window.innerHeight/2;
+                        for(var i = 0; i < iframe_id_list.length; i++) {
+                            let element = document.getElementById(iframe_id_list[i])
+                            if(element==null){
+                                return
+                            }
+                            let diff = element.getBoundingClientRect().top
+                            if(element.contentWindow.update_top_val){
+                                element.contentWindow.update_top_val(half_vh - diff)
+                            }
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        
+            const dark_scheme_name = "slate"
+            
+            window.scheme = document.body.getAttribute("data-md-color-scheme")
+            const options = {
+                attributeFilter: ['data-md-color-scheme'],
+            };
+            function color_scheme_callback(mutations) {
+                for (let mutation of mutations) {
+                    if (mutation.attributeName === "data-md-color-scheme") {
+                        scheme = document.body.getAttribute("data-md-color-scheme")
+                        var iframe_list = document.getElementsByClassName("swagger-ui-iframe")
+                        for(var i = 0; i < iframe_list.length; i++) {
+                            var ele = iframe_list.item(i);
+                            if (ele) {
+                                if (scheme === dark_scheme_name) {
+                                    ele.contentWindow.enable_dark_mode();
+                                } else {
+                                    ele.contentWindow.disable_dark_mode();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            observer = new MutationObserver(color_scheme_callback);
+            observer.observe(document.body, options);
+            })</script></body>
+</html>

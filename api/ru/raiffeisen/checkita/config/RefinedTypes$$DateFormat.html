@@ -150,7 +150,7 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="ru.raiffeisen.checkita.config">config</a></dd></dl></div>
     </li><li class="current-entities indented5">
-                        <a class="object" href="RefinedTypes$$DateFormat$.html" title=""></a>
+                        <span class="separator"></span>
                         <a class="class" href="" title="DateFormat class is used to store both date-time pattern and corresponding formatter."></a>
                         <a href="" title="DateFormat class is used to store both date-time pattern and corresponding formatter.">DateFormat</a>
                       </li><li class="current-entities indented5">
@@ -168,16 +168,14 @@
           <div id="content">
             <body class="class type">
       <div id="definition">
-        <a href="RefinedTypes$$DateFormat$.html" title="See companion object"><div class="big-circle class-companion-object">c</div></a>
+        <div class="big-circle class">c</div>
         <p id="owner"><a href="../../../index.html" class="extype" name="ru">ru</a>.<a href="../../index.html" class="extype" name="ru.raiffeisen">raiffeisen</a>.<a href="../index.html" class="extype" name="ru.raiffeisen.checkita">checkita</a>.<a href="index.html" class="extype" name="ru.raiffeisen.checkita.config">config</a>.<a href="RefinedTypes$.html" class="extype" name="ru.raiffeisen.checkita.config.RefinedTypes">RefinedTypes</a></p>
-        <h1><a href="RefinedTypes$$DateFormat$.html" title="See companion object">DateFormat</a><span class="permalink">
+        <h1>DateFormat<span class="permalink">
       <a href="../../../../ru/raiffeisen/checkita/config/RefinedTypes$$DateFormat.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
-        <h3><span class="morelinks"><div>
-            Companion <a href="RefinedTypes$$DateFormat$.html" title="See companion object">object DateFormat</a>
-          </div></span></h3>
+        <h3><span class="morelinks"></span></h3>
       </div>
 
       <h4 id="signature" class="signature">
@@ -186,7 +184,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">DateFormat</span><span class="params">(<span name="pattern">pattern: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="formatter">formatter: <span class="extype" name="java.time.format.DateTimeFormatter">DateTimeFormatter</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">DateFormat</span><span class="params">(<span name="pattern">pattern: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -195,7 +193,7 @@
 Such construction allows to verify if pattern is convertable to formatter at the point
 of configuration reading and also supports backwards conversion (when writing configuration).
 The issue with backwards conversion is due to DateTimeFormatter does not store string representation
-of original datetime pattern.</p></div><dl class="paramcmts block"><dt class="param">pattern</dt><dd class="cmt"><p>- datetime pattern string</p></dd><dt class="param">formatter</dt><dd class="cmt"><p>- datetime formatter for pattern</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>DataTimeFormatter is not serializable, therefore, it is marked as @transient
+of original datetime pattern.</p></div><dl class="paramcmts block"><dt class="param">pattern</dt><dd class="cmt"><p>- datetime pattern string</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>DataTimeFormatter is not serializable, therefore, it is marked as @transient
       to avoid serialization errors in Spark Tasks.</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
@@ -247,9 +245,9 @@ of original datetime pattern.</p></div><dl class="paramcmts block"><dt class="pa
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(pattern:String,formatter:java.time.format.DateTimeFormatter):ru.raiffeisen.checkita.config.RefinedTypes.DateFormat"></a><a id="&lt;init&gt;:DateFormat"></a>
+      <a id="&lt;init&gt;(pattern:String):ru.raiffeisen.checkita.config.RefinedTypes.DateFormat"></a><a id="&lt;init&gt;:DateFormat"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/config/RefinedTypes$$DateFormat.html#&lt;init&gt;(pattern:String,formatter:java.time.format.DateTimeFormatter):ru.raiffeisen.checkita.config.RefinedTypes.DateFormat" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/config/RefinedTypes$$DateFormat.html#&lt;init&gt;(pattern:String):ru.raiffeisen.checkita.config.RefinedTypes.DateFormat" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -258,10 +256,10 @@ of original datetime pattern.</p></div><dl class="paramcmts block"><dt class="pa
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">DateFormat</span><span class="params">(<span name="pattern">pattern: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="formatter">formatter: <span class="extype" name="java.time.format.DateTimeFormatter">DateTimeFormatter</span></span>)</span>
+        <span class="name">DateFormat</span><span class="params">(<span name="pattern">pattern: <span class="extype" name="scala.Predef.String">String</span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">pattern</dt><dd class="cmt"><p>- datetime pattern string</p></dd><dt class="param">formatter</dt><dd class="cmt"><p>- datetime formatter for pattern</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">pattern</dt><dd class="cmt"><p>- datetime pattern string</p></dd></dl></div>
     </li></ol>
             </div>
 

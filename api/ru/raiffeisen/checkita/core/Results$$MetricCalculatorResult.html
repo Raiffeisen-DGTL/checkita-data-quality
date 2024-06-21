@@ -486,6 +486,25 @@ for storing into results storage and sending via targets.
 for storing into results storage and sending via targets.</p><div class="fullcomment"><div class="comment cmt"><p>Converts regular metric calculator result to final regular metric result representation suitable
 for storing into results storage and sending via targets.
 </p></div><dl class="paramcmts block"><dt class="param">description</dt><dd class="cmt"><p>Regular metric description</p></dd><dt class="param">params</dt><dd class="cmt"><p>Regular metric parameters (JSON string)</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>Metadata parameters specific to this regular metric (JSON List string)</p></dd><dt class="param">jobId</dt><dd class="cmt"><p>Implicit Job ID</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt>returns</dt><dd class="cmt"><p>Finalized regular metric result</p></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.core.Results.MetricCalculatorResult#finalizeAsTrend" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalizeAsTrend(description:Option[String],params:Option[String],metadata:Option[String])(implicitjobId:String,implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings):ru.raiffeisen.checkita.storage.Models.ResultMetricTrend"></a><a id="finalizeAsTrend(Option[String],Option[String],Option[String])(String,AppSettings):ResultMetricTrend"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/core/Results$$MetricCalculatorResult.html#finalizeAsTrend(description:Option[String],params:Option[String],metadata:Option[String])(implicitjobId:String,implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings):ru.raiffeisen.checkita.storage.Models.ResultMetricTrend" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">finalizeAsTrend</span><span class="params">(<span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="params">params: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="metadata">metadata: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="jobId">jobId: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="ru.raiffeisen.checkita.appsettings.AppSettings">AppSettings</a></span>)</span><span class="result">: <a href="../storage/Models$$ResultMetricTrend.html" class="extype" name="ru.raiffeisen.checkita.storage.Models.ResultMetricTrend">ResultMetricTrend</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Converts trend metric calculator result to final trend metric result representation suitable
+for storing into results storage and sending via targets.</p><div class="fullcomment"><div class="comment cmt"><p>Converts trend metric calculator result to final trend metric result representation suitable
+for storing into results storage and sending via targets.
+</p></div><dl class="paramcmts block"><dt class="param">description</dt><dd class="cmt"><p>Regular metric description</p></dd><dt class="param">params</dt><dd class="cmt"><p>Regular metric parameters (JSON string)</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>Metadata parameters specific to this regular metric (JSON List string)</p></dd><dt class="param">jobId</dt><dd class="cmt"><p>Implicit Job ID</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt>returns</dt><dd class="cmt"><p>Finalized trend metric result</p></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.core.Results.MetricCalculatorResult#finalizeMetricErrors" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalizeMetricErrors(implicitjobId:String,implicitsettings:ru.raiffeisen.checkita.appsettings.AppSettings):Seq[ru.raiffeisen.checkita.storage.Models.ResultMetricError]"></a><a id="finalizeMetricErrors(String,AppSettings):Seq[ResultMetricError]"></a>
       <span class="permalink">

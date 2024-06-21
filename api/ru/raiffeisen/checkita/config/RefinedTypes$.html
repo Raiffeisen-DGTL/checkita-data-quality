@@ -313,14 +313,14 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="DateFormat class is used to store both date-time pattern and corresponding formatter." href="RefinedTypes$$DateFormat.html"><span class="name">DateFormat</span></a><span class="params">(<span name="pattern">pattern: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="formatter">formatter: <span class="extype" name="java.time.format.DateTimeFormatter">DateTimeFormatter</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="DateFormat class is used to store both date-time pattern and corresponding formatter." href="RefinedTypes$$DateFormat.html"><span class="name">DateFormat</span></a><span class="params">(<span name="pattern">pattern: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       <p class="shortcomment cmt">DateFormat class is used to store both date-time pattern and corresponding formatter.</p><div class="fullcomment"><div class="comment cmt"><p>DateFormat class is used to store both date-time pattern and corresponding formatter.
 Such construction allows to verify if pattern is convertable to formatter at the point
 of configuration reading and also supports backwards conversion (when writing configuration).
 The issue with backwards conversion is due to DateTimeFormatter does not store string representation
-of original datetime pattern.</p></div><dl class="paramcmts block"><dt class="param">pattern</dt><dd class="cmt"><p>- datetime pattern string</p></dd><dt class="param">formatter</dt><dd class="cmt"><p>- datetime formatter for pattern</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>DataTimeFormatter is not serializable, therefore, it is marked as @transient
+of original datetime pattern.</p></div><dl class="paramcmts block"><dt class="param">pattern</dt><dd class="cmt"><p>- datetime pattern string</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>DataTimeFormatter is not serializable, therefore, it is marked as @transient
       to avoid serialization errors in Spark Tasks.</p></span></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.config.RefinedTypes.DoubleElemStringSeq" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DoubleElemStringSeq=eu.timepit.refined.api.Refined[Seq[String],eu.timepit.refined.collection.Size[eu.timepit.refined.generic.Equal[Int(2)]]]"></a><a id="DoubleElemStringSeq:DoubleElemStringSeq"></a>
@@ -978,22 +978,6 @@ in this case parent source are registered as temporary views in Spark.</p></div>
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.config.RefinedTypes.DateFormat" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DateFormat"></a><a id="DateFormat:DateFormat"></a>
-      <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/config/RefinedTypes$$DateFormat$.html" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a title="" href="RefinedTypes$$DateFormat$.html"><span class="name">DateFormat</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      
-      
     </li>
               </ol>
             </div>

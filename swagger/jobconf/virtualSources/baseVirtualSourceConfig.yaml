@@ -1,0 +1,71 @@
+type: object
+required:
+  - id
+  - kind
+  - parentSources
+properties:
+  id:
+    type: string
+    description: Source ID
+    example: filter_nan_virtual_source
+  description:
+    type: string
+    description: Optional. Source description
+    example: Delimited file source.
+  kind:
+    type: string
+    description: Sets the type (kind) of the virtual source.
+    enum:
+      - sql
+      - join
+      - filter
+      - select
+      - aggregate
+    example: sql
+  parentSources:
+    type: array
+    description: |-
+      List of parent sources to use for creation of virtual sources. 
+      There could be a limitations imposed in number of parent sources, depending on virtual source type.
+    example:
+      - 'some_regular_source'
+    items:
+      type: string
+      description: ID of the parent source.
+  persist:
+    type: string
+    description: |-
+      One of the allowed Spark StorageLevels used to cache virtual sources. 
+      By default, virtual sources are not cached.
+    enum:
+      - NONE
+      - DISK_ONLY
+      - DISK_ONLY_2
+      - MEMORY_ONLY
+      - MEMORY_ONLY_2
+      - MEMORY_ONLY_SER
+      - MEMORY_ONLY_SER_2
+      - MEMORY_AND_DISK
+      - MEMORY_AND_DISK_2
+      - MEMORY_AND_DISK_SER
+      - MEMORY_AND_DISK_SER_2
+      - OFF_HEAP
+  save:
+    description:  File output configuration used to save virtual source. By default, virtual sources are not saved.
+    $ref: '../fileOutput/fileOutputConfig.yaml'
+  keyFields:
+    type: array
+    description: |-
+      Optional list of column that form a Primary Key or are used to identify row within a dataset.
+      Key fields are primarily used in error collection reports.
+    items:
+      type: string
+      description: Column name
+    default: [ ]
+  metadata:
+    type: array
+    description: Optional list of arbitrary user-defined metadata parameters specific to this schema.
+    items:
+      type: string
+      description: Metadata parameter string in format of `param.name=param.value`
+    default: [ ]

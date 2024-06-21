@@ -1,0 +1,9 @@
+type: object
+required:
+  - query
+properties:
+  query:
+    type: string
+    description: SQL query to build virtual source. Existing sources are referred in SQL query by their IDs.
+    example: "SELECT * FROM regular_source_id WHERE id_column IS NOT NULL"
+    

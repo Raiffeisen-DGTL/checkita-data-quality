@@ -165,14 +165,42 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="ru.raiffeisen.checkita.core">core</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.core.serialization" visbl="pub" class="indented5 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="serialization"></a><a id="serialization:serialization"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/core/serialization/index.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="serialization/index.html"><span class="name">serialization</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="ru.raiffeisen.checkita.core">core</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.core.streaming" visbl="pub" class="indented5 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="streaming"></a><a id="streaming:streaming"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/core/streaming/index.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="streaming/index.html"><span class="name">streaming</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="ru.raiffeisen.checkita.core">core</a></dd></dl></div>
     </li><li class="current-entities indented4">
                         <a class="object" href="CalculatorStatus$.html" title=""></a>
                         <a class="trait" href="CalculatorStatus.html" title="Calculator Status enumeration."></a>
                         <a href="CalculatorStatus.html" title="Calculator Status enumeration.">CalculatorStatus</a>
-                      </li><li class="current-entities indented4">
-                        <span class="separator"></span>
-                        <a class="object" href="Casting$.html" title="Helpers used to convert values of type Any to desirable type."></a>
-                        <a href="Casting$.html" title="Helpers used to convert values of type Any to desirable type.">Casting</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="object" href="" title=""></a>
@@ -273,11 +301,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Check calculator result." href="Results$$CheckCalculatorResult.html"><span class="name">CheckCalculatorResult</span></a><span class="params">(<span name="checkId">checkId: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="checkName">checkName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="sourceIds">sourceIds: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="baseMetric">baseMetric: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="comparedMetric">comparedMetric: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="comparedThreshold">comparedThreshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="lowerBound">lowerBound: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="upperBound">upperBound: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="status">status: <a href="CalculatorStatus.html" class="extype" name="ru.raiffeisen.checkita.core.CalculatorStatus">CalculatorStatus</a></span>, <span name="message">message: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultType">resultType: <a href="Results$$ResultType.html" class="extype" name="ru.raiffeisen.checkita.core.Results.ResultType">ResultType</a> = <span class="symbol"><span class="name"><a href="Results$$ResultType$.html">ResultType.Check</a></span></span></span>)</span><span class="result"> extends <a href="Results$$TypedResult.html" class="extype" name="ru.raiffeisen.checkita.core.Results.TypedResult">TypedResult</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Check calculator result." href="Results$$CheckCalculatorResult.html"><span class="name">CheckCalculatorResult</span></a><span class="params">(<span name="checkId">checkId: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="checkName">checkName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="sourceIds">sourceIds: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="baseMetric">baseMetric: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="comparedMetric">comparedMetric: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="comparedThreshold">comparedThreshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="lowerBound">lowerBound: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="upperBound">upperBound: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="status">status: <a href="CalculatorStatus.html" class="extype" name="ru.raiffeisen.checkita.core.CalculatorStatus">CalculatorStatus</a></span>, <span name="message">message: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultType">resultType: <a href="Results$$ResultType.html" class="extype" name="ru.raiffeisen.checkita.core.Results.ResultType">ResultType</a> = <span class="symbol"><span class="name"><a href="Results$$ResultType$.html">ResultType.Check</a></span></span></span>)</span><span class="result"> extends <a href="Results$$TypedResult.html" class="extype" name="ru.raiffeisen.checkita.core.Results.TypedResult">TypedResult</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       <p class="shortcomment cmt">Check calculator result.</p><div class="fullcomment"><div class="comment cmt"><p>Check calculator result.
-</p></div><dl class="paramcmts block"><dt class="param">checkId</dt><dd class="cmt"><p>Check ID</p></dd><dt class="param">checkName</dt><dd class="cmt"><p>Check calculator name</p></dd><dt class="param">baseMetric</dt><dd class="cmt"><p>Base metric used to build check</p></dd><dt class="param">comparedMetric</dt><dd class="cmt"><p>Metric to compare with</p></dd><dt class="param">comparedThreshold</dt><dd class="cmt"><p>Threshold to compare with</p></dd><dt class="param">lowerBound</dt><dd class="cmt"><p>Allowed lower bound for base metric value</p></dd><dt class="param">upperBound</dt><dd class="cmt"><p>Allowed upper bound for base metric value</p></dd><dt class="param">status</dt><dd class="cmt"><p>Check status</p></dd><dt class="param">message</dt><dd class="cmt"><p>Check message</p></dd><dt class="param">resultType</dt><dd class="cmt"><p>Type of result</p></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">checkId</dt><dd class="cmt"><p>Check ID</p></dd><dt class="param">checkName</dt><dd class="cmt"><p>Check calculator name</p></dd><dt class="param">baseMetric</dt><dd class="cmt"><p>Base metric used to build check</p></dd><dt class="param">comparedMetric</dt><dd class="cmt"><p>Sequence of metrics to compare with.</p></dd><dt class="param">comparedThreshold</dt><dd class="cmt"><p>Threshold to compare with</p></dd><dt class="param">lowerBound</dt><dd class="cmt"><p>Allowed lower bound for base metric value</p></dd><dt class="param">upperBound</dt><dd class="cmt"><p>Allowed upper bound for base metric value</p></dd><dt class="param">status</dt><dd class="cmt"><p>Check status</p></dd><dt class="param">message</dt><dd class="cmt"><p>Check message</p></dd><dt class="param">resultType</dt><dd class="cmt"><p>Type of result</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Expression checks can utilize multiple metrics. Therefore, compareMetric field is represented as
+      sequence: when compare metric is absent the empty sequence will be written,
+      otherwise sequence containing one or more metric IDs will be written.</p></span></dd></dl></div>
     </li><li name="ru.raiffeisen.checkita.core.Results.LoadCheckCalculatorResult" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="LoadCheckCalculatorResultextendsProductwithSerializable"></a><a id="LoadCheckCalculatorResult:LoadCheckCalculatorResult"></a>
       <span class="permalink">

@@ -1,0 +1,34 @@
+title: Application Configuration
+description: Configuration for Checkita Data Quality framework
+type: object
+properties:
+  appConfig:
+    type: object
+    description: Object holding all Checkita Data Quality configuration sections.
+    properties:
+      applicationName:
+        type: string
+        description: Name of the Spark application
+        default: Checkita Data Quality
+        example: your-spark-app-name
+      defaultSparkOptions:
+        type: array
+        description: List of default Spark configuration parameters used acros multiple jobs.
+        items:
+          type: string
+          description: Spark parameter in format of `spark.param.name=spark.param.value`
+        default: []
+      dateTimeOptions:
+        $ref: 'dateTimeConfig.yaml'
+      streaming:
+        $ref: 'streamConfig.yaml'
+      enablers:
+        $ref: 'enablersConfig.yaml'
+      storage:
+        $ref: 'storageConfig.yaml'
+      email:
+        $ref: 'emailConfig.yaml'
+      mattermost:
+        $ref: 'mattermostConfig.yaml'
+      encryption:
+        $ref: 'encryptionConfig.yaml'

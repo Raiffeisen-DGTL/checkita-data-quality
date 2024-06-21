@@ -1,0 +1,25 @@
+description: |-
+  List of all virtual streams configurations.
+
+  When running Data Quality checks over the streaming data sources it is required 
+  to apply transformations to them thus creating virtual streaming sources. 
+  Such sources have to be defined in virutalStreams section of the job configuration. 
+  Thus, transformations defined in this section are applied only to streaming sources 
+  using Spark Structured Streaming API. 
+
+  The configuration of virtual streaming sources is the same as for the static ones.
+  In addition, column used as source of timestamp for windowing can be redefined 
+  and derived from the resultant virtual stream scheme.
+type: array
+items:
+  oneOf:
+    - title: filter
+      allOf:
+        - $ref: 'virtualSources/baseVirtualSourceConfig.yaml'
+        - $ref: 'virtualSources/filterVirtualSourceConfig.yaml'
+        - $ref: 'streams/windowByConfig.yaml'
+    - title: select
+      allOf:
+        - $ref: 'virtualSources/baseVirtualSourceConfig.yaml'
+        - $ref: 'virtualSources/selectVirtualSourceConfig.yaml'
+        - $ref: 'streams/windowByConfig.yaml'

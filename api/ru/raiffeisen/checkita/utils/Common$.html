@@ -143,8 +143,8 @@
                         <a href="EnrichedDT.html" title="Wrapper over datetime string with predefined format and time zone.">EnrichedDT</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="trait" href="FormulaParser.html" title="Recursively creates a tree of operations and executes it"></a>
-                        <a href="FormulaParser.html" title="Recursively creates a tree of operations and executes it">FormulaParser</a>
+                        <a class="trait" href="FormulaParser.html" title="Recursively creates a tree of operations and executes it."></a>
+                        <a href="FormulaParser.html" title="Recursively creates a tree of operations and executes it.">FormulaParser</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="trait" href="Logging.html" title="Logging trait that is mixed to the classes that do logging."></a>
@@ -239,7 +239,26 @@
         <div id="allMembers">
         
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="ru.raiffeisen.checkita.utils.Common.UnsafeArraySeqOps" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="UnsafeArraySeqOps[T]extendsAnyRef"></a><a id="UnsafeArraySeqOps[T]:UnsafeArraySeqOps[T]"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/Common$$UnsafeArraySeqOps.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Common$$UnsafeArraySeqOps.html"><span class="name">UnsafeArraySeqOps</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      
+      
+    </li></ol>
+            </div>
 
         
 
@@ -440,6 +459,44 @@
       
       <p class="shortcomment cmt">Collects field values of case class in form of Map(field_name -&gt; field_value).</p><div class="fullcomment"><div class="comment cmt"><p>Collects field values of case class in form of Map(field_name -&gt; field_value).
 Also unpacks Refined and DateFormat fields if any (required for proper JSON serialization)</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>Generic type constrained to case classes</p></dd><dt class="param">obj</dt><dd class="cmt"><p>Case class instance to get field values from</p></dd><dt>returns</dt><dd class="cmt"><p>Map of case class fields with values.</p></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.utils.Common#getPrependVars" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getPrependVars(extraVariables:Map[String,String]):String"></a><a id="getPrependVars(Map[String,String]):String"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/Common$.html#getPrependVars(extraVariables:Map[String,String]):String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getPrependVars</span><span class="params">(<span name="extraVariables">extraVariables: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Retrieves DQ variables from environment, combines them with explicitly provided variables
+and then converts them into a string that will be prepended to a configuration prior reading.</p><div class="fullcomment"><div class="comment cmt"><p>Retrieves DQ variables from environment, combines them with explicitly provided variables
+and then converts them into a string that will be prepended to a configuration prior reading.
+</p></div><dl class="paramcmts block"><dt class="param">extraVariables</dt><dd class="cmt"><p>Explicitly provided extra variables.</p></dd><dt>returns</dt><dd class="cmt"><p>String with variables to be prepended to configuration.</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Variables are collected from system and java-runtime environment and retained only those that are related to
+      Checkita Data Quality Framework: following regex is used to find such variables: <code>^(?i)(DQ)[a-z0-9_-]+$<code>.
+      These variables are combined with the ones provided in </code>extraVariables<code> argument and further used during
+      configuration files parsing.</code></code></p></span></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.utils.Common#getStringHash" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getStringHash(s:String):String"></a><a id="getStringHash(String):String"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/utils/Common$.html#getStringHash(s:String):String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getStringHash</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Builds MD5 hash for input string.</p><div class="fullcomment"><div class="comment cmt"><p>Builds MD5 hash for input string.</p></div><dl class="paramcmts block"><dt class="param">s</dt><dd class="cmt"><p>String to build has for.</p></dd><dt>returns</dt><dd class="cmt"><p>MD5 hash string.</p></dd></dl></div>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
       <span class="permalink">

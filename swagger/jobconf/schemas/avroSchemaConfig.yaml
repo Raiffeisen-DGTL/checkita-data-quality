@@ -1,0 +1,16 @@
+title: avro
+allOf:
+  - $ref: 'baseSchemaConfig.yaml'
+  - type: object
+    required:
+      - schema
+    properties:
+      schema:
+        type: string
+        description: Path to avro schema file `.avsc` to read schema from.
+        example: './schemas/avroSchema.avsc'
+      validateDefaults:
+        type: boolean
+        description: Boolean flag enabling or disabling default values validation in Avro schema.
+        default: false
+        example: true

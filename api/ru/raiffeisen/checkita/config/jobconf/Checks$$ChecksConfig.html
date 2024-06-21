@@ -203,6 +203,10 @@
                         <a href="Checks$$EqualToCheckConfig.html" title="'Equal to' check configuration">EqualToCheckConfig</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
+                        <a class="class" href="Checks$$ExpressionCheck.html" title="Expression check: uses boolean expression to evaluate check condition."></a>
+                        <a href="Checks$$ExpressionCheck.html" title="Expression check: uses boolean expression to evaluate check condition.">ExpressionCheck</a>
+                      </li><li class="current-entities indented6">
+                        <span class="separator"></span>
                         <a class="class" href="Checks$$GreaterThanCheckConfig.html" title="'Greater than' check configuration"></a>
                         <a href="Checks$$GreaterThanCheckConfig.html" title="'Greater than' check configuration">GreaterThanCheckConfig</a>
                       </li><li class="current-entities indented6">
@@ -252,12 +256,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">ChecksConfig</span><span class="params">(<span name="snapshot">snapshot: <span class="extype" name="scala.Option">Option</span>[<a href="Checks$$SnapshotChecks.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotChecks">SnapshotChecks</a>]</span>, <span name="trend">trend: <span class="extype" name="scala.Option">Option</span>[<a href="Checks$$TrendChecks.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.TrendChecks">TrendChecks</a>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">ChecksConfig</span><span class="params">(<span name="snapshot">snapshot: <span class="extype" name="scala.Option">Option</span>[<a href="Checks$$SnapshotChecks.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotChecks">SnapshotChecks</a>]</span>, <span name="trend">trend: <span class="extype" name="scala.Option">Option</span>[<a href="Checks$$TrendChecks.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.TrendChecks">TrendChecks</a>]</span>, <span name="expression">expression: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Checks$$ExpressionCheck.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.ExpressionCheck">ExpressionCheck</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Data Quality job configuration section describing all checks.</p></div><dl class="paramcmts block"><dt class="param">snapshot</dt><dd class="cmt"><p>Snapshot checks of all subtypes</p></dd><dt class="param">trend</dt><dd class="cmt"><p>Trend checks of all subtypes</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Data Quality job configuration section describing all checks.
+</p></div><dl class="paramcmts block"><dt class="param">snapshot</dt><dd class="cmt"><p>Snapshot checks of all subtypes</p></dd><dt class="param">trend</dt><dd class="cmt"><p>Trend checks of all subtypes</p></dd><dt class="param">expression</dt><dd class="cmt"><p>List of expression checks</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -308,9 +313,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ru.raiffeisen.checkita.config.jobconf.Checks.ChecksConfig#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(snapshot:Option[ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotChecks],trend:Option[ru.raiffeisen.checkita.config.jobconf.Checks.TrendChecks]):ru.raiffeisen.checkita.config.jobconf.Checks.ChecksConfig"></a><a id="&lt;init&gt;:ChecksConfig"></a>
+      <a id="&lt;init&gt;(snapshot:Option[ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotChecks],trend:Option[ru.raiffeisen.checkita.config.jobconf.Checks.TrendChecks],expression:Seq[ru.raiffeisen.checkita.config.jobconf.Checks.ExpressionCheck]):ru.raiffeisen.checkita.config.jobconf.Checks.ChecksConfig"></a><a id="&lt;init&gt;:ChecksConfig"></a>
       <span class="permalink">
-      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Checks$$ChecksConfig.html#&lt;init&gt;(snapshot:Option[ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotChecks],trend:Option[ru.raiffeisen.checkita.config.jobconf.Checks.TrendChecks]):ru.raiffeisen.checkita.config.jobconf.Checks.ChecksConfig" title="Permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Checks$$ChecksConfig.html#&lt;init&gt;(snapshot:Option[ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotChecks],trend:Option[ru.raiffeisen.checkita.config.jobconf.Checks.TrendChecks],expression:Seq[ru.raiffeisen.checkita.config.jobconf.Checks.ExpressionCheck]):ru.raiffeisen.checkita.config.jobconf.Checks.ChecksConfig" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -319,10 +324,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">ChecksConfig</span><span class="params">(<span name="snapshot">snapshot: <span class="extype" name="scala.Option">Option</span>[<a href="Checks$$SnapshotChecks.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotChecks">SnapshotChecks</a>]</span>, <span name="trend">trend: <span class="extype" name="scala.Option">Option</span>[<a href="Checks$$TrendChecks.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.TrendChecks">TrendChecks</a>]</span>)</span>
+        <span class="name">ChecksConfig</span><span class="params">(<span name="snapshot">snapshot: <span class="extype" name="scala.Option">Option</span>[<a href="Checks$$SnapshotChecks.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.SnapshotChecks">SnapshotChecks</a>]</span>, <span name="trend">trend: <span class="extype" name="scala.Option">Option</span>[<a href="Checks$$TrendChecks.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.TrendChecks">TrendChecks</a>]</span>, <span name="expression">expression: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Checks$$ExpressionCheck.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.ExpressionCheck">ExpressionCheck</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">snapshot</dt><dd class="cmt"><p>Snapshot checks of all subtypes</p></dd><dt class="param">trend</dt><dd class="cmt"><p>Trend checks of all subtypes</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">snapshot</dt><dd class="cmt"><p>Snapshot checks of all subtypes</p></dd><dt class="param">trend</dt><dd class="cmt"><p>Trend checks of all subtypes</p></dd><dt class="param">expression</dt><dd class="cmt"><p>List of expression checks</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -437,6 +442,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.config.jobconf.Checks.ChecksConfig#expression" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="expression:Seq[ru.raiffeisen.checkita.config.jobconf.Checks.ExpressionCheck]"></a><a id="expression:Seq[ExpressionCheck]"></a>
+      <span class="permalink">
+      <a href="../../../../../ru/raiffeisen/checkita/config/jobconf/Checks$$ChecksConfig.html#expression:Seq[ru.raiffeisen.checkita.config.jobconf.Checks.ExpressionCheck]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">expression</span><span class="result">: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="Checks$$ExpressionCheck.html" class="extype" name="ru.raiffeisen.checkita.config.jobconf.Checks.ExpressionCheck">ExpressionCheck</a>]</span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">

@@ -165,14 +165,42 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="ru.raiffeisen.checkita.core">core</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.core.serialization" visbl="pub" class="indented5 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="serialization"></a><a id="serialization:serialization"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/core/serialization/index.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="serialization/index.html"><span class="name">serialization</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="ru.raiffeisen.checkita.core">core</a></dd></dl></div>
+    </li><li name="ru.raiffeisen.checkita.core.streaming" visbl="pub" class="indented5 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="streaming"></a><a id="streaming:streaming"></a>
+      <span class="permalink">
+      <a href="../../../../ru/raiffeisen/checkita/core/streaming/index.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="streaming/index.html"><span class="name">streaming</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="ru.raiffeisen.checkita.core">core</a></dd></dl></div>
     </li><li class="current-entities indented4">
                         <a class="object" href="CalculatorStatus$.html" title=""></a>
                         <a class="trait" href="CalculatorStatus.html" title="Calculator Status enumeration."></a>
                         <a href="CalculatorStatus.html" title="Calculator Status enumeration.">CalculatorStatus</a>
-                      </li><li class="current-entities indented4">
-                        <span class="separator"></span>
-                        <a class="object" href="Casting$.html" title="Helpers used to convert values of type Any to desirable type."></a>
-                        <a href="Casting$.html" title="Helpers used to convert values of type Any to desirable type.">Casting</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="object" href="Results$.html" title=""></a>
@@ -550,10 +578,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="ru.raiffeisen.checkita.core.Source#validated" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="validated(id:String,df:org.apache.spark.sql.DataFrame,keyFields:Seq[String],parents:Seq[String])(implicitcaseSensitive:Boolean):ru.raiffeisen.checkita.core.Source"></a><a id="validated(String,DataFrame,Seq[String],Seq[String])(Boolean):Source"></a>
+    </li><li name="ru.raiffeisen.checkita.core.Source#validated" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="validated(id:String,df:org.apache.spark.sql.DataFrame,keyFields:Seq[String],parents:Seq[String],checkpoint:Option[ru.raiffeisen.checkita.core.streaming.Checkpoints.Checkpoint])(implicitcaseSensitive:Boolean):ru.raiffeisen.checkita.core.Source"></a><a id="validated(String,DataFrame,Seq[String],Seq[String],Option[Checkpoint])(Boolean):Source"></a>
       <span class="permalink">
-      <a href="../../../../ru/raiffeisen/checkita/core/Source$.html#validated(id:String,df:org.apache.spark.sql.DataFrame,keyFields:Seq[String],parents:Seq[String])(implicitcaseSensitive:Boolean):ru.raiffeisen.checkita.core.Source" title="Permalink">
+      <a href="../../../../ru/raiffeisen/checkita/core/Source$.html#validated(id:String,df:org.apache.spark.sql.DataFrame,keyFields:Seq[String],parents:Seq[String],checkpoint:Option[ru.raiffeisen.checkita.core.streaming.Checkpoints.Checkpoint])(implicitcaseSensitive:Boolean):ru.raiffeisen.checkita.core.Source" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -562,10 +590,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">validated</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="keyFields">keyFields: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="parents">parents: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="caseSensitive">caseSensitive: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="Source.html" class="extype" name="ru.raiffeisen.checkita.core.Source">Source</a></span>
+        <span class="name">validated</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="keyFields">keyFields: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="parents">parents: <a href="../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">Seq.empty</a></span></span></span>, <span name="checkpoint">checkpoint: <span class="extype" name="scala.Option">Option</span>[<a href="streaming/Checkpoints$$Checkpoint.html" class="extype" name="ru.raiffeisen.checkita.core.streaming.Checkpoints.Checkpoint">Checkpoint</a>] = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">None</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="caseSensitive">caseSensitive: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="Source.html" class="extype" name="ru.raiffeisen.checkita.core.Source">Source</a></span>
       </span>
       
-      
+      <p class="shortcomment cmt">Creates Source instance with additional validation of its fields.</p><div class="fullcomment"><div class="comment cmt"><p>Creates Source instance with additional validation of its fields.
+</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Source ID</p></dd><dt class="param">df</dt><dd class="cmt"><p>Spark dataframe with source data</p></dd><dt class="param">keyFields</dt><dd class="cmt"><p>Key fields (columns) of this source: uniquely define data row</p></dd><dt class="param">parents</dt><dd class="cmt"><p>Sequence of parent sources IDs from which this source is build (applies to virtual sources)</p></dd><dt class="param">checkpoint</dt><dd class="cmt"><p>Initial source checkpoint. Applicable only for streaming sources.</p></dd><dt class="param">caseSensitive</dt><dd class="cmt"><p>Implicit flag defining whether column names are case sensitive or not.</p></dd><dt>returns</dt><dd class="cmt"><p>Source instance</p></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
