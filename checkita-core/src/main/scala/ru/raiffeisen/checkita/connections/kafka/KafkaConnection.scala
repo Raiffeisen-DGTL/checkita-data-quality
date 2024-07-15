@@ -104,12 +104,7 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
       case KafkaTopicFormat.Json =>
         from_json(binaryColumn.cast(StringType), schemaGetter("JSON").schema).alias(colName)
       case KafkaTopicFormat.Xml =>
-        val xmlSchema = schemaGetter("XML").schema
-        from_json(
-          to_json(
-            from_xml(binaryColumn.cast(StringType), xmlSchema)
-          ).cast(StringType), xmlSchema
-        ).alias(colName)
+            from_xml(binaryColumn.cast(StringType), schemaGetter("XML").schema).alias(colName)
       case KafkaTopicFormat.Avro =>
         // intentionally use deprecated method to support compatibility with Spark 2.4.x versions.
         from_avro(binaryColumn, schemaGetter("AVRO").toAvroSchema).alias(colName)
