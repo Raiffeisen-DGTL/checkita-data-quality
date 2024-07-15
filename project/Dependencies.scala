@@ -34,6 +34,9 @@ object Dependencies {
   val h2db = "com.h2database" % "h2" % "1.4.196"
   val clickhouse = "com.clickhouse" % "clickhouse-jdbc" % "0.4.6"
 
+  // spark-xml
+  val sparkXml = "com.databricks" %% "spark-xml" % "0.18.0"
+
   // Slick
   val slickVersion = "3.4.1"
   val slick = "com.typesafe.slick" %% "slick" % slickVersion
@@ -93,7 +96,8 @@ object Dependencies {
     flywayMSSQL,
     schemaRegistry,
     scalaTest,
-    scalaCollCompat
+    scalaCollCompat,
+    sparkXml
   )
 
   val checkita_api: Seq[ModuleID] = Seq(
