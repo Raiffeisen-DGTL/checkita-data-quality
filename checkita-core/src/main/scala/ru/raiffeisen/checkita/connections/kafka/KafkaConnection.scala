@@ -1,14 +1,13 @@
 package ru.raiffeisen.checkita.connections.kafka
 
+import com.databricks.spark.xml.functions.from_xml
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
 import org.apache.spark.sql.avro.functions.from_avro
-import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
-import org.json.XML
 import org.json4s.jackson.Serialization.write
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.Enums.KafkaTopicFormat
@@ -43,8 +42,6 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
     params.map {
       case (k, v) => if (k.startsWith("kafka.")) k.drop("kafka.".length) -> v else k -> v
     }
-
-  private val xmlToJson: UserDefinedFunction = udf((xmlStr: String) => XML.toJSONObject(xmlStr).toString)
   
   /**
    * Gets proper subscribe option for given source configuration.
@@ -107,7 +104,12 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
       case KafkaTopicFormat.Json =>
         from_json(binaryColumn.cast(StringType), schemaGetter("JSON").schema).alias(colName)
       case KafkaTopicFormat.Xml =>
-        from_json(xmlToJson(binaryColumn.cast(StringType)), schemaGetter("XML").schema).alias(colName)
+        val xmlSchema = schemaGetter("XML").schema
+        from_json(
+          to_json(
+            from_xml(binaryColumn.cast(StringType), xmlSchema)
+          ).cast(StringType), xmlSchema
+        ).alias(colName)
       case KafkaTopicFormat.Avro =>
         // intentionally use deprecated method to support compatibility with Spark 2.4.x versions.
         from_avro(binaryColumn, schemaGetter("AVRO").toAvroSchema).alias(colName)
