@@ -204,7 +204,11 @@ object DFMetricProcessor extends BasicMetricProcessor {
       Map.empty[String, (String, String, Boolean)]
     )){
       case (acc, metric) =>
-        val calculator = metric.initDFMetricCalculator
+        val calculator = metric.initDFMetricCalculator(
+          if (metric.metricColumns.size == 1 && metric.metricColumns.head == "*") df.schema.fieldNames.toSeq
+          else metric.metricColumns
+        )
+          
         val updatedCalcResCols = acc._3 + (calculator.metricId -> (
           addColumnSuffix(calculator.metricId, DFMetricOutput.Result.entryName),
           addColumnSuffix(calculator.metricId, DFMetricOutput.Errors.entryName),

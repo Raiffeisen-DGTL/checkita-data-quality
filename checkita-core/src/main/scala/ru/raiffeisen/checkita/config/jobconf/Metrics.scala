@@ -128,7 +128,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.RowCount
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new RowCountRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = RowCountDFMetricCalculator(metricId)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = RowCountDFMetricCalculator(metricId)
   }
 
   /** Duplicate values regular metric configuration
@@ -149,7 +149,8 @@ object Metrics {
     val metricName: MetricName                 = MetricName.DuplicateValues
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new DuplicateValuesRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = DuplicateValuesDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = 
+      DuplicateValuesDFMetricCalculator(metricId, columns)
   }
 
   /** Distinct values regular metric configuration
@@ -170,7 +171,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.DistinctValues
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new DistinctValuesRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = DistinctValuesDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = DistinctValuesDFMetricCalculator(metricId, columns)
   }
 
   /** Approximate distinct values regular metric configuration
@@ -194,8 +195,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: RDDMetricCalculator =
       new HyperLogLogRDDMetricCalculator(params.accuracyError.value)
-    def initDFMetricCalculator: DFMetricCalculator = ApproximateDistinctValuesDFMetricCalculator(
-      metricId, metricColumns, params.accuracyError.value
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = ApproximateDistinctValuesDFMetricCalculator(
+      metricId, columns, params.accuracyError.value
     )
   }
 
@@ -219,8 +220,8 @@ object Metrics {
     val metricName: MetricName                 = MetricName.NullValues
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator = new NullValuesRDDMetricCalculator(reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = NullValuesDFMetricCalculator(
-      metricId, metricColumns, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = NullValuesDFMetricCalculator(
+      metricId, columns, reversed
     )
   }
 
@@ -244,8 +245,8 @@ object Metrics {
     val metricName: MetricName                 = MetricName.EmptyValues
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator = new EmptyValuesRDDMetricCalculator(reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = EmptyValuesDFMetricCalculator(
-      metricId, metricColumns, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = EmptyValuesDFMetricCalculator(
+      metricId, columns, reversed
     )
   }
 
@@ -272,8 +273,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new CompletenessRDDMetricCalculator(params.includeEmptyStrings, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = CompletenessDFMetricCalculator(
-      metricId, metricColumns, params.includeEmptyStrings, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = CompletenessDFMetricCalculator(
+      metricId, columns, params.includeEmptyStrings, reversed
     )
   }
 
@@ -300,8 +301,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new EmptinessRDDMetricCalculator(params.includeEmptyStrings, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = EmptinessDFMetricCalculator(
-      metricId, metricColumns, params.includeEmptyStrings, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = EmptinessDFMetricCalculator(
+      metricId, columns, params.includeEmptyStrings, reversed
     )
   }
 
@@ -326,8 +327,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: RDDMetricCalculator =
       new SequenceCompletenessRDDMetricCalculator(params.increment.value)
-    def initDFMetricCalculator: DFMetricCalculator =
-      SequenceCompletenessDFMetricCalculator(metricId, metricColumns, params.increment.value)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator =
+      SequenceCompletenessDFMetricCalculator(metricId, columns, params.increment.value)
   }
 
   /** Sequence completeness regular metric configuration
@@ -351,8 +352,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: RDDMetricCalculator =
       new HLLSequenceCompletenessRDDMetricCalculator(params.accuracyError.value, params.increment.value)
-    def initDFMetricCalculator: DFMetricCalculator = ApproximateSequenceCompletenessDFMetricCalculator(
-      metricId, metricColumns, params.accuracyError.value, params.increment.value
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = ApproximateSequenceCompletenessDFMetricCalculator(
+      metricId, columns, params.accuracyError.value, params.increment.value
     )
   }
 
@@ -374,7 +375,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.MinString
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new MinStringRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = MinStringDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = MinStringDFMetricCalculator(metricId, columns)
   }
 
   /** Max string regular metric configuration
@@ -395,7 +396,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.MaxString
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new MaxStringRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = MaxStringDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = MaxStringDFMetricCalculator(metricId, columns)
   }
 
   /** Average string regular metric configuration
@@ -416,7 +417,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.AvgString
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new AvgStringRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = AvgStringDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = AvgStringDFMetricCalculator(metricId, columns)
   }
 
   /** String length regular metric configuration
@@ -442,8 +443,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new StringLengthRDDMetricCalculator(params.length.value, params.compareRule.toString.toLowerCase, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = StringLengthDFMetricCalculator(
-      metricId, metricColumns, params.length.value, params.compareRule.toString.toLowerCase, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = StringLengthDFMetricCalculator(
+      metricId, columns, params.length.value, params.compareRule.toString.toLowerCase, reversed
     )
   }
 
@@ -470,8 +471,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new StringInDomainRDDMetricCalculator(params.domain.value.toSet, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = StringInDomainDFMetricCalculator(
-      metricId, metricColumns, params.domain.value.toSet, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = StringInDomainDFMetricCalculator(
+      metricId, columns, params.domain.value.toSet, reversed
     )
   }
 
@@ -498,8 +499,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new StringOutDomainRDDMetricCalculator(params.domain.value.toSet, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = StringOutDomainDFMetricCalculator(
-      metricId, metricColumns, params.domain.value.toSet, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = StringOutDomainDFMetricCalculator(
+      metricId, columns, params.domain.value.toSet, reversed
     )
   }
 
@@ -526,8 +527,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new StringValuesRDDMetricCalculator(params.compareValue.value, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = StringValuesDFMetricCalculator(
-      metricId, metricColumns, params.compareValue.value, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = StringValuesDFMetricCalculator(
+      metricId, columns, params.compareValue.value, reversed
     )
   }
 
@@ -554,8 +555,8 @@ object Metrics {
     val paramString: Option[String]            = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new RegexMatchRDDMetricCalculator(params.regex.value, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = RegexMatchDFMetricCalculator(
-      metricId, metricColumns, params.regex.value, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = RegexMatchDFMetricCalculator(
+      metricId, columns, params.regex.value, reversed
     )
   }
 
@@ -582,8 +583,8 @@ object Metrics {
     val paramString: Option[String]            = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new RegexMismatchRDDMetricCalculator(params.regex.value, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = RegexMismatchDFMetricCalculator(
-      metricId, metricColumns, params.regex.value, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = RegexMismatchDFMetricCalculator(
+      metricId, columns, params.regex.value, reversed
     )
   }
 
@@ -610,8 +611,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new FormattedDateRDDMetricCalculator(params.dateFormat.pattern, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = FormattedDateDFMetricCalculator(
-      metricId, metricColumns, params.dateFormat.pattern, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = FormattedDateDFMetricCalculator(
+      metricId, columns, params.dateFormat.pattern, reversed
     )
   }
 
@@ -642,9 +643,9 @@ object Metrics {
       params.compareRule.toString.toLowerCase,
       reversed
     )
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = FormattedNumberDFMetricCalculator(
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = FormattedNumberDFMetricCalculator(
       metricId,
-      metricColumns,
+      columns,
       params.precision.value,
       params.scale.value,
       params.compareRule.toString.toLowerCase,
@@ -670,7 +671,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.MinNumber
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new MinNumberRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = MinNumberDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = MinNumberDFMetricCalculator(metricId, columns)
   }
 
   /** Max number regular metric configuration
@@ -691,7 +692,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.MaxNumber
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new MaxNumberRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = MaxNumberDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = MaxNumberDFMetricCalculator(metricId, columns)
   }
 
   /** Sum number regular metric configuration
@@ -712,7 +713,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.SumNumber
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new SumNumberRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = SumNumberDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = SumNumberDFMetricCalculator(metricId, columns)
   }
 
   /** Average number regular metric configuration
@@ -733,7 +734,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.AvgNumber
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new StdAvgNumberRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = AvgNumberDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = AvgNumberDFMetricCalculator(metricId, columns)
   }
 
   /** Standard deviation number regular metric configuration
@@ -754,7 +755,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.StdNumber
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new StdAvgNumberRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = StdNumberDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = StdNumberDFMetricCalculator(metricId, columns)
   }
 
   /** Casted number regular metric configuration
@@ -778,8 +779,8 @@ object Metrics {
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new CastedNumberRDDMetricCalculator(reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator =
-      CastedNumberDFMetricCalculator(metricId, metricColumns, reversed)
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator =
+      CastedNumberDFMetricCalculator(metricId, columns, reversed)
   }
 
   /** Number in domain regular metric configuration
@@ -805,8 +806,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new NumberInDomainRDDMetricCalculator(params.domain.value.toSet, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator =
-      NumberInDomainDFMetricCalculator(metricId, metricColumns, params.domain.value.toSet, reversed)
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator =
+      NumberInDomainDFMetricCalculator(metricId, columns, params.domain.value.toSet, reversed)
   }
 
   /** Number out domain regular metric configuration
@@ -832,8 +833,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new NumberOutDomainRDDMetricCalculator(params.domain.value.toSet, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator =
-      NumberOutDomainDFMetricCalculator(metricId, metricColumns, params.domain.value.toSet, reversed)
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator =
+      NumberOutDomainDFMetricCalculator(metricId, columns, params.domain.value.toSet, reversed)
   }
 
   /** Number less than regular metric configuration
@@ -859,8 +860,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new NumberLessThanRDDMetricCalculator(params.compareValue, params.includeBound, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator =
-      NumberLessThanDFMetricCalculator(metricId, metricColumns, params.compareValue, params.includeBound, reversed)
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator =
+      NumberLessThanDFMetricCalculator(metricId, columns, params.compareValue, params.includeBound, reversed)
   }
 
   /** Number greater than regular metric configuration
@@ -886,8 +887,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new NumberGreaterThanRDDMetricCalculator(params.compareValue, params.includeBound, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator =
-      NumberGreaterThanDFMetricCalculator(metricId, metricColumns, params.compareValue, params.includeBound, reversed)
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator =
+      NumberGreaterThanDFMetricCalculator(metricId, columns, params.compareValue, params.includeBound, reversed)
   }
 
   /** Number between regular metric configuration
@@ -914,8 +915,8 @@ object Metrics {
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator = new NumberBetweenRDDMetricCalculator(
       params.lowerCompareValue, params.upperCompareValue, params.includeBound, reversed
     )
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = NumberBetweenDFMetricCalculator(
-      metricId, metricColumns, params.lowerCompareValue, params.upperCompareValue, params.includeBound, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = NumberBetweenDFMetricCalculator(
+      metricId, columns, params.lowerCompareValue, params.upperCompareValue, params.includeBound, reversed
     )
   }
 
@@ -943,8 +944,8 @@ object Metrics {
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator = new NumberNotBetweenRDDMetricCalculator(
       params.lowerCompareValue, params.upperCompareValue, params.includeBound, reversed
     )
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = NumberNotBetweenDFMetricCalculator(
-      metricId, metricColumns, params.lowerCompareValue, params.upperCompareValue, params.includeBound, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = NumberNotBetweenDFMetricCalculator(
+      metricId, columns, params.lowerCompareValue, params.upperCompareValue, params.includeBound, reversed
     )
   }
 
@@ -971,8 +972,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new NumberValuesRDDMetricCalculator(params.compareValue, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = NumberValuesDFMetricCalculator(
-      metricId, metricColumns, params.compareValue, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = NumberValuesDFMetricCalculator(
+      metricId, columns, params.compareValue, reversed
     )
   }
 
@@ -997,8 +998,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: RDDMetricCalculator =
       new TDigestRDDMetricCalculator(params.accuracyError.value, 0)
-    def initDFMetricCalculator: DFMetricCalculator = MedianValueDFMetricCalculator(
-      metricId, metricColumns, params.accuracyError.value
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = MedianValueDFMetricCalculator(
+      metricId, columns, params.accuracyError.value
     )
   }
 
@@ -1023,8 +1024,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: RDDMetricCalculator =
       new TDigestRDDMetricCalculator(params.accuracyError.value, 0)
-    def initDFMetricCalculator: DFMetricCalculator = FirstQuantileDFMetricCalculator(
-      metricId, metricColumns, params.accuracyError.value
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = FirstQuantileDFMetricCalculator(
+      metricId, columns, params.accuracyError.value
     )
   }
 
@@ -1049,8 +1050,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: RDDMetricCalculator =
       new TDigestRDDMetricCalculator(params.accuracyError.value, 0)
-    def initDFMetricCalculator: DFMetricCalculator = ThirdQuantileDFMetricCalculator(
-      metricId, metricColumns, params.accuracyError.value
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = ThirdQuantileDFMetricCalculator(
+      metricId, columns, params.accuracyError.value
     )
   }
 
@@ -1075,8 +1076,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: RDDMetricCalculator =
       new TDigestRDDMetricCalculator(params.accuracyError.value, params.target.value)
-    def initDFMetricCalculator: DFMetricCalculator = GetQuantileDFMetricCalculator(
-      metricId, metricColumns, params.accuracyError.value, params.target.value
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = GetQuantileDFMetricCalculator(
+      metricId, columns, params.accuracyError.value, params.target.value
     )
   }
 
@@ -1101,8 +1102,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: RDDMetricCalculator =
       new TDigestRDDMetricCalculator(params.accuracyError.value, params.target)
-    def initDFMetricCalculator: DFMetricCalculator = GetPercentileDFMetricCalculator(
-      metricId, metricColumns, params.accuracyError.value, params.target
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = GetPercentileDFMetricCalculator(
+      metricId, columns, params.accuracyError.value, params.target
     )
   }
 
@@ -1126,8 +1127,8 @@ object Metrics {
     val metricName: MetricName                 = MetricName.ColumnEq
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator = new ColumnEqRDDMetricCalculator(reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator =
-      ColumnEqDFMetricCalculator(metricId, metricColumns, reversed)
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator =
+      ColumnEqDFMetricCalculator(metricId, columns, reversed)
   }
 
   /** Day distance regular metric configuration
@@ -1153,8 +1154,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new DayDistanceRDDMetricCalculator(params.dateFormat.pattern, params.threshold.value, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = DayDistanceDFMetricCalculator(
-      metricId, metricColumns, params.dateFormat.pattern, params.threshold.value, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = DayDistanceDFMetricCalculator(
+      metricId, columns, params.dateFormat.pattern, params.threshold.value, reversed
     )
   }
 
@@ -1181,8 +1182,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: ReversibleRDDMetricCalculator =
       new LevenshteinDistanceRDDMetricCalculator(params.threshold, params.normalize, reversed)
-    def initDFMetricCalculator: ReversibleDFMetricCalculator = LevenshteinDistanceDFMetricCalculator(
-      metricId, metricColumns, params.threshold, params.normalize, reversed
+    def initDFMetricCalculator(columns: Seq[String]): ReversibleDFMetricCalculator = LevenshteinDistanceDFMetricCalculator(
+      metricId, columns, params.threshold, params.normalize, reversed
     )
   }
 
@@ -1204,7 +1205,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.CoMoment
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new CovarianceRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = CoMomentDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = CoMomentDFMetricCalculator(metricId, columns)
   }
 
   /** Covariance regular metric configuration
@@ -1225,7 +1226,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.Covariance
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new CovarianceRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = CovarianceDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = CovarianceDFMetricCalculator(metricId, columns)
   }
 
   /** Covariance Bessel regular metric configuration
@@ -1246,7 +1247,7 @@ object Metrics {
     val metricName: MetricName                 = MetricName.CovarianceBessel
     val paramString: Option[String]            = None
     def initRDDMetricCalculator: RDDMetricCalculator = new CovarianceRDDMetricCalculator()
-    def initDFMetricCalculator: DFMetricCalculator = CovarianceBesselDFMetricCalculator(metricId, metricColumns)
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = CovarianceBesselDFMetricCalculator(metricId, columns)
   }
 
   /** TopN regular metric configuration
@@ -1270,8 +1271,8 @@ object Metrics {
     val paramString: Option[String] = Some(write(getFieldsMap(params)))
     def initRDDMetricCalculator: RDDMetricCalculator =
       new TopKRDDMetricCalculator(params.maxCapacity.value, params.targetNumber.value)
-    def initDFMetricCalculator: DFMetricCalculator = TopNDFMetricCalculator(
-      metricId, metricColumns, params.maxCapacity.value, params.targetNumber.value
+    def initDFMetricCalculator(columns: Seq[String]): DFMetricCalculator = TopNDFMetricCalculator(
+      metricId, columns, params.maxCapacity.value, params.targetNumber.value
     )
   }
 

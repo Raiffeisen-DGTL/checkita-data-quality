@@ -32,6 +32,21 @@ trait RDDMetricProcessor extends BasicMetricProcessor {
   }
 
   /**
+   * Groups regular metrics by their sequence of columns. 
+   * The `*` is expanded to actual list of columns prior grouping metrics.
+   * @param metrics Sequence of regular metrics for current source
+   * @param allColumns Sequence of all source columns (used to expand `*`)
+   * @param caseSensitive  Implicit flag defining whether column names are case sensitive or not.
+   * @return Map of sequence of columns to sequence of regular metrics that refer to these columns.
+   */
+  def getGroupedMetrics(metrics: Seq[RegularMetric], allColumns: Seq[String])
+                       (implicit caseSensitive: Boolean): Map[Seq[String], Seq[RegularMetric]] =
+    metrics.groupBy { m =>
+      val mCols = if (m.metricColumns.size == 1 && m.metricColumns.head == "*") allColumns else m.metricColumns
+      if (caseSensitive) mCols else mCols.map(_.toLowerCase)
+    }
+  
+  /**
    * Build grouped calculator collection. Main idea here is following:
    *
    * @example You want to obtain multiple quantiles for a specific column,
@@ -58,7 +73,7 @@ trait RDDMetricProcessor extends BasicMetricProcessor {
     case (columns, metrics) =>
       columns -> metrics.map(m => (m, m.initRDDMetricCalculator))
         .groupBy(_._2)
-        .map{ case (k, v) => k -> v.map(_._1)}.toSeq
+        .map{ case (k, v) => k -> v.map(_._1) }.toSeq
   }
 
   /**

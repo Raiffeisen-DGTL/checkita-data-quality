@@ -80,9 +80,7 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
         s". Please ensure that keyFields are always exist within streamed messages."
       )
 
-      val metricsByColumns = streamMetrics.groupBy(
-        m => if (caseSensitive) m.metricColumns else m.metricColumns.map(_.toLowerCase)
-      )
+      val metricsByColumns = getGroupedMetrics(streamMetrics, df.schema.fieldNames)
 
       // get and register metric error accumulator:
       val metricErrorAccumulator = getAndRegisterErrorAccumulator
