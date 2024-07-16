@@ -23,8 +23,7 @@
             {
                 "assets": [
                     "docs/changelog/CHANGELOG.md",
-                    "docs/en/index.md",
-                    "docs/ru/index.md",
+                    "docs/index.md",
                     "project/Version.scala",
                     "README.md",
                     "checkita-core/src/main/resources/version-info.properties"

@@ -57,9 +57,8 @@ object RDDMetricBatchProcessor extends RDDMetricProcessor {
         sourceKeys.filterNot(columnIndexes.contains).mkString("[`", "`, `", "`]")
     )
 
-    val metricsByColumns = sourceMetrics.groupBy(
-      m => if (caseSensitive) m.metricColumns else m.metricColumns.map(_.toLowerCase)
-    )
+    val metricsByColumns = getGroupedMetrics(sourceMetrics, df.schema.fieldNames)
+    
     val groupedCalculators = getGroupedCalculators(metricsByColumns)
 
     // get and register metric error accumulator:
