@@ -1,0 +1,10 @@
+description: |-
+  Additional considerations for file storage. Results are stored as Parquet files without schema evolution 
+  or partitioning. Not recommended for production use.
+type: object
+properties:
+  note:
+    type: string
+    description: |-
+      Results will be stored as Parquet files with no schema evolution. 
+      Each job reads and overwrites the entire results history.

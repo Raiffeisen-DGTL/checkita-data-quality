@@ -1,0 +1,152 @@
+description: >
+  Schema definitions for different types of results stored by Checkita. Includes primary keys and data formats.
+type: object
+properties:
+  regularMetrics:
+    description: >
+      Schema for regular metrics results.
+    type: object
+    properties:
+      primaryKey:
+        type: array
+        description: >
+          Primary key fields for regular metrics results.
+        example:
+          - job_id
+          - metric_id
+          - metric_name
+          - reference_date
+      source_id:
+        type: string
+        description: >
+          String representation of the source ID list.
+      column_names:
+        type: string
+        description: >
+          String representation of column names list.
+      params:
+        type: string
+        description: >
+          JSON string for additional parameters.
+  composedMetrics:
+    description: >
+      Schema for composed metrics results.
+    type: object
+    properties:
+      primaryKey:
+        type: array
+        description: >
+          Primary key fields for composed metrics results.
+        example:
+          - job_id
+          - metric_id
+          - reference_date
+      source_id:
+        type: string
+        description: >
+          String representation of the source ID list.
+  trendMetrics:
+    description: >
+      Schema for trend metric results.
+    type: object
+    properties:
+      primaryKey:
+        type: array
+        description: >
+          Primary key fields for trend metric results.
+        example:
+          - job_id
+          - metric_id
+          - reference_date
+      source_id:
+        type: string
+        description: >
+          String representation of the source ID list.
+  metricError:
+    description: >
+      Schema for trend metric results.
+    type: object
+    properties:
+      primaryKey:
+        type: array
+        description: >
+          Primary key fields for trend metric results.
+        example:
+          - job_id
+          - error_hash
+          - reference_date
+      source_id:
+        type: string
+        description: >
+          JSON string.
+      source_key_fields:
+        type: string
+        description: >
+          JSON string.
+      metric_columns:
+        type: string
+        description: >
+          JSON string.
+      row_data:
+        type: string
+        description: >
+          JSON string.
+      errorHash:
+        type: string
+        description: >
+          JSON string. Error hash is computed with use of raw value of row_data field even if it is encrypted later.
+  loadChecks:
+    description: >
+      Schema for load checks results.
+    type: object
+    properties:
+      primaryKey:
+        type: array
+        description: >
+          Primary key fields for load checks results.
+        example:
+          - job_id
+          - check_id
+          - reference_date
+      source_id:
+        type: string
+        description: >
+          String representation of the source ID list.
+  checks:
+    description: >
+      Schema for checks results.
+    type: object
+    properties:
+      primaryKey:
+        type: array
+        description: >
+          Primary key fields for checks results.
+        example:
+          - job_id
+          - check_id
+          - reference_date
+      source_id:
+        type: string
+        description: >
+          String representation of the source ID list.
+      compare_metric:
+        type: string
+        description: |-
+          Usually empty list or single metric. But expression checks can use multiple metrics in their formulas, 
+          which will be stored in this field, except the very first metric which is considered as base_metric.
+  jobState:
+    description: >
+      Schema for job state results.
+    type: object
+    properties:
+      primaryKey:
+        type: array
+        description: >
+          Primary key fields for job state results.
+        example:
+          - job_id
+          - reference_date
+      params:
+        type: string
+        description: >
+          JSON string for additional parameters.

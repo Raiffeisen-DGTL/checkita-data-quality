@@ -1,0 +1,21 @@
+title: Storage
+description: Data Quality Results Storage
+type: object
+properties:
+  resultsStorageConfiguration:
+    type: object
+    description: |-
+      Object holding all Checkita Data Quality Storage sections.
+    properties:
+      storage:
+        $ref: 'storageType.yaml'
+      connection:
+        $ref: 'connectionDetails.yaml'
+      schema:
+        $ref: 'schemaMigrations.yaml'
+      file:
+        $ref: 'fileStorage.yaml'
+      hive:
+        $ref: 'hiveStorage.yaml'
+      resultsTypesAndSchemas:
+        $ref: "resultsTypesAndSchemas.yaml"

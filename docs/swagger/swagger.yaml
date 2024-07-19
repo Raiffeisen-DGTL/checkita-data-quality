@@ -14,6 +14,8 @@ tags:
     description: Endpoints used to validate application and job configurations
   - name: storage
     description: Endpoints used to fetch results from Checkita DQ Storage.
+  - name: submitting
+    description: Endpoints contains information about spark-submit arguments for Checkita DQ.
 paths: 
   /validation/app-config/:
     post:
@@ -99,9 +101,77 @@ paths:
               schema:
                 type: string
                 example: 'Unable to parse arguments: <list of argument parsing errors>.'
+  /storage:
+    post:
+      tags:
+        - storage
+      summary: Data Quality Results Storage
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/Storage'
+      responses:
+        200:
+          description: Valid configuration response.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Success. Configuration is valid.
+        406:
+          description: Validation error response.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Unable to validate configuration due to following errors: <list of validation errors>.'
+        400:
+          description: Bad request in case when query parameters cannon be parsed.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Unable to parse arguments: <list of argument parsing errors>.'
+  /submitting:
+    post:
+      tags:
+        - submitting
+      summary: Submitting Data Quality Application
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/Submitting'
+      responses:
+        200:
+          description: Valid configuration response.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Success. Configuration is valid.
+        406:
+          description: Validation error response.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Unable to validate configuration due to following errors: <list of validation errors>.'
+        400:
+          description: Bad request in case when query parameters cannon be parsed.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Unable to parse arguments: <list of argument parsing errors>.'
 components:
   schemas:
     ApplicationConfiguration:
       $ref: 'appconf/topLevelAppConfig.yaml'
     JobConfiguration:
       $ref: 'jobconf/topLevelJobConfig.yaml'
+    Storage:
+      $ref: 'storage/topLevelStorage.yaml'
+    Submitting:
+      $ref: 'submitting/topLevelSubmitting.yaml'

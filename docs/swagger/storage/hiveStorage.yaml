@@ -1,0 +1,9 @@
+description: |-
+  Additional considerations for Hive storage. Results tables must be partitioned by job_id for faster 
+  fetching during trend checks. Not recommended for production use with many jobs.
+type: object
+properties:
+  note:
+    type: string
+    description: >
+      Results Hive tables must be partitioned by job_id. Create tables using provided DDL scripts.

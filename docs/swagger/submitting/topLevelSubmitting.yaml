@@ -1,0 +1,13 @@
+submittingDataQualityApplication:
+description: |-
+  Configuration for submitting a Data Quality application using the Checkita framework. 
+  Since Checkita is based on Spark, it runs as an ordinary Spark application using the spark-submit command. 
+  The framework supports both local and cluster mode execution.
+type: object
+properties:
+  sparkSubmitCommand:
+    $ref: "sparkSubmitCommand.yaml"
+  mainClassPaths:
+    $ref: "mainClassPaths.yaml"
+  commandLineArguments:
+    $ref: "commandLineArguments.yaml"

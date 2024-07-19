@@ -1,0 +1,12 @@
+description: |-
+  Type of storage to use for results.
+type: string
+enum:
+  - postgresql
+  - oracle
+  - mysql
+  - sqlserver
+  - sqlite
+  - h2
+  - hive
+  - file
