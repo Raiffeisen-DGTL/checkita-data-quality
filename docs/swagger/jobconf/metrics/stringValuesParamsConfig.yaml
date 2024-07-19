@@ -1,0 +1,15 @@
+type: object
+required:
+  - params
+properties:
+  params:
+    type: object
+    description: String values metric parameters.
+    required:
+      - compareValue
+    properties:
+      compareValue:
+        type: string
+        description: String value to compare with.
+        example: foo
+    

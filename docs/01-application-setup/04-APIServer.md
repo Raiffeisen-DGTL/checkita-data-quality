@@ -12,11 +12,11 @@ with Checkita configuration and results.
 Thus, at current moment API server supports following functionality:
 
 * Configuration:
-  * Validation of application configuration.
-  * Validation of job configuration.
+    * Validation of application configuration.
+    * Validation of job configuration.
 * DQ Storage:
-  * Fetch overall summary for all jobs in DQ storage.
-  * Fetch actual job state that was run.
-  * Fetch job results for given datetime interval.
+    * Fetch overall summary for all jobs in DQ storage.
+    * Fetch actual job state that was run.
+    * Fetch job results for given datetime interval.
 
 See [Swagger Doc](../swagger/index.md#swagger-doc) for more details on Checkita API Server methods.

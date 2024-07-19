@@ -1,0 +1,12 @@
+type: object
+properties:
+  params:
+    type: object
+    description: Completeness metric parameters.
+    properties:
+      includeEmptyStrings:
+        type: boolean
+        description: Boolean parameter indicating whether empty string values should be considered as nulls
+        default: false
+        example: true
+    

@@ -1,0 +1,70 @@
+type: object
+required:
+  - id
+  - kind
+  - quantile
+  - lookupMetric
+  - rule
+  - windowSize
+properties:
+  id:
+    type: string
+    description: Trend metric ID
+    example: trend_metric
+  description:
+    type: string
+    description: Optional. Trend metric description
+    example: Metric to compute average number of rows that failed a criteria.
+  kind:
+    type: string
+    description: Kind of statistic to be calculated over historical metric results
+    example: avg
+    enum:
+      - avg
+      - std
+      - min
+      - max
+      - sum
+      - median
+      - firstQuartile
+      - thirdQuartile
+      - quantile
+  quantile:
+    type: number
+    description: |-
+      **ONLY FOR `quantile` TREND METRIC.** 
+      Quantile to compute over historical metric results (must be a number in range [0, 1]).
+    example: 0.15
+  lookupMetric:
+    type: string
+    description: "Lookup metric ID: metric which results will be pulled from DQ storage"
+    example: some_criteria_metric_id
+  rule:
+    type: string
+    description: The rule for loading historical metric results from storage
+    enum:
+      - record
+      - datetime
+    example: datetime
+  windowSize:
+    type: string
+    description: |-
+      Size of the window for average metric value calculation. 
+        * If the rule is set to `record`, then the window size is the number of records to retrieve. 
+        * If the rule is set to `datetime`, then the window size is a duration string which should conform to Scala Duration.
+    example: 14d
+  windowOffset:
+    type: string
+    description: |-
+      Set window offset back from the current reference date. 
+      By default, the offset is absent and the window starts from the current reference date. 
+        * If the rule is set to `record`, then the window offset is the number of records to skip from the reference date.
+        * If the rule is set to `datetime`, then the window offset is a duration string which should conform to Scala Duration.
+    example: 3d
+  metadata:
+    type: array
+    description: Optional list of arbitrary user-defined metadata parameters specific to this trend metric
+    items:
+      type: string
+      description: Metadata parameter string in format of `param.name=param.value`
+    default: [ ]

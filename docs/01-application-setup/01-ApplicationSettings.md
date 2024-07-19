@@ -18,11 +18,11 @@ section for more details on working with date and time in Checkita Framework.
 DateTime settings include following:
 
 * `timeZone` - Time zone in which string representation of reference date and execution date are parsed and rendered.
-  *Optional, default is `"UTC"`*.
+    *Optional, default is `"UTC"`*.
 * `referenceDateFormat` - datetime format used to parse and render reference date.
-  *Optional, default is `"yyyy-MM-dd'T'HH:mm:ss.SSS"`*.
+    *Optional, default is `"yyyy-MM-dd'T'HH:mm:ss.SSS"`*.
 * `executionDateFormat` - datetime format used to parse and render execution date.
-  *Optional, default is `"yyyy-MM-dd'T'HH:mm:ss.SSS"`*
+    *Optional, default is `"yyyy-MM-dd'T'HH:mm:ss.SSS"`*
  
 If `dateTimeOptions` section is missing then default values are used for all parameters above.
 
@@ -36,7 +36,7 @@ section for more details on runnig data quality checks over streaming sources.
 * `window` - Window interval: defines tabbing window size used to accumulate metrics. 
   All metrics results and checks are evaluated per each window once it finalised. *Optional, default is `10m`*.
 * `watermark` - Watermark level: defines time interval after which late records are no longer processed.
-  *Optional, default is `5m`*.
+    *Optional, default is `5m`*.
 * `allowEmptyWindows` - Boolean flag indicating whether empty windows are allowed. Thus, in situation when window is 
   below watermark and for some of the processed streams there are no results then all related checks will be skipped 
   if this flag is set to `true`. Otherwise, checks will be processed and will return error status with 
@@ -52,20 +52,20 @@ Section `enablers` of application configuration file defines various boolean swi
 that controls various aspects of data quality job execution:
 
 * `allowSqlQueries` - Enables usage arbitrary SQL queries in data quality job configuration.
-  *Optional, default is `false`*
+    *Optional, default is `false`*
 * `allowNotifications` - Enables notifications to be sent from DQ application. 
-  *Optional, default is `false`*
+    *Optional, default is `false`*
 * `aggregatedKafkaOutput` - Enables sending aggregates messages for Kafka Targets (one per each target type).
   By default, kafka messages are sent per each result entity.
-  *Optional, default is `false`*
+    *Optional, default is `false`*
 * `enableCaseSensitivity` - Enable columns case sensitivity. Controls column names comparison and lookup.
-  *Optional, default is `false`*
+    *Optional, default is `false`*
 * `errorDumpSize` - Maximum number of errors to be collected per single metric. Framework is able to collect source 
   data rows where metric evaluation yielded some errors. But in order to prevent OOM the number of collected errors
   have to be limited to a reasonable value. Thus, maximum allowable number of errors per metric is `10000`.
   It is possible to lower this number by setting this parameter. *Optional, default is `10000`*
 * `outputRepartition` - Sets the number of partitions when writing outputs. By default, writes single file.
-  *Optional, default is `1`*
+    *Optional, default is `1`*
 * `metricEngineAPI` - Sets engine to be used for regular metric processing: `rdd` (RDD-engine) or `df` (DF-engine) are
   available. It is recommended to use DF-engine for batch applications while streaming applications support only
   RDD-engine. *Optional, default is `rdd`*.

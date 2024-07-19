@@ -14,7 +14,7 @@ is how statuses are communicated with user:
 
 * When computing metrics, status is obtained for each data row during metric increment step. If status other than 
   `Success` then metric error is collected for this particular row of data. Then, metric error reports can be requested
-  as [Error Collection Targets](../03-job-configuration/08-Targets.md#error-collection-targets). For more information 
+  as [Error Collection Targets](../03-job-configuration/10-Targets.md#error-collection-targets). For more information 
   on metric error collection, see [Metric Error Collection](04-ErrorCollection.md) chapter.
 * As for checks, status is their primary result output. Therefore, it is written into data quality storage along with
   a detailed message.

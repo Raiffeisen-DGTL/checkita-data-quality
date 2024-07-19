@@ -64,7 +64,7 @@ Fixed-short schema definition contains following parameters:
 * `id` - *Required*. Schema ID;
 * `description` - *Optional*. Schema description;
 * `schema` - *Required*. List of schema columns where each column is a string in format `columnName:columnWidth`.
-  *Type of columns is always a StringType.*
+    *Type of columns is always a StringType.*
 * `metadata` - *Optional*. List of user-defined metadata parameters specific to this schema where each parameter
   is a string in format:`param.name=param.value`.
 

@@ -1,312 +1,135 @@
 description: |-
-  Performing checks over the metric results is an important step in Checkita framework. As metric results are calculated, 
-  checks can be configured to identify if there are any problems with the quality of data.
-
-  In Checkita, there are two main groups of checks:
-
-  - Snapshot checks: Allows comparison of metric results with static thresholds or with other metric results in the same Data Quality job.
-  - Trend checks: Allows evaluation of how a metric result is changing over a certain period of time. Checks of this type are used to detect anomalies in data. In order for trend checks to work, it is required to set up Data Quality storage since the check calculator needs to fetch historical results for the metric of interest.
-
-  After evaluation, a check will have a status as described in the Status Model used in the Results chapter.
+  Performing checks over the metric results is an important step in Checkita framework. As metric results 
+  are calculated then checks can be configured to identify if there are any problems with the quality of data.
+    
+  ***IMPORTANT: Trend checks are scheduled for deprecation in Checkita 3.0 release as their functionality is now
+  covered (and also enhanced) by trend metrics.***
 type: object
 properties:
-  snapshotChecks:
+  snapshot:
     type: object
     description: Snapshot checks represent a simple comparison of metric results with a static threshold or with other metric result.
     properties:
       equalTo:
-        type: object
-        description: Checks if metric results is equal to a given threshold value or to other metric result.
-        properties:
-          id:
-            type: string
-            description: Required. Check ID.
-          description:
-            type: string
-            description: Optional. Description of the check.
-          metric:
-            type: string
-            description: Required. Metric ID which result is checked.
-          compareMetric:
-            type: string
-            description: Optional. Metric ID which result is used as a threshold.
-          threshold:
-            type: number
-            description: Optional. Explicit threshold value.
-          metadata:
-            type: array
-            description: |-
-              Optional. List of user-defined metadata parameters specific to this check where each parameter is a string in format: param.name=param.value.
-            items:
-              type: string
-              description: Metadata parameter string in format of `param.name=param.value`
-      lessThan:
-        type: object
-        description: Checks if metric result is less than a given threshold value or other metric result.
-        properties:
-          id:
-            type: string
-            description: Required. Check ID.
-          description:
-            type: string
-            description: Optional. Description of the check.
-          metric:
-            type: string
-            description: Required. Metric ID which result is checked.
-          compareMetric:
-            type: string
-            description: Optional. Metric ID which result is used as a threshold.
-          threshold:
-            type: number
-            description: Optional. Explicit threshold value.
-          metadata:
-            type: array
-            description: |-
-              Optional. List of user-defined metadata parameters specific to this check where each parameter is a string in format: param.name=param.value.
-            items:
-              type: string
-              description: Metadata parameter string in format of `param.name=param.value`
-      greaterThan:
-        type: object
-        description: Checks if metric result is greater than a given threshold value or other metric result.
-        properties:
-          id:
-            type: string
-            description: Required. Check ID.
-          description:
-            type: string
-            description: Optional. Description of the check.
-          metric:
-            type: string
-            description: Required. Metric ID which result is checked.
-          compareMetric:
-            type: string
-            description: Optional. Metric ID which result is used as a threshold.
-          threshold:
-            type: number
-            description: Optional. Explicit threshold value.
-          metadata:
-            type: array
-            description: |-
-              Optional. List of user-defined metadata parameters specific to this check where each parameter is a string in format: param.name=param.value.
-            items:
-              type: string
-              description: Metadata parameter string in format of `param.name=param.value`
-      differByLT:
-        type: object
-        description: |-
-          Checks if the relative difference between two metric results is less than a given threshold. 
-          This check succeeds when the following expression is true: | metric - compareMetric | / compareMetric < threshold.
-        properties:
-          id:
-            type: string
-            description: Required. Check ID.
-          description:
-            type: string
-            description: Optional. Description of the check.
-          metric:
-            type: string
-            description: Required. Metric ID which result is checked.
-          compareMetric:
-            type: string
-            description: Required. Metric ID which result is used as a threshold.
-          threshold:
-            type: number
-            description: Required. Explicit threshold value.
-          metadata:
-            type: array
-            description: |-
-              Optional. List of user-defined metadata parameters specific to this check where each parameter is a string in format: param.name=param.value.
-            items:
-              type: string
-              description: Metadata parameter string in format of `param.name=param.value`
-
-  trendChecks:
-    type: object
-    description: |-
-      Trend checks are used to detect anomalies in data. This type of checks allows to verify that the value of the metric corresponds to its average value within a given deviation for a certain period of time. Maximum allowed deviation is configured by providing a threshold value.
-      
-      Following trend checks are supported:
-    properties:
-      averageBoundFull:
-        type: object
-        description: |- 
-          Sets the same upper and lower deviation from metric average result. Check succeeds when the following expression is true: (1 - threshold) * avgResult <= currentResult <= (1 + threshold) * avgResult.
-        properties:
-          id:
-            type: string
-            description: Required. Check ID.
-          description:
-            type: string
-            description: Optional. Description of the check.
-          metric:
-            type: string
-            description: Required. Metric ID which result is checked.
-          rule:
-            type: string
-            description: |-
-              Required. The rule for calculating the historical average value of the metric. There are two rules supported:
-            enum:
-              - record
-              - datetime
-          windowSize:
-            type: string
-            description: Required. Size of the window for average metric value calculation. If the rule is set to record, then the window size is the number of records to retrieve. If the rule is set to datetime, then the window size is a duration string which should conform to Scala Duration.
-          windowOffset:
-            type: string
-            description: Optional, default is 0 or 0s. Set window offset back from the current reference date. By default, the offset is absent and the window starts from the current reference date. If the rule is set to record, then the window offset is the number of records to skip from the reference date. If the rule is set to datetime, then the window offset is a duration string which should conform to Scala Duration.
-          threshold:
-            type: number
-            description: Required. Sets the maximum allowed deviation from the historical average metric result. Not used with averageBoundRange check.
-          metadata:
-            type: array
-            description: |- 
-              Optional. List of user-defined metadata parameters specific to this metric where each parameter is a string in format: param.name=param.value.
-            items:
-              type: string
-              description: Metadata parameter string in format of `param.name=param.value`
-      averageBoundUpper:
-        type: object
-        description: |-
-          Verifies only upper deviation from the metric average result. Check succeeds when the following expression is true: currentResult <= (1 + threshold) * avgResult.
-        properties:
-          id:
-            type: string
-            description: Required. Check ID.
-          description:
-            type: string
-            description: Optional. Description of the check.
-          metric:
-            type: string
-            description: Required. Metric ID which result is checked.
-          rule:
-            type: string
-            description: |-
-              Required. The rule for calculating the historical average value of the metric. There are two rules supported:
-            enum:
-              - record
-              - datetime
-          windowSize:
-            type: string
-            description: Required. Size of the window for average metric value calculation. If the rule is set to record, then the window size is the number of records to retrieve. If the rule is set to datetime, then the window size is a duration string which should conform to Scala Duration.
-          windowOffset:
-            type: string
-            description: Optional, default is 0 or 0s. Set window offset back from the current reference date. By default, the offset is absent and the window starts from the current reference date. If the rule is set to record, then the window offset is the number of records to skip from the reference date. If the rule is set to datetime, then the window offset is a duration string which should conform to Scala Duration.
-          threshold:
-            type: number
-            description: Required. Sets the maximum allowed deviation from the historical average metric result. Not used with averageBoundRange check.
-          metadata:
-            type: array
-            description: |-
-              Optional. List of user-defined metadata parameters specific to this metric where each parameter is a string in format: param.name=param.value.
-            items:
-              type: string
-              description: Metadata parameter string in format of `param.name=param.value`
-      averageBoundLower:
-        type: object
-        description: |-
-          Verifies only lower deviation from the metric average result. Check succeeds when the following expression is true: (1 - threshold) * avgResult <= currentResult.
-        properties:
-          id:
-            type: string
-            description: Required. Check ID.
-          description:
-            type: string
-            description: Optional. Description of the check.
-          metric:
-            type: string
-            description: Required. Metric ID which result is checked.
-          rule:
-            type: string
-            description: |-
-              Required. The rule for calculating the historical average value of the metric. There are two rules supported:
-            enum:
-              - record
-              - datetime
-          windowSize:
-            type: string
-            description: Required. Size of the window for average metric value calculation. If the rule is set to record, then the window size is the number of records to retrieve. If the rule is set to datetime, then the window size is a duration string which should conform to Scala Duration.
-          windowOffset:
-            type: string
-            description: Optional, default is 0 or 0s. Set window offset back from the current reference date. By default, the offset is absent and the window starts from the current reference date. If the rule is set to record, then the window offset is the number of records to skip from the reference date. If the rule is set to datetime, then the window offset is a duration string which should conform to Scala Duration.
-          threshold:
-            type: number
-            description: Required. Sets the maximum allowed deviation from the historical average metric result. Not used with averageBoundRange check.
-          metadata:
-            type: array
-            description: |-
-              Optional. List of user-defined metadata parameters specific to this metric where each parameter is a string in format: param.name=param.value.
-            items:
-              type: string
-              description: Metadata parameter string in format of `param.name=param.value`
-      averageBoundRange:
-        type: object
-        description: |-
-          Sets different thresholds for upper and lower deviations from metric average results. Check succeeds when the following expression is true: (1 - thresholdLower) * avgResult <= currentResult <= (1 + thresholdUpper) * avgResult.
-        properties:
-          id:
-            type: string
-            description: Required. Check ID.
-          description:
-            type: string
-            description: Optional. Description of the check.
-          metric:
-            type: string
-            description: Required. Metric ID which result is checked.
-          rule:
-            type: string
-            description: |-
-              Required. The rule for calculating the historical average value of the metric. There are two rules supported:
-            enum:
-              - record
-              - datetime
-          windowSize:
-            type: string
-            description: Required. Size of the window for average metric value calculation. If the rule is set to record, then the window size is the number of records to retrieve. If the rule is set to datetime, then the window size is a duration string which should conform to Scala Duration.
-          windowOffset:
-            type: string
-            description: Optional, default is 0 or 0s. Set window offset back from the current reference date. By default, the offset is absent and the window starts from the current reference date. If the rule is set to record, then the window offset is the number of records to skip from the reference date. If the rule is set to datetime, then the window offset is a duration string which should conform to Scala Duration.
-          thresholdLower:
-            type: number
-            description: Required. Sets the maximum allowed lower deviation from historical average metric result.
-          thresholdUpper:
-            type: number
-            description: Required. Sets the maximum allowed upper deviation from historical average metric result.
-          metadata:
-            type: array
-            description: |-
-              Optional. List of user-defined metadata parameters specific to this metric where each parameter is a string in format: param.name=param.value.
-            items:
-              type: string
-              description: Metadata parameter string in format of `param.name=param.value`
-
-  topNRankCheck:
-    type: object
-    description: |-
-      This is a special check designed specifically for Top N Metric and working only with it. 
-      Top N rank check calculates the Jacquard distance between the current and previous sets of top N metric and checks if it does not exceed the threshold value.
-
-      IMPORTANT: Calculation of this check is currently supported only between the current and previous topN metric sets.
-    properties:
-      id:
-        type: string
-        description: Required. Check ID.
-      description:
-        type: string
-        description: Optional. Description of the check.
-      metric:
-        type: string
-        description: Required. Metric ID which result is checked.
-      targetNumber:
-        type: integer
-        description: Required. Number of records from the set of top N metric results that is considered. This number should be less than or equal to number of collected top values in top N metric.
-      threshold:
-        type: number
-        description: Required. Maximum allowed Jacquard distance between current and previous sets of records from top N metric result. Should be a number in interval [0, 1].
-      metadata:
         type: array
         description: |-
-          Optional. List of user-defined metadata parameters specific to this metric where each parameter is a string in format: param.name=param.value.
+          Checks if metric results is equal to a given threshold value or to other metric result.
+          When configuring check it should be specified either an explicit threshold value in `threshold` field
+          or other metric ID in `compareMetric` field which result will be used as a threshold value.
         items:
-          type: string
-          description: Metadata parameter string in format of `param.name=param.value`
+          allOf:
+            - $ref: 'checks/baseChecksConfig.yaml'
+            - $ref: 'checks/snapshotCheckConfig.yaml'
+      lessThan:
+        type: array
+        description: |-
+          Checks if metric results less than a given threshold value or other metric result.
+          When configuring check it should be specified either an explicit threshold value in `threshold` field
+          or other metric ID in `compareMetric` field which result will be used as a threshold value.
+        items:
+          allOf:
+            - $ref: 'checks/baseChecksConfig.yaml'
+            - $ref: 'checks/snapshotCheckConfig.yaml'
+      greaterThan:
+        type: array
+        description: |-
+          Checks if metric results greater than a given threshold value or other metric result.
+          When configuring check it should be specified either an explicit threshold value in `threshold` field
+          or other metric ID in `compareMetric` field which result will be used as a threshold value.
+        items:
+          allOf:
+            - $ref: 'checks/baseChecksConfig.yaml'
+            - $ref: 'checks/snapshotCheckConfig.yaml'
+      differByLT:
+        type: array
+        description: |-
+          Checks if metric results greater than a given threshold value or other metric result.
+          When configuring check it is required to specify both, `threshold` value and
+          `compareMetric` to compare with.
+        items:
+          allOf:
+            - $ref: 'checks/baseChecksConfig.yaml'
+            - $ref: 'checks/snapshotCheckConfig.yaml'
+  trend:
+    type: object
+    description: |-
+      Trend checks are used to detect anomalies in data. This type of checks allows to verify that the value 
+      of the metric corresponds to its average value within a given deviation for a certain period of time.
+      Maximum allowed deviation is configured by providing a threshold value.
+    properties:
+      averageBoundFull:
+        type: array
+        description: |-
+          Sets the same upper and lower deviation from metric average result. 
+          Check succeeds when the following expression is true: 
+          `(1 - threshold) * avgResult <= currentResult <= (1 + threshold) * avgResult`.
+        items:
+          allOf:
+            - $ref: 'checks/baseChecksConfig.yaml'
+            - $ref: 'checks/trendCheckConfig.yaml'
+            - $ref: 'checks/trendCheckSingleThresholdConfig.yaml'
+      averageBoundUpper:
+        type: array
+        description: |-
+          Verifies only upper deviation from the metric average result.
+          Check succeeds when the following expression is true: 
+          `currentResult <= (1 + threshold) * avgResult`.
+        items:
+          allOf:
+            - $ref: 'checks/baseChecksConfig.yaml'
+            - $ref: 'checks/trendCheckConfig.yaml'
+            - $ref: 'checks/trendCheckSingleThresholdConfig.yaml'
+      averageBoundLower:
+        type: array
+        description: |-
+          Verifies only lower deviation from the metric average result.
+          Check succeeds when the following expression is true: 
+          `(1 - threshold) * avgResult <= currentResult`.
+        items:
+          allOf:
+            - $ref: 'checks/baseChecksConfig.yaml'
+            - $ref: 'checks/trendCheckConfig.yaml'
+            - $ref: 'checks/trendCheckSingleThresholdConfig.yaml'
+      averageBoundRange:
+        type: array
+        description: |-
+          Sets different thresholds for upper and lower deviations from metric average results.
+          Check succeeds when the following expression is true: 
+          `(1 - thresholdLower) * avgResult <= currentResult <= (1 + thresholdUpper) * avgResult`.
+        items:
+          allOf:
+            - $ref: 'checks/baseChecksConfig.yaml'
+            - $ref: 'checks/trendCheckConfig.yaml'
+            - $ref: 'checks/trendCheckDoubleThresholdConfig.yaml'
+      topNRankCheck:
+        type: array
+        description: |-
+          This is a special check designed specifically for TopN metric and working only with it.
+          Top N rank check calculates the Jacquard distance between the current and previous sets 
+          of top N metric and checks if it does not exceed the threshold value.
+        items:
+          allOf:
+            - $ref: 'checks/baseChecksConfig.yaml'
+            - $ref: 'checks/topNCheckConfig.yaml'
+  expression:
+    type: array
+    description: |-
+      Expression checks represent a boolean expression referring to one or multiple metric results which evaluates to
+      `true` or `false`. Metrics must be referenced by their IDs.
+      
+      Formula must be written using [Mustache Template](https://mustache.github.io/mustache.5.html) notation, e.g.:
+      `{{ metric_1 }} + {{ metric_2 }}`.
+      
+      There are following operations supported to build boolean expressions:
+  
+        * Basic `+-*/` and exponentiation `^` math operations.
+        * Grouping using parentheses.
+        * Mathematical functions of single argument:
+            `abs`, `sqrt`, `floor`, `ceil`, `round` (rounds to the closest integer), `ln` (natural logarithm), `lg` (decimal logarithm), `exp`.
+        * Mathematical functions of two arguments: `max` and `min`.
+        * Logical operators: `&&` (and), `||` (or), `not`.
+        * Comparison operators: `==`, `<>`, `>=`, `<=`, `>`, `<`.
+    items:
+      allOf:
+        - $ref: 'checks/baseChecksConfig.yaml'
+        - $ref: 'checks/expressionCheckConfig.yaml'

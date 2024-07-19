@@ -1,0 +1,32 @@
+type: object
+required:
+  - metric
+  - rule
+  - windowSize
+properties:
+  metric:
+    type: string
+    description: Metric ID which results is checked.
+    example: some_metric_id
+  rule:
+    type: string
+    description: The rule for calculating the historical average value of the metric
+    enum:
+      - record
+      - datetime
+    example: datetime
+  windowSize:
+    type: string
+    description: |-
+      Size of the window for average metric value calculation. 
+        * If the rule is set to `record`, then the window size is the number of records to retrieve. 
+        * If the rule is set to `datetime`, then the window size is a duration string which should conform to Scala Duration.
+    example: 14d
+  windowOffset:
+    type: string
+    description: |-
+      Set window offset back from the current reference date. 
+      By default, the offset is absent and the window starts from the current reference date. 
+        * If the rule is set to `record`, then the window offset is the number of records to skip from the reference date.
+        * If the rule is set to `datetime`, then the window offset is a duration string which should conform to Scala Duration.
+    example: 3d

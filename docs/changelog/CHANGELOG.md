@@ -238,11 +238,11 @@ API methods (still in development, will be completed shortly)
 ### Features
 
 * Change DB model:
-  * Added referenceDateTime and executionDateTime
-  * Type in DB - timestamp with tz
-  * Render format can be setup in application.conf
-  * Job-conf variables are changed to referenceDateTime and executionDateTime
-  * Changed init sql script and also added alter sql script
+    * Added referenceDateTime and executionDateTime
+    * Type in DB - timestamp with tz
+    * Render format can be setup in application.conf
+    * Job-conf variables are changed to referenceDateTime and executionDateTime
+    * Changed init sql script and also added alter sql script
 * Added option to sent aggregated messaged to Kafka: one per each target type
 * Added option to run DQ in Shared Spark Context
 * Added new types of history DB: Hive and File (both managed by spark without extra services)
@@ -271,13 +271,13 @@ API methods (still in development, will be completed shortly)
 ### Features
 
 * Adding Kafka support:
-  * New section in run configuration to describe connection to Kafka Brokers
-  * New type of source to read from Kafka topic
-  * Output of all targets to Kafka topic
+    * New section in run configuration to describe connection to Kafka Brokers
+    * New type of source to read from Kafka topic
+    * Output of all targets to Kafka topic
 * Adding Mattermost notifications:
-  * New section added to application configuration to describe connection to Mattermost API.
-  * CheckAlerts and summary reports can be sent to Mattermost.
-  * Notifications can be sent to both channels and user direct messages.
+    * New section added to application configuration to describe connection to Mattermost API.
+    * CheckAlerts and summary reports can be sent to Mattermost.
+    * Notifications can be sent to both channels and user direct messages.
 * Added new DQ application argument -v to pass extra variables to be prepended to application configuration file. Can be used to pass secrets for email, mattermost and storage DB on startup.
 * Documentation is updated according to new features.
 

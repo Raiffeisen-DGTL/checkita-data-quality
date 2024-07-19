@@ -19,8 +19,8 @@ this mode of operation. A typical architecture for working with Checkita Data Qu
 * Spark Application is started.
 * Spark Application loads the sources described in the configuration file (HDFS, S3, Hive, external databases),
   calculates metrics, performs checks and saves the results:
-  * The main results are saved in the framework database.
-  * Additionally, results and notifications are sent via channels configured in the pipeline.
+    * The main results are saved in the framework database.
+    * Additionally, results and notifications are sent via channels configured in the pipeline.
 * Based on the results, dashboards are formed to monitor data quality
   (not included in the functionality of this framework).
 
@@ -29,4 +29,4 @@ however, this functionality is currently in experimental state and is subject to
 information on running quality checks over streaming sources, please see 
 [Data Quality Checks over Streaming Sources](../02-general-information/05-StreamingMode.md) chapter. 
 
-![image](../../diagrams/Architecture.png)
+![image](../diagrams/Architecture.png)

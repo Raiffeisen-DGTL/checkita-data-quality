@@ -1,0 +1,22 @@
+type: object
+required:
+  - metric
+  - targetNumber
+  - threshold
+properties:
+  metric:
+    type: string
+    description: Metric ID which results is checked.
+    example: some_metric_id
+  targetNumber:
+    type: integer
+    description: |-
+      Number of records from the set of top N metric results that is considered. 
+      This number should be less than or equal to number of collected top values in top N metric.
+    example: 3
+  threshold:
+    type: number
+    description: |-
+      Maximum allowed Jacquard distance between current and previous sets of records from
+      top N metric result. Should be a number in interval `[0, 1]`.
+    example: 0.3

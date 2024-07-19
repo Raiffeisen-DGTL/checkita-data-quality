@@ -7,12 +7,10 @@ provide different ways for saving results, e.g. write them to file in HDFS or se
 All targets are configured in `targets` section of the job configuration.
 There are four general types of targets that can be configured depending on what information is being sent or saved:
 
-* [Result Targets](#result-targets) - used to save results as file or send them to Kafka in addition to storing into
+* [Result Targets](#result-targets) - used to save results as file, store them to Hive or send to Kafka topic in addition to storing into
   Data Quality storage.
-* [Error Collection Targets](#error-collection-targets) - used to save collected metric errors as file or to send them
-  to Kafka topic. Note that metric errors are not saved in the Data Quality storage as they contain some excerpts from 
-  data being checked. For more information, see [Metric Error Collection](../02-general-information/04-ErrorCollection.md)
-  chapter.
+* [Error Collection Targets](#error-collection-targets) - used to save collected metric errors as file store them to Hive or send to Kafka topic. 
+  For more information on error collection, see [Metric Error Collection](../02-general-information/04-ErrorCollection.md) chapter.
 * [Summary Targets](#summary-targets) - used to send notifications with summary report for Data Quality job.
   Summary report may also be sent to Kafka topic.
 * [Check Alert Targets](#check-alert-targets) - used to watch over some checks and send notification to users in case if
@@ -31,7 +29,7 @@ they are sent or saved:
 For result target of any type it is required to configure list of result to be saved or sent:
 
 * `resultTypes` - *Required*. List of result types to save or sent. May include following:
-  `regularMetrics`, `composedMetrics`, `loadChecks`, `checks`, `jobState`. Note that all results types are reduced 
+  `regularMetrics`, `composedMetrics`, `trendMetrics`, `loadChecks`, `checks`, `jobState`. Note that all results types are reduced 
    to [Unified Targets Schema](#unified-targets-schema) and saved together.
 
 ### Save Results to File
@@ -159,7 +157,7 @@ For summary target of `email` or `mattermost` type the following parameters can 
 * `attachFailedChecks` - *Optional, default is `false`*. Boolean parameter indicating whether report with failed checks
   should be attached to email or message with summary report.
 * `metrics` - *Optional*. If `attachMetricErrors` is set to `true`, then this parameter can be used to specify list of 
-  metric for which errors will be saved. If omitted, then errors are saved for all metrics defined in Data Quality job.
+  metrics for which errors will be saved. If omitted, then errors are saved for all metrics defined in Data Quality job.
 * `dumpSize` - *Optional, default is `100`*. If `attachMetricErrors` is set to `true`, then this parameter allows 
   additionally limit number of errors saved per metric in order to make report more compact. 
   Could not be larger, than application-level limitation as described in
@@ -176,7 +174,7 @@ In addition to common summary target parameters, it is required to configure fol
 
 HTML template is optional. If HTML template is not provided then the default summary report body is 
 compiled. Moreover, it should be noted, that `template` parameter has higher priority than `templateFile` one. 
-Therefore, if both of them are set then explicitly defined then HTML template from `template` parameter is used.
+Therefore, if both of them are set then explicitly defined HTML template from `template` parameter is used.
 
 In addition, HTML templates support parameter substitution using 
 [Mustache Template](https://mustache.github.io/mustache.5.html) notation, e.g.:
@@ -189,16 +187,16 @@ substitution in HTML templates is given in
 In order to send summary report to mattermost, it is required to configure summary target of `mattermost` type.
 In addition to common summary target parameters, it is required to configure following ones:
 
-* `recipients` - *Required*. List of recipients' to which summary report will be sent. Message can be sent either to
+* `recipients` - *Required*. **List of recipients to which summary report will be sent. Message can be sent either to
   a channel or to a user's direct messages:
     * When sending message to a channel, it is required to specify channel name prefixed with `#` sign: `#someChannel`.
-    * When sending message to a user's direct messages, it is required to specify username with `@` prefix: `@someUser`.
+    * When sending message to a user's direct messages, it is required to specify username with `@` prefix: `@someUser`.**
 * `template` - *Optional*. Markdown template to build message body.
 * `templateFile` - *Optional*. Location of the file with Markdown template to build message body.
 
 Markdown template is optional. If Markdown template is not provided then the default summary report body is
 compiled. Moreover, it should be noted, that `template` parameter has higher priority than `templateFile` one.
-Therefore, if both of them are set then explicitly defined then Markdown template from `template` parameter is used.
+Therefore, if both of them are set then explicitly defined Markdown template from `template` parameter is used.
 
 In addition, Markdown templates support parameter substitution using
 [Mustache Template](https://mustache.github.io/mustache.5.html) notation, e.g.:
@@ -266,8 +264,8 @@ In addition to common check alert target parameters, it is required to configure
 
 * `recipients` - *Required*. List of recipients' to which check alert will be sent. Message can be sent either to
   a channel or to a user's direct messages:
-  * When sending message to a channel, it is required to specify channel name prefixed with `#` sign: `#someChannel`.
-  * When sending message to a user's direct messages, it is required to specify username with `@` prefix: `@someUser`.
+    * When sending message to a channel, it is required to specify channel name prefixed with `#` sign: `#someChannel`.
+    * When sending message to a user's direct messages, it is required to specify username with `@` prefix: `@someUser`.
 * `template` - *Optional*. Markdown template to build message body.
 * `templateFile` - *Optional*. Location of the file with Markdown template to build message body.
 
