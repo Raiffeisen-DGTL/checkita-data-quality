@@ -1,0 +1,24 @@
+type: object
+required:
+  - id
+  - source
+properties:
+  id:
+    type: string
+    description: Regular metric ID
+    example: some_metric_id
+  description:
+    type: string
+    description: Optional. Regular metric description
+    example: Metric to count number of rows in the source
+  source:
+    type: string
+    description: Reference to a source ID over which metric is calculated
+    example: some_source_id
+  metadata:
+    type: array
+    description: Optional list of arbitrary user-defined metadata parameters specific to this regular metric
+    items:
+      type: string
+      description: Metadata parameter string in format of `param.name=param.value`
+    default: [ ]

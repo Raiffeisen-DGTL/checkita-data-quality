@@ -1,127 +1,24 @@
 description: |-
-  Load checks are the special type of checks that are distinguished from other checks as they are applied not to results of metrics computation but to sources metadata. Another key feature of load checks is that they are run prior to actual data loading from the sources, made possible due to Spark's lazy evaluation mechanisms: sources are, essentially, Spark dataframes and load checks are used to verify their metadata.
-
-  Load checks are defined in the loadChecks section of job configuration and have the following common parameters:
-
-  - **id**: Required. Load check ID.
-  - **description**: Optional. Load check description.
-  - **source**: Required. Reference to a source ID which metadata is being checked.
-  - **metadata**: Optional. List of user-defined metadata parameters specific to this load check where each parameter is a string in the format: `param.name=param.value`.
-
-  Currently, supported load checks are described below as well as configuration parameters specific to them.
-type: object
-required:
-- option
-properties:
-  minColumnNum:
-    type: array
-    description: |-
-      This check is used to verify if the number of columns in the source is equal to or greater than the specified number. 
-      Load checks of this type are configured in the minColumnNum subsection of the loadChecks section. In addition to the common parameters, 
-      the following parameter should be specified:
-
-    items:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Load check ID.
-          example: load_check_1
-        source:
-          type: string
-          description: Reference to a source ID which metadata is being checked.
-          example: kafka_source
-        option:
-          type: integer
-          description: Minimum number of columns that checked source must contain.
-          example: 2
-
-  exactColumnNum:
-    type: array
-    description: |-
-      This check is used to verify if the number of columns in the source is exactly equal to the specified number. Load checks of this type are 
-      configured in the exactColumnNum subsection of the loadChecks section. In addition to the common parameters, the following parameter should be 
-      specified:
-
-    items:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Load check ID.
-          example: load_check_2
-        description:
-          type: string
-          description: Optional. Load check description.
-          example: Checking that source has exactly required number of columns
-        source:
-          type: string
-          description: Reference to a source ID which metadata is being checked.
-          example: hdfs_delimited_source
-        option:
-          type: integer
-          description: Required number of columns that the checked source must contain.
-          example: 3
-        metadata:
-          type: array
-          description: |-
-            Optional. List of user-defined metadata parameters specific to this load check where each parameter is a string in the format: `param.name=param.value`.
-          items:
-            type: string
-          example:
-            - critical.loadcheck=true
-
-  columnsExist:
-    type: array
-    description: |-
-      This check is used to verify if the source contains columns with required names. Load checks of this type are configured in the columnsExist subsection of the loadChecks section. In addition to the common parameters, the following parameter should be specified:
-
-      - **columns**: Required. List of column names that must exist in the checked source.
-    items:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Load check ID.
-          example: loadCheck3
-        source:
-          type: string
-          description: Reference to a source ID which metadata is being checked.
-          example: sqlVS
-        columns:
-          type: array
-          description: List of column names that must exist in the checked source.
-          items:
-            type: string
-          example:
-            - id
-            - name
-            - entity
-            - description
-
-  schemaMatch:
-    type: array
-    description: |-
-      This check is used to verify if the source schema matches a predefined reference schema. The reference schema must be defined in the schemas section of configuration files as described in the Schemas Configuration chapter. Load checks of this type are configured in the schemaMatch subsection of the loadChecks section. In addition to the common parameters, the following parameters should be specified:
-
-      - **schema**: Required. Reference Schema ID which should be used for comparison with the source schema.
-      - **ignoreOrder**: Optional, default is false. Boolean parameter indicating whether column order should be ignored during comparison of the schemas.
-    items:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Load check ID.
-          example: load_check_5
-        source:
-          type: string
-          description: Reference to a source ID which metadata is being checked.
-          example: kafka_source
-        schema:
-          type: string
-          description: Reference Schema ID which should be used for comparison with the source schema.
-          example: hive_schema
-        ignoreOrder:
-          type: boolean
-          description: Boolean parameter indicating whether column order should be ignored during comparison of the schemas.
-          default: false
+  Load checks are the special type of checks that are distinguished from other checks as they are applied not to results
+  of metrics computation but to sources metadata. Another key feature of load checks is that they are run prior to 
+  actual data loading from the sources, made possible due to Spark's lazy evaluation mechanisms: 
+  sources are, essentially, Spark dataframes and load checks are used to verify their metadata.
+type: array
+items:
+  oneOf:
+    - title: minColumnNum
+      allOf:
+        - $ref: 'loadChecks/baseLoadCheckConfig.yaml'
+        - $ref: 'loadChecks/minColumnLoadCheckConfig.yaml'
+    - title: exactColumnNum
+      allOf:
+        - $ref: 'loadChecks/baseLoadCheckConfig.yaml'
+        - $ref: 'loadChecks/exactColumnLoadCheckConfig.yaml'
+    - title: columnsExist
+      allOf:
+        - $ref: 'loadChecks/baseLoadCheckConfig.yaml'
+        - $ref: 'loadChecks/columnsExistLoadCheckConfig.yaml'
+    - title: schemaMatch
+      allOf:
+        - $ref: 'loadChecks/baseLoadCheckConfig.yaml'
+        - $ref: 'loadChecks/schemaMatchLoadCheckConfig.yaml'

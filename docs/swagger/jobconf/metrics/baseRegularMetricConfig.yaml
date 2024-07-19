@@ -1,0 +1,39 @@
+type: object
+required:
+  - id
+  - source
+  - columns
+properties:
+  id:
+    type: string
+    description: Regular metric ID
+    example: some_metric_id
+  description:
+    type: string
+    description: Optional. Regular metric description
+    example: Metric to count number of rows in the source
+  source:
+    type: string
+    description: Reference to a source ID over which metric is calculated
+    example: some_source_id
+  columns:
+    type: array
+    description: |-
+      List of columns over which metric is calculated. 
+      Regular metrics can be calculated for multiple columns. 
+      This means that the result of the metrics will be calculated for row values in these columns. 
+      There could be a limitation imposed on number of columns which metric can process. 
+      The only exception is `Row Count Metric` which does not need columns to be specified.
+    example:
+      - column_one
+      - column_two
+    items:
+      type: string
+      description: Column name
+  metadata:
+    type: array
+    description: Optional list of arbitrary user-defined metadata parameters specific to this regular metric
+    items:
+      type: string
+      description: Metadata parameter string in format of `param.name=param.value`
+    default: [ ]

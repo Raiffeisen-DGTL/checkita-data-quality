@@ -1,0 +1,13 @@
+type: object
+required:
+  - columns
+properties:
+  columns:
+    type: array
+    description: List of column names that must exists in checked source
+    example:
+      - column_one
+      - column_two
+    items:
+      type: string
+      description: Column name

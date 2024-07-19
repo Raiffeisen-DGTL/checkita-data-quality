@@ -1,0 +1,30 @@
+type: object
+properties:
+  attachMetricErrors:
+    type: boolean
+    description: Boolean parameter indicating whether report with collected metric errors should be attached to summary report.
+    default: false
+    example: true
+  attachFailedChecks:
+    type: boolean
+    description: Boolean parameter indicating whether report with failed checks should be attached to summary report.
+    default: false
+    example: true
+  metrics:
+    type: array
+    description: |-
+      If `attachMetricErrors` is set to `true`, then this parameter can be used to specify list of 
+      metrics for which errors will be saved. 
+      If omitted, then errors are saved for all metrics defined in Data Quality job.
+    items:
+      type: string
+      description: Metric ID
+  dumpSize:
+    type: integer
+    description: |-
+      If `attachMetricErrors` is set to `true`, then this parameter allows 
+      additionally limit number of errors saved per metric in order to make report more compact. 
+      Could not be larger, than application-level limitation.
+    default: 100
+    
+      

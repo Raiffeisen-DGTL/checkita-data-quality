@@ -1,0 +1,19 @@
+type: object
+required:
+  - id
+properties:
+  id:
+    type: string
+    description: Check ID
+    example: some_check_id
+  description:
+    type: string
+    description: Optional. Check description
+    example: Some check description
+  metadata:
+    type: array
+    description: Optional list of arbitrary user-defined metadata parameters specific to this check
+    items:
+      type: string
+      description: Metadata parameter string in format of `param.name=param.value`
+    default: [ ]

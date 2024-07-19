@@ -44,6 +44,7 @@ nav:
       - 01-application-setup/01-ApplicationSettings.md
       - 01-application-setup/02-ApplicationSubmit.md
       - 01-application-setup/03-ResultsStorage.md
+      - 01-application-setup/04-APIServer.md
   - General Information:
       - 02-general-information/index.md
       - 02-general-information/01-WorkingWithDateTime.md

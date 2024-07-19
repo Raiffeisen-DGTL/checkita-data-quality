@@ -1,0 +1,20 @@
+type: object
+required:
+  - recipients
+properties:
+  recipients:
+    type: array
+    description: |-
+      List of recipients to which summary report will be sent. Message can be sent either to
+      a channel or to a user's direct messages:
+        * When sending message to a channel, it is required to specify channel name prefixed with `#` sign: `#someChannel`.
+        * When sending message to a user's direct messages, it is required to specify username with `@` prefix: `@someUser`.
+    items:
+      type: string
+      description: User or channel name.
+  template:
+    type: string
+    description: Markdown template to build message body.
+  templateFile:
+    type: string
+    description: Location of the file with Markdown template to build message body.

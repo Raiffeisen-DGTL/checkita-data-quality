@@ -1,0 +1,19 @@
+type: object
+required:
+  - recipients
+properties:
+  recipients:
+    type: array
+    description: List of recipients emails to which summary report will be sent.
+    items:
+      type: string
+      description: Email
+  template:
+    type: string
+    description: HTML template to build email body.
+  templateFile:
+    type: string
+    description: Location of the file with HTML template to build email body.
+  subjectTemplate:
+    type: string
+    description: Template used to customize email subject. If omitted, default subject name is used.

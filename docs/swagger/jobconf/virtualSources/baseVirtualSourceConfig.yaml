@@ -51,8 +51,9 @@ properties:
       - MEMORY_AND_DISK_SER_2
       - OFF_HEAP
   save:
-    description:  File output configuration used to save virtual source. By default, virtual sources are not saved.
-    $ref: '../fileOutput/fileOutputConfig.yaml'
+    allOf:
+      - description:  File output configuration used to save virtual source. By default, virtual sources are not saved.
+      - $ref: '../fileOutput/fileOutputConfig.yaml'
   keyFields:
     type: array
     description: |-
