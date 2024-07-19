@@ -1,0 +1,23 @@
+type: object
+required:
+  - params
+properties:
+  params:
+    type: object
+    description: Day distance metric parameters.
+    required:
+      - threshold
+    properties:
+      threshold:
+        type: number
+        description: |-
+          Maximum allowed Levenshtein distance.
+          If Levenshtein distance is normalized then threshold value must be in range `[0, 1]`.
+        example: 0.15
+      normalize:
+        type: boolean
+        description: |-
+          Boolean parameter indicating whether the Levenshtein distance
+          should be normalized with respect to the maximum of the two string lengths.
+        default: false
+        example: true

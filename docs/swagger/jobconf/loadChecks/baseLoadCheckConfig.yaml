@@ -1,0 +1,24 @@
+type: object
+required:
+  - id
+  - source
+properties:
+  id:
+    type: string
+    description: Load check ID
+    example: some_load_check_id
+  description:
+    type: string
+    description: Optional. Load check description
+    example: Some load check description
+  source:
+    type: string
+    description: Reference to a source ID which metadata is being checked
+    example: some_source_id
+  metadata:
+    type: array
+    description: Optional list of arbitrary user-defined metadata parameters specific to this load check
+    items:
+      type: string
+      description: Metadata parameter string in format of `param.name=param.value`
+    default: [ ]

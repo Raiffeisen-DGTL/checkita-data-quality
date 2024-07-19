@@ -1,0 +1,20 @@
+type: object
+required:
+  - resultTypes
+properties:
+  resultTypes:
+    type: array
+    description: List of result types to save or sent
+    example:
+      - regularMetrics
+      - composedMetrics
+      - trendMetrics
+    items:
+      type: string
+      enum:
+        - regularMetrics
+        - composedMetrics
+        - trendMetrics
+        - loadChecks
+        - checks
+        - jobState

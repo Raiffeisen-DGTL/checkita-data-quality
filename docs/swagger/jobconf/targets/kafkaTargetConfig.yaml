@@ -1,0 +1,19 @@
+type: object
+required:
+  - connection
+  - topic
+properties:
+  connection:
+    type: string
+    description: Kafka connection ID.
+    example: kafka_conn_id
+  topic:
+    type: string
+    description: Kafka topic to send results to.
+    example: result_targets_topic
+  options:
+    type: array
+    description: Additional list of Kafka parameters for sending messages to topic.
+    items:
+      type: string
+      description: Parameters in format of `parameterName=parameterValue`.

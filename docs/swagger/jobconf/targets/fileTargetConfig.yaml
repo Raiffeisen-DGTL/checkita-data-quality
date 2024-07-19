@@ -1,0 +1,8 @@
+type: object
+required:
+  - save
+properties:
+  save:
+    allOf:
+      - description: File output configuration used to save results.
+      - $ref: '../fileOutput/fileOutputConfig.yaml'

@@ -1,0 +1,8 @@
+type: object
+required:
+  - formula
+properties:
+  formula:
+    type: string
+    description: "Check formula: boolean expression referring to metric results."
+    example: "{{ metric_1 }} >= {{ metric_2 }}"

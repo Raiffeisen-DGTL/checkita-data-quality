@@ -4,7 +4,7 @@ Calculation of various metrics over the data is the main part of Data Quality jo
 various indicators that describe data from both technical and business points of view. Indicators in their turn can
 signal about problems in the data.
 
-All metrics are linked to a source over which they are calculated. Most of the metrics are computed directly over 
+Most of the metrics are linked to a source over which they are calculated. Most of the metrics are computed directly over 
 the data source. Such metrics are called `regular`. Apart from regular metrics there are two special kinds of metrics:
 
 * `composed` metrics - can be calculated based on other metrics results thus allowing metric compositions.
@@ -190,8 +190,8 @@ Therefore, to prevent OOM errors for extremely large sequences, it is recommende
 the [Approximate Sequence Completeness Metric](#approximate-sequence-completeness-metric), which uses HLL probabilistic
 algorithm to estimate number of unique values.
 
-The required number of elements is determined by the formula: `(max_value - min_value) / increment + 1`,
-Where:
+The required number of elements is determined by the formula: `(max_value - min_value) / increment + 1`, where:
+
 * `min_value` - the minimum value in the sequence;
 * `max_value` - the maximum value in the sequence;
 * `increment` - sequence step, default is 1.
@@ -229,8 +229,8 @@ Metric definition does not require additional parameters: `params` should not be
 
 All minimum string metrics are defined in `minString` subsection.
 
-Metric increment returns `Failure` status for rows where all values in the specified columns are not castable 
-to string and, therefore, minimum string length cannot be computed.
+Metric is not reversible. Metric increment returns `Failure` status for rows where all values in the specified 
+columns cannot be cast to string and, therefore, minimum string length cannot be computed.
 
 ### Maximum String Metric
 
@@ -618,7 +618,7 @@ Calculates an arbitrary quantile for the values in the specified column. Metric 
 Additional parameters should be supplied:
 
 * `accuracyError` - *Optional, default is `0.01`*. Accuracy error for calculation of quantile value.
-* `target` - *Required*. A number in the interval `[0, 1]` corresponding to the quantile that need to be caclulated.
+* `target` - *Required*. A number in the interval `[0, 1]` corresponding to the quantile that need to be calculated.
 
 Metric is not reversible and metric increment returns `Failure` status for rows where value in the specified column
 cannot be cast to number.
@@ -716,9 +716,6 @@ Metric definition does not require additional parameters: `params` should not be
 
 **This metric works with exactly two columns.**
 
-> **IMPORTANT**. For the metric to be calculated, values in the specified columns must not be empty or null and 
-> also can be cast to number (double). If at least one corrupt value is found, then metric calculator returns NaN value.
-
 Metric is not reversible and metric increment returns `Failure` status for rows where some values in the specified 
 columns cannot be cast to number.
 
@@ -731,9 +728,6 @@ Metric definition does not require additional parameters: `params` should not be
 
 **This metric works with exactly two columns.**
 
-> **IMPORTANT**. For the metric to be calculated, values in the specified columns must not be empty or null and
-> also can be cast to number (double). If at least one corrupt value is found, then metric calculator returns NaN value.
-
 Metric is not reversible and metric increment returns `Failure` status for rows where some values in the specified 
 columns cannot be cast to number.
 
@@ -745,9 +739,6 @@ Calculates the covariance of the values in two columns with the Bessel correctio
 Metric definition does not require additional parameters: `params` should not be set.
 
 **This metric works with exactly two columns.**
-
-> **IMPORTANT**. For the metric to be calculated, values in the specified columns must not be empty or null and
-> also can be cast to number (double). If at least one corrupt value is found, then metric calculator returns NaN value.
 
 Metric is not reversible and metric increment returns `Failure` status for rows where some values in the specified 
 columns cannot be cast to number.
@@ -807,22 +798,22 @@ Thus, trend metrics are defined `trend` subsection using following set of parame
 
 * `id` - *Required*. Trend metric ID;
 * `description` - *Optional*. Trend metric description.
-* `kind` - *Required*. Kind of statistic to be calculated over historical metric results. 
-  * Available trend metric kinds are: `avg`, `std`, `min`, `max`, `sum`, `median`, `firstQuartile`, `thirdQuartile`, `quantile`.
+* `kind` - *Required*. Kind of statistic to be calculated over historical metric results.
+    * Available trend metric kinds are: `avg`, `std`, `min`, `max`, `sum`, `median`, `firstQuartile`, `thirdQuartile`, `quantile`.
 * `quantile` - *Required*. **ONLY FOR `quantile` TREND METRIC**. Quantile to compute over historical metric results
   (must be a number in range `[0, 1]`).
 * `lookupMetric` - *Required*. Lookup metric ID: metric which results will be pulled from DQ storage.
 * `rule` - *Required*. The rule for loading historical metric results from DQ storage. There are two rules supported:
-  * `record` - loads specified number of historical metric result records.
-  * `datetime` - loads historical metric results for configured datetime window.
+    * `record` - loads specified number of historical metric result records.
+    * `datetime` - loads historical metric results for configured datetime window.
 * `windowSize` - *Required*. Size of the window for which historical results are loaded:
-  * If `rule` is set to `record` then window size is the number of records to retrieve.
-  * If `rule` is set to `datetime` then window size is a duration string which should conform to Scala Duration.
+    * If `rule` is set to `record` then window size is the number of records to retrieve.
+    * If `rule` is set to `datetime` then window size is a duration string which should conform to Scala Duration.
 * `windowOffset` - *Optional, default is `0` or `0s`*. Set window offset back from current reference date
   (see [Working with Date and Time](../02-general-information/01-WorkingWithDateTime.md) chapter for more details on
   reference date). By default, offset is absent and window start from current reference date (not including it).
-  * If `rule` is set to `record` then window offset is the number of records to skip from reference date.
-  * If `rule` is set to `datetime` then window offset is a duration string which should conform to Scala Duration.
+    * If `rule` is set to `record` then window offset is the number of records to skip from reference date.
+    * If `rule` is set to `datetime` then window offset is a duration string which should conform to Scala Duration.
 * `metadata` - *Optional*. List of user-defined metadata parameters specific to this metric where each parameter
   is a string in format: `param.name=param.value`.
 

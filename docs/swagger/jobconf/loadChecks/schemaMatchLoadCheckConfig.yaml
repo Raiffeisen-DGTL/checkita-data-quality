@@ -1,0 +1,13 @@
+type: object
+required:
+  - schema
+properties:
+  schema:
+    type: string
+    description: Reference Schema ID which should be used for comparison with source schema
+    example: avro_schema_from_registry
+  ignoreOrder:
+    type: boolean
+    description: Boolean parameter indicating whether columns order should be ignored during comparison of the schemas
+    default: false
+    example: true

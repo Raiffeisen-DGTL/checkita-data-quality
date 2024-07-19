@@ -45,30 +45,26 @@ Summarizing, data quality streaming job processing routing consists of following
 * Start streaming queries from provided sources with `forEachBatch` sink.
 * Start window processor in a separate thread.
 * For each micro-batch (evaluated once per trigger interval) process data:
-
-  * register metric error accumulator;
-  * for each record increment metric calculators corresponding to the window to which record is assigned;
-  * collect metric errors if any;
-  * if record is late to current watermark, then it is skipped and metric calculators state is unchanged;
-  * compute new watermark based on time values obtained from processed records;
-  * update processor buffer state, which contains state of metric calculators for all windows as well as collected
-    metric errors (also per each window). In addition, processor buffer tracks current watermark levels per each
-    processed streaming source.
-  
+    * register metric error accumulator;
+    * for each record increment metric calculators corresponding to the window to which record is assigned;
+    * collect metric errors if any;
+    * if record is late to current watermark, then it is skipped and metric calculators state is unchanged;
+    * compute new watermark based on time values obtained from processed records;
+    * update processor buffer state, which contains state of metric calculators for all windows as well as collected
+      metric errors (also per each window). In addition, processor buffer tracks current watermark levels per each
+      processed streaming source.
 * Window processor checks processor buffer (also once per trigger interval) for windows that are completely below the
   watermark level. **IMPORTANT** In order to support synchronised processing of multiple streaming sources, the minimum
   watermark level is used (computed from current watermark levels of all the processed sources). This ensures that
   window is finalised for all processed sources.
-* Once finalised window is obtained, then for this window all data quality routines are performed: 
-
-  * metric results are retrieved from calculators;
-  * composed metrics are calculated;
-  * checks are performed;
-  * results are stored in the data quality storage;
-  * all targets are processed and results (or notifications) are sent to required channels.
-  * checkpoints are saved if checkpoint directory is configured. **This is new feature available since Checkita 2.0.**
-  * processor buffer is cleared: state for processed window is removed.
-  
+* Once finalised window is obtained, then for this window all data quality routines are performed:
+    * metric results are retrieved from calculators;
+    * composed metrics are calculated;
+    * checks are performed;
+    * results are stored in the data quality storage;
+    * all targets are processed and results (or notifications) are sent to required channels.
+    * checkpoints are saved if checkpoint directory is configured. **This is new feature available since Checkita 2.0.**
+    * processor buffer is cleared: state for processed window is removed. 
 * Streaming queries and window processor run until application is stopped (`sigterm` signal received) or error occurs.
 
 **Important note on results saving**: since set of results is generated per each processed window than for each set of 

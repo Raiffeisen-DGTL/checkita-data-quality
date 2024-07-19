@@ -1,0 +1,21 @@
+type: object
+required:
+  - params
+properties:
+  params:
+    type: object
+    description: Day distance metric parameters.
+    required:
+      - threshold
+    properties:
+      threshold:
+        type: integer
+        description: Maximum allowed difference between two dates in days (not included in the range for comparison).
+        example: 3
+      dateFormat:
+        type: string
+        description: |-
+          Target datetime format. The datetime format must be specified as
+          [Java DateTimeFormatter](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html) pattern.
+        default: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        example: "yyyy-MM-dd"
