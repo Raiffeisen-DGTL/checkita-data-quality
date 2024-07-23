@@ -1,0 +1,23 @@
+description: >
+  Schema for job state results.
+type: object
+properties:
+  primaryKey:
+    type: array
+    description: >
+      Primary key fields for job state results.
+    example:
+      - job_id
+      - reference_date
+  version_info:
+    type: string
+    description: >
+      JSON string.
+  config:
+    type: string
+    description: >
+      JSON string.
+  reference_date:
+    type: string
+  execution_date:
+    type: string

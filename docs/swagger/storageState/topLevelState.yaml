@@ -1,0 +1,6 @@
+title: Storage
+description: Data Quality Job State
+type: object
+properties:
+  jobState:
+    $ref: "state.yaml"
