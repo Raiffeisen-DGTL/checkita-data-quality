@@ -1,5 +1,5 @@
 description: >
-  Schema definitions for different types of results stored by Checkita. Includes primary keys and data formats.
+  Schema for job results.
 type: object
 properties:
   regularMetrics:
@@ -16,6 +16,16 @@ properties:
           - metric_id
           - metric_name
           - reference_date
+      job_id:
+        type: string
+      metric_id:
+        type: string
+      metric_name:
+        type: string
+      description:
+        type: string
+      metadata:
+        type: string
       source_id:
         type: string
         description: >
@@ -28,6 +38,15 @@ properties:
         type: string
         description: >
           JSON string for additional parameters.
+      result:
+        type: number
+        format: double
+      additional_result:
+        type: string
+      reference_date:
+        type: string
+      execution_date:
+        type: string
   composedMetrics:
     description: >
       Schema for composed metrics results.
@@ -41,60 +60,31 @@ properties:
           - job_id
           - metric_id
           - reference_date
+      job_id:
+        type: string
+      metric_id:
+        type: string
+      metric_name:
+        type: string
+      description:
+        type: string
+      metadata:
+        type: string
       source_id:
         type: string
         description: >
           String representation of the source ID list.
-  trendMetrics:
-    description: >
-      Schema for trend metric results.
-    type: object
-    properties:
-      primaryKey:
-        type: array
-        description: >
-          Primary key fields for trend metric results.
-        example:
-          - job_id
-          - metric_id
-          - reference_date
-      source_id:
+      formula:
         type: string
-        description: >
-          String representation of the source ID list.
-  metricError:
-    description: >
-      Schema for trend metric results.
-    type: object
-    properties:
-      primaryKey:
-        type: array
-        description: >
-          Primary key fields for trend metric results.
-        example:
-          - job_id
-          - error_hash
-          - reference_date
-      source_id:
+      result:
+        type: number
+        format: double
+      additional_result:
         type: string
-        description: >
-          JSON string.
-      source_key_fields:
+      reference_date:
         type: string
-        description: >
-          JSON string.
-      metric_columns:
+      execution_date:
         type: string
-        description: >
-          JSON string.
-      row_data:
-        type: string
-        description: >
-          JSON string.
-      errorHash:
-        type: string
-        description: >
-          JSON string. Error hash is computed with use of raw value of row_data field even if it is encrypted later.
   loadChecks:
     description: >
       Schema for load checks results.
@@ -108,10 +98,31 @@ properties:
           - job_id
           - check_id
           - reference_date
+      job_id:
+        type: string
+      check_id:
+        type: string
+      check_name:
+        type: string
+      description:
+        type: string
+      metadata:
+        type: string
       source_id:
         type: string
         description: >
           String representation of the source ID list.
+      expected:
+        type: string
+      status:
+        type: number
+        format: double
+      message:
+        type: string
+      reference_date:
+        type: string
+      execution_date:
+        type: string
   checks:
     description: >
       Schema for checks results.
@@ -125,28 +136,41 @@ properties:
           - job_id
           - check_id
           - reference_date
+      job_id:
+        type: string
+      check_id:
+        type: string
+      check_name:
+        type: string
+      description:
+        type: string
+      metadata:
+        type: string
       source_id:
         type: string
         description: >
           String representation of the source ID list.
+      base_metric:
+        type: string
       compare_metric:
         type: string
         description: |-
           Usually empty list or single metric. But expression checks can use multiple metrics in their formulas, 
           which will be stored in this field, except the very first metric which is considered as base_metric.
-  jobState:
-    description: >
-      Schema for job state results.
-    type: object
-    properties:
-      primaryKey:
-        type: array
-        description: >
-          Primary key fields for job state results.
-        example:
-          - job_id
-          - reference_date
-      params:
+      compared_threshold:
+        type: number
+        format: double
+      lower_bound:
+        type: number
+        format: double
+      upper_bound:
+        type: number
+        format: double
+      status:
         type: string
-        description: >
-          JSON string for additional parameters.
+      message:
+        type: string
+      reference_date:
+        type: string
+      execution_date:
+        type: string

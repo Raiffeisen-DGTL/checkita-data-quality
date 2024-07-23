@@ -1,5 +1,0 @@
-description: >
-  Command to submit the Spark application.
-type: string
-example: >
-  spark-submit --class <main-class> <jar-file>

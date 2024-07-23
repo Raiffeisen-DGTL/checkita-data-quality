@@ -1,0 +1,6 @@
+title: Storage
+description: Data Quality Job Results
+type: object
+properties:
+  jobResults:
+    $ref: "results.yaml"

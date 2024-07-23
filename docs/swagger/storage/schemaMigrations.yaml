@@ -1,4 +1,0 @@
-description: >
-  Indicates whether schema evolution is supported and configured. Flyway is used for RDBMS schema migrations.
-type: boolean
-default: false
