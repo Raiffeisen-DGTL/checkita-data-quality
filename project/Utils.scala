@@ -81,10 +81,11 @@ object Utils {
   
   def overrideSnakeYaml: ModuleID = "org.yaml" % "snakeyaml" % "1.33"
   
-  def getVersionString(buildVersion: String, packageType: PackageType.Value): String = packageType match {
-    case PackageType.Release => buildVersion
-    case otherType => s"$buildVersion-${otherType.toString}"
-  }
+  def getVersionString(buildVersion: String, sparkVersion: String, packageType: PackageType.Value): String = 
+    packageType match {
+      case PackageType.Release => s"$buildVersion-$sparkVersion"
+      case otherType => s"$buildVersion-$sparkVersion-${otherType.toString}"
+    }
   
   def getScalacOptions(scalaVersion: String): Seq[String] = {
     val commonOptions = Seq(
