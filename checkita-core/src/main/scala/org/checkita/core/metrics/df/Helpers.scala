@@ -23,8 +23,9 @@ object Helpers {
   def dropColumnSuffix(columnName: String, suffix: String): String =
     if (columnName.endsWith("`")) columnName.dropRight(suffix.length + 2) + "`"
     else columnName.dropRight(suffix.length + 1)
-
-
+  
+  def tripleBackticks(columnName: String): String = columnName.replace("`", "```")
+  
   def withKeyFields(columns: Seq[String], keyFields: Seq[String]): Seq[String] =
     keyFields ++ columns.filterNot(keyFields.contains)
 }

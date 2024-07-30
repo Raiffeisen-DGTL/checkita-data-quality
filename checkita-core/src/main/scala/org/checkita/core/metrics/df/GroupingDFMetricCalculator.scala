@@ -3,7 +3,7 @@ package org.checkita.core.metrics.df
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.functions.{coalesce, col, lit, sum, typedlit, when}
 import org.apache.spark.sql.types.{ArrayType, DoubleType, StringType}
-import org.checkita.core.metrics.df.Helpers.{DFMetricOutput, addColumnSuffix}
+import org.checkita.core.metrics.df.Helpers.{DFMetricOutput, addColumnSuffix, tripleBackticks}
 import org.checkita.core.metrics.df.functions.api.{collect_list_limit, merge_list_limit}
 
 /**
@@ -110,7 +110,7 @@ abstract class GroupingDFMetricCalculator extends DFMetricCalculator {
    * @return Spark expression that will yield double metric calculator result
    */
   override def result: Column = coalesce(
-    resultAggregateFunction(col(groupResultCol)).cast(DoubleType),
+    resultAggregateFunction(col(tripleBackticks(groupResultCol))).cast(DoubleType),
     emptyValue
   ).as(resultCol)
 
@@ -123,6 +123,6 @@ abstract class GroupingDFMetricCalculator extends DFMetricCalculator {
    * @return Spark expression that will yield array of metric errors.
    */
   override def errors(implicit errorDumpSize: Int, keyFields: Seq[String]): Column =
-    merge_list_limit(col(groupErrorsCol), errorDumpSize).as(errorsCol)
+    merge_list_limit(col(tripleBackticks(groupErrorsCol)), errorDumpSize).as(errorsCol)
 
 }
