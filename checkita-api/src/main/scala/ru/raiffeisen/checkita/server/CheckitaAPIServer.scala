@@ -9,8 +9,7 @@ import org.http4s.server.{Router, Server}
 import ru.raiffeisen.checkita.appsettings.AppSettings
 import ru.raiffeisen.checkita.config.Enums.DQStorageType
 import ru.raiffeisen.checkita.dbmanager.APIJdbcStorageManager
-import ru.raiffeisen.checkita.routes.StorageRoutes
-import ru.raiffeisen.checkita.routes.ValidationRoutes
+import ru.raiffeisen.checkita.routes.{HeuristicsRoutes, StorageRoutes, ValidationRoutes}
 import ru.raiffeisen.checkita.storage.Connections.DqStorageJdbcConnection
 import ru.raiffeisen.checkita.utils.Common.getPrependVars
 import ru.raiffeisen.checkita.utils.Logging
@@ -76,7 +75,8 @@ object CheckitaAPIServer extends IOApp with Logging {
    */
   private def getRouter(dbManager: APIJdbcStorageManager, settings: AppSettings): HttpRoutes[IO] = Router(
     "/api/validation" -> ValidationRoutes.configValidationRoutes,
-    "/api/storage" -> StorageRoutes(dbManager, settings).dqStorageRoutes
+    "/api/storage" -> StorageRoutes(dbManager, settings).dqStorageRoutes,
+    "/api/config" -> HeuristicsRoutes.dqHeuristicsRoutes
   )
 
   /**
