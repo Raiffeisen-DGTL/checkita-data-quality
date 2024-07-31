@@ -99,9 +99,104 @@ paths:
               schema:
                 type: string
                 example: 'Unable to parse arguments: <list of argument parsing errors>.'
+  /storage/info:
+    post:
+      tags:
+        - storage
+      summary: Data Quality Job Info
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/Info'
+      responses:
+        200:
+          description: Valid response.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Success. Got job info.
+        500:
+          description: Error response.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Unable to get jobs summary results due to following error: <list of argument parsing errors>.'
+  /storage/state:
+    post:
+      tags:
+        - storage
+      summary: Data Quality Job State
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/State'
+      responses:
+        200:
+          description: Valid response.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Success. Got job state.
+        500:
+          description: Decryption error.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Unable to decrypt job state due to following error: <list of validation errors>.'
+        404:
+          description: Empty response. Query job state returned empty result.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: No job state was found.
+  /storage/results:
+    post:
+      tags:
+        - storage
+      summary: Data Quality Job Results
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/Results'
+      responses:
+        200:
+          description: Valid response.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Success. Got job results.
+        500:
+          description: Decryption error.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Unable to decrypt metric errors due to following error: <list of validation errors>.'
+        404:
+          description: Empty response. Query job results are empty.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: No job result was found.
 components:
   schemas:
     ApplicationConfiguration:
       $ref: 'appconf/topLevelAppConfig.yaml'
     JobConfiguration:
       $ref: 'jobconf/topLevelJobConfig.yaml'
+    State:
+      $ref: 'storageState/topLevelState.yaml'
+    Results:
+      $ref: 'storageResults/topLevelResults.yaml'
+    Info:
+      $ref: 'storageInfo/topLevelInfo.yaml'

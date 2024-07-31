@@ -1,0 +1,176 @@
+description: >
+  Schema for job results.
+type: object
+properties:
+  regularMetrics:
+    description: >
+      Schema for regular metrics results.
+    type: object
+    properties:
+      primaryKey:
+        type: array
+        description: >
+          Primary key fields for regular metrics results.
+        example:
+          - job_id
+          - metric_id
+          - metric_name
+          - reference_date
+      job_id:
+        type: string
+      metric_id:
+        type: string
+      metric_name:
+        type: string
+      description:
+        type: string
+      metadata:
+        type: string
+      source_id:
+        type: string
+        description: >
+          String representation of the source ID list.
+      column_names:
+        type: string
+        description: >
+          String representation of column names list.
+      params:
+        type: string
+        description: >
+          JSON string for additional parameters.
+      result:
+        type: number
+        format: double
+      additional_result:
+        type: string
+      reference_date:
+        type: string
+      execution_date:
+        type: string
+  composedMetrics:
+    description: >
+      Schema for composed metrics results.
+    type: object
+    properties:
+      primaryKey:
+        type: array
+        description: >
+          Primary key fields for composed metrics results.
+        example:
+          - job_id
+          - metric_id
+          - reference_date
+      job_id:
+        type: string
+      metric_id:
+        type: string
+      metric_name:
+        type: string
+      description:
+        type: string
+      metadata:
+        type: string
+      source_id:
+        type: string
+        description: >
+          String representation of the source ID list.
+      formula:
+        type: string
+      result:
+        type: number
+        format: double
+      additional_result:
+        type: string
+      reference_date:
+        type: string
+      execution_date:
+        type: string
+  loadChecks:
+    description: >
+      Schema for load checks results.
+    type: object
+    properties:
+      primaryKey:
+        type: array
+        description: >
+          Primary key fields for load checks results.
+        example:
+          - job_id
+          - check_id
+          - reference_date
+      job_id:
+        type: string
+      check_id:
+        type: string
+      check_name:
+        type: string
+      description:
+        type: string
+      metadata:
+        type: string
+      source_id:
+        type: string
+        description: >
+          String representation of the source ID list.
+      expected:
+        type: string
+      status:
+        type: number
+        format: double
+      message:
+        type: string
+      reference_date:
+        type: string
+      execution_date:
+        type: string
+  checks:
+    description: >
+      Schema for checks results.
+    type: object
+    properties:
+      primaryKey:
+        type: array
+        description: >
+          Primary key fields for checks results.
+        example:
+          - job_id
+          - check_id
+          - reference_date
+      job_id:
+        type: string
+      check_id:
+        type: string
+      check_name:
+        type: string
+      description:
+        type: string
+      metadata:
+        type: string
+      source_id:
+        type: string
+        description: >
+          String representation of the source ID list.
+      base_metric:
+        type: string
+      compare_metric:
+        type: string
+        description: |-
+          Usually empty list or single metric. But expression checks can use multiple metrics in their formulas, 
+          which will be stored in this field, except the very first metric which is considered as base_metric.
+      compared_threshold:
+        type: number
+        format: double
+      lower_bound:
+        type: number
+        format: double
+      upper_bound:
+        type: number
+        format: double
+      status:
+        type: string
+      message:
+        type: string
+      reference_date:
+        type: string
+      execution_date:
+        type: string
