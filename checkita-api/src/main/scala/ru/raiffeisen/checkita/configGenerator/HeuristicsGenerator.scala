@@ -1,105 +1,457 @@
 package ru.raiffeisen.checkita.configGenerator
 
 import scala.collection.mutable.ListBuffer
-import scala.util.Try
 
+import com.typesafe.config.Config
+import eu.timepit.refined.api.Refined
+import eu.timepit.refined.types.string.NonEmptyString
+
+import ru.raiffeisen.checkita.config.IO.writeJobConfig
+import ru.raiffeisen.checkita.config.RefinedTypes.{Email, ID}
+import ru.raiffeisen.checkita.config.jobconf.Checks._
+import ru.raiffeisen.checkita.config.jobconf.Connections._
+import ru.raiffeisen.checkita.config.jobconf.JobConfig
+import ru.raiffeisen.checkita.config.jobconf.LoadChecks.{ExactColNumLoadCheckConfig, LoadChecksConfig}
+import ru.raiffeisen.checkita.config.jobconf.Metrics._
+import ru.raiffeisen.checkita.config.jobconf.Sources._
+import ru.raiffeisen.checkita.config.jobconf.Targets._
 import ru.raiffeisen.checkita.configGenerator.DdlParser.parseDDL
-import ru.raiffeisen.checkita.configGenerator.HeuristicsConstants._
 import ru.raiffeisen.checkita.utils.ResultUtils._
 
 /**  */
 object HeuristicsGenerator {
-  def heuristics(ddl: String, connType: String): Result[String] = {
-    Try {
-      val (sourcesMap, parsedDdl) = parseDDL(ddl)
-      val notNullableCols: ListBuffer[String] = ListBuffer()
-      val duplicatesCols: ListBuffer[String] = ListBuffer()
-      val completenessCols: ListBuffer[String] = ListBuffer()
-      val source = sourcesMap("source")
+  def heuristics(ddl: String, connType: String): Result[Config] = {
 
-      val result: ListBuffer[String] = ListBuffer(rowCount.replaceAll("%s", source))
-      val greaterThan = greaterThanConst.replaceAll("%s", source)
-      val equalTo: ListBuffer[String] = ListBuffer()
-      val lessThan: ListBuffer[String] = ListBuffer()
-      val colCnt: ListBuffer[Int] = ListBuffer()
-      val metricsForTarget: ListBuffer[String] = ListBuffer("check_row_cnt")
-      val metrics: ListBuffer[String] = ListBuffer()
-      val equalToResult: ListBuffer[String] = ListBuffer()
+    val tableType = Seq("oracle", "postgresql", "mysql", "mssql", "h2", "clickhouse")
+    val distinctCols = Seq("login", "inn", "id")
 
-      parsedDdl.values.foreach { columns =>
-        columns.foreach { values =>
-          val key = Seq(values.keys).head.mkString
-          val value = Seq(values.values).head.toString
-          colCnt += 1
-          if (distinctCols.contains(key)) {
-            duplicatesCols += key
-          }
-          if (key == "cnum") {
-            result += cnumRegex.replaceAll("%s", source)
-            equalTo += equalToCnum.replace("%s", source)
-          }
-          if (value == "not null" || distinctCols.contains(key)) {
-            notNullableCols += key
-          } else {
-            completenessCols += key
-          }
+    val (sourcesMap, parsedDdl) = parseDDL(ddl)
+    val notNullableCols: ListBuffer[String] = ListBuffer()
+    val duplicatesCols: ListBuffer[String] = ListBuffer()
+    val completenessCols: ListBuffer[String] = ListBuffer()
+    val source = sourcesMap("source")
+    var colCnt = 0
+    val metricsForTarget: ListBuffer[NonEmptyString] = ListBuffer(Refined.unsafeApply("check_row_cnt"))
+
+    val rowCnt = RowCountMetricConfig(
+      id = ID(f"$source%s_row_cnt"),
+      source = Refined.unsafeApply(source),
+      description = Option(Refined.unsafeApply("Row count in %s"))
+    )
+    val greaterThan = GreaterThanCheckConfig(
+      id = ID(f"check_row_cnt"),
+      description = Option(Refined.unsafeApply(f"Completness check for $source")),
+      metric = Refined.unsafeApply(f"$source%s_row_cnt"),
+      threshold = Option(0.0),
+      compareMetric = None
+    )
+
+    parsedDdl.values.foreach { columns =>
+      columns.foreach { values =>
+        val key = Seq(values.keys).head.mkString
+        val value = Seq(values.values).head.toString
+        colCnt += 1
+        if (distinctCols.contains(key)) {
+          duplicatesCols += key
+        }
+        if (value == "not null" || distinctCols.contains(key)) {
+          notNullableCols += key
+        } else {
+          completenessCols += key
         }
       }
+    }
 
-      val colNum = colNumConst.replaceAll("%s", source).replace("%a", colCnt.length.toString)
+    val colNum = ExactColNumLoadCheckConfig(
+      id = ID(f"$source%s_cols_num"),
+      source = Refined.unsafeApply(source),
+      option = Refined.unsafeApply(colCnt),
+      description = None
+    )
 
+    val (duplicateVal: DuplicateValuesMetricConfig, equalToDuplicates: EqualToCheckConfig) =
       if (duplicatesCols.nonEmpty) {
-        result += duplicateVal.replaceAll("%s", source).replace("%a", duplicatesCols.mkString(", "))
-        equalTo += equalToDuplicates.replaceAll("%s", source)
-        metricsForTarget += s"check_duplicates_$source"
+        val duplicateVal = DuplicateValuesMetricConfig(
+          id = ID(f"$source%s_duplicate_val"),
+          description = Option(Refined.unsafeApply(f"Count of duplicate values in $source")),
+          source = Refined.unsafeApply(source),
+          columns = Refined.unsafeApply(duplicatesCols)
+        )
+        val equalToDuplicates = EqualToCheckConfig(
+          id = ID(f"check_duplicates_$source"),
+          description = Option(Refined.unsafeApply(f"$source mustnt contain nulls")),
+          metric = Refined.unsafeApply(f"$source%s_duplicate_val"),
+          threshold = Option(0.0),
+          compareMetric = None
+        )
+        metricsForTarget += Refined.unsafeApply(s"check_duplicates_$source")
+        (duplicateVal, equalToDuplicates)
       }
+
+    val (completeness: CompletenessMetricConfig, equalToCompleteness: EqualToCheckConfig) =
       if (completenessCols.nonEmpty) {
-        result += completeness.replaceAll("%s", source).replace("%a", completenessCols.mkString(", "))
-        equalTo += equalToCompleteness.replaceAll("%s", source)
-        metricsForTarget += s"check_completeness_$source"
+        val completeness = CompletenessMetricConfig(
+          id = ID(f"$source%s_completeness"),
+          description = Option(Refined.unsafeApply(f"Completeness check for $source")),
+          source = Refined.unsafeApply(source),
+          columns = Refined.unsafeApply(completenessCols)
+        )
+        val equalToCompleteness = EqualToCheckConfig(
+          id = ID(f"check_completeness_$source"),
+          description = Option(Refined.unsafeApply(f"Completness check for $source")),
+          metric = Refined.unsafeApply(f"$source%s_completeness"),
+          threshold = Option(1.0),
+          compareMetric = None
+        )
+        metricsForTarget += Refined.unsafeApply(s"check_completeness_$source")
+        (completeness, equalToCompleteness)
       }
+
+    val (
+      regular: RegularMetricsConfig,
+      composed: Option[ComposedMetricConfig],
+      equalToNulls: EqualToCheckConfig,
+      lessThanPct: Option[LessThanCheckConfig]
+      ) =
       if (notNullableCols.nonEmpty) {
-        result += nullVal.replaceAll("%s", source).replace("%a", notNullableCols.mkString(", "))
-        val composed = composedConstants.replaceAll("%s", source)
-        lessThan += lessThanPct.replace("%s", source)
-        metricsForTarget += "check_pct_of_null"
-        equalTo += equalToNulls.replaceAll("%s", source)
-        metricsForTarget += s"check_nulls_$source"
-        metrics += s"metrics : {regular: {${result.mkString(",")}}}, {$composed}"
+        val nullVal = NullValuesMetricConfig(
+          id = ID(f"$source%s_nulls"),
+          description = Option(Refined.unsafeApply(f"Null values in $source")),
+          source = Refined.unsafeApply(source),
+          columns = Refined.unsafeApply(notNullableCols)
+        )
+        val composed = Some(
+          ComposedMetricConfig(
+            id = ID(f"$source%s_pct_of_null"),
+            description = Option(Refined.unsafeApply(f"Percent of null values in $source")),
+            formula = Refined.unsafeApply(f"$source%s_nulls   / (  $source%s_row_cnt  )")
+          )
+        )
+        val lessThanPct = Some(
+          LessThanCheckConfig(
+            id = ID(f"check_pct_of_null"),
+            description = None,
+            metric = Refined.unsafeApply(f"$source%s_pct_of_null"),
+            compareMetric = None,
+            threshold = Option(0.1)
+          )
+        )
+        metricsForTarget += Refined.unsafeApply("check_pct_of_null")
+        val equalToNulls = EqualToCheckConfig(
+          id = ID(f"check_nulls_$source"),
+          description = Option(Refined.unsafeApply(f"$source mustnt contain duplicates")),
+          metric = Refined.unsafeApply(f"$source%s_duplicate_val"),
+          threshold = Option(0.0),
+          compareMetric = None
+        )
+        metricsForTarget += Refined.unsafeApply(s"check_nulls_$source")
+        val regular = RegularMetricsConfig(
+          rowCount = Seq(rowCnt),
+          duplicateValues = Seq(duplicateVal),
+          completeness = Seq(completeness),
+          nullValues = Seq(nullVal)
+        )
+        (regular, composed, equalToNulls, lessThanPct)
       } else {
-        metrics += s"metrics : {regular: {${result.mkString(",")}}}"
+        (None, None, None, None)
       }
 
-      val connections = connType match {
-        case "sqlite" => f"""connections:{{sqlite: [{{id: "$connType%s_id", url: "CHANGE"}}]}},"""
-        case "kafka" => f"""connections: {kafka: [{id: "$connType%s_id", servers: ["CHANGE"]}]},"""
-        case _ if tableType.contains(connType) =>
-          f"""connections:{$connType: [{id: "$connType%s_id", url: "CHANGE", username: "CHANGE", password: "CHANGE"}]},"""
-        case _ => ""
+    val metrics = MetricsConfig(
+      regular = Option(regular),
+      composed = composed match {
+        case Some(comp) => Seq(comp)
+        case None => Seq.empty
       }
+    )
 
-      val sources = if (tableType.contains(connType) || connType == "sqlite") {
-        f"""table: [{id: $source, connection: "$connType%s_id", table: "$source"}]"""
-      } else {
-        f"""file: [{id: "$source", kind: "${sourcesMap("stored_as")}", path: "${sourcesMap("loc")}"}]"""
+    val connections: Option[ConnectionsConfig] = connType match {
+      case "sqlite" => Some(ConnectionsConfig(
+        sqlite = Seq(
+          SQLiteConnectionConfig(
+            id = ID(f"$connType%s_id"),
+            description = None,
+            url = Refined.unsafeApply("CHANGE")
+          )
+        )
+      ))
+      case "kafka" => Some(ConnectionsConfig(
+        kafka = Seq(
+          KafkaConnectionConfig
+          (
+            id = ID(f"$connType%s_id"),
+            description = None,
+            servers = Refined.unsafeApply(Seq(Refined.unsafeApply("CHANGE")))
+          )
+        )
+      ))
+      case "postgresql" => Some(ConnectionsConfig(
+        postgres = Seq(
+          PostgresConnectionConfig
+          (
+            id = ID(f"$connType%s_id"),
+            description = None,
+            url = Refined.unsafeApply("CHANGE"),
+            username = Option(Refined.unsafeApply("CHANGE")),
+            password = Option(Refined.unsafeApply("CHANGE")),
+            schema = None
+          )
+        )
+      ))
+      case "oracle" => Some(ConnectionsConfig(
+        oracle = Seq(
+          OracleConnectionConfig
+          (
+            id = ID(f"$connType%s_id"),
+            description = None,
+            url = Refined.unsafeApply("CHANGE"),
+            username = Option(Refined.unsafeApply("CHANGE")),
+            password = Option(Refined.unsafeApply("CHANGE")),
+            schema = None
+          )
+        )
+      ))
+      case "mysql" => Some(ConnectionsConfig(
+        mysql = Seq(
+          MySQLConnectionConfig
+          (
+            id = ID(f"$connType%s_id"),
+            description = None,
+            url = Refined.unsafeApply("CHANGE"),
+            username = Option(Refined.unsafeApply("CHANGE")),
+            password = Option(Refined.unsafeApply("CHANGE")),
+            schema = None
+          )
+        )
+      ))
+      case "mssql" => Some(ConnectionsConfig(
+        mssql = Seq(
+          MSSQLConnectionConfig
+          (
+            id = ID(f"$connType%s_id"),
+            description = None,
+            url = Refined.unsafeApply("CHANGE"),
+            username = Option(Refined.unsafeApply("CHANGE")),
+            password = Option(Refined.unsafeApply("CHANGE")),
+            schema = None
+          )
+        )
+      ))
+      case "h2" => Some(ConnectionsConfig(
+        h2 = Seq(
+          H2ConnectionConfig
+          (
+            id = ID(f"$connType%s_id"),
+            description = None,
+            url = Refined.unsafeApply("CHANGE")
+          )
+        )
+      ))
+      case "greenplum" => Some(ConnectionsConfig(
+        greenplum = Seq(
+          GreenplumConnectionConfig
+          (
+            id = ID(f"$connType%s_id"),
+            description = None,
+            url = Refined.unsafeApply("CHANGE"),
+            username = Option(Refined.unsafeApply("CHANGE")),
+            password = Option(Refined.unsafeApply("CHANGE")),
+            schema = None
+          )
+        )
+      ))
+      case "clickhouse" => Some(ConnectionsConfig(
+        clickhouse = Seq(
+          ClickHouseConnectionConfig
+          (
+            id = ID(f"$connType%s_id"),
+            description = None,
+            url = Refined.unsafeApply("CHANGE"),
+            username = Option(Refined.unsafeApply("CHANGE")),
+            password = Option(Refined.unsafeApply("CHANGE")),
+            schema = None
+          )
+        )
+      ))
+      case _ => None
+    }
+
+    val sources = SourcesConfig(
+      table = if (tableType.contains(connType) || connType == "sqlite") {
+        Seq(
+          TableSourceConfig(
+            id = ID(f"$source"),
+            description = None,
+            connection = ID(f"$connType%s_id"),
+            table = Option(Refined.unsafeApply(f"$source")),
+            query = None
+          )
+        )
+      } else Seq.empty,
+      hive = connType match {
+        case "hive" => Seq(
+          HiveSourceConfig(
+            id = ID(f"$source"),
+            description = None,
+            table = Refined.unsafeApply(f"$source"),
+            schema = Refined.unsafeApply("CHANGE")
+          )
+        )
+        case _ => Seq.empty
+      },
+      kafka = connType match {
+        case "kafka" => Seq(
+          KafkaSourceConfig(
+            id = ID(f"$source"),
+            description = None,
+            connection = ID(f"$connType%s_id"),
+            topics = Seq(Refined.unsafeApply("CHANGE")),
+            topicPattern = None,
+            startingOffsets = None,
+            endingOffsets = None
+          )
+        )
+        case _ => Seq.empty
+      },
+      greenplum = connType match {
+        case "greenplum" => Seq(
+          GreenplumSourceConfig(
+            id = ID(f"$source"),
+            description = None,
+            connection = ID(f"$connType%s_id"),
+            table = Option(Refined.unsafeApply(f"$source"))
+          )
+        )
+        case _ => Seq.empty
+      },
+      file = sourcesMap("stored_as") match {
+        case "avro" => Seq(
+          AvroFileSourceConfig(
+            id = ID(f"$source"),
+            description = None,
+            path = Refined.unsafeApply(sourcesMap("loc")),
+            schema = None
+          )
+        )
+        case "parquet" => Seq(
+          ParquetFileSourceConfig(
+            id = ID(f"$source"),
+            description = None,
+            path = Refined.unsafeApply(sourcesMap("loc")),
+            schema = None
+          )
+        )
+        case "orc" => Seq(
+          OrcFileSourceConfig(
+            id = ID(f"$source"),
+            description = None,
+            path = Refined.unsafeApply(sourcesMap("loc")),
+            schema = None
+          )
+        )
+        case _ => connType match {
+          case "fixed" => Seq(
+            FixedFileSourceConfig(
+              id = ID(f"$source"),
+              description = None,
+              path = Refined.unsafeApply("CHANGE"),
+              schema = None
+            )
+          )
+          case "delimited" => Seq(
+            DelimitedFileSourceConfig(
+              id = ID(f"$source"),
+              description = None,
+              path = Refined.unsafeApply("CHANGE"),
+              schema = None
+            )
+          )
+          case _ => Seq.empty
+        }
+      },
+      custom = connType match {
+        case "custom" => Seq(
+          CustomSource(
+            id = ID(f"$source"),
+            description = None,
+            path = Option(Refined.unsafeApply("CHANGE")),
+            schema = None,
+            format = Refined.unsafeApply("CHANGE")
+          )
+        )
+        case _ => Seq.empty
       }
+    )
 
-      equalToResult += equalToConst.replace("%s", equalTo.mkString(", "))
+    val snapshots = SnapshotChecks(
+      equalTo = Seq(
+        equalToNulls,
+        equalToDuplicates,
+        equalToCompleteness
+      ),
+      lessThan = lessThanPct match {
+        case Some(l) => Seq(l)
+        case None => Seq.empty
+      },
+      greaterThan = Seq(greaterThan)
 
-      val snapshots = if (lessThan.nonEmpty) {
-        equalTo + ", " + greaterThan + ", " + lessThan
-      } else {
-        equalToResult.mkString(", ") + ", " + greaterThan
-      }
+    )
 
-      val targets = targetsEmail.replace("%s", metricsForTarget.mkString(", "))
-      jobConfigConst.replace("%a", source)
-        .replace("%b", connections)
-        .replace("%c", sources)
-        .replace("%d", colNum)
-        .replace("%e", metrics.mkString(", "))
-        .replace("%f", snapshots)
-        .replace("%g", targets)
-    }.toResult(preMsg = "Unable to get Job Configuration due to following error:")
+    val targets = TargetsConfig(
+      summary = Some(
+        SummaryTargetsConfig(
+          email = Some(
+            SummaryEmailTargetConfig(
+              recipients = Refined.unsafeApply(Seq(Email("change@change.com"))),
+              dumpSize = Some(Refined.unsafeApply(10)),
+              attachMetricErrors = true,
+              subjectTemplate = None,
+              template = None,
+              templateFile = None
+            )
+          ),
+          mattermost = None,
+          kafka = None
+        )
+      ),
+      checkAlerts = Some(
+        CheckAlertTargetsConfig(
+          email = Seq(
+            CheckAlertEmailTargetConfig(
+              id = ID("alert"),
+              checks = metricsForTarget,
+              recipients = Refined.unsafeApply(Seq(Email("change@change.com"))),
+              subjectTemplate = None,
+              template = None,
+              templateFile = None
+            )
+          )
+        )
+      ),
+      results = None,
+      errorCollection = None
+    )
+
+    writeJobConfig(
+      JobConfig(
+        jobId = ID(f"job_$source"),
+        connections = connections,
+        sources = Some(sources),
+        loadChecks = Some(
+          LoadChecksConfig(
+            exactColumnNum = Seq(colNum)
+          )
+        ),
+        metrics = Some(metrics),
+        checks = Some(
+          ChecksConfig(
+            snapshot = Some(snapshots),
+            trend = None
+          )
+        ),
+        targets = Some(targets),
+        jobDescription = None,
+        streams = None
+      )
+    )
   }
 }

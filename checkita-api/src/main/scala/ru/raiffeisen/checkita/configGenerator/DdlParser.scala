@@ -3,21 +3,18 @@ package ru.raiffeisen.checkita.configGenerator
 
 import scala.collection.mutable.{Map => MutableMap}
 
-import ru.raiffeisen.checkita.configGenerator.HeuristicsConstants._
-
-/**
-
- */
 object DdlParser {
 
   /**
-
+    DDL parser
+   @param ddl
    */
   def parseDDL(ddl: String): (Map[String, String], Map[String, List[Map[String, String]]]) = {
     val ddlLowerCase = ddl.toLowerCase
     val reg = "(?i)stored as ".r
     val location = "(?i) location".r
     val sources: MutableMap[String, String] = MutableMap()
+    val notDataType: Seq[String] = List(")", "key", "constraint", "))", "")
     val columnDict: MutableMap[String, List[Map[String, String]]] = MutableMap()
 
     if (ddlLowerCase.contains("stored as")) {
