@@ -6,7 +6,7 @@
 This framework is used to perform parallel and distributed quality checks on big data environments.
 Its functionality allows calculating various metrics over the large datasets and perform multiple checks to ensure quality of these datasets.
 
-For more information, please see the [Documentation](https://raiffeisen-dgtl.github.io/checkita-data-quality/).
+For more information, please see the [Documentation](https://docs.checkita.org/).
 
 ## Project Build
 

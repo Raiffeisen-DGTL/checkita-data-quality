@@ -25,8 +25,8 @@ However, Checkita applications require some command line arguments to be passed 
 
 There are two available applications to start:
 
-* Batch application: main class path is `org.checkita.apps.batch.DataQualityBatchApp`
-* Streaming application: main class path is `org.checkita.apps.stream.DataQualityStreamApp`
+* Batch application: main class path is `org.checkita.dqf.apps.batch.DataQualityBatchApp`
+* Streaming application: main class path is `org.checkita.dqf.apps.stream.DataQualityStreamApp`
 
 
 The following is an example of running an application in YARN in `cluster` mode.
@@ -46,11 +46,11 @@ export DQ_APP_CONFIG_FILE=$(basename $DQ_APP_CONFIG)
 export DQ_JOB_CONFIG_FILES="<job configuration files separated by commas (only file names)>"
 export REFERENCE_DATE="2023-08-01"
 
-# application entry point (executable class): org.checkita.apps.batch.DataQualityBatchApp
+# application entry point (executable class): org.checkita.dqf.apps.batch.DataQualityBatchApp
 # --name spark-submit argument has a higher priority over application name set in `application.conf`
 
 spark-submit\
-   --class org.checkita.apps.batch.DataQualityBatchApp \
+   --class org.checkita.dqf.apps.batch.DataQualityBatchApp \
    --name "Checkita Data Quality" \
    --master yarn \
    --deploy-mode cluster \
