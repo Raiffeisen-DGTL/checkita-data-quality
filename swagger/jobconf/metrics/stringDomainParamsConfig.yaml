@@ -1,0 +1,20 @@
+type: object
+required:
+  - params
+properties:
+  params:
+    type: object
+    description: String domain metric parameters
+    required:
+      - domain
+    properties:
+      domain:
+        type: array
+        description: List of string values
+        example:
+          - foo
+          - bar
+        items:
+          type: string
+          description: String value
+    

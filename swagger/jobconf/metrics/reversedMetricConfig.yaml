@@ -1,0 +1,9 @@
+type: object
+properties:
+  reversed:
+    type: boolean
+    default: false
+    example: true
+    description: |-
+      **Supported only for reversible metrics**.
+      Boolean flag indicating whether error collection logic for this metric is direct (false) or reversed (true).

@@ -1,0 +1,29 @@
+type: object
+required:
+  - params
+properties:
+  params:
+    type: object
+    description: Formatted number metric parameters.
+    required:
+      - precision
+      - scale
+    properties:
+      precision:
+        type: integer
+        description: The total number of digits in the value (excluding the decimal separator).
+        example: 14
+      scale:
+        type: integer
+        description: Number of decimal digits in the value.
+      compareRule:
+        type: string
+        description: |-
+          Number format comparison rule:
+            * `inbound` - the value must "fit" into the specified number format:
+                 actual precision and scale of the value are less than or equal to given ones.
+            * `outbound` - the value must be outside the specified format:
+                 actual precision and scale of the value are strictly greater than given ones.
+        enum:
+          - inbound
+          - outbound

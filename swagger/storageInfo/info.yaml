@@ -1,0 +1,12 @@
+description: >
+  Schema for job info results.
+type: object
+properties:
+  job_id:
+    type: string
+  job_description:
+    type: string
+  last_run:
+    type: string
+  execution_date:
+    type: string

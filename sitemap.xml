@@ -2,167 +2,167 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/01-application-setup/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/01-application-setup/01-ApplicationSettings/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/01-application-setup/02-ApplicationSubmit/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/01-application-setup/03-ResultsStorage/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/01-application-setup/04-APIServer/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/02-general-information/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/02-general-information/01-WorkingWithDateTime/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/02-general-information/02-EnvironmentAndExtraVariables/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/02-general-information/03-StatusModel/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/02-general-information/04-ErrorCollection/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/02-general-information/05-StreamingMode/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/02-general-information/06-MetricSQLEquivalency/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/02-general-information/07-MetricCalculatorEngines/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/01-Connections/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/02-Schemas/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/03-Sources/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/04-Streams/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/05-VirtualSources/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/06-VirtualStreams/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/07-LoadChecks/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/08-Metrics/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/09-Checks/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/10-Targets/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/11-FileOutputs/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/03-job-configuration/12-JobConfigExample/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/changelog/CHANGELOG/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/contribution/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/contribution/code-of-conduct/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/contribution/contribution/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/ru/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://raiffeisen-dgtl.github.io/checkita-data-quality/swagger/</loc>
-         <lastmod>2024-06-21</lastmod>
+         <lastmod>2024-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

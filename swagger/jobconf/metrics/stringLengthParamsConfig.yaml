@@ -1,0 +1,25 @@
+type: object
+required:
+  - params
+properties:
+  params:
+    type: object
+    description: String length metric parameters.
+    required:
+      - length
+      - compareRule
+    properties:
+      length:
+        type: integer
+        description: Required string length threshold
+        example: 10
+      compareRule:
+        type: string
+        description: Comparison rule used to compare actual value string length with threshold one
+        enum:
+          - eq
+          - lt
+          - lte
+          - gt
+          - gte
+    

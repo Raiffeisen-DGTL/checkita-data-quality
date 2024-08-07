@@ -1,0 +1,12 @@
+type: object
+properties:
+  params:
+    type: object
+    description: Sequence completeness metric parameters.
+    properties:
+      increment:
+        type: integer
+        description: Sequence increment step.
+        default: 1
+        example: 4
+    

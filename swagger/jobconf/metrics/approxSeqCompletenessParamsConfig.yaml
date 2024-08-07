@@ -1,0 +1,17 @@
+type: object
+properties:
+  params:
+    type: object
+    description: Approximate sequence completeness metric parameters.
+    properties:
+      increment:
+        type: integer
+        description: Sequence increment step.
+        default: 1
+        example: 4
+      accuracyError:
+        type: number
+        description:  Accuracy error for estimating number of unique values.
+        default: 0.01
+        example: 0.005
+    

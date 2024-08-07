@@ -47,7 +47,5 @@ properties:
         $ref: 'checksConfig.yaml'
       targets:
         $ref: 'targetsConfig.yaml'
-      fileOutput:
-        $ref: 'fileOutput.yaml'
     required:
       - jobId

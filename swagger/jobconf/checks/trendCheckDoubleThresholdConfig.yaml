@@ -1,0 +1,13 @@
+type: object
+required:
+  - thresholdLower
+  - thresholdUpper
+properties:
+  thresholdLower:
+    type: number
+    description: Sets maximum allowed lower deviation from historical average metric result.
+    example: 0.1
+  thresholdUpper:
+    type: number
+    description: Sets maximum allowed upper deviation from historical average metric result.
+    example: 0.2

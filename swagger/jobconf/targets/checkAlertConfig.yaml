@@ -1,0 +1,17 @@
+type: object
+required:
+  - id
+properties:
+  id:
+    type: string
+    description: |-
+      ID of check alert. There could be different check alert configurations for different sets of checks.
+      Therefore, check alerts should have an ID, in order to distinguish them.
+  checks:
+    type: array
+    description: |-
+      List of watched checks. If any of watched checks fails then alert notification is sent.
+      If omitted, then all checks defined in the Data Quality job are being watched.
+    items:
+      type: string
+      description: Check ID

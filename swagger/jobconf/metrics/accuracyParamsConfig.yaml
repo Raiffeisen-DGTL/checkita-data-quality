@@ -1,0 +1,12 @@
+type: object
+properties:
+  params:
+    type: object
+    description: Parameters for metric accuracy configuration.
+    properties:
+      accuracyError:
+        type: number
+        description: Accuracy error for estimating metric value.
+        default: 0.01
+        example: 0.005
+    

@@ -1,0 +1,20 @@
+type: object
+required:
+  - params
+properties:
+  params:
+    type: object
+    description: Get quantile metric parameters.
+    required:
+      - target
+    properties:
+      accuracyError:
+        type: number
+        description: Accuracy error for estimating metric value.
+        default: 0.01
+        example: 0.005
+      target:
+        type: number
+        description: The number from the set of values in the column, for which percentile is determined.
+        example: 3.14
+    
