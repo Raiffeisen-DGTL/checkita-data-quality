@@ -1,10 +1,11 @@
 package org.checkita.dqf.core.metrics.df.regular
 
 import org.apache.spark.sql.Column
-import org.apache.spark.sql.functions.{col, count, lit, max, min, slice, sum, when}
-import org.apache.spark.sql.types.LongType
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types.{DataType, DoubleType, LongType}
 import org.checkita.dqf.core.metrics.MetricName
 import org.checkita.dqf.core.metrics.df.GroupingDFMetricCalculator
+import org.checkita.dqf.core.metrics.df.Helpers.tripleBackticks
 import org.checkita.dqf.core.metrics.df.functions.api.collect_list_limit
 
 /**
@@ -42,7 +43,7 @@ object GroupingDFMetrics {
      * @return Spark row-level expression yielding numeric result.
      * @note Spark expression MUST process single row but not aggregate multiple rows.
      */
-    override protected def resultExpr: Column = lit(1)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = lit(1)
 
     /**
      * Function that aggregates metric increments into intermediate per-group metric results.
@@ -50,11 +51,21 @@ object GroupingDFMetrics {
      * spark expression that will yield aggregated double metric result per each group.
      *
      * As each group will have value 1 assigned to it, then any aggregation is excessive.
-     * The only thing left is to filter out groups where entire tuple of columns is null.
      */
-    override protected val groupAggregationFunction: Column => Column = 
-      rowValue => when(errorConditionExpr, lit(0)).otherwise(rowValue)
+    override protected val groupAggregationFunction: Column => Column = identity
 
+    /**
+     * Per-group intermediate metric aggregation expression that MUST yield double value.
+     * The only thing left after grouping is to filter out groups where entire tuple of columns is null.
+     *
+     * @param colTypes Map of column names to their datatype.
+     * @return Spark expression that will yield double metric calculator result
+     */
+    override def groupResult(implicit colTypes: Map[String, DataType]): Column =
+      groupAggregationFunction(
+        when(errorConditionExpr, lit(0)).otherwise(resultExpr)
+      ).cast(DoubleType).as(groupResultCol)
+    
     /**
      * Error message that will be returned when metric increment fails.
      *
@@ -71,7 +82,7 @@ object GroupingDFMetrics {
      * Collect error data for groups where at least on of the column values is null.
      * @return Spark row-level expression yielding boolean result.
      */
-    override protected def errorConditionExpr: Column =
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column =
       columns.map(c => col(c).isNull).foldLeft(lit(true))(_ && _)
 
     /**
@@ -110,7 +121,7 @@ object GroupingDFMetrics {
      * @return Spark row-level expression yielding numeric result.
      * @note Spark expression MUST process single row but not aggregate multiple rows.
      */
-    override protected def resultExpr: Column = lit(1)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = lit(1)
 
     /**
      * Function that aggregates metric increments into intermediate per-group metric results.
@@ -138,7 +149,8 @@ object GroupingDFMetrics {
      * Collect error data for groups which contain more than 1 row i.e. group has duplicates.
      * @return Spark row-level expression yielding boolean result.
      */
-    override protected def errorConditionExpr: Column = groupAggregationFunction(resultExpr) > lit(0)
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = 
+      groupAggregationFunction(resultExpr) > lit(0)
 
     /**
      * Per-group error collection expression: collects row data for ENTIRE group in case of metric error.
@@ -188,7 +200,8 @@ object GroupingDFMetrics {
      * @return Spark row-level expression yielding numeric result.
      * @note Spark expression MUST process single row but not aggregate multiple rows.
      */
-    override protected def resultExpr: Column = col(columns.head).cast(LongType)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = 
+      col(columns.head).cast(LongType)
 
     /**
      * Function that aggregates metric increments into intermediate per-group metric results.
@@ -215,7 +228,8 @@ object GroupingDFMetrics {
      * Collect error data for groups where at least on of the column values is null.
      * @return Spark row-level expression yielding boolean result.
      */
-    override protected def errorConditionExpr: Column = resultExpr.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = 
+      resultExpr.isNull
 
     /**
      * Per-group error collection expression: collects row data for ENTIRE group in case of metric error.
@@ -229,14 +243,28 @@ object GroupingDFMetrics {
     override protected def groupErrorExpr(rowData: Column, errorDumpSize: Int): Column =
       collect_list_limit(rowData, errorDumpSize)
 
+//    /**
+//     * Function that aggregates intermediate metric per-group results into final metric value.
+//     * Sequence completeness is a ration of actual number of unique elements in that sequence to
+//     * an estimated one calculated based on known sequence increment.
+//     */
+//    override protected val resultAggregateFunction: Column => Column =
+//      groupRes => sum(groupRes) / (
+//        (max(resultExpr) - min(resultExpr)) / lit(increment) + lit(1.0)
+//      )
+
     /**
-     * Function that aggregates intermediate metric per-group results into final metric value.
-     * Sequence completeness is a ration of actual number of unique elements in that sequence to
-     * an estimated one calculated based on known sequence increment.
+     * Final metric aggregation expression that MUST yield double value.
+     *
+     * @param colTypes Map of column names to their datatype.
+     * @return Spark expression that will yield double metric calculator result
      */
-    override protected val resultAggregateFunction: Column => Column =
-      groupRes => sum(groupRes) / (
+    override def result(implicit colTypes: Map[String, DataType]): Column = {
+      val resultAgg = resultAggregateFunction(col(tripleBackticks(groupResultCol)))
+      val result = resultAgg / (
         (max(resultExpr) - min(resultExpr)) / lit(increment) + lit(1.0)
       )
+      coalesce(result.cast(DoubleType), emptyValue).as(resultCol)
+    }
   }
 }

@@ -2,7 +2,7 @@ package org.checkita.dqf.core.metrics.df.regular
 
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.{DoubleType, StringType}
+import org.apache.spark.sql.types.{DataType, DoubleType, StringType}
 import org.checkita.dqf.core.metrics.MetricName
 import org.checkita.dqf.core.metrics.df.functions.api.comoment
 import org.checkita.dqf.core.metrics.df.{DFMetricCalculator, ReversibleDFCalculator}
@@ -39,7 +39,8 @@ object MultiColumnDFMetrics {
      * @return Spark row-level expression yielding numeric result.
      * @note Spark expression MUST process single row but not aggregate multiple rows.
      */
-    override protected def resultExpr: Column = when(metricCondExpr, lit(1)).otherwise(lit(0))
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = 
+      when(metricCondExpr, lit(1)).otherwise(lit(0))
 
     /**
      * Spark expression yielding boolean result for processed row.
@@ -47,7 +48,8 @@ object MultiColumnDFMetrics {
      *
      * @return Spark row-level expression yielding boolean result.
      */
-    override protected def errorConditionExpr: Column = if (reversed) metricCondExpr else !metricCondExpr
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = 
+      if (reversed) metricCondExpr else !metricCondExpr
 
     /**
      * Aggregation function for all conditional metrics is just a summation.
@@ -89,7 +91,8 @@ object MultiColumnDFMetrics {
      *
      * @return Spark row-level expression yielding numeric result.
      */
-    override protected def resultExpr: Column = col(columns.head).cast(DoubleType)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column =
+      col(columns.head).cast(DoubleType)
 
     /**
      * Second row-level expression that retrieves double value from right column.
@@ -105,7 +108,8 @@ object MultiColumnDFMetrics {
      *
      * @return Spark row-level expression yielding boolean result.
      */
-    override protected def errorConditionExpr: Column = resultExpr.isNull || resultExprRight.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = 
+      resultExpr.isNull || resultExprRight.isNull
 
     /**
      * Aggregation function for covariance metric is covar_pop Spark function.
@@ -149,7 +153,8 @@ object MultiColumnDFMetrics {
      *
      * @return Spark row-level expression yielding numeric result.
      */
-    override protected def resultExpr: Column = col(columns.head).cast(DoubleType)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = 
+      col(columns.head).cast(DoubleType)
 
     /**
      * Second row-level expression that retrieves double value from right column.
@@ -165,7 +170,8 @@ object MultiColumnDFMetrics {
      *
      * @return Spark row-level expression yielding boolean result.
      */
-    override protected def errorConditionExpr: Column = resultExpr.isNull || resultExprRight.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = 
+      resultExpr.isNull || resultExprRight.isNull
 
     /**
      * Aggregation function for covarianceBessel metric is covar_samp Spark function.
@@ -209,7 +215,8 @@ object MultiColumnDFMetrics {
      *
      * @return Spark row-level expression yielding numeric result.
      */
-    override protected def resultExpr: Column = col(columns.head).cast(DoubleType)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column =
+      col(columns.head).cast(DoubleType)
 
     /**
      * Second row-level expression that retrieves double value from right column.
@@ -225,7 +232,8 @@ object MultiColumnDFMetrics {
      *
      * @return Spark row-level expression yielding boolean result.
      */
-    override protected def errorConditionExpr: Column = resultExpr.isNull || resultExprRight.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column =
+      resultExpr.isNull || resultExprRight.isNull
 
     /**
      * Aggregation function for covariance metric is covar_pop Spark function.

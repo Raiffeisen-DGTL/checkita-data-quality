@@ -2,7 +2,7 @@ package org.checkita.dqf.core.metrics.df.regular
 
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.{DoubleType, LongType, StringType}
+import org.apache.spark.sql.types.{DataType, DoubleType, LongType, StringType}
 import org.checkita.dqf.core.metrics.MetricName
 import org.checkita.dqf.core.metrics.df.DFMetricCalculator
 import org.checkita.dqf.core.metrics.df.functions.api.{hll_count_distinct, space_saving_top_n}
@@ -47,7 +47,8 @@ object ApproxCardinalityDFMetrics {
      * @return Spark row-level expression yielding numeric result.
      * @note Spark expression MUST process single row but not aggregate multiple rows.
      */
-    override protected def resultExpr: Column = col(columns.head).cast(StringType)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = 
+      col(columns.head).cast(StringType)
 
     /**
      * If casting value to StringType yields null, then it is a signal that value
@@ -56,7 +57,7 @@ object ApproxCardinalityDFMetrics {
      *
      * @return Spark row-level expression yielding boolean result.
      */
-    override protected def errorConditionExpr: Column = resultExpr.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = resultExpr.isNull
 
     /**
      * Use approx_count_distinct function which calculates data cardinality
@@ -104,7 +105,8 @@ object ApproxCardinalityDFMetrics {
      * @return Spark row-level expression yielding numeric result.
      * @note Spark expression MUST process single row but not aggregate multiple rows.
      */
-    override protected def resultExpr: Column = col(columns.head).cast(LongType)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = 
+      col(columns.head).cast(LongType)
 
     /**
      * If casting value to LongType yields null, then it is a signal that value
@@ -113,7 +115,7 @@ object ApproxCardinalityDFMetrics {
      *
      * @return Spark row-level expression yielding boolean result.
      */
-    override protected def errorConditionExpr: Column = resultExpr.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = resultExpr.isNull
 
     /**
      * Use approx_count_distinct function which calculates data cardinality
@@ -155,7 +157,8 @@ object ApproxCardinalityDFMetrics {
      * @return Spark row-level expression yielding numeric result.
      * @note Spark expression MUST process single row but not aggregate multiple rows.
      */
-    override protected def resultExpr: Column = col(columns.head).cast(StringType)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = 
+      col(columns.head).cast(StringType)
 
     /**
      * If casting value to StringType yields null, then it is a signal that value is not a string.
@@ -164,7 +167,7 @@ object ApproxCardinalityDFMetrics {
      *
      * @return Spark row-level expression yielding boolean result.
      */
-    override protected def errorConditionExpr: Column = resultExpr.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = resultExpr.isNull
 
     /**
      * User custom aggregation function to find topN values based on SpaceSaver.
@@ -178,7 +181,7 @@ object ApproxCardinalityDFMetrics {
      *
      * @return Spark expression that will yield result of following type: `array(struct(string, double))`.
      */
-    override def result: Column = coalesce(
+    override def result(implicit colTypes: Map[String, DataType]): Column = coalesce(
       resultAggregateFunction(resultExpr),
       emptyValue
     ).as(resultCol)

@@ -78,6 +78,8 @@ class GroupingDFMetricsSpec extends AnyWordSpec with Matchers with DFMetricsTest
 
   protected def runGroupingDFMetricCalc(df: DataFrame,
                                         calculator: GroupingDFMetricCalculator): (Double, Int) = {
+    implicit val colTypes: Map[String, DataType] =
+      df.schema.map(sf => sf.name -> sf.dataType).toMap
     val metDf = df.groupBy(calculator.columns.map(col) : _*)
       .agg(calculator.groupResult, calculator.groupErrors)
       .select(calculator.result, calculator.errors)

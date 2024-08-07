@@ -2,7 +2,7 @@ package org.checkita.dqf.core.metrics.df
 
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.functions.{lit, sum, when}
-import org.apache.spark.sql.types.DoubleType
+import org.apache.spark.sql.types.{DataType, DoubleType}
 
 /**
  * Abstract class for all conditional DF metric calculators.
@@ -23,8 +23,9 @@ abstract class ConditionalDFCalculator extends DFMetricCalculator with Reversibl
    * and will yield boolean result.
    *
    * @param colName Column to which the metric condition is applied
+   * @param colTypes Map of column names to their datatype.
    */
-  def metricCondExpr(colName: String): Column
+  protected def metricCondExpr(colName: String)(implicit colTypes: Map[String, DataType]): Column
 
   /**
    * All conditional metrics should return zero when DF is empty.
@@ -36,7 +37,7 @@ abstract class ConditionalDFCalculator extends DFMetricCalculator with Reversibl
    * For conditional metrics, the increment is 1 when condition is met,
    * otherwise increment is 0 (metric is not incremented).
    */
-  protected val resultExpr: Column = columns.map { c =>
+  protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = columns.map { c =>
     when(metricCondExpr(c), lit(1)).otherwise(lit(0))
   }.foldLeft(lit(0))(_ + _)
 
@@ -46,7 +47,7 @@ abstract class ConditionalDFCalculator extends DFMetricCalculator with Reversibl
    * For reversed error collection logic metric increment is considered failed
    * when for one or more of metric columns the condition IS met.
    */
-  protected val errorConditionExpr: Column =
+  protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column =
     if (reversed) resultExpr > 0 else resultExpr < lit(columns.size)
 
   /**

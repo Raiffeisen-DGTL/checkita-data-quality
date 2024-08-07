@@ -4,7 +4,6 @@ import org.apache.spark.sql.Column
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
 import org.checkita.dqf.core.metrics.MetricName
-import org.checkita.dqf.core.metrics.df.functions.api.any_to_timestamp
 import org.checkita.dqf.core.metrics.df.{ConditionalDFCalculator, DFMetricCalculator, ReversibleDFCalculator}
 
 object BasicStringDFMetrics {
@@ -37,7 +36,9 @@ object BasicStringDFMetrics {
       if (reversed) s"Some of the values DO match regex pattern '$regex'."
       else s"Some of the values failed to match regex pattern '$regex'."
 
-    def metricCondExpr(colName: String): Column = col(colName).cast(StringType).rlike(regex)
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column = 
+      col(colName).cast(StringType).rlike(regex)
   }
 
   /**
@@ -68,7 +69,9 @@ object BasicStringDFMetrics {
       if (reversed) s"Some of the values failed to match regex pattern '$regex'."
       else s"Some of the values DO match regex pattern '$regex'."
 
-    def metricCondExpr(colName: String): Column = !col(colName).cast(StringType).rlike(regex)
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column = 
+      !col(colName).cast(StringType).rlike(regex)
   }
 
   /**
@@ -95,7 +98,9 @@ object BasicStringDFMetrics {
       if (reversed) s"There are null values found within processed values."
       else s"There are non-null values found within processed values."
 
-    def metricCondExpr(colName: String): Column = col(colName).isNull
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column = 
+      col(colName).isNull
   }
 
   /**
@@ -134,7 +139,7 @@ object BasicStringDFMetrics {
       case (false, true) => s"There are null values found within processed values."
     }
 
-    def metricCondExpr(colName: String): Column =
+    protected def metricCondExpr(colName: String): Column =
       if (includeEmptyStrings) col(colName).isNull || col(colName).cast(StringType) === lit("")
       else col(colName).isNull
 
@@ -144,11 +149,12 @@ object BasicStringDFMetrics {
      * values within requested columns.
      * @return Spark row-level expression yielding numeric result.
      */
-    override protected val resultExpr: Column = columns.map{ c =>
-      when(metricCondExpr(c), lit(0)).otherwise(lit(1))
-    }.foldLeft(lit(0))(_ + _)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = 
+      columns.map{ c =>
+        when(metricCondExpr(c), lit(0)).otherwise(lit(1))
+      }.foldLeft(lit(0))(_ + _)
 
-    override protected val errorConditionExpr: Column =
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column =
       if (reversed) resultExpr < lit(columns.size) else resultExpr > 0
 
     /**
@@ -191,7 +197,8 @@ object BasicStringDFMetrics {
       case (false, true) => s"There are null values found within processed values."
     }
 
-    def metricCondExpr(colName: String): Column =
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column =
       if (includeEmptyStrings) col(colName).isNull || col(colName).cast(StringType) === lit("")
       else col(colName).isNull
 
@@ -228,7 +235,9 @@ object BasicStringDFMetrics {
       else s"There are non-empty strings found within processed values."
     }
 
-    def metricCondExpr(colName: String): Column = col(colName).cast(StringType) === lit("")
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column =
+      col(colName).cast(StringType) === lit("")
   }
 
   /**
@@ -258,7 +267,7 @@ object BasicStringDFMetrics {
      *
      * @return Spark row-level expression yielding numeric result.
      */
-    protected def resultExpr: Column =
+    protected def resultExpr(implicit colTypes: Map[String, DataType]): Column =
       if (columns.size == 1) length(col(columns.head).cast(StringType))
       else least(columns.map(c => length(col(c).cast(StringType))): _*)
 
@@ -267,7 +276,7 @@ object BasicStringDFMetrics {
      * requested columns of processed row were nulls. Thus, minimum string length couldn't be
      * calculated. This is a metric increment failure.
      */
-    protected def errorConditionExpr: Column = resultExpr.isNull
+    protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = resultExpr.isNull
 
     /**
      * Aggregation function for finding minimum string length is simply `min`
@@ -302,7 +311,7 @@ object BasicStringDFMetrics {
      *
      * @return Spark row-level expression yielding numeric result.
      */
-    protected def resultExpr: Column =
+    protected def resultExpr(implicit colTypes: Map[String, DataType]): Column =
       if (columns.size == 1) length(col(columns.head).cast(StringType))
       else greatest(columns.map(c => length(col(c).cast(StringType))): _*)
 
@@ -311,7 +320,7 @@ object BasicStringDFMetrics {
      * requested columns of processed row were nulls. Thus, maximum string length couldn't be
      * calculated. This is a metric increment failure.
      */
-    protected def errorConditionExpr: Column = resultExpr.isNull
+    protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = resultExpr.isNull
 
     /**
      * Aggregation function for finding maximum string length is simply `max`
@@ -352,7 +361,7 @@ object BasicStringDFMetrics {
      *
      * @return Spark row-level expression yielding numeric result.
      */
-    protected def resultExpr: Column =
+    protected def resultExpr(implicit colTypes: Map[String, DataType]): Column =
       if (columns.size == 1) length(col(columns.head).cast(StringType))
       else columns.map(c => coalesce(length(col(c).cast(StringType)), lit(0))).foldLeft(lit(0))(_ + _)
 
@@ -373,7 +382,7 @@ object BasicStringDFMetrics {
      *
      * @return Spark row-level expression yielding boolean result.
      */
-    override protected def errorConditionExpr: Column = resultExpr.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = resultExpr.isNull
 
     /**
      * Average string length is aggregated as ration of sum of all string length
@@ -416,10 +425,16 @@ object BasicStringDFMetrics {
      * date with given format. In this case `to_date` function would
      * yield non-null value.
      *
-     * @param colName Column to which the metric condition is applied
+     * @param colName  Column to which the metric condition is applied
+     * @param colTypes Map of column names to their datatype.
      */
-    override def metricCondExpr(colName: String): Column =
-      !any_to_timestamp(col(colName), dateFormat).isNull
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column = {
+      val nonCastTypes = Seq(StringType, DateType, TimestampType)
+      val origCol = col(colName)
+      val adjCol = if (nonCastTypes.contains(colTypes(colName))) origCol else origCol.cast(StringType)
+      !to_timestamp(adjCol, dateFormat).isNull
+    }
   }
 
   /**
@@ -464,13 +479,15 @@ object BasicStringDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column = compareRule match {
-      case "eq" => length(col(colName)) === lit(compareLength)
-      case "lt" => length(col(colName)) < lit(compareLength)
-      case "lte" => length(col(colName)) <= lit(compareLength)
-      case "gt" => length(col(colName)) > lit(compareLength)
-      case "gte" => length(col(colName)) >= lit(compareLength)
-    }
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column =
+      compareRule match {
+        case "eq" => length(col(colName)) === lit(compareLength)
+        case "lt" => length(col(colName)) < lit(compareLength)
+        case "lte" => length(col(colName)) <= lit(compareLength)
+        case "gt" => length(col(colName)) > lit(compareLength)
+        case "gte" => length(col(colName)) >= lit(compareLength)
+      }
 
     private def criteriaStringRepr: String = compareRule match {
       case "eq" => s"==$compareLength"
@@ -514,7 +531,9 @@ object BasicStringDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column = col(colName).cast(StringType).isInCollection(domain)
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column = 
+      col(colName).cast(StringType).isInCollection(domain)
   }
 
   /**
@@ -551,7 +570,9 @@ object BasicStringDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column = !col(colName).cast(StringType).isInCollection(domain)
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column = 
+      !col(colName).cast(StringType).isInCollection(domain)
   }
 
   /**
@@ -588,6 +609,8 @@ object BasicStringDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column = col(colName).cast(StringType) === lit(compareValue)
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column = 
+      col(colName).cast(StringType) === lit(compareValue)
   }
 }

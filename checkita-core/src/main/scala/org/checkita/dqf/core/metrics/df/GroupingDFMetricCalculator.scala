@@ -1,10 +1,10 @@
 package org.checkita.dqf.core.metrics.df
 
 import org.apache.spark.sql.Column
-import org.apache.spark.sql.functions.{coalesce, col, lit, sum, typedlit, when}
-import org.apache.spark.sql.types.{ArrayType, DoubleType, StringType}
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types.{ArrayType, DataType, DoubleType, StringType}
 import org.checkita.dqf.core.metrics.df.Helpers.{DFMetricOutput, addColumnSuffix, tripleBackticks}
-import org.checkita.dqf.core.metrics.df.functions.api.{collect_list_limit, merge_list_limit}
+import org.checkita.dqf.core.metrics.df.functions.api.merge_list_limit
 
 /**
  * Base class for metric calculators that require data grouping by metric columns.
@@ -52,7 +52,8 @@ abstract class GroupingDFMetricCalculator extends DFMetricCalculator {
    * Grouping calculators will have different API for collecting per-group arrays with error data.
    * Therefore, an exception will be throw if this method is called.
    */
-  override protected def errorExpr(rowData: Column): Column =
+  override protected def errorExpr(rowData: Column)
+                                  (implicit colTypes: Map[String, DataType]): Column =
     throw new UnsupportedOperationException(
       "Grouping dataframe metric calculator uses special API to collect per-group errors first." +
         "Use `groupErrorExpr` method with signature: `(rowData: Column, errorDumpSize: Int) => Column`."
@@ -72,9 +73,11 @@ abstract class GroupingDFMetricCalculator extends DFMetricCalculator {
   /**
    * Per-group intermediate metric aggregation expression that MUST yield double value.
    *
+   * @param colTypes Map of column names to their datatype.
    * @return Spark expression that will yield double metric calculator result
    */
-  def groupResult: Column = groupAggregationFunction(resultExpr).cast(DoubleType).as(groupResultCol)
+  def groupResult(implicit colTypes: Map[String, DataType]): Column = 
+    groupAggregationFunction(resultExpr).cast(DoubleType).as(groupResultCol)
 
   /**
    * Per-group metric errors aggregation expression.
@@ -86,11 +89,14 @@ abstract class GroupingDFMetricCalculator extends DFMetricCalculator {
    *
    * @param errorDumpSize Maximum allowed number of errors to be collected per single metric.
    * @param keyFields     Sequence of source/stream key fields.
+   * @param colTypes      Map of column names to their datatype.
    * @return Spark expression that will yield array of metric errors.
    * @note For streaming applications, we need to collect metric errors in per-window basis.
    *       Therefore, error row data has to contain window start time (first element of array).
    */
-  def groupErrors(implicit errorDumpSize: Int, keyFields: Seq[String]): Column = {
+  def groupErrors(implicit errorDumpSize: Int, 
+                  keyFields: Seq[String],
+                  colTypes: Map[String, DataType]): Column = {
     val rowData = rowDataExpr(keyFields)
     when(
       errorConditionExpr, groupErrorExpr(rowData, errorDumpSize)
@@ -107,9 +113,10 @@ abstract class GroupingDFMetricCalculator extends DFMetricCalculator {
   /**
    * Final metric aggregation expression that MUST yield double value.
    *
+   * @param colTypes Map of column names to their datatype.
    * @return Spark expression that will yield double metric calculator result
    */
-  override def result: Column = coalesce(
+  override def result(implicit colTypes: Map[String, DataType]): Column = coalesce(
     resultAggregateFunction(col(tripleBackticks(groupResultCol))).cast(DoubleType),
     emptyValue
   ).as(resultCol)
@@ -120,9 +127,13 @@ abstract class GroupingDFMetricCalculator extends DFMetricCalculator {
    * The size of array is limited by maximum allowed error dump size parameter.
    *
    * @param errorDumpSize Maximum allowed number of errors to be collected per single metric.
+   * @param keyFields     Sequence of source/stream key fields.
+   * @param colTypes      Map of column names to their datatype.
    * @return Spark expression that will yield array of metric errors.
    */
-  override def errors(implicit errorDumpSize: Int, keyFields: Seq[String]): Column =
+  override def errors(implicit errorDumpSize: Int,
+                      keyFields: Seq[String],
+                      colTypes: Map[String, DataType]): Column =
     merge_list_limit(col(tripleBackticks(groupErrorsCol)), errorDumpSize).as(errorsCol)
 
 }

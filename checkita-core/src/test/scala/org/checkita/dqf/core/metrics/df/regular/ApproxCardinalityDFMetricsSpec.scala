@@ -145,6 +145,8 @@ class ApproxCardinalityDFMetricsSpec extends AnyWordSpec with Matchers with DFMe
 
     def runTopNMetricCalc(df: DataFrame,
                           calculator: DFMetricCalculator): (Seq[(String, Double)], Int) = {
+      implicit val colTypes: Map[String, DataType] =
+        df.schema.map(sf => sf.name -> sf.dataType).toMap
       val metDf = df.select(calculator.result, calculator.errors)
       val processed = metDf.collect().head
       val result = processed.getAs[mutable.WrappedArray[Row]](0).map { row =>

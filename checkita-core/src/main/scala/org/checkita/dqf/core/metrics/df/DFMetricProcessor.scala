@@ -1,6 +1,7 @@
 package org.checkita.dqf.core.metrics.df
 
 import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.types.DataType
 import org.apache.spark.sql.{DataFrame, Row}
 import org.checkita.dqf.core.Results.{MetricCalculatorResult, ResultType}
 import org.checkita.dqf.core.metrics.ErrorCollection.{ErrorRow, MetricErrors}
@@ -34,12 +35,14 @@ object DFMetricProcessor extends BasicMetricProcessor {
    * @param dumpSize    Implicit value of maximum number of metric failure (or errors) 
    *                    to be collected per metric. Used to prevent OOM errors.
    * @param keyFields   Source key fields.
+   * @param colTypes    Map of column names to their datatype.
    * @return Spark DataFrame containing results of single-pass metric calculators.
    */
   private def runSinglePassCalculators(df: DataFrame,
                                        calculators: Seq[DFMetricCalculator])
                                       (implicit dumpSize: Int,
-                                       keyFields: Seq[String]): DataFrame =
+                                       keyFields: Seq[String],
+                                       colTypes: Map[String, DataType]): DataFrame =
     df.select(calculators.flatMap(c => Seq(c.result, c.errors)): _*)
 
   /**
@@ -52,13 +55,15 @@ object DFMetricProcessor extends BasicMetricProcessor {
    * @param dumpSize     Implicit value of maximum number of metric failure (or errors) 
    *                     to be collected per metric. Used to prevent OOM errors.
    * @param keyFields    Source key fields.
+   * @param colTypes     Map of column names to their datatype.
    * @return Spark DataFrame containing results of grouping metric calculators.
    */
   private def runGroupingCalculators(df: DataFrame,
                                      groupColumns: Seq[String],
                                      calculators: Seq[GroupingDFMetricCalculator])
                                     (implicit dumpSize: Int,
-                                     keyFields: Seq[String]): DataFrame = {
+                                     keyFields: Seq[String],
+                                     colTypes: Map[String, DataType]): DataFrame = {
     assert(
       calculators.forall(c => c.columns == groupColumns),
       "All grouping calculators within a group must have the same list of columns: " +
@@ -184,7 +189,8 @@ object DFMetricProcessor extends BasicMetricProcessor {
 
     val columnIndexes = getColumnIndexMap(df)
     val sourceKeyIds = sourceKeys.flatMap(columnIndexes.get)
-
+    implicit val colTypes: Map[String, DataType] = getColumnTypes(df)
+    
     assert(
       sourceKeys.size == sourceKeyIds.size,
       s"Some of key fields were not found for source '${source.id}'. " +

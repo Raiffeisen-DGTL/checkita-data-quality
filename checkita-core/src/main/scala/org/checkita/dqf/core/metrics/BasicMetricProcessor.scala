@@ -1,6 +1,7 @@
 package org.checkita.dqf.core.metrics
 
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.types.DataType
 import org.checkita.dqf.core.Results.MetricCalculatorResult
 import org.checkita.dqf.core.metrics.composed.ComposedMetricCalculator
 import org.checkita.dqf.utils.Templating.getTokens
@@ -30,6 +31,15 @@ trait BasicMetricProcessor {
    */
   protected def getColumnNamesMap(df: DataFrame): Map[Int, String] =
     df.schema.fieldNames.map(s => df.schema.fieldIndex(s) -> s).toMap
+
+  /**
+   * Builds map of column name to column data type.
+   *
+   * @param df Spark Dataframe
+   * @return Map(column name -> column datatype)
+   */
+  protected def getColumnTypes(df: DataFrame): Map[String, DataType] =
+    df.schema.map(sf => sf.name -> sf.dataType).toMap
 
 }
 object BasicMetricProcessor {

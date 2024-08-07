@@ -19,8 +19,9 @@ lazy val `checkita-core` = (project in file("checkita-core"))
 
     excludeDependencies ++= Utils.getExcludeDependencies(sparkVersion.value),
 
+    Compile / unmanagedSources / excludeFilter := Utils.addSourceDirFilters(sparkVersion.value),
     Compile / doc / target := baseDirectory.value / ".." / "docs/api",
-
+    
     dependencyOverrides ++= (Utils.overrideFasterXml(sparkVersion.value) :+ Utils.overrideSnakeYaml),
     version := Utils.getVersionString((ThisBuild / version).value, sparkVersion.value, packageType.value),
     assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}-uber.jar",

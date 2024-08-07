@@ -96,9 +96,4 @@ object api {
   def space_saving_top_n(colName: String, targetNumber: Int): Column =
     space_saving_top_n(new Column(colName), new Column(Literal(targetNumber)))
 
-  def any_to_timestamp(c: Column, fmt: Column): Column =
-    withExpr(new ParseAnyToTimestamp(c.expr, fmt.expr))
-  def any_to_timestamp(c: Column, fmt: String): Column = 
-    any_to_timestamp(c, new Column(Literal(fmt)))
-
 }

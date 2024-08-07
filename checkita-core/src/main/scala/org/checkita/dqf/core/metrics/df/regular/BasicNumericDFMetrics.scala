@@ -32,14 +32,14 @@ object BasicNumericDFMetrics {
      *
      * @return Spark row-level expression yielding numeric result.
      */
-    protected def resultExpr: Column = col(columns.head).cast(DoubleType)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = col(columns.head).cast(DoubleType)
 
     /**
      * If casting value to DoubleType yields null, then it is a signal that value
      * is not a number. Thus, percentile computation can't be
      * incremented for this row. This is a metric increment failure.
      */
-    protected def errorConditionExpr: Column = resultExpr.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = resultExpr.isNull
 
     /**
      * Use custom aggregation function to find percentile value based on T-Digest.
@@ -188,7 +188,7 @@ object BasicNumericDFMetrics {
      *
      * @return Spark row-level expression yielding numeric result.
      */
-    protected def resultExpr: Column =
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column =
       if (columns.size == 1) col(columns.head).cast(DoubleType)
       else least(columns.map(c => col(c).cast(DoubleType)): _*)
 
@@ -197,7 +197,7 @@ object BasicNumericDFMetrics {
      * requested columns of processed row were nulls. Thus, minimum number couldn't be
      * calculated. This is a metric increment failure.
      */
-    protected def errorConditionExpr: Column = resultExpr.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = resultExpr.isNull
 
     /**
      * Aggregation function for finding minimum number is simply `min`
@@ -234,7 +234,7 @@ object BasicNumericDFMetrics {
      *
      * @return Spark row-level expression yielding numeric result.
      */
-    protected def resultExpr: Column =
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column =
       if (columns.size == 1) col(columns.head).cast(DoubleType)
       else greatest(columns.map(c => col(c).cast(DoubleType)): _*)
 
@@ -243,7 +243,7 @@ object BasicNumericDFMetrics {
      * requested columns of processed row were nulls. Thus, maximum number couldn't be
      * calculated. This is a metric increment failure.
      */
-    protected def errorConditionExpr: Column = resultExpr.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = resultExpr.isNull
 
     /**
      * Aggregation function for finding maximum number is simply `max`
@@ -279,7 +279,7 @@ object BasicNumericDFMetrics {
      *
      * @return Spark row-level expression yielding numeric result.
      */
-    protected def resultExpr: Column =
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column =
       if (columns.size == 1) col(columns.head).cast(DoubleType)
       else columns.map(c => coalesce(col(c).cast(DoubleType), lit(0))).foldLeft(lit(0))(_ + _)
 
@@ -288,7 +288,7 @@ object BasicNumericDFMetrics {
      * it is a signal of metric increment failure: sum will not be complete for this row since
      * at least one value is null.
      */
-    protected def errorConditionExpr: Column = columns.map{ c =>
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = columns.map{ c =>
       when(col(c).cast(DoubleType).isNull, lit(0)).otherwise(lit(1))
     }.foldLeft(lit(0))(_ + _) < lit(columns.size)
 
@@ -335,14 +335,15 @@ object BasicNumericDFMetrics {
      *
      * @return Spark row-level expression yielding numeric result.
      */
-    protected def resultExpr: Column = col(columns.head).cast(DoubleType)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = 
+      col(columns.head).cast(DoubleType)
 
     /**
      * If casting value to DoubleType yields null, then it is a signal that value
      * is not a number. Thus, average number computation can't be
      * incremented for this row. This is a metric increment failure.
      */
-    protected def errorConditionExpr: Column = resultExpr.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = resultExpr.isNull
 
     /**
      * Aggregation function to find average number is just `avg`
@@ -385,14 +386,15 @@ object BasicNumericDFMetrics {
      *
      * @return Spark row-level expression yielding numeric result.
      */
-    protected def resultExpr: Column = col(columns.head).cast(DoubleType)
+    override protected def resultExpr(implicit colTypes: Map[String, DataType]): Column = 
+      col(columns.head).cast(DoubleType)
 
     /**
      * If casting value to DoubleType yields null, then it is a signal that value
      * is not a number. Thus, standard deviation computation can't be
      * incremented for this row. This is a metric increment failure.
      */
-    protected def errorConditionExpr: Column = resultExpr.isNull
+    override protected def errorConditionExpr(implicit colTypes: Map[String, DataType]): Column = resultExpr.isNull
 
     /**
      * Aggregation function to find standard deviation is just `stddev_pop`
@@ -439,9 +441,11 @@ object BasicNumericDFMetrics {
       else "Some of the provided values could not be cast to number which meets given" +
         s"precision and scale criteria of $criteriaStringRepr."
 
-    override def metricCondExpr(colName: String): Column = check_number_format(
-      col(colName).cast(DoubleType), precision, scale, compareRule == "outbound"
-    )
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column = 
+      check_number_format(
+        col(colName).cast(DoubleType), precision, scale, compareRule == "outbound"
+      )
   }
 
   /**
@@ -475,7 +479,9 @@ object BasicNumericDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column = !col(colName).cast(DoubleType).isNull
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column = 
+      !col(colName).cast(DoubleType).isNull
   }
 
 
@@ -512,7 +518,9 @@ object BasicNumericDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column = col(colName).cast(DoubleType).isInCollection(domain)
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column =
+      col(colName).cast(DoubleType).isInCollection(domain)
   }
 
 
@@ -549,7 +557,8 @@ object BasicNumericDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column =
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column =
       coalesce(!col(colName).cast(DoubleType).isInCollection(domain), lit(false))
   }
 
@@ -587,7 +596,9 @@ object BasicNumericDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column = col(colName).cast(DoubleType) === lit(compareValue)
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column = 
+      col(colName).cast(DoubleType) === lit(compareValue)
   }
 
 
@@ -639,7 +650,8 @@ object BasicNumericDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column =
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column =
       if (includeBound) col(colName).cast(DoubleType) <= lit(compareValue)
       else col(colName).cast(DoubleType) < lit(compareValue)
   }
@@ -669,7 +681,8 @@ object BasicNumericDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column =
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column =
       if (includeBound) col(colName).cast(DoubleType) >= lit(compareValue)
       else col(colName).cast(DoubleType) > lit(compareValue)
   }
@@ -705,7 +718,8 @@ object BasicNumericDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column =
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column =
       if (includeBound)
         col(colName).cast(DoubleType) >= lit(lowerCompareValue) &&
           col(colName).cast(DoubleType) <= lit(upperCompareValue)
@@ -746,7 +760,8 @@ object BasicNumericDFMetrics {
      *
      * @param colName Column to which the metric condition is applied
      */
-    override def metricCondExpr(colName: String): Column =
+    override protected def metricCondExpr(colName: String)
+                                         (implicit colTypes: Map[String, DataType]): Column =
       if (includeBound)
         col(colName).cast(DoubleType) <= lit(lowerCompareValue) ||
           col(colName).cast(DoubleType) >= lit(upperCompareValue)
