@@ -1,3 +1,49 @@
+## [2.0.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.2...v2.0.0) (2024-08-07)
+
+
+### Bug Fixes
+
+* added spark-xml lib for reading xml kafka topics ([#48](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/48)) ([22c3761](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/22c376187748974e1dae97bee9d32c32053f9053))
+
+
+### Features
+
+* add support of `*` for selection of all source columns in metric configuration ([#49](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/49)) ([ca09fe4](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/ca09fe4259039605cdfa52867b008807e21cc398))
+* change project domain ([#52](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/52)) ([6020463](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/6020463420b120d1c0af97adb7766922f5e190c7))
+* Checkita 2.0 release ([#45](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/45)) ([e747659](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/e7476598ada2b681ee6be478e5dce0e913799b0f))
+
+
+### BREAKING CHANGES
+
+* move project from ru.raiffeisen domain to org.checkita
+domain.
+
+Other changes include:
+
+- fix backticks issue in GroupingDFMetricCalculator
+- refactor DFMerticCalculator API to implicitly pass column types.
+* major updates to Checkita Core that enables new
+functionality and enhances existing one.
+
+* new metrics engine based on Spark DF-API: improves stability and
+performance of regular metrics computation. Supported in batch-jobs
+only.
+* checkpointing for streaming application: restart your application from
+the same point where it stopped (or crushed).
+* Checkita API Server - experimental MVP service that provides basic
+functionality to work with configurations and DQ Storage.
+* regular metrics refactoring to comply with SQL standards.
+* new type of metrics: TREND metrics. Enables computing various
+statistics over historical metric results.
+* new type of checks: EXPRESSION. Allows to define check pass condition
+using arbitrary boolean expression.
+* enhanced formulas (for both composed metrics and expression checks):
+formulas now supports basic mathematical functions.
+* new Swagger documentation covering both Checkita Configurations and
+API methods (still in development, will be completed shortly)
+* support of Confluent Schema Registry to read schemas from.
+* minor bug fixes.
+
 ## [1.7.2](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.1...v1.7.2) (2024-06-21)
 
 
