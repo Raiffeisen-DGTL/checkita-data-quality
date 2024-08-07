@@ -350,12 +350,15 @@ Counts number of values which have the specified datetime format.
 Additional parameters can be supplied:
 
 * `dateFormat` - *Optional, default is `yyyy-MM-dd'T'HH:mm:ss.SSSZ`*. Target datetime format. 
-  The datetime format must be specified as 
-  [Java DateTimeFormatter](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html) pattern.
+  The datetime format must be specified using  
+  [Spark Datetime Patterns for Formatting and Parsing](https://spark.apache.org/docs/latest/sql-ref-datetime-pattern.html).
   
 > **NOTE** If the specified columns are of type `Timestamp`, it is assumed that they fit any datetime format and, 
 > therefore,  metric will return the total number of non-empty cells. 
 > Accordingly, the datetime format does not need to be specified.
+
+> **NOTE** Metric is capable of parsing only part of date or time, 
+> e.g. one can parse column containing year with `yyyy` format.
 
 Metric is reversible. **By default, `reversed` parameter is set to `false`.**
 For direct error collection logic, metric increment returns `Failure` status for rows where some values in

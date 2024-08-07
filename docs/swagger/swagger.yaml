@@ -100,7 +100,7 @@ paths:
                 type: string
                 example: 'Unable to parse arguments: <list of argument parsing errors>.'
   /storage/info:
-    post:
+    get:
       tags:
         - storage
       summary: Data Quality Job Info
@@ -125,7 +125,7 @@ paths:
                 type: string
                 example: 'Unable to get jobs summary results due to following error: <list of argument parsing errors>.'
   /storage/state:
-    post:
+    get:
       tags:
         - storage
       summary: Data Quality Job State
@@ -157,7 +157,7 @@ paths:
                 type: string
                 example: No job state was found.
   /storage/results:
-    post:
+    get:
       tags:
         - storage
       summary: Data Quality Job Results
