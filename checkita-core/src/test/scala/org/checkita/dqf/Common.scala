@@ -12,6 +12,8 @@ import org.checkita.dqf.storage.Connections.DqStorageConnection
 import org.checkita.dqf.storage.Managers.DqStorageManager
 import org.checkita.dqf.utils.SparkUtils.{makeFileSystem, makeSparkSession}
 
+import scala.collection.compat._
+
 object Common {
   implicit val jobId: String = "earthquakes_base_job"
   implicit val dumpSize: Int = 1000
