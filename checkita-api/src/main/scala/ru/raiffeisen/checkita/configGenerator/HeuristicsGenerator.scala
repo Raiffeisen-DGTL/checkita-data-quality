@@ -17,9 +17,19 @@ import ru.raiffeisen.checkita.config.jobconf.Sources._
 import ru.raiffeisen.checkita.config.jobconf.Targets._
 import ru.raiffeisen.checkita.configGenerator.DdlParser.parseDDL
 import ru.raiffeisen.checkita.utils.ResultUtils._
+import ru.raiffeisen.checkita.utils.Logging
 
 /**  */
-object HeuristicsGenerator {
+object HeuristicsGenerator extends Logging{
+
+  /**
+   * Generates a configuration based on the provided DDL string and connection type.
+   *
+   * @param ddl      The DDL string representing the table schema.
+   * @param connType The type of database connection (e.g., "oracle", "postgresql", "mysql").
+   * @return A `Result[Config]` object representing the generated configuration.
+   *
+   */
   def heuristics(ddl: String, connType: String): Result[Config] = {
 
     val tableType = Seq("oracle", "postgresql", "mysql", "mssql", "h2", "clickhouse")
@@ -71,6 +81,7 @@ object HeuristicsGenerator {
 
     val (duplicateVal: DuplicateValuesMetricConfig, equalToDuplicates: EqualToCheckConfig) =
       if (duplicatesCols.nonEmpty) {
+        log.debug(f"Found ${duplicatesCols.length} columns with duplicate values")
         val duplicateVal = DuplicateValuesMetricConfig(
           id = ID(f"$source%s_duplicate_val"),
           description = Option(Refined.unsafeApply(f"Count of duplicate values in $source")),
@@ -90,6 +101,7 @@ object HeuristicsGenerator {
 
     val (completeness: CompletenessMetricConfig, equalToCompleteness: EqualToCheckConfig) =
       if (completenessCols.nonEmpty) {
+        log.debug(f"Found ${completenessCols.length} columns with completeness")
         val completeness = CompletenessMetricConfig(
           id = ID(f"$source%s_completeness"),
           description = Option(Refined.unsafeApply(f"Completeness check for $source")),
@@ -114,6 +126,7 @@ object HeuristicsGenerator {
       lessThanPct: Option[LessThanCheckConfig]
       ) =
       if (notNullableCols.nonEmpty) {
+        log.debug(f"Found ${notNullableCols.length} nullable columns")
         val nullVal = NullValuesMetricConfig(
           id = ID(f"$source%s_nulls"),
           description = Option(Refined.unsafeApply(f"Null values in $source")),
@@ -323,50 +336,53 @@ object HeuristicsGenerator {
         )
         case _ => Seq.empty
       },
-      file = sourcesMap("stored_as") match {
-        case "avro" => Seq(
-          AvroFileSourceConfig(
-            id = ID(f"$source"),
-            description = None,
-            path = Refined.unsafeApply(sourcesMap("loc")),
-            schema = None
-          )
-        )
-        case "parquet" => Seq(
-          ParquetFileSourceConfig(
-            id = ID(f"$source"),
-            description = None,
-            path = Refined.unsafeApply(sourcesMap("loc")),
-            schema = None
-          )
-        )
-        case "orc" => Seq(
-          OrcFileSourceConfig(
-            id = ID(f"$source"),
-            description = None,
-            path = Refined.unsafeApply(sourcesMap("loc")),
-            schema = None
-          )
-        )
-        case _ => connType match {
-          case "fixed" => Seq(
-            FixedFileSourceConfig(
+      file = sourcesMap.get("stored_as") match {
+        case Some(stored) => stored match {
+          case "avro" => Seq(
+            AvroFileSourceConfig(
               id = ID(f"$source"),
               description = None,
-              path = Refined.unsafeApply("CHANGE"),
+              path = Refined.unsafeApply(sourcesMap("loc")),
               schema = None
             )
           )
-          case "delimited" => Seq(
-            DelimitedFileSourceConfig(
+          case "parquet" => Seq(
+            ParquetFileSourceConfig(
               id = ID(f"$source"),
               description = None,
-              path = Refined.unsafeApply("CHANGE"),
+              path = Refined.unsafeApply(sourcesMap("loc")),
               schema = None
             )
           )
-          case _ => Seq.empty
+          case "orc" => Seq(
+            OrcFileSourceConfig(
+              id = ID(f"$source"),
+              description = None,
+              path = Refined.unsafeApply(sourcesMap("loc")),
+              schema = None
+            )
+          )
+          case _ => connType match {
+            case "fixed" => Seq(
+              FixedFileSourceConfig(
+                id = ID(f"$source"),
+                description = None,
+                path = Refined.unsafeApply("CHANGE"),
+                schema = None
+              )
+            )
+            case "delimited" => Seq(
+              DelimitedFileSourceConfig(
+                id = ID(f"$source"),
+                description = None,
+                path = Refined.unsafeApply("CHANGE"),
+                schema = None
+              )
+            )
+            case _ => Seq.empty
+          }
         }
+        case None => Seq.empty
       },
       custom = connType match {
         case "custom" => Seq(
@@ -393,7 +409,6 @@ object HeuristicsGenerator {
         case None => Seq.empty
       },
       greaterThan = Seq(greaterThan)
-
     )
 
     val targets = TargetsConfig(

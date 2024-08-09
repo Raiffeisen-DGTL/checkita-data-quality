@@ -1,69 +1,103 @@
 package ru.raiffeisen.checkita.configGenerator
 
+import scala.collection.mutable
+import scala.collection.mutable.{ListBuffer, Map => MutableMap}
 
-import scala.collection.mutable.{Map => MutableMap}
+import org.apache.spark.sql.catalyst.parser.CatalystSqlParser
+import org.apache.spark.sql.catalyst.plans.logical.CreateTable
 
-object DdlParser {
+import net.sf.jsqlparser.parser.CCJSqlParserUtil
+import net.sf.jsqlparser.statement.Statement
+import net.sf.jsqlparser.statement.create.table
+
+import ru.raiffeisen.checkita.utils.Logging
+
+object DdlParser extends Logging {
 
   /**
-    DDL parser
-   @param ddl
+   * Parses DDL string to extract metadata about a table and its columns.
+   *
+   * @param ddl The DDL string to be parsed.
+   * @return A tuple containing two maps:
+   *         - The first map contains basic table information, including the table's source name, location, and storage format.
+   *         - The second map categorizes columns by their data types, with each entry listing the columns and their associated attributes.
    */
-  def parseDDL(ddl: String): (Map[String, String], Map[String, List[Map[String, String]]]) = {
-    val ddlLowerCase = ddl.toLowerCase
-    val reg = "(?i)stored as ".r
-    val location = "(?i) location".r
-    val sources: MutableMap[String, String] = MutableMap()
-    val notDataType: Seq[String] = List(")", "key", "constraint", "))", "")
-    val columnDict: MutableMap[String, List[Map[String, String]]] = MutableMap()
+  def parseDDL(ddl: String): (Map[String, String], Map[String, ListBuffer[Map[String, String]]]) = {
+    var sources: MutableMap[String, String] = MutableMap()
+    val columnDict: MutableMap[String, ListBuffer[Map[String, String]]] = MutableMap()
 
-    if (ddlLowerCase.contains("stored as")) {
+    if (ddl.toLowerCase.contains("stored as")) {
+      log.debug("Parsing Hive DDL")
 
-      val pattern = if (ddlLowerCase.contains("external")) "create external table" else "create table"
+      val statements = ddl.split(";").map(_.trim).filter(_.nonEmpty)
+      var tableName: Option[String] = None
+      var tableLocation: Option[String] = None
+      var tableStorageFormat: Option[String] = None
+      val partitionCol: ListBuffer[String] = ListBuffer()
 
-      val source = ddlLowerCase.split(pattern, 2)(1).split("\\(", 2)(0).split("\\.")(1).trim
-      val splits = reg.split(ddl.split("\\(", 2)(1))
-      val columns = splits(0).toLowerCase.split(" \\) comment", 2)(0).split("',")
+      statements.foreach { statement =>
+        try {
+          val logicalPlan = CatalystSqlParser.parsePlan(statement)
+          logicalPlan match {
+            case t: CreateTable =>
+              val tableTree = t.name.treeString
+              tableName = Some(
+                if (tableTree.contains("UnresolvedIdentifier")) {
+                  tableTree.split("\\[")(1).split(",")(1).split("]")(0).trim
+                } else t.name.productIterator.next().asInstanceOf[List[Any]].mkString(".")
+              )
+              tableLocation = t.tableSpec.location
+              tableStorageFormat = t.tableSpec.serde.head.storedAs
+              t.partitioning.map { col =>
+                partitionCol += col.references().head.toString
+              }
 
-      val storedAs = location.split(splits(1))(0).trim
-      val loc = location.split(splits(1).split(";")(0))(1).trim
-
-      sources("stored_as") = storedAs.toLowerCase.replace(" ", "")
-      sources("loc") = loc.replace("'", "")
-        .replace("\"", "")
-        .replace(" ", "") + "/dlk_cob_date="
-
-      columns.foreach { column =>
-        val parts = column.split("\\s+", 4).filter(_.nonEmpty)
-        val columnName = if (parts(0).startsWith("`")) parts(0).split("`")(1) else parts(0)
-        val dataType = parts(1).toLowerCase.split("\\(")(0)
-        val comment = parts(2).split("'")(1)
-
-        columnDict(dataType) = columnDict.getOrElse(dataType, List()) :+ Map(columnName -> comment)
-      }
-      sources("source") = source.replace("'", "")
-        .replace("\"", "")
-        .replace(" ", "")
-    } else {
-      val table = "(?i)table".r
-      val splits = ddl.split("\\(", 2)(1).split("\\);")(0)
-      val source = table.split(ddl.split("\\(")(0))(1).trim
-      val columns = splits.split(",")
-
-      columns.foreach { column =>
-        val nullable = if (column.toLowerCase.contains("not null")) "not null" else "null"
-        val parts = column.split("\\s+", 4).filter(_.nonEmpty)
-        val columnName = parts(0)
-        if (parts.length > 1) {
-          val dataType = parts(1).toLowerCase.split("\\(")(0)
-          if (!notDataType.contains(dataType) && !notDataType.contains(columnName.toLowerCase) && !columnName.contains(")")) {
-            columnDict(dataType) = columnDict.getOrElse(dataType, List()) :+ Map(columnName -> nullable)
+              t.tableSchema.foreach { field =>
+                val fieldType = field.dataType.simpleString
+                val correctType = if (fieldType.contains("(")) fieldType.split("\\(")(0) else fieldType
+                if (!partitionCol.contains(field.name)) {
+                  val fInfo = Map(field.name -> field.getComment().getOrElse(""))
+                  if (columnDict.contains(correctType)) {
+                    columnDict(correctType) += fInfo
+                  } else {
+                      columnDict(correctType) = ListBuffer(fInfo)
+                  }
+                }
+              }
           }
+        } catch {
+          case e: Exception => log.error(f"Error parsing $statement, error $e")
         }
       }
-      sources("source") = source.replace("'", "")
-        .replace("\"", "")
-        .replace(" ", "")
+      sources = mutable.Map(
+        "source" -> tableName.getOrElse(""),
+        "loc" -> tableLocation.map(_ + "/dlk_cob_date=").getOrElse(""),
+        "stored_as" -> tableStorageFormat.getOrElse("")
+      )
+    } else {
+        log.debug("Parsing other DDL")
+        try {
+          val statement: Statement = CCJSqlParserUtil.parse(ddl)
+          statement match {
+            case t: table.CreateTable =>
+              sources("source") = t.getTable.getName
+              val colsInfo = t.getColumnDefinitions
+              colsInfo.forEach { col =>
+                val dataType = col.getColDataType.getDataType.toLowerCase
+                val colSpec = col.getColumnSpecs.toString.toLowerCase
+                val nullState = if (colSpec.contains("not") | colSpec.contains("primary")) "not null" else "null"
+                val fInfo = Map(col.getColumnName -> nullState)
+
+                if (columnDict.contains(dataType)) {
+                  columnDict(dataType) += fInfo
+                } else {
+                    columnDict(dataType) = ListBuffer(fInfo)
+                }
+              }
+          }
+        } catch {
+          case e: Exception => log.error(f"Error parsing, error $e")
+        }
     }
     (sources.toMap, columnDict.toMap)
   }
