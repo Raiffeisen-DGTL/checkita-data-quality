@@ -1,4 +1,4 @@
-package org.raiffeisen.checkita.api.routes
+package org.checkita.api.routes
 
 import cats.effect.IO
 import com.typesafe.config.ConfigRenderOptions
@@ -6,7 +6,7 @@ import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.dsl.io._
 import org.http4s.HttpRoutes
 
-import org.raiffeisen.checkita.api.configGenerator.HeuristicsGenerator.heuristics
+import org.checkita.api.configGenerator.HeuristicsGenerator.heuristics
 import org.checkita.dqf.utils.Logging
 
 object HeuristicsRoutes extends Logging {

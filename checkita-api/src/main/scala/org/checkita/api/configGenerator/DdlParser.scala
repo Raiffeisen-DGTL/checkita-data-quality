@@ -1,4 +1,4 @@
-package org.raiffeisen.checkita.api.configGenerator
+package org.checkita.api.configGenerator
 
 import scala.collection.mutable
 import scala.collection.mutable.{ListBuffer, Map => MutableMap}

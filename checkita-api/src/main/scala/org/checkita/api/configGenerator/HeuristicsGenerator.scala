@@ -1,4 +1,4 @@
-package org.raiffeisen.checkita.api.configGenerator
+package org.checkita.api.configGenerator
 
 import scala.collection.mutable.ListBuffer
 
@@ -6,18 +6,18 @@ import com.typesafe.config.Config
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.types.string.NonEmptyString
 
-import org.raiffeisen.checkita.dqf.config.IO.writeJobConfig
-import org.raiffeisen.checkita.dqf.config.RefinedTypes.{Email, ID}
-import org.raiffeisen.checkita.dqf.config.jobconf.Checks._
-import org.raiffeisen.checkita.dqf.config.jobconf.Connections._
-import org.raiffeisen.checkita.dqf.config.jobconf.JobConfig
-import org.raiffeisen.checkita.dqf.config.jobconf.LoadChecks.{ExactColNumLoadCheckConfig, LoadChecksConfig}
-import org.raiffeisen.checkita.dqf.config.jobconf.Metrics._
-import org.raiffeisen.checkita.dqf.config.jobconf.Sources._
-import org.raiffeisen.checkita.dqf.config.jobconf.Targets._
-import org.raiffeisen.checkita.dqf.configGenerator.DdlParser.parseDDL
-import org.raiffeisen.checkita.dqf.utils.ResultUtils._
-import org.raiffeisen.checkita.dqf.utils.Logging
+import org.checkita.dqf.config.IO.writeJobConfig
+import org.checkita.dqf.config.RefinedTypes.{Email, ID}
+import org.checkita.dqf.config.jobconf.Checks._
+import org.checkita.dqf.config.jobconf.Connections._
+import org.checkita.dqf.config.jobconf.JobConfig
+import org.checkita.dqf.config.jobconf.LoadChecks.{ExactColNumLoadCheckConfig, LoadChecksConfig}
+import org.checkita.dqf.config.jobconf.Metrics._
+import org.checkita.dqf.config.jobconf.Sources._
+import org.checkita.dqf.config.jobconf.Targets._
+import org.checkita.dqf.configGenerator.DdlParser.parseDDL
+import org.checkita.dqf.utils.ResultUtils._
+import org.checkita.dqf.utils.Logging
 
 /**  */
 object HeuristicsGenerator extends Logging{
