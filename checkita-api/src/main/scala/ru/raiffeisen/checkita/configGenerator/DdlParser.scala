@@ -1,4 +1,4 @@
-package ru.raiffeisen.checkita.configGenerator
+package org.raiffeisen.checkita.api.configGenerator
 
 import scala.collection.mutable
 import scala.collection.mutable.{ListBuffer, Map => MutableMap}
@@ -10,7 +10,7 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.create.table
 
-import ru.raiffeisen.checkita.utils.Logging
+import org.raiffeisen.checkita.dqf.utils.Logging
 
 object DdlParser extends Logging {
 

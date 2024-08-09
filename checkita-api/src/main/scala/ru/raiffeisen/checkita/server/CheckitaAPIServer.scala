@@ -1,19 +1,19 @@
-package ru.raiffeisen.checkita.server
+package org.checkita.api.server
 
 import cats.effect.{ExitCode, IO, IOApp, Resource}
 import com.comcast.ip4s._
 import org.apache.logging.log4j.Level
+import org.checkita.api.dbmanager.APIJdbcStorageManager
+import org.checkita.api.routes.{StorageRoutes, ValidationRoutes, HeuristicsRoutes}
 import org.http4s.HttpRoutes
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.{Router, Server}
-import ru.raiffeisen.checkita.appsettings.AppSettings
-import ru.raiffeisen.checkita.config.Enums.DQStorageType
-import ru.raiffeisen.checkita.dbmanager.APIJdbcStorageManager
-import ru.raiffeisen.checkita.routes.{HeuristicsRoutes, StorageRoutes, ValidationRoutes}
-import ru.raiffeisen.checkita.storage.Connections.DqStorageJdbcConnection
-import ru.raiffeisen.checkita.utils.Common.getPrependVars
-import ru.raiffeisen.checkita.utils.Logging
-import ru.raiffeisen.checkita.utils.ResultUtils._
+import org.checkita.dqf.appsettings.AppSettings
+import org.checkita.dqf.config.Enums.DQStorageType
+import org.checkita.dqf.storage.Connections.DqStorageJdbcConnection
+import org.checkita.dqf.utils.Common.getPrependVars
+import org.checkita.dqf.utils.Logging
+import org.checkita.dqf.utils.ResultUtils._
 
 import scala.util.Try
 
