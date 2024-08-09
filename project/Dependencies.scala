@@ -65,6 +65,9 @@ object Dependencies {
   
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.15" % Test
   val scalaCollCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0"
+
+  //JSQL
+  val jsql = "com.github.jsqlparser" % "jsqlparser" % "4.5"
   
   val checkita_core: Seq[ModuleID] = Seq(
     pureConfig,
@@ -107,6 +110,7 @@ object Dependencies {
     circe,
     circeParser,
     scalaTest,
-    scalaCollCompat
+    scalaCollCompat,
+    jsql
   )
 }

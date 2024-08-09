@@ -4,7 +4,7 @@ import cats.effect.{ExitCode, IO, IOApp, Resource}
 import com.comcast.ip4s._
 import org.apache.logging.log4j.Level
 import org.checkita.api.dbmanager.APIJdbcStorageManager
-import org.checkita.api.routes.{StorageRoutes, ValidationRoutes}
+import org.checkita.api.routes.{StorageRoutes, ValidationRoutes, HeuristicsRoutes}
 import org.http4s.HttpRoutes
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.{Router, Server}
@@ -75,7 +75,8 @@ object CheckitaAPIServer extends IOApp with Logging {
    */
   private def getRouter(dbManager: APIJdbcStorageManager, settings: AppSettings): HttpRoutes[IO] = Router(
     "/api/validation" -> ValidationRoutes.configValidationRoutes,
-    "/api/storage" -> StorageRoutes(dbManager, settings).dqStorageRoutes
+    "/api/storage" -> StorageRoutes(dbManager, settings).dqStorageRoutes,
+    "/api/config" -> HeuristicsRoutes.dqHeuristicsRoutes
   )
 
   /**
