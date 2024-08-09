@@ -1,4 +1,4 @@
-name: Checkita Release
+name: Publish to Maven Central
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         scala-version: ['2.12', '2.13']
-        spark-version: ["3.2.0", "3.2.1", "3.2.2", "3.2.3", "3.2.4", "3.3.0", "3.3.1", "3.3.2", "3.3.3", "3.3.4", "3.4.0", "3.4.1", "3.4.2", "3.4.3", "3.5.0", "3.5.1"]
+        spark-version: ["3.2.0", "3.3.0", "3.4.0", "3.5.0"]
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -27,12 +27,18 @@ jobs:
           echo "-Xmx2G" > .jvmopts
           echo "-Xms1G" >> .jvmopts
           echo "-Xss100m" >> .jvmopts
-      - name: Set GPG Key
-        run: gpg --list-keys # todo: need actual gpg keys flow
+      - name: Set GPG Key  # Import GPG Key and trust it. Then list key for debug purposes.
+        run: |
+          echo -n "$GPG_KEY" | base64 --decode | gpg --import
+          echo -n "$GPG_TRUST" | gpg --import-ownertrust
+          gpg --list-keys
+        env:
+          GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_TRUST: ${{ secrets.GPG_OWNERTRUST }}
       - name: Set SBT Credentials
         run: |
-          echo "realm=Sonatype Nexus Repository Manager" > ~/.sbt/.credentials
-          echo "host=s01.oss.sonatype.org" >> ~/.sbt/.credentials
+          echo "realm=Sonatype Central Portal" > ~/.sbt/.credentials
+          echo "host=central.sonatype.com" >> ~/.sbt/.credentials
           echo "user=$ST_USER" >> ~/.sbt/.credentials
           echo "password=$ST_PASSWORD" >> ~/.sbt/.credentials
         env:
@@ -44,17 +50,17 @@ jobs:
             -DASSY_MODE=WITHSPARK \
             -DSCALA_VERSION=$SCALA_VER \
             -DSPARK_VERSION=$SPARK_VER \
-            -Duser.timezone="Europe/Moscow" \
             -DPUBLISH_REALM=$REALM \
             -DPUBLISH_URL=$URL \
             -DPKG_TYPE=$PKG \
             checkita-core/clean \
             checkita-core/compile \
-            checkita-core/publishSigned
+            checkita-core/publishSigned \
+            checkita-core/sonatypeCentralUpload
         env:
           SCALA_VER: ${{ matrix.scala-version }}
           SPARK_VER: ${{ matrix.spark-version }}
           REALM: Sonatype
-          URL: https://s01.oss.sonatype.org/service/local/staging/deploy/maven2
+          URL: https://central.sonatype.com
           PKG: RELEASE
       

@@ -34,6 +34,39 @@ Thus, depending on environment, it is possible to build:
 * As all framework dependencies are available via the spark library class path, it is only required to submit jar file
   with Checkita itself. One can be packaged using sbt command `checkita-core / package`.
 
+## Releases to Maven Central Repository
+
+Starting from Checkita 2.0 the project releases are published to Maven Central repository. As it was already stated,
+Checkita supports multiple Spark versions starting from 3.2.0 and up to 3.5.1 (currently). The code base of Checkita
+does not change between supported version of Spark. However, the Spark transitive dependencies DO change for
+various version. In order to keep reasonable number of packages being released to Maven Central repository 
+per each Checkita version, we only publish Checkita packages tied to minor Spark version like 3.2.0 or 3.3.0 
+and skip patch Spark versions. Thus, Checkita packages have following versioning scheme: 
+`<checkita-version>-<spark-minor-version>`. For example: `checkita-core_2.12-2.0.0-3.2` is build for Scala 2.12
+and Spark 3.2.0.
+
+We also provide FULL lists of dependencies for each of supported Spark versions in raw text format.
+You can fund these lists by links in the table below:
+
+| Spark \ Scala | 2.12                                                               | 2.13                                                               |
+|---------------|--------------------------------------------------------------------|--------------------------------------------------------------------|
+| 3.2.0         | [view](docs/dependencies/checita-core-dependencies-2.12-3.2.0.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.2.0.txt) |
+| 3.2.1         | [view](docs/dependencies/checita-core-dependencies-2.12-3.2.1.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.2.1.txt) |
+| 3.2.2         | [view](docs/dependencies/checita-core-dependencies-2.12-3.2.2.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.2.2.txt) |
+| 3.2.3         | [view](docs/dependencies/checita-core-dependencies-2.12-3.2.3.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.2.3.txt) |
+| 3.2.4         | [view](docs/dependencies/checita-core-dependencies-2.12-3.2.4.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.2.4.txt) |
+| 3.3.0         | [view](docs/dependencies/checita-core-dependencies-2.12-3.3.0.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.3.0.txt) |
+| 3.3.1         | [view](docs/dependencies/checita-core-dependencies-2.12-3.3.1.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.3.1.txt) |
+| 3.3.2         | [view](docs/dependencies/checita-core-dependencies-2.12-3.3.2.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.3.2.txt) |
+| 3.3.3         | [view](docs/dependencies/checita-core-dependencies-2.12-3.3.3.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.3.3.txt) |
+| 3.3.4         | [view](docs/dependencies/checita-core-dependencies-2.12-3.3.4.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.3.4.txt) |
+| 3.4.0         | [view](docs/dependencies/checita-core-dependencies-2.12-3.4.0.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.4.0.txt) |
+| 3.4.1         | [view](docs/dependencies/checita-core-dependencies-2.12-3.4.1.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.4.1.txt) |
+| 3.4.2         | [view](docs/dependencies/checita-core-dependencies-2.12-3.4.2.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.4.2.txt) |
+| 3.4.3         | [view](docs/dependencies/checita-core-dependencies-2.12-3.4.3.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.4.3.txt) |
+| 3.5.0         | [view](docs/dependencies/checita-core-dependencies-2.12-3.5.0.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.5.0.txt) |
+| 3.5.1         | [view](docs/dependencies/checita-core-dependencies-2.12-3.5.1.txt) | [view](docs/dependencies/checita-core-dependencies-2.13-3.5.1.txt) |
+
 ## Contribution
 
 Thank you for considering contributing to our project! We welcome contributions from everyone. By participating in 

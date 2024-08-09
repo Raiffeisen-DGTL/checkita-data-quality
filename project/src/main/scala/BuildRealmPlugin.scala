@@ -4,6 +4,7 @@ import sbt._
 import sbt.{AllRequirements, AutoPlugin, Resolver, Setting, settingKey}
 import sbt.Keys.onLoadMessage
 import sbt.plugins.JvmPlugin
+import xerial.sbt.Sonatype.autoImport.sonatypePublishToBundle
 
 /** Sets Realm and repository host for project publishing */
 object BuildRealmPlugin extends AutoPlugin {
@@ -24,26 +25,29 @@ object BuildRealmPlugin extends AutoPlugin {
       .orElse(sys.env.get("PUBLISH_REALM"))
     val publishUrl = sys.props.get("PUBLISH_URL")
       .orElse(sys.env.get("PUBLISH_URL"))
-    
-    val repo = for {
+
+    for {
       realm <- publishRealm
       url <- publishUrl
     } yield realm at url
-    
-    repo.orElse(localRepo)
   }
   
   import autoImport._
 
   override def projectSettings: Seq[Setting[_]] = Seq(
-    publishRepo := getRepository,
+    
+    publishRepo := getRepository.filter{
+      case mvn: MavenRepository if mvn.name.toUpperCase == "SONATYPE" => false
+      case _ => true
+    }.orElse(sonatypePublishToBundle.value),
+    
     // give feed back
     onLoadMessage := {
       // depend on the old message as well
       val defaultMessage = onLoadMessage.value
-      val resolverName = publishRepo.value.get.name
+      val resolverStr = publishRepo.value.map(_.toString()).getOrElse("None")
       s"""|$defaultMessage
-          |Current Publish Repository: $resolverName""".stripMargin
+          |Current Publish Repository: $resolverStr""".stripMargin
     }
   )
 }
