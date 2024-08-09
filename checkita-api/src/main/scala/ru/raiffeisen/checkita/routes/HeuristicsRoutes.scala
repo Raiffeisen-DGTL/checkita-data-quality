@@ -1,4 +1,4 @@
-package ru.raiffeisen.checkita.routes
+package org.raiffeisen.checkita.api.routes
 
 import cats.effect.IO
 import com.typesafe.config.ConfigRenderOptions
@@ -6,8 +6,8 @@ import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.dsl.io._
 import org.http4s.HttpRoutes
 
-import ru.raiffeisen.checkita.configGenerator.HeuristicsGenerator.heuristics
-import ru.raiffeisen.checkita.utils.Logging
+import org.raiffeisen.checkita.api.configGenerator.HeuristicsGenerator.heuristics
+import org.checkita.dqf.utils.Logging
 
 object HeuristicsRoutes extends Logging {
   private object ConnTypeQueryParamMatcher extends QueryParamDecoderMatcher[String]("conn_type")
