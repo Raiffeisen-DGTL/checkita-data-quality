@@ -1,0 +1,16 @@
+type: object
+properties:
+  params:
+    type: object
+    description: Top N metric parameters.
+    properties:
+      targetNumber:
+        type: integer
+        description: Number N of values to search.
+        default: 10
+        example: 3
+      maxCapacity:
+        type: integer
+        description: Maximum container size for storing top values.
+        default: 100
+        example: 10

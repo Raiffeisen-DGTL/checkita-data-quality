@@ -1,0 +1,13 @@
+type: object
+properties:
+  params:
+    type: object
+    description: Formatted date metric parameters.
+    properties:
+      dateFormat:
+        type: string
+        description: |-
+          Target datetime format. The datetime format must be specified as
+          [Java DateTimeFormatter](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html) pattern.
+        default: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        example: "yyyy-MM-dd"

@@ -97,7 +97,7 @@ $RECYCLE.BIN/
 /out
 
 # use this package for experimentation and do not track it in VSC: 
-/checkita-core/src/main/scala/ru/raiffeisen/checkita/playground
+/checkita-core/src/main/scala/org/checkita/dqf/playground
 
 # ScalaDoc is generated during CI process (with GH Actions)
 # No need to tack it in VSC:

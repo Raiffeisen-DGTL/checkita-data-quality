@@ -1,0 +1,17 @@
+type: object
+properties:
+  metrics:
+    type: array
+    description: |-
+      List of metric for which errors will be saved. If omitted, then errors are saved for all
+      metrics defined in Data Quality job.
+    items:
+      type: string
+      description: Metric ID
+  dumpSize:
+    type: integer
+    description: |-
+      Allows additionally limit number of errors saved per metric in order to 
+      make reports more compact. Could not be larger, than application-level limitation.
+    default: 100
+    example: 25

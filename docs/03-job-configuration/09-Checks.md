@@ -5,7 +5,7 @@ then checks can be configured to identify if there are any problems with quality
 
 In Checkita there are two main group of checks:
 
-* `Spanshot` checks - allows comparison of metric results with static thresholds or with other metric results in the 
+* `Snapshot` checks - allows comparison of metric results with static thresholds or with other metric results in the 
   same Data Quality job.
 * `Trend` checks - allows evaluation of how metric result is changing over a certain period of time. Checks of this type
   are used to detect anomalies in data. In order trend check work it is required to set up Data Quality storage since
@@ -119,7 +119,7 @@ Expression checks represent a boolean expression referring to one or multiple me
 `true` or `false`. Metrics must be referenced by their IDs.
 
 Formula must be written using [Mustache Template](https://mustache.github.io/mustache.5.html) notation, e.g.:
-`{{ metric_1 }} + {{ metic_2 }}`.
+`{{ metric_1 }} + {{ metric_2 }}`.
 
 There are following operations supported to build boolean expressions:
 

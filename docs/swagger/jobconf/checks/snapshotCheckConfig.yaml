@@ -1,0 +1,16 @@
+type: object
+required:
+  - metric
+properties:
+  metric:
+    type: string
+    description: Metric ID which results is checked.
+    example: some_metric_id
+  compareMetric:
+    type: string
+    description: Optional. Metric ID which result is used as a threshold.
+    example: other_metric_id
+  threshold:
+    type: number
+    description: Optional. Explicit threshold value.
+    example: 3.14

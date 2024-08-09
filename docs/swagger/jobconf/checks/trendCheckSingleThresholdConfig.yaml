@@ -1,0 +1,8 @@
+type: object
+required:
+  - threshold
+properties:
+  threshold:
+    type: number
+    description: Sets maximum allowed deviation from historical average metric result.
+    example: 0.1

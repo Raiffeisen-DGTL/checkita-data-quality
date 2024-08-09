@@ -1,0 +1,13 @@
+type: object
+required:
+  - schema
+  - table
+properties:
+  schema:
+    type: string
+    description: Hive schema.
+    example: checkita
+  table:
+    type: string
+    description: Hive table
+    example: result_targets

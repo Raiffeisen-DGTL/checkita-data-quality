@@ -20,6 +20,9 @@ additionally limited in the application settings by setting `errorDumpSize` para
 See [Enablers](../01-application-setup/01-ApplicationSettings.md#enablers) chapter for more details.
 
 Collected metric errors could be used to identify and debug problems in the data. In order to save or send metric error
-reports, [Error Collection Targets](../03-job-configuration/08-Targets.md#error-collection-targets) can be configured in
+reports, [Error Collection Targets](../03-job-configuration/10-Targets.md#error-collection-targets) can be configured in
 `targets` section of job configuration. Note that error collection reports will contain excerpts from data and,
-therefore, should be communicated with caution. For the same reason they are never saved in Data Quality storage.
+therefore, should be communicated with caution. For the same reason it is up to user to decide wether metrics errrors
+will be saved in Data Quality storage. This behaviour is controlled by `saveErrorsToStorage` enabler within
+[Storage Configuration](../01-application-setup/01-ApplicationSettings.md#storage-configuration) section of application
+configuration.

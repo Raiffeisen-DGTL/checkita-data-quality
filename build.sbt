@@ -1,13 +1,10 @@
 import sbt._
 
-ThisBuild / version          := Version.releaseVersion
-ThisBuild / organization     := "ru.raiffeisen"
-ThisBuild / organizationName := "Raiffeisen"
-ThisBuild / versionScheme    := Some("semver-spec")
-ThisBuild / publishTo        := publishRepo.value
-ThisBuild / credentials      += Credentials(Path.userHome / ".sbt" / ".credentials")
-ThisBuild / resolvers        += "Confluent IO" at "https://packages.confluent.io/maven/"
-ThisBuild / scalacOptions    ++= Utils.getScalacOptions(scalaVersion.value)
+ThisBuild / version       := Version.releaseVersion
+ThisBuild / versionScheme := Some("semver-spec")
+ThisBuild / credentials   += Credentials(Path.userHome / ".sbt" / ".credentials")
+ThisBuild / resolvers     += "Confluent IO" at "https://packages.confluent.io/maven/"
+ThisBuild / scalacOptions ++= Utils.getScalacOptions(scalaVersion.value)
 
 lazy val `checkita-data-quality` = (project in file("."))
   .aggregate(`checkita-core`, `checkita-api`)
@@ -22,12 +19,11 @@ lazy val `checkita-core` = (project in file("checkita-core"))
 
     excludeDependencies ++= Utils.getExcludeDependencies(sparkVersion.value),
 
+    Compile / unmanagedSources / excludeFilter := Utils.addSourceDirFilters(sparkVersion.value),
     Compile / doc / target := baseDirectory.value / ".." / "docs/api",
-
+    
     dependencyOverrides ++= (Utils.overrideFasterXml(sparkVersion.value) :+ Utils.overrideSnakeYaml),
-
-    version := Utils.getVersionString((ThisBuild / version).value, packageType.value),
-
+    version := Utils.getVersionString((ThisBuild / version).value, sparkVersion.value, packageType.value),
     assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}-uber.jar",
     assemblyPackageDependency / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}-deps.jar",
 
@@ -57,7 +53,7 @@ lazy val `checkita-api` = (project in file("checkita-api"))
   .dependsOn(`checkita-core`)
   .settings(
     libraryDependencies ++= Dependencies.checkita_api,
-    version := Utils.getVersionString((ThisBuild / version).value, packageType.value),
+    version := Utils.getVersionString((ThisBuild / version).value, sparkVersion.value, packageType.value),
     assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}-uber.jar",
     assemblyPackageDependency / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}-deps.jar",
 

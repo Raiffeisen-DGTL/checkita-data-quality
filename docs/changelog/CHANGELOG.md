@@ -1,13 +1,27 @@
-## [2.0.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.2...v2.0.0) (2024-06-21)
+## [2.0.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.2...v2.0.0) (2024-08-07)
+
+
+### Bug Fixes
+
+* added spark-xml lib for reading xml kafka topics ([#48](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/48)) ([22c3761](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/22c376187748974e1dae97bee9d32c32053f9053))
 
 
 ### Features
 
+* add support of `*` for selection of all source columns in metric configuration ([#49](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/49)) ([ca09fe4](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/ca09fe4259039605cdfa52867b008807e21cc398))
+* change project domain ([#52](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/52)) ([6020463](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/6020463420b120d1c0af97adb7766922f5e190c7))
 * Checkita 2.0 release ([#45](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/45)) ([e747659](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/e7476598ada2b681ee6be478e5dce0e913799b0f))
 
 
 ### BREAKING CHANGES
 
+* move project from ru.raiffeisen domain to org.checkita
+domain.
+
+Other changes include:
+
+- fix backticks issue in GroupingDFMetricCalculator
+- refactor DFMerticCalculator API to implicitly pass column types.
 * major updates to Checkita Core that enables new
 functionality and enhances existing one.
 
@@ -238,11 +252,11 @@ API methods (still in development, will be completed shortly)
 ### Features
 
 * Change DB model:
-  * Added referenceDateTime and executionDateTime
-  * Type in DB - timestamp with tz
-  * Render format can be setup in application.conf
-  * Job-conf variables are changed to referenceDateTime and executionDateTime
-  * Changed init sql script and also added alter sql script
+    * Added referenceDateTime and executionDateTime
+    * Type in DB - timestamp with tz
+    * Render format can be setup in application.conf
+    * Job-conf variables are changed to referenceDateTime and executionDateTime
+    * Changed init sql script and also added alter sql script
 * Added option to sent aggregated messaged to Kafka: one per each target type
 * Added option to run DQ in Shared Spark Context
 * Added new types of history DB: Hive and File (both managed by spark without extra services)
@@ -271,13 +285,13 @@ API methods (still in development, will be completed shortly)
 ### Features
 
 * Adding Kafka support:
-  * New section in run configuration to describe connection to Kafka Brokers
-  * New type of source to read from Kafka topic
-  * Output of all targets to Kafka topic
+    * New section in run configuration to describe connection to Kafka Brokers
+    * New type of source to read from Kafka topic
+    * Output of all targets to Kafka topic
 * Adding Mattermost notifications:
-  * New section added to application configuration to describe connection to Mattermost API.
-  * CheckAlerts and summary reports can be sent to Mattermost.
-  * Notifications can be sent to both channels and user direct messages.
+    * New section added to application configuration to describe connection to Mattermost API.
+    * CheckAlerts and summary reports can be sent to Mattermost.
+    * Notifications can be sent to both channels and user direct messages.
 * Added new DQ application argument -v to pass extra variables to be prepended to application configuration file. Can be used to pass secrets for email, mattermost and storage DB on startup.
 * Documentation is updated according to new features.
 

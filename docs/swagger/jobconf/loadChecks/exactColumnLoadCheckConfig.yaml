@@ -1,0 +1,8 @@
+type: object
+required:
+  - option
+properties:
+  option:
+    type: integer
+    description: Exact number of columns that checked source must contain
+    example: 2
