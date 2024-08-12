@@ -26,10 +26,12 @@ object BuildRealmPlugin extends AutoPlugin {
     val publishUrl = sys.props.get("PUBLISH_URL")
       .orElse(sys.env.get("PUBLISH_URL"))
 
-    for {
+    val repo = for {
       realm <- publishRealm
       url <- publishUrl
     } yield realm at url
+    
+    repo.orElse(localRepo)
   }
   
   import autoImport._
