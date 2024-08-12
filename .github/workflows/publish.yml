@@ -29,13 +29,13 @@ jobs:
           echo "-Xss100m" >> .jvmopts
       - name: Set GPG Key  # Import GPG Key and trust it. Then list key for debug purposes.
         run: |
-          export GPG_TTY=$(tty)
-          echo -n "$GPG_KEY" | base64 --decode | gpg --import
+          echo -n "$GPG_KEY" | base64 --decode | gpg --batch --passphrase $GPG_PASS --import
           echo -n "$GPG_TRUST" | gpg --import-ownertrust
           gpg --list-keys
         env:
           GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_TRUST: ${{ secrets.GPG_OWNERTRUST }}
+          GPG_PASS: ${{ secrets.GPG_PASSPHRASE }}
       - name: Set SBT Credentials
         run: |
           echo "realm=Sonatype Central Portal" > ~/.sbt/.credentials
