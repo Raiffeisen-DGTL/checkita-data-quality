@@ -1,4 +1,5 @@
 import sbt._
+import xerial.sbt.Sonatype.sonatypeCentralHost
 
 ThisBuild / organization         := "org.checkita"
 ThisBuild / organizationName     := "Checkita"
@@ -28,3 +29,6 @@ ThisBuild / developers := List(
     url = url("https://github.com/emakhov")
   )
 )
+
+// Sonatype Settings:
+ThisBuild / sonatypeCredentialHost := sonatypeCentralHost

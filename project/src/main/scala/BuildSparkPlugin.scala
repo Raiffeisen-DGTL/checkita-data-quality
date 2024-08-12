@@ -1,6 +1,6 @@
 package src.main.scala
 
-import sbt.Keys.{onLoadMessage, scalaVersion, scalacOptions}
+import sbt.Keys.{onLoadMessage, scalaVersion, version}
 import sbt.plugins.JvmPlugin
 import sbt.{AllRequirements, AutoPlugin, Setting, settingKey}
 
@@ -31,7 +31,7 @@ object BuildSparkPlugin extends AutoPlugin {
       .getOrElse("2.12")
     
     if (scalaFeatVersion == "2.12") {
-      if (sparkVer <= "3.4.0") "2.12.16" else "2.12.18"
+      if (sparkVer < "3.4.0") "2.12.16" else "2.12.18"
     } else if (scalaFeatVersion == "2.13") {
       if (sparkVer <= "3.3.0") "2.13.5" else "2.13.8"
     } else throw new IllegalArgumentException(
@@ -45,8 +45,9 @@ object BuildSparkPlugin extends AutoPlugin {
     scalaVersion := getScalaVersion(sparkVersion.value),
     onLoadMessage := {
       s"""|${onLoadMessage.value}
-          |Current Spark version: ${sparkVersion.value}
-          |Current Scala version: ${scalaVersion.value}""".stripMargin
+          |Current Spark version:   ${sparkVersion.value}
+          |Current Scala version:   ${scalaVersion.value}
+          |Current Project version: ${version.value}""".stripMargin
     }
   )
 }

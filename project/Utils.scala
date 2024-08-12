@@ -16,8 +16,8 @@ object Utils {
       "3\\.0\\.[0-3]".r -> "2.7.4",
       "3\\.1\\.[0-3]".r -> "3.2.0",
       "3\\.2\\.[0-4]".r -> "3.3.1",
-      "3\\.3\\.[0-3]".r -> "3.3.2",
-      "3\\.4\\.[0-2]".r -> "3.3.4",
+      "3\\.3\\.[0-4]".r -> "3.3.2",
+      "3\\.4\\.[0-3]".r -> "3.3.4",
       "3\\.5\\.[0-1]".r -> "3.3.4"
     )
 
@@ -83,8 +83,8 @@ object Utils {
   
   def getVersionString(buildVersion: String, sparkVersion: String, packageType: PackageType.Value): String = 
     packageType match {
-      case PackageType.Release => s"$buildVersion-$sparkVersion"
-      case otherType => s"$buildVersion-$sparkVersion-${otherType.toString}"
+      case PackageType.Release => s"$buildVersion-${sparkVersion.take(3)}"
+      case otherType => s"$buildVersion-${sparkVersion.take(3)}-${otherType.toString.toUpperCase}"
     }
   
   def getScalacOptions(scalaVersion: String): Seq[String] = {
@@ -101,24 +101,4 @@ object Utils {
     
     if (scalaVersion.startsWith("2.12")) commonOptions :+ "-Ypartial-unification" else commonOptions
   }
-
-  /**
-   * Function to include only relevant implementation of Spark Native functions.
-   *
-   * @param sparkVersion Spark version for which the project is built.
-   * @param baseDir      Project base directory
-   * @return Path to source directory that needs to be excluded from project build.
-   */
-  def getUnmanagedDirs(sparkVersion: String, baseDir: File): Seq[File] = {
-    val basePath = baseDir / "main" / "scala" / "org" / "checkita" / "dqf" / "core" / "metrics" / "df" / "functions"
-    if (sparkVersion < "3.4.0") Seq(basePath / "post34")
-    else Seq(basePath / "pre34")
-  }
-  
-  def addSourceDirFilters(sparkVersion: String): FileFilter = {
-    val excludeFolder = if (sparkVersion < "3.4.0") "post34" else "post34"
-    val dirFilter = new SimpleFileFilter(_.getCanonicalPath.contains(excludeFolder))
-    HiddenFileFilter || dirFilter
-  }
-
 }

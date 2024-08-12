@@ -42,7 +42,7 @@ Checkita is designed with focus on integration into ETL pipelines and data catal
 
 Another key feature of Checkita data quality framework is that it can process both static (batch) and
 streaming data sources. Thus, either a batch or streaming application can be started depending on the type of sources
-that needs to be checked. ***Streaming mode is currently in experimental phase and is subjected to changes.***
+that needs to be checked. Streaming mode is currently in experimental phase and is subjected to changes.
 
 The framework is written in Scala 2 and can be built for both Scala 2.12 and Scala 2.13. 
 It operates with Spark 3.2.0 or newer and has been tested in YARN and Kubernetes Spark clusters running on Java 8.
@@ -50,6 +50,9 @@ There are also **limited tests** performed for clusters running on Java 11.
 The project is configured with a parameterized SBT build that allows building the framework for
 a specific version of Scala and Spark, publish the project to a given repository, and also build Uber-jar,
 both with and without Spark dependencies.
+
+*In addition, project is published to Maven Central repository. For more details
+on Maven releases, please see project information on [GitHub](https://github.com/Raiffeisen-DGTL/checkita-data-quality).*
 
 **License**
 
