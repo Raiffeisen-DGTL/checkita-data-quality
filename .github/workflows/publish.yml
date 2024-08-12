@@ -30,7 +30,7 @@ jobs:
       - name: Set GPG Key  # Import GPG Key and trust it. Then list key for debug purposes.
         run: |
           echo -n "$GPG_KEY" | base64 --decode | gpg --batch --passphrase $GPG_PASS --import
-          echo -n "$GPG_TRUST" | gpg --import-ownertrust
+          echo "$GPG_TRUST" | gpg --import-ownertrust
           gpg --list-keys
         env:
           GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
