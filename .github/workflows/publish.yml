@@ -63,6 +63,7 @@ jobs:
         env:
           SCALA_VER: ${{ matrix.scala-version }}
           SPARK_VER: ${{ matrix.spark-version }}
+          PGP_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}  # required for sbt-pgp plugin to sign package
           REALM: Sonatype
           URL: https://central.sonatype.com
           PKG: RELEASE
