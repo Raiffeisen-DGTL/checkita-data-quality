@@ -48,6 +48,7 @@ jobs:
           ST_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
       - name: Compile and Publish for Scala ${{ matrix.scala-version }} and Spark ${{ matrix.spark-version }}
         run: |
+          export GPG_TTY=$(tty)
           sbt \
             -DASSY_MODE=WITHSPARK \
             -DSCALA_VERSION=$SCALA_VER \
