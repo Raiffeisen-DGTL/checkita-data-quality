@@ -59,7 +59,7 @@ jobs:
             checkita-core/clean \
             checkita-core/compile \
             checkita-core/publishSigned \
-            checkita-core/sonatypeCentralUpload
+            sonatypeCentralUpload
         env:
           SCALA_VER: ${{ matrix.scala-version }}
           SPARK_VER: ${{ matrix.spark-version }}
