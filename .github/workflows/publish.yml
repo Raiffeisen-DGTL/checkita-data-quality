@@ -29,6 +29,7 @@ jobs:
           echo "-Xss100m" >> .jvmopts
       - name: Set GPG Key  # Import GPG Key and trust it. Then list key for debug purposes.
         run: |
+          export GPG_TTY=$(tty)
           echo -n "$GPG_KEY" | base64 --decode | gpg --import
           echo -n "$GPG_TRUST" | gpg --import-ownertrust
           gpg --list-keys
