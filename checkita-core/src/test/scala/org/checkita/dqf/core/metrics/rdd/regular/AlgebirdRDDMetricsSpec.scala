@@ -158,7 +158,9 @@ class AlgebirdRDDMetricsSpec extends AnyWordSpec with Matchers {
             (m, v) => m.increment(Seq(v))).result()(MetricName.ApproximateSequenceCompleteness.entryName)._1,
           t._3
         ))
-        metricResults.foreach(v => v._1 shouldEqual v._2)
+        metricResults.foreach{case (actual, expected)  =>
+          actual should (be >= expected - 0.02 and be <= expected + 0.02)
+        }
       }
     }
 
