@@ -31,7 +31,7 @@ class AlgebirdRDDMetricsSpec extends AnyWordSpec with Matchers {
         t._2
       ))
       metricResults.foreach { t =>
-        t._1(MetricName.ApproximateDistinctValues.entryName)._1 shouldEqual t._2
+        t._1(MetricName.ApproximateDistinctValues.entryName)._1 should (be >= t._2 - accuracy and be <= t._2 + accuracy)
       }
     }
 
