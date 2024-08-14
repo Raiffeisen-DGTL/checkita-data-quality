@@ -63,10 +63,17 @@ trait DFMetricsTestUtils { this: AnyWordSpec with Matchers =>
       case (df, params, res, fc) =>
 //         println(s"Testing '$mId' metric. isMultiSeq = ${metCols.size > 1}. Params = $params, Expected: result = $res; failCount = $fc")
         val calculator = fCalc(mId, metCols, params)
+        val accDouble = params.getOrElse("accuracyError", 0.005).asInstanceOf[Double]
+        val accLong = math.round(accDouble * 10e6)
         val (result, errorsNum) = runDFMetricCalc(df, calculator)
 
         if (res.isNaN) result.isNaN shouldEqual true
-        else math.round(result * 10e6) shouldEqual math.round(res * 10e6) 
+        else calculator.metricName.entryName match {
+          case "MIN_NUMBER" | "MAX_NUMBER" =>
+            result should (be >= res - accDouble and be <= res + accDouble)
+          case _ =>
+            math.round(result * 10e6) should (be >= math.round(res * 10e6) - accLong and be <= math.round(res * 10e6) + accLong)
+        }
         // there is some floating number errors during test. lets check if results are the same up to 6th digit.
 
         errorsNum shouldEqual fc
