@@ -15,9 +15,9 @@ import org.checkita.dqf.config.jobconf.LoadChecks.{ExactColNumLoadCheckConfig, L
 import org.checkita.dqf.config.jobconf.Metrics._
 import org.checkita.dqf.config.jobconf.Sources._
 import org.checkita.dqf.config.jobconf.Targets._
-import org.checkita.dqf.configGenerator.DdlParser.parseDDL
 import org.checkita.dqf.utils.ResultUtils._
 import org.checkita.dqf.utils.Logging
+import org.checkita.api.configGenerator.DdlParser.parseDDL
 
 /**  */
 object HeuristicsGenerator extends Logging{
@@ -35,7 +35,7 @@ object HeuristicsGenerator extends Logging{
     val tableType = Seq("oracle", "postgresql", "mysql", "mssql", "h2", "clickhouse")
     val distinctCols = Seq("login", "inn", "id")
 
-    val (sourcesMap, parsedDdl) = parseDDL(ddl)
+    val (sourcesMap, parsedDdl) = parseDDL(ddl, connType)
     val notNullableCols: ListBuffer[String] = ListBuffer()
     val duplicatesCols: ListBuffer[String] = ListBuffer()
     val completenessCols: ListBuffer[String] = ListBuffer()

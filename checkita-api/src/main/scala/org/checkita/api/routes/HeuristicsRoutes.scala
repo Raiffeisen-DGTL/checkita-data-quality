@@ -10,7 +10,25 @@ import org.checkita.api.configGenerator.HeuristicsGenerator.heuristics
 import org.checkita.dqf.utils.Logging
 
 object HeuristicsRoutes extends Logging {
-  private object ConnTypeQueryParamMatcher extends QueryParamDecoderMatcher[String]("conn_type")
+
+  private val validConnTypes = Set(
+    "mssql",
+    "oracle",
+    "postgres",
+    "postgresql",
+    "greenplum",
+    "sqlite",
+    "hive",
+    "mysql",
+    "h2",
+    "clickhouse"
+  )
+
+  private object ConnTypeQueryParamMatcher extends QueryParamDecoderMatcher[String]("conn_type") {
+    override def unapply(params: Map[String, Seq[String]]): Option[String] = {
+      params.get("conn_type").flatMap(_.headOption).map(_.toLowerCase).filter(validConnTypes.contains)
+    }
+  }
 
 
   /** API route for generate Job Config.
@@ -28,5 +46,8 @@ object HeuristicsRoutes extends Logging {
           case Left(err) => NotAcceptable(err.mkString("\n"))
         }
       } yield response
+
+    case _@POST -> Root / "heuristics" =>
+      BadRequest(f"Invalid or missing conn_type parameter. Allowed values: ${validConnTypes.mkString(", ")}.")
   }
 }

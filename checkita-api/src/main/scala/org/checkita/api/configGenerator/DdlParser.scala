@@ -10,7 +10,7 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.create.table
 
-import org.raiffeisen.checkita.dqf.utils.Logging
+import org.checkita.dqf.utils.Logging
 
 object DdlParser extends Logging {
 
@@ -18,22 +18,22 @@ object DdlParser extends Logging {
    * Parses DDL string to extract metadata about a table and its columns.
    *
    * @param ddl The DDL string to be parsed.
+   * @param connType The type of database connection (e.g., "oracle", "postgresql", "mysql").
    * @return A tuple containing two maps:
    *         - The first map contains basic table information, including the table's source name, location, and storage format.
    *         - The second map categorizes columns by their data types, with each entry listing the columns and their associated attributes.
    */
-  def parseDDL(ddl: String): (Map[String, String], Map[String, ListBuffer[Map[String, String]]]) = {
+  def parseDDL(ddl: String, connType: String): (Map[String, String], Map[String, ListBuffer[Map[String, String]]]) = {
     var sources: MutableMap[String, String] = MutableMap()
     val columnDict: MutableMap[String, ListBuffer[Map[String, String]]] = MutableMap()
 
-    if (ddl.toLowerCase.contains("stored as")) {
+    if (connType == "hive") {
       log.debug("Parsing Hive DDL")
 
       val statements = ddl.split(";").map(_.trim).filter(_.nonEmpty)
       var tableName: Option[String] = None
       var tableLocation: Option[String] = None
       var tableStorageFormat: Option[String] = None
-      val partitionCol: ListBuffer[String] = ListBuffer()
 
       statements.foreach { statement =>
         try {
@@ -48,8 +48,8 @@ object DdlParser extends Logging {
               )
               tableLocation = t.tableSpec.location
               tableStorageFormat = t.tableSpec.serde.head.storedAs
-              t.partitioning.map { col =>
-                partitionCol += col.references().head.toString
+              val partitionCol = t.partitioning.map { col =>
+                col.references().head.toString
               }
 
               t.tableSchema.foreach { field =>
@@ -71,7 +71,7 @@ object DdlParser extends Logging {
       }
       sources = mutable.Map(
         "source" -> tableName.getOrElse(""),
-        "loc" -> tableLocation.map(_ + "/dlk_cob_date=").getOrElse(""),
+        "loc" -> tableLocation.getOrElse(""),
         "stored_as" -> tableStorageFormat.getOrElse("")
       )
     } else {
