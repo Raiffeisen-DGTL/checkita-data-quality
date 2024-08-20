@@ -58,7 +58,8 @@ jobs:
             -DPKG_TYPE=$PKG \
             checkita-core/clean \
             checkita-core/compile \
-            checkita-core/publishSigned
+            checkita-core/publishSigned \
+            sonatypeCentralUpload
         env:
           SCALA_VER: ${{ matrix.scala-version }}
           SPARK_VER: ${{ matrix.spark-version }}
@@ -66,14 +67,4 @@ jobs:
           REALM: Sonatype
           URL: https://central.sonatype.com
           PKG: RELEASE
-      - name: Debug bundle and access to Sonatype
-        run: |
-          curl --request POST \
-            --verbose \
-            --header "Authorization: Bearer $ST_TOKEN" \
-            "${URL}/status?id=28570f16-da32-4c14-bd2e-c1acc0782365"
-          ls -l ./target/sonatype-staging/2.0.0-3.2
-        env:
-          ST_TOKEN: ${{ secrets.SONATYPE_TOKEN }}
-          URL: https://central.sonatype.com/api/v1/publisher
       
