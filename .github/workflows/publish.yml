@@ -10,8 +10,8 @@ jobs:
   publish:
     strategy:
       matrix:
-        scala-version: ['2.12', '2.13']
-        spark-version: ["3.2.0", "3.3.0", "3.4.0", "3.5.0"]
+        scala-version: ['2.12'] #, '2.13']
+        spark-version: ["3.2.0"] #, "3.3.0", "3.4.0", "3.5.0"]
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -58,8 +58,7 @@ jobs:
             -DPKG_TYPE=$PKG \
             checkita-core/clean \
             checkita-core/compile \
-            checkita-core/publishSigned \
-            sonatypeCentralUpload
+            checkita-core/publishSigned
         env:
           SCALA_VER: ${{ matrix.scala-version }}
           SPARK_VER: ${{ matrix.spark-version }}
@@ -67,4 +66,15 @@ jobs:
           REALM: Sonatype
           URL: https://central.sonatype.com
           PKG: RELEASE
+      - name: Debug bundle and access to Sonatype
+        run: |
+          ls -l ./target/sonatype-staging/2.0.0-${SPARK_VER}-bundle
+          curl --request POST \
+            --verbose \
+            --header "Authorization: Bearer $ST_TOKEN" \
+            "${URL}/status?id=28570f16-da32-4c14-bd2e-c1acc0782365"
+        env:
+          ST_TOKEN: ${{ secrets.SONATYPE_TOKEN }}
+          SPARK_VER: ${{ matrix.spark-version }}
+          URL: https://central.sonatype.com/api/v1/publisher
       
