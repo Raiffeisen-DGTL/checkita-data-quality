@@ -38,7 +38,7 @@ jobs:
           GPG_PASS: ${{ secrets.GPG_PASSPHRASE }}
       - name: Set SBT Credentials
         run: |
-          mkdir ~/.sbt
+          mkdir -p ~/.sbt
           echo "realm=Sonatype Central Portal" > ~/.sbt/.credentials
           echo "host=central.sonatype.com" >> ~/.sbt/.credentials
           echo "user=$ST_USER" >> ~/.sbt/.credentials
