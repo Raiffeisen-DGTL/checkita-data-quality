@@ -34,14 +34,10 @@ object HeuristicsGenerator extends Logging{
 
     val tableType = Seq("oracle", "postgresql", "mysql", "mssql", "h2", "clickhouse")
     val distinctCols = Seq("login", "inn", "id")
-
     val (sourcesMap, parsedDdl) = parseDDL(ddl, connType)
-    val notNullableCols: ListBuffer[String] = ListBuffer()
-    val duplicatesCols: ListBuffer[String] = ListBuffer()
-    val completenessCols: ListBuffer[String] = ListBuffer()
     val source = sourcesMap("source")
-    var colCnt = 0
     val metricsForTarget: ListBuffer[NonEmptyString] = ListBuffer(Refined.unsafeApply("check_row_cnt"))
+    val initialState = (0, List.empty[String], List.empty[String], List.empty[String])
 
     val rowCnt = RowCountMetricConfig(
       id = ID(f"$source%s_row_cnt"),
@@ -56,20 +52,26 @@ object HeuristicsGenerator extends Logging{
       compareMetric = None
     )
 
-    parsedDdl.values.foreach { columns =>
-      columns.foreach { values =>
-        val key = Seq(values.keys).head.mkString
-        val value = Seq(values.values).head.toString
-        colCnt += 1
-        if (distinctCols.contains(key)) {
-          duplicatesCols += key
+    val (colCnt, notNullableCols, duplicatesCols, completenessCols) = parsedDdl.values.foldLeft(initialState) {
+      case ((colCntAcc, notNullableAcc, duplicatesAcc, completenessAcc), columns) =>
+        columns.foldLeft((colCntAcc, notNullableAcc, duplicatesAcc, completenessAcc)) {
+          case ((colCntInner, notNullableInner, duplicatesInner, completenessInner), values) =>
+            val key = values.keys.head
+            val value = values.values.head
+            val updatedColCnt = colCntInner + 1
+
+            val updatedDuplicates = if (distinctCols.contains(key)) duplicatesInner :+ key else duplicatesInner
+
+            val updatedNotNullable = if (value == "not null" || distinctCols.contains(key)) {
+              notNullableInner :+ key
+            } else notNullableInner
+
+            val updatedCompleteness = if (value != "not null" && !distinctCols.contains(key)) {
+              completenessInner :+ key
+            } else completenessInner
+
+            (updatedColCnt, updatedNotNullable, updatedDuplicates, updatedCompleteness)
         }
-        if (value == "not null" || distinctCols.contains(key)) {
-          notNullableCols += key
-        } else {
-          completenessCols += key
-        }
-      }
     }
 
     val colNum = ExactColNumLoadCheckConfig(
