@@ -10,8 +10,8 @@ jobs:
   publish:
     strategy:
       matrix:
-        scala-version: ['2.12'] #, '2.13']
-        spark-version: ["3.2.0"] #, "3.3.0", "3.4.0", "3.5.0"]
+        scala-version: ['2.12', '2.13']
+        spark-version: ["3.2.0", "3.3.0", "3.4.0", "3.5.0"]
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -36,21 +36,11 @@ jobs:
           GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_TRUST: ${{ secrets.GPG_OWNERTRUST }}
           GPG_PASS: ${{ secrets.GPG_PASSPHRASE }}
-      - name: Set SBT Credentials
-        run: |
-          mkdir -p ~/.sbt
-          echo "realm=Sonatype Central Portal" > ~/.sbt/.credentials
-          echo "host=central.sonatype.com" >> ~/.sbt/.credentials
-          echo "user=$ST_USER" >> ~/.sbt/.credentials
-          echo "password=$ST_PASSWORD" >> ~/.sbt/.credentials
-        env:
-          ST_USER: ${{ secrets.SONATYPE_USER }}
-          ST_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
       - name: Compile and Publish for Scala ${{ matrix.scala-version }} and Spark ${{ matrix.spark-version }}
         run: |
           export GPG_TTY=$(tty)
           sbt \
-            -DASSY_MODE=WITHSPARK \
+            -DASSY_MODE=$ASSY \
             -DSCALA_VERSION=$SCALA_VER \
             -DSPARK_VERSION=$SPARK_VER \
             -DPUBLISH_REALM=$REALM \
@@ -59,11 +49,14 @@ jobs:
             checkita-core/clean \
             checkita-core/compile \
             checkita-core/publishSigned \
-            sonatypeCentralUpload
+            checkita-core/sonatypeUpload
         env:
           SCALA_VER: ${{ matrix.scala-version }}
           SPARK_VER: ${{ matrix.spark-version }}
           PGP_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}  # required for sbt-pgp plugin to sign package
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USER }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          ASSY: WITHSPARK
           REALM: Sonatype
           URL: https://central.sonatype.com
           PKG: RELEASE

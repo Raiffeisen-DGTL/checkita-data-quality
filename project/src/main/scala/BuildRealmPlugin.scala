@@ -4,7 +4,7 @@ import sbt._
 import sbt.{AllRequirements, AutoPlugin, Resolver, Setting, settingKey}
 import sbt.Keys.onLoadMessage
 import sbt.plugins.JvmPlugin
-import xerial.sbt.Sonatype.autoImport.sonatypePublishToBundle
+import src.main.scala.SonatypeUploadPlugin.autoImport.sonatypeStagingResolver
 
 /** Sets Realm and repository host for project publishing */
 object BuildRealmPlugin extends AutoPlugin {
@@ -41,7 +41,7 @@ object BuildRealmPlugin extends AutoPlugin {
     publishRepo := getRepository.filter{
       case mvn: MavenRepository if mvn.name.toUpperCase == "SONATYPE" => false
       case _ => true
-    }.orElse(sonatypePublishToBundle.value),
+    }.orElse(sonatypeStagingResolver.value),
     
     // give feed back
     onLoadMessage := {
