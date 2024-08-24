@@ -81,7 +81,7 @@ object HeuristicsGenerator extends Logging{
       description = None
     )
 
-    val (duplicateVal: DuplicateValuesMetricConfig, equalToDuplicates: EqualToCheckConfig) =
+    val (duplicateVal: Option[DuplicateValuesMetricConfig], equalToDuplicates: Option[EqualToCheckConfig]) =
       if (duplicatesCols.nonEmpty) {
         log.debug(f"Found ${duplicatesCols.length} columns with duplicate values")
         val duplicateVal = DuplicateValuesMetricConfig(
@@ -98,10 +98,10 @@ object HeuristicsGenerator extends Logging{
           compareMetric = None
         )
         metricsForTarget += Refined.unsafeApply(s"check_duplicates_$source")
-        (duplicateVal, equalToDuplicates)
-      }
+        (Some(duplicateVal), Some(equalToDuplicates))
+      } else (None, None)
 
-    val (completeness: CompletenessMetricConfig, equalToCompleteness: EqualToCheckConfig) =
+    val (completeness: Option[CompletenessMetricConfig], equalToCompleteness: Option[EqualToCheckConfig]) =
       if (completenessCols.nonEmpty) {
         log.debug(f"Found ${completenessCols.length} columns with completeness")
         val completeness = CompletenessMetricConfig(
@@ -118,13 +118,13 @@ object HeuristicsGenerator extends Logging{
           compareMetric = None
         )
         metricsForTarget += Refined.unsafeApply(s"check_completeness_$source")
-        (completeness, equalToCompleteness)
-      }
+        (Some(completeness), Some(equalToCompleteness))
+      } else (None, None)
 
     val (
-      regular: RegularMetricsConfig,
+      regular: Option[RegularMetricsConfig],
       composed: Option[ComposedMetricConfig],
-      equalToNulls: EqualToCheckConfig,
+      equalToNulls: Option[EqualToCheckConfig],
       lessThanPct: Option[LessThanCheckConfig]
       ) =
       if (notNullableCols.nonEmpty) {
@@ -135,21 +135,17 @@ object HeuristicsGenerator extends Logging{
           source = Refined.unsafeApply(source),
           columns = Refined.unsafeApply(notNullableCols)
         )
-        val composed = Some(
-          ComposedMetricConfig(
-            id = ID(f"$source%s_pct_of_null"),
-            description = Option(Refined.unsafeApply(f"Percent of null values in $source")),
-            formula = Refined.unsafeApply(f"$source%s_nulls   / (  $source%s_row_cnt  )")
-          )
+        val composed = ComposedMetricConfig(
+          id = ID(f"$source%s_pct_of_null"),
+          description = Option(Refined.unsafeApply(f"Percent of null values in $source")),
+          formula = Refined.unsafeApply(f"$source%s_nulls   / (  $source%s_row_cnt  )")
         )
-        val lessThanPct = Some(
-          LessThanCheckConfig(
-            id = ID(f"check_pct_of_null"),
-            description = None,
-            metric = Refined.unsafeApply(f"$source%s_pct_of_null"),
-            compareMetric = None,
-            threshold = Option(0.1)
-          )
+        val lessThanPct = LessThanCheckConfig(
+          id = ID(f"check_pct_of_null"),
+          description = None,
+          metric = Refined.unsafeApply(f"$source%s_pct_of_null"),
+          compareMetric = None,
+          threshold = Option(0.1)
         )
         metricsForTarget += Refined.unsafeApply("check_pct_of_null")
         val equalToNulls = EqualToCheckConfig(
@@ -162,17 +158,23 @@ object HeuristicsGenerator extends Logging{
         metricsForTarget += Refined.unsafeApply(s"check_nulls_$source")
         val regular = RegularMetricsConfig(
           rowCount = Seq(rowCnt),
-          duplicateValues = Seq(duplicateVal),
-          completeness = Seq(completeness),
+          duplicateValues = duplicateVal match {
+            case Some(value) => Seq(value)
+            case None => Seq.empty
+          },
+          completeness = completeness match {
+            case Some(value) => Seq(value)
+            case None => Seq.empty
+          },
           nullValues = Seq(nullVal)
         )
-        (regular, composed, equalToNulls, lessThanPct)
+        (Some(regular), Some(composed), Some(equalToNulls), Some(lessThanPct))
       } else {
         (None, None, None, None)
       }
 
     val metrics = MetricsConfig(
-      regular = Option(regular),
+      regular = regular,
       composed = composed match {
         case Some(comp) => Seq(comp)
         case None => Seq.empty
@@ -405,7 +407,7 @@ object HeuristicsGenerator extends Logging{
         equalToNulls,
         equalToDuplicates,
         equalToCompleteness
-      ),
+      ).flatten,
       lessThan = lessThanPct match {
         case Some(l) => Seq(l)
         case None => Seq.empty
