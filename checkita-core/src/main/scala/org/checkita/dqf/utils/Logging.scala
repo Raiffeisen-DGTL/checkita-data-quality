@@ -93,6 +93,7 @@ trait Logging {
   private def refactorProperties(is: InputStream, lvl: log4j2.Level): InputStream = {
     val props = new Properties()
     props.load(is)
+    props.setProperty("logger.checkita.name", "org.checkita")
     props.setProperty("logger.checkita.level", lvl.toString)
     toInputStream(props.asScala.map{ case (k, v) => s"$k = $v"}.mkString("\n"), StandardCharsets.UTF_8)
   }
