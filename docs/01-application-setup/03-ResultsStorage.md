@@ -221,7 +221,6 @@ CREATE SCHEMA IF NOT EXISTS ${schema_name};
 DROP TABLE IF EXISTS ${schema_name}.results_metric_regular;
 CREATE EXTERNAL TABLE ${schema_name}.results_metric_regular
 (
-    job_id            STRING COMMENT '',
     metric_id         STRING COMMENT '',
     metric_name       STRING COMMENT '',
     description       STRING COMMENT '',
@@ -242,7 +241,6 @@ LOCATION '${schema_dir}/results_metric_regular';
 DROP TABLE IF EXISTS ${schema_name}.results_metric_composed;
 CREATE EXTERNAL TABLE ${schema_name}.results_metric_composed
 (
-    job_id            STRING COMMENT '',
     metric_id         STRING COMMENT '',
     metric_name       STRING COMMENT '',
     description       STRING COMMENT '',
@@ -262,7 +260,6 @@ LOCATION '${schema_dir}/results_metric_composed';
 DROP TABLE IF EXISTS ${schema_name}.results_metric_trend;
 CREATE EXTERNAL TABLE ${schema_name}.results_metric_trend
 (
-  job_id            STRING COMMENT '',
   metric_id         STRING COMMENT '',
   metric_name       STRING COMMENT '',
   description       STRING COMMENT '',
@@ -282,7 +279,6 @@ LOCATION '${schema_dir}/results_metric_trend';
 DROP TABLE IF EXISTS ${schema_name}.results_metric_error;
 CREATE EXTERNAL TABLE ${schema_name}.results_metric_error
 (
-    job_id            STRING COMMENT '',
     metric_id         STRING COMMENT '',
     source_id         STRING COMMENT '',
     source_key_fields STRING COMMENT '',
@@ -292,7 +288,7 @@ CREATE EXTERNAL TABLE ${schema_name}.results_metric_error
     row_data          STRING COMMENT '',
     error_hash        STRING COMMENT '',
     reference_date    TIMESTAMP COMMENT '',
-    execution_date    TIMESTAMP COMMENT '',
+    execution_date    TIMESTAMP COMMENT ''
 )
 COMMENT 'Data Quality Metrics Error Results'
 PARTITIONED BY (job_id STRING)
@@ -302,7 +298,6 @@ LOCATION '${schema_dir}/results_metric_error';
 DROP TABLE IF EXISTS ${schema_name}.results_check_load;
 CREATE EXTERNAL TABLE ${schema_name}.results_check_load
 (
-    job_id         STRING COMMENT '',
     check_id       STRING COMMENT '',
     check_name     STRING COMMENT '',
     description    STRING COMMENT '',
@@ -322,7 +317,6 @@ LOCATION '${schema_dir}/results_check_load';
 DROP TABLE IF EXISTS ${schema_name}.results_check;
 CREATE EXTERNAL TABLE ${schema_name}.results_check
 (
-    job_id             STRING COMMENT '',
     check_id           STRING COMMENT '',
     check_name         STRING COMMENT '',
     description        STRING COMMENT '',
@@ -346,7 +340,6 @@ LOCATION '${schema_dir}/results_check';
 DROP TABLE IF EXISTS ${schema_name}.job_state;
 CREATE EXTERNAL TABLE ${schema_name}.job_state
 (
-    job_id            STRING COMMENT '',
     config            STRING COMMENT '',
     version_info      STRING COMMENT '',
     reference_date    TIMESTAMP COMMENT '',

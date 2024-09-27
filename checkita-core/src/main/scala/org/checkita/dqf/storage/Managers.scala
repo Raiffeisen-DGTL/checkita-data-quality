@@ -84,7 +84,8 @@ object Managers {
         .withColumn("rank", lit(1))
 
       require(
-        currentDataFmt.schema.zip(newDataFmt.schema).forall(t => t._1 == t._2),
+        currentDataFmt.schema.zip(newDataFmt.schema)
+          .forall(t => (t._1.name, t._1.dataType) == (t._2.name, t._2.dataType)),
         "History storage schema does not match the schema of results being written."
       )
 
@@ -270,19 +271,24 @@ object Managers {
     
     def saveResults[R <: DQEntity : TypeTag](results: Seq[R])(implicit ops: tables.DQTableOps[R]): String = {
       val (targetTable, _, schema) = getBasicVars[R](ops)
-      val curJobId = results.head.jobId
+      results match {
+        case res if res.isEmpty =>
+         s"Unable to find metrics for $targetTable. Skipping"
+        case _ =>
+          val curJobId = results.head.jobId
 
-      // Hive tables are partitioned by job_id and, therefore, it must be at last position in dataframe:
-      val shuffledSchema = StructType(
-        schema.filter(_.name != "job_id") ++ schema.filter(_.name == "job_id")
-      )
+          // Hive tables are partitioned by job_id and, therefore, it must be at last position in dataframe:
+          val shuffledSchema = StructType(
+            schema.filter(_.name != "job_id") ++ schema.filter(_.name == "job_id")
+          )
 
-      val currentData = spark.read.table(targetTable).filter(col("job_id") === curJobId)
-      val resultsData = updateData(spark, currentData, results, schema)
-      resultsData.select(shuffledSchema.map(c => col(c.name)) : _*)
-        .repartition(1).write.mode(SaveMode.Overwrite).insertInto(targetTable)
-      
-      s"Successfully upsert ${results.size} rows into hive table '$targetTable'."
+          val currentData = spark.read.table(targetTable).filter(col("job_id") === curJobId)
+          val resultsData = updateData(spark, currentData, results, schema)
+          resultsData.select(shuffledSchema.map(c => col(c.name)): _*)
+            .repartition(1).write.mode(SaveMode.Overwrite).insertInto(targetTable)
+
+          s"Successfully upsert ${results.size} rows into hive table '$targetTable'."
+      }
     }
 
     def loadMetricResults[R <: MetricResult : TypeTag](jobId: String,
