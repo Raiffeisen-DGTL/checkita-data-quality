@@ -29,9 +29,8 @@ trait Logging {
    * Gets log4j2 properties from corresponding file in the resources directory.
    * @return Input stream with log4j2 properties
    */
-  private def getPropsFromResources: Option[InputStream] = Try(
+  private def getPropsFromResources: InputStream =
     getClass.getResourceAsStream("/log4j2.properties")
-  ).toOption.flatMap(Option(_)) // take care of null input stream
 
   /**
    * Gets log4j2 properties from corresponding file in the working directory.
@@ -42,49 +41,6 @@ trait Logging {
   ).toOption.flatMap(Option(_)) // take care of null input stream
 
   /**
-   * Default logging configuration if user-defined one wasn't provided.
-   * @return Input stream with default log4j properties
-   */
-  private def getDefaultProps: InputStream = {
-    val defaultProperties =
-      """
-        |# Set everything to be logged to the console
-        |# Log level for all external packages is "warn" unless defined explicitly.
-        |# Log level for Checkita classes is defined explicitly further in this file.
-        |rootLogger.level = warn
-        |rootLogger.appenderRef.stdout.ref = console
-        |
-        |appender.console.type = Console
-        |appender.console.name = console
-        |appender.console.target = SYSTEM_OUT
-        |appender.console.layout.type = PatternLayout
-        |appender.console.layout.pattern = %d{yy/MM/dd HH:mm:ss} %p %c{1}: %m%n%ex
-        |
-        |# Settings to quiet third party logs that are too verbose
-        |logger.jetty2.name = org.sparkproject.jetty.util.component.AbstractLifeCycle
-        |logger.jetty2.level = error
-        |
-        |# SPARK-9183: Settings to avoid annoying messages when looking up nonexistent UDFs
-        |# in SparkSQL with Hive support:
-        |logger.metastore.name = org.apache.hadoop.hive.metastore.RetryingHMSHandler
-        |logger.metastore.level = fatal
-        |logger.hive_functionregistry.name = org.apache.hadoop.hive.ql.exec.FunctionRegistry
-        |logger.hive_functionregistry.level = error
-        |
-        |# Parquet related log level is set to error as well:
-        |logger.parquet.name = org.apache.parquet.CorruptStatistics
-        |logger.parquet.level = error
-        |logger.parquet2.name = parquet.CorruptStatistics
-        |logger.parquet2.level = error
-        |
-        |# EXPLICIT LOG LEVEL FOR CHECKITA CLASSES:
-        |logger.checkita.name = org.checkita
-        |logger.checkita.level = debug
-        |""".stripMargin
-    toInputStream(defaultProperties, StandardCharsets.UTF_8)
-  }
-
-  /**
    * Refactors log4j properties stream with actual Checkita logger level provided at application start.
    * @param is Input stream with log4j2 properties
    * @param lvl Root logger level
@@ -93,6 +49,7 @@ trait Logging {
   private def refactorProperties(is: InputStream, lvl: log4j2.Level): InputStream = {
     val props = new Properties()
     props.load(is)
+    props.setProperty("logger.checkita.name", "org.checkita")
     props.setProperty("logger.checkita.level", lvl.toString)
     toInputStream(props.asScala.map{ case (k, v) => s"$k = $v"}.mkString("\n"), StandardCharsets.UTF_8)
   }
@@ -119,7 +76,7 @@ trait Logging {
    * @param lvl Root logger level defined at application start
    */
   def initLogger(lvl: log4j2.Level): Unit = {
-    val configStream = getPropsFromResources orElse getPropsFromWorkDir getOrElse getDefaultProps
+    val configStream = getPropsFromWorkDir getOrElse getPropsFromResources
     val refactoredStream = refactorProperties(configStream, lvl)
     reconfigureLog4J2(refactoredStream)
   }
