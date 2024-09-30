@@ -271,23 +271,20 @@ object Managers {
     
     def saveResults[R <: DQEntity : TypeTag](results: Seq[R])(implicit ops: tables.DQTableOps[R]): String = {
       val (targetTable, _, schema) = getBasicVars[R](ops)
-      results match {
-        case res if res.isEmpty =>
-         s"Unable to find metrics for $targetTable. Skipping"
-        case _ =>
-          val curJobId = results.head.jobId
+      if (results.isEmpty) "Nothing to save" else {
+        val curJobId = results.head.jobId
 
-          // Hive tables are partitioned by job_id and, therefore, it must be at last position in dataframe:
-          val shuffledSchema = StructType(
-            schema.filter(_.name != "job_id") ++ schema.filter(_.name == "job_id")
-          )
+        // Hive tables are partitioned by job_id and, therefore, it must be at last position in dataframe:
+        val shuffledSchema = StructType(
+          schema.filter(_.name != "job_id") ++ schema.filter(_.name == "job_id")
+        )
 
-          val currentData = spark.read.table(targetTable).filter(col("job_id") === curJobId)
-          val resultsData = updateData(spark, currentData, results, schema)
-          resultsData.select(shuffledSchema.map(c => col(c.name)): _*)
-            .repartition(1).write.mode(SaveMode.Overwrite).insertInto(targetTable)
+        val currentData = spark.read.table(targetTable).filter(col("job_id") === curJobId)
+        val resultsData = updateData(spark, currentData, results, schema)
+        resultsData.select(shuffledSchema.map(c => col(c.name)): _*)
+          .repartition(1).write.mode(SaveMode.Overwrite).insertInto(targetTable)
 
-          s"Successfully upsert ${results.size} rows into hive table '$targetTable'."
+        s"Successfully upsert ${results.size} rows into hive table '$targetTable'."
       }
     }
 
@@ -330,21 +327,18 @@ object Managers {
     }
 
     def saveResults[R <: DQEntity : TypeTag](results: Seq[R])(implicit ops: tables.DQTableOps[R]): String = {
-      results match {
-        case res if res.isEmpty =>
-          s"Unable to find metrics. Skipping"
-        case _ =>
-          val (resultsDir, tmpDir, _, schema) = getBasicVars[R](ops)
+      if (results.isEmpty) "Nothing to save" else {
+        val (resultsDir, tmpDir, _, schema) = getBasicVars[R](ops)
 
-          val currentData = if (!fs.exists(new Path(resultsDir)))
-            spark.createDataFrame(rowRDD = spark.sparkContext.emptyRDD[Row], schema = schema)
-          else
-            spark.read.parquet(resultsDir).select(schema.map(c => col(c.name).cast(c.dataType)): _*)
+        val currentData = if (!fs.exists(new Path(resultsDir)))
+          spark.createDataFrame(rowRDD = spark.sparkContext.emptyRDD[Row], schema = schema)
+        else
+          spark.read.parquet(resultsDir).select(schema.map(c => col(c.name).cast(c.dataType)): _*)
 
-          val resultsData = updateData(spark, currentData, results, schema)
-          resultsData.write.mode(SaveMode.Overwrite).parquet(tmpDir)
-          spark.read.parquet(tmpDir).repartition(1).write.mode(SaveMode.Overwrite).parquet(resultsDir)
-          s"Successfully upsert ${results.size} rows into results folder '$resultsDir'."
+        val resultsData = updateData(spark, currentData, results, schema)
+        resultsData.write.mode(SaveMode.Overwrite).parquet(tmpDir)
+        spark.read.parquet(tmpDir).repartition(1).write.mode(SaveMode.Overwrite).parquet(resultsDir)
+        s"Successfully upsert ${results.size} rows into results folder '$resultsDir'."
       }
     }
 
