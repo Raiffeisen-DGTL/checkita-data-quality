@@ -27,6 +27,7 @@ import scala.util.Try
  * @param errorDumpSize         Maximum number of errors to be collected per single metric.
  * @param outputRepartition     Sets the number of partitions when writing outputs. By default writes single file.
  * @param metricEngineAPI       Metric processor API used to process metrics: either Spark RDD or Spark DF.
+ * @param failOnError           Returns the failure status if any of the checks fail.
  * @param storageConfig         Configuration of connection to Data Quality Storage
  * @param emailConfig           Configuration of connection to SMTP server
  * @param mattermostConfig      Configuration of connection to Mattermost API
@@ -51,6 +52,7 @@ final case class AppSettings(
                               errorDumpSize: Int,
                               outputRepartition: Int,
                               metricEngineAPI: MetricEngineAPI,
+                              failOnError: Boolean,
                               storageConfig: Option[StorageConfig],
                               emailConfig: Option[EmailConfig],
                               mattermostConfig: Option[MattermostConfig],
@@ -135,6 +137,7 @@ object AppSettings {
         appConfig.enablers.errorDumpSize.value,
         appConfig.enablers.outputRepartition.value,
         appConfig.enablers.metricEngineAPI,
+        appConfig.enablers.failOnError,
         appConfig.storage,
         appConfig.email,
         appConfig.mattermost,
@@ -210,6 +213,7 @@ object AppSettings {
       defaultAppConf.enablers.errorDumpSize.value,
       defaultAppConf.enablers.outputRepartition.value,
       defaultAppConf.enablers.metricEngineAPI,
+      defaultAppConf.enablers.failOnError,
       defaultAppConf.storage,
       defaultAppConf.email,
       defaultAppConf.mattermost,
