@@ -25,6 +25,7 @@ import org.checkita.dqf.readers.SourceReaders._
 import org.checkita.dqf.readers.VirtualSourceReaders.VirtualSourceReaderOps
 import org.checkita.dqf.storage.Connections.DqStorageConnection
 import org.checkita.dqf.storage.Managers.DqStorageManager
+import org.checkita.dqf.storage.Models.ResultSet
 import org.checkita.dqf.utils.Common.{getPrependVars, prepareConfig}
 import org.checkita.dqf.utils.Logging
 import org.checkita.dqf.utils.ResultUtils._
@@ -102,7 +103,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       s"  - errorDumpSize:            ${settings.errorDumpSize}",
       s"  - outputRepartition:        ${settings.outputRepartition}",
       s"  - metricEngineAPI:          ${settings.metricEngineAPI.entryName}",
-      s"  - failOnError:              ${settings.failOnError}"
+      s"  - checkFailureTolerance:    ${settings.checkFailureTolerance.entryName}"
     )
     val logStorageConf = settings.storageConfig match {
       case Some(conf) => Seq(
@@ -598,6 +599,37 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
   def buildStreamJob(jobConfigs: Seq[String]): Result[DQStreamJob] =
     prepareConfig(jobConfigs, settings.prependVars, "job")
       .flatMap(readJobConfig[InputStreamReader]).flatMap(buildStreamJob)
+
+  def checkFailureTolerance(dqJob: Result[DQBatchJob], res: ResultSet): Unit = {
+    val criticalChecks: Seq[String] = dqJob.map {
+      _.checks.filter(_.isCritical)
+    }.map(_.map(_.id.value)).getOrElse(Seq())
+
+    val criticalLoadChecks: Seq[String] = dqJob.map {
+      _.loadChecks.filter(_.isCritical)
+    }.map(_.map(_.id.value)).getOrElse(Seq())
+
+    val failureChecks: Seq[String] =
+      res.checks.filter(_.status == "Failure").map(_.checkId) ++ res.loadChecks.filter(_.status == "Failure").map(_.checkId)
+
+    val checkFailureTolerance: String = dqJob.map(_.settings.checkFailureTolerance.entryName).getOrElse("")
+
+    if (checkFailureTolerance == "Critical") {
+      val failedChecks = res.checks.filter(r => criticalChecks.contains(r.checkId) & r.status == "Failure").map(_.checkId)
+      val failedLoadChecks = res.loadChecks.filter(r => criticalLoadChecks.contains(r.checkId) & r.status == "Failure").map(_.checkId)
+      val failedCritical = if (criticalChecks.nonEmpty & criticalLoadChecks.isEmpty) {
+        failedChecks
+      }
+      else if (criticalChecks.nonEmpty & criticalLoadChecks.nonEmpty) {
+        failedChecks :+ failedLoadChecks.mkString(", ")
+      } else failedLoadChecks
+
+      throw new RuntimeException(s"Critical checks failed: ${failedCritical.mkString(", ")}")
+    }
+    else if (checkFailureTolerance == "All" & failureChecks.nonEmpty) {
+      throw new RuntimeException(s"Checks failed: ${failureChecks.mkString(", ")}")
+    } else log.info("Checkita Data Quality batch application completed successfully.")
+  }
 }
 
 object DQContext {
@@ -684,5 +716,5 @@ object DQContext {
     AppSettings.build(appConfig, referenceDate, isLocal, isShared, doMigration, prependVariables, logLvl)
       .flatMap(settings => build(settings))
   }
-  
+
 }

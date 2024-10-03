@@ -18,6 +18,7 @@ object Checks {
    */
   sealed abstract class CheckConfig extends JobConfigEntity {
     val metric: NonEmptyString
+    val isCritical: Boolean
     def getCalculator: CheckCalculator
   }
 
@@ -68,6 +69,7 @@ object Checks {
                                           metric: NonEmptyString,
                                           compareMetric: Option[NonEmptyString],
                                           threshold: Option[Double],
+                                          isCritical: Boolean = false,
                                           metadata: Seq[SparkParam] = Seq.empty
                                         ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = DifferByLTCheckCalculator(
@@ -91,6 +93,7 @@ object Checks {
                                        metric: NonEmptyString,
                                        compareMetric: Option[NonEmptyString],
                                        threshold: Option[Double],
+                                       isCritical: Boolean = false,
                                        metadata: Seq[SparkParam] = Seq.empty
                                      ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = EqualToCheckCalculator(
@@ -114,6 +117,7 @@ object Checks {
                                         metric: NonEmptyString,
                                         compareMetric: Option[NonEmptyString],
                                         threshold: Option[Double],
+                                        isCritical: Boolean = false,
                                         metadata: Seq[SparkParam] = Seq.empty
                                       ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = LessThanCheckCalculator(
@@ -137,6 +141,7 @@ object Checks {
                                            metric: NonEmptyString,
                                            compareMetric: Option[NonEmptyString],
                                            threshold: Option[Double],
+                                           isCritical: Boolean = false,
                                            metadata: Seq[SparkParam] = Seq.empty
                                          ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = GreaterThanCheckCalculator(
@@ -165,6 +170,7 @@ object Checks {
                                                 windowSize: NonEmptyString,
                                                 windowOffset: Option[NonEmptyString],
                                                 threshold: PercentileDouble,
+                                                isCritical: Boolean = false,
                                                 metadata: Seq[SparkParam] = Seq.empty
                                               ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundFullCheckCalculator(
@@ -193,6 +199,7 @@ object Checks {
                                                  windowSize: NonEmptyString,
                                                  windowOffset: Option[NonEmptyString],
                                                  threshold: PercentileDouble,
+                                                 isCritical: Boolean = false,
                                                  metadata: Seq[SparkParam] = Seq.empty
                                                ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundUpperCheckCalculator(
@@ -221,6 +228,7 @@ object Checks {
                                                  windowSize: NonEmptyString,
                                                  windowOffset: Option[NonEmptyString],
                                                  threshold: PercentileDouble,
+                                                 isCritical: Boolean = false,
                                                  metadata: Seq[SparkParam] = Seq.empty
                                                ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundLowerCheckCalculator(
@@ -251,6 +259,7 @@ object Checks {
                                                  windowOffset: Option[NonEmptyString],
                                                  thresholdLower: PercentileDouble,
                                                  thresholdUpper: PercentileDouble,
+                                                 isCritical: Boolean = false,
                                                  metadata: Seq[SparkParam] = Seq.empty
                                                ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundRangeCheckCalculator(
@@ -276,6 +285,7 @@ object Checks {
                                         metric: NonEmptyString,
                                         targetNumber: PositiveInt,
                                         threshold: PercentileDouble,
+                                        isCritical: Boolean = false,
                                         metadata: Seq[SparkParam] = Seq.empty
                                       ) extends TrendCheckConfig {
     def getCalculator: CheckCalculator = TopNRankCheckCalculator(
@@ -295,6 +305,7 @@ object Checks {
                                     id: ID,
                                     description: Option[NonEmptyString],
                                     formula: NonEmptyString,
+                                    isCritical: Boolean = false,
                                     metadata: Seq[SparkParam] = Seq.empty
                                   ) extends CheckConfig {
     override val metric: NonEmptyString = "unsupported"

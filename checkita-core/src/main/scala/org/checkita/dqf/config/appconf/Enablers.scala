@@ -2,7 +2,7 @@ package org.checkita.dqf.config.appconf
 
 import org.checkita.dqf.config.RefinedTypes.PositiveInt
 import eu.timepit.refined.auto._
-import org.checkita.dqf.config.Enums.MetricEngineAPI
+import org.checkita.dqf.config.Enums.{CheckFailureTolerance, MetricEngineAPI}
 
 /**
  * Application-level configuration for switchers (enablers)
@@ -16,7 +16,7 @@ import org.checkita.dqf.config.Enums.MetricEngineAPI
  * @param errorDumpSize         Maximum number of errors to be collected per single metric per partition.
  * @param outputRepartition     Sets the number of partitions when writing outputs. By default writes single file.
  * @param metricEngineAPI       Metric processor API used to process metrics: either Spark RDD or Spark DF.
- * @param failOnError           Returns the failure status if any of the checks fail.
+ * @param checkFailureTolerance Returns the failure status if any of the checks fail.
  */
 final case class Enablers(
                            allowSqlQueries: Boolean = false,
@@ -26,5 +26,5 @@ final case class Enablers(
                            errorDumpSize: PositiveInt = 10000,
                            outputRepartition: PositiveInt = 1,
                            metricEngineAPI: MetricEngineAPI = MetricEngineAPI.RDD,
-                           failOnError: Boolean = false
+                           checkFailureTolerance: CheckFailureTolerance = CheckFailureTolerance.None
                          )

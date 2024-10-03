@@ -14,6 +14,7 @@ object LoadChecks {
    */
   sealed abstract class LoadCheckConfig extends JobConfigEntity {
     val source: NonEmptyString
+    val isCritical: Boolean
     def getCalculator: LoadCheckCalculator
   }
 
@@ -31,6 +32,7 @@ object LoadChecks {
                                                description: Option[NonEmptyString],
                                                source: NonEmptyString,
                                                option: PositiveInt,
+                                               isCritical: Boolean = false,
                                                metadata: Seq[SparkParam] = Seq.empty
                                              ) extends LoadCheckConfig {
     def getCalculator: LoadCheckCalculator = ExactColNumLoadCheckCalculator(id.value, option.value)
@@ -50,6 +52,7 @@ object LoadChecks {
                                              description: Option[NonEmptyString],
                                              source: NonEmptyString,
                                              option: PositiveInt,
+                                             isCritical: Boolean = false,
                                              metadata: Seq[SparkParam] = Seq.empty
                                            ) extends LoadCheckConfig {
     def getCalculator: LoadCheckCalculator = MinColNumLoadCheckCalculator(id.value, option.value)
@@ -69,6 +72,7 @@ object LoadChecks {
                                                  description: Option[NonEmptyString],
                                                  source: NonEmptyString,
                                                  columns: NonEmptyStringSeq,
+                                                 isCritical: Boolean = false,
                                                  metadata: Seq[SparkParam] = Seq.empty
                                                ) extends LoadCheckConfig {
     def getCalculator: LoadCheckCalculator = ColumnsExistsLoadCheckCalculator(id.value, columns.value)
@@ -90,6 +94,7 @@ object LoadChecks {
                                                source: NonEmptyString,
                                                schema: NonEmptyString,
                                                ignoreOrder: Boolean = false,
+                                               isCritical: Boolean = false,
                                                metadata: Seq[SparkParam] = Seq.empty
                                              ) extends LoadCheckConfig {
     def getCalculator: LoadCheckCalculator = SchemaMatchLoadCheckCalculator(id.value, schema.value, ignoreOrder)

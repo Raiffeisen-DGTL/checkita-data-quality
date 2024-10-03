@@ -26,8 +26,8 @@ object DataQualityBatchApp extends Logging {
         val _ = dqContext.flatMap(_.stop())
         // Log success or error message:
         results match {
-          case Right(_) =>
-            log.info("Checkita Data Quality batch application completed successfully.")
+          case Right(res) =>
+            dqContext.map(_.checkFailureTolerance(dqJob, res))
           case Left(errs) =>
             log.error("Checkita Data Quality batch application finished with following errors:")
             errs.foreach(log.error)

@@ -256,14 +256,8 @@ trait DQJob extends Logging {
 
               lcResult.status match {
                 case CalculatorStatus.Success => log.info(s"$stage Load check is passed.")
-                case CalculatorStatus.Failure =>
-                  if (settings.failOnError){
-                    throw new RuntimeException(s"Load check failed with message: ${lcResult.message}")
-                  } else log.warn(s"$stage Load check failed with message: ${lcResult.message}")
-                case CalculatorStatus.Error =>
-                  if (settings.failOnError) {
-                    throw new RuntimeException(s"Load check calculation error: ${lcResult.message}")
-                  } else log.warn(s"$stage Load check calculation error: ${lcResult.message}")
+                case CalculatorStatus.Failure => log.warn(s"$stage Load check failed with message: ${lcResult.message}")
+                case CalculatorStatus.Error => log.warn(s"$stage Load check calculation error: ${lcResult.message}")
               }
 
               lcResult.finalize(lc.description.map(_.value), lc.metadataString)
@@ -322,14 +316,8 @@ trait DQJob extends Logging {
 
           chkResult.status match {
             case CalculatorStatus.Success => log.info(s"$stage Check is passed.")
-            case CalculatorStatus.Failure =>
-              if (settings.failOnError) {
-              throw new RuntimeException(s"Check failed with message: ${chkResult.message}")
-            } else log.warn(s"Check failed with message: ${chkResult.message}")
-            case CalculatorStatus.Error =>
-              if (settings.failOnError) {
-                throw new RuntimeException(s"$stage Check calculation error: ${chkResult.message}")
-              } else log.warn(s"$stage Check calculation error: ${chkResult.message}")
+            case CalculatorStatus.Failure => log.warn(s"Check failed with message: ${chkResult.message}")
+            case CalculatorStatus.Error => log.warn(s"$stage Check calculation error: ${chkResult.message}")
           }
 
           chkResult.finalize(chk.description.map(_.value), chk.metadataString)
