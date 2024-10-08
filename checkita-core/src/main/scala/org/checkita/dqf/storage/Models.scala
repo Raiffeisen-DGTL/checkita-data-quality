@@ -1,6 +1,7 @@
 package org.checkita.dqf.storage
 
 import org.checkita.dqf.appsettings.AppSettings
+import org.checkita.dqf.config.IO.readJobConfig
 import org.checkita.dqf.core.CalculatorStatus
 import org.checkita.dqf.utils.Common.camelToSnakeCase
 import shapeless.{::, HList, HNil}
@@ -198,7 +199,8 @@ object Models {
                               loadChecks: Seq[ResultCheckLoad],
                               metricErrors: Seq[ResultMetricError],
                               jobConfig: JobState,
-                              summaryMetrics: ResultSummaryMetrics
+                              summaryMetrics: ResultSummaryMetrics,
+                              failureToleranceViolationChecks: Seq[String]
                             )
   
   object ResultSet{
@@ -224,10 +226,30 @@ object Models {
               jobConfig: JobState,
               metricErrors: Seq[ResultMetricError]
              )(implicit jobId: String, settings: AppSettings): ResultSet = {
+      val (criticalChecks, criticalLoadChecks) = readJobConfig(jobConfig.config) match {
+        case Right(job) =>
+          (job.checks.map(_.getAllChecks.filter(_.isCritical).map(_.id.value)).getOrElse(Seq.empty),
+            job.loadChecks.map(_.getAllLoadChecks.filter(_.isCritical).map(_.id.value)).getOrElse(Seq.empty))
+      }
       val failedChecks = checks.filter(_.status != CalculatorStatus.Success.toString).map(_.checkId)
       val failedLoadChecks = loadChecks.filter(_.status != CalculatorStatus.Success.toString).map(_.checkId)
       val metricsWithErrors = metricErrors.map(_.metricId).distinct
       val status = if (failedChecks.length + failedLoadChecks.length == 0) "SUCCESS" else "FAILURE"
+      val failedChk = failedChecks ++ failedLoadChecks
+
+      val failureToleranceViolationChecks: Seq[String] = settings.checkFailureTolerance.entryName match {
+        case "Critical" =>
+          val failedCritical = (checks ++ loadChecks)
+            .filter(r => (criticalChecks ++ criticalLoadChecks).contains(r.checkId) && r.status == "Failure")
+            .map(_.checkId)
+
+          if (failedCritical.nonEmpty) {
+            failedCritical
+          } else Seq.empty
+        case "All" if failedChk.nonEmpty =>
+          failedChk
+        case _ => Seq.empty
+      }
       val summary = ResultSummaryMetrics(
         jobId,
         status,
@@ -244,7 +266,7 @@ object Models {
         failedChecks,
         failedLoadChecks
       )
-      ResultSet(regularMetrics, composedMetrics, trendMetrics, checks, loadChecks, metricErrors, jobConfig, summary)
+      ResultSet(regularMetrics, composedMetrics, trendMetrics, checks, loadChecks, metricErrors, jobConfig, summary, failureToleranceViolationChecks)
     }
   }
 }

@@ -27,7 +27,9 @@ object DataQualityBatchApp extends Logging {
         // Log success or error message:
         results match {
           case Right(res) =>
-            dqContext.map(_.checkFailureTolerance(dqJob, res))
+            if (res.failureToleranceViolationChecks.nonEmpty) {
+              throw new RuntimeException(s"Critical checks failed: ${res.failureToleranceViolationChecks.mkString(", ")}")
+            } else log.info("Checkita Data Quality batch application completed successfully.")
           case Left(errs) =>
             log.error("Checkita Data Quality batch application finished with following errors:")
             errs.foreach(log.error)

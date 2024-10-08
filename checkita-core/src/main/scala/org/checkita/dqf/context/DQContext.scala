@@ -599,34 +599,6 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
   def buildStreamJob(jobConfigs: Seq[String]): Result[DQStreamJob] =
     prepareConfig(jobConfigs, settings.prependVars, "job")
       .flatMap(readJobConfig[InputStreamReader]).flatMap(buildStreamJob)
-
-  def checkFailureTolerance(dqJob: Result[DQBatchJob], res: ResultSet): Unit = {
-    val (criticalChecks, criticalLoadChecks) = dqJob.map{ job =>
-      (job.checks.filter(_.isCritical).map(_.id.value),
-       job.loadChecks.filter(_.isCritical).map(_.id.value))
-    }.getOrElse(Seq.empty[String], Seq.empty[String])
-
-    val failureChecks: Seq[String] = (res.checks ++ res.loadChecks)
-      .filter(_.status == "Failure")
-      .map(_.checkId)
-
-    dqJob.map(_.settings.checkFailureTolerance.entryName).getOrElse("") match {
-      case "Critical" =>
-        val failedCritical = (res.checks ++ res.loadChecks)
-          .filter(r => (criticalChecks ++ criticalLoadChecks).contains(r.checkId) && r.status == "Failure")
-          .map(_.checkId)
-
-        if (failedCritical.nonEmpty) {
-          throw new RuntimeException(s"Critical checks failed: ${failedCritical.mkString(", ")}")
-        } else {
-          log.info("Checkita Data Quality batch application completed successfully.")
-        }
-      case "All" if failureChecks.nonEmpty =>
-        throw new RuntimeException(s"Checks failed: ${failureChecks.mkString(", ")}")
-      case _ =>
-        log.info("Checkita Data Quality batch application completed successfully.")
-    }
-  }
 }
 
 object DQContext {

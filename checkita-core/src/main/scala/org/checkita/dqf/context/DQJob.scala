@@ -316,7 +316,7 @@ trait DQJob extends Logging {
 
           chkResult.status match {
             case CalculatorStatus.Success => log.info(s"$stage Check is passed.")
-            case CalculatorStatus.Failure => log.warn(s"Check failed with message: ${chkResult.message}")
+            case CalculatorStatus.Failure => log.warn(s"$stage Check failed with message: ${chkResult.message}")
             case CalculatorStatus.Error => log.warn(s"$stage Check calculation error: ${chkResult.message}")
           }
 
