@@ -25,6 +25,7 @@ object LoadChecks {
    * @param description Load check description
    * @param source      Source ID to be checked
    * @param option      Required number of columns
+   * @param isCritical  Flag if check is critical
    * @param metadata    List of metadata parameters specific to this load check
    */
   final case class ExactColNumLoadCheckConfig(
@@ -35,7 +36,7 @@ object LoadChecks {
                                                isCritical: Boolean = false,
                                                metadata: Seq[SparkParam] = Seq.empty
                                              ) extends LoadCheckConfig {
-    def getCalculator: LoadCheckCalculator = ExactColNumLoadCheckCalculator(id.value, option.value)
+    def getCalculator: LoadCheckCalculator = ExactColNumLoadCheckCalculator(id.value, option.value, isCritical)
   }
 
   /**
@@ -45,6 +46,7 @@ object LoadChecks {
    * @param description Load check description
    * @param source      Source ID to be checked
    * @param option      Minimum number of columns
+   * @param isCritical  Flag if check is critical
    * @param metadata    List of metadata parameters specific to this load check
    */
   final case class MinColNumLoadCheckConfig(
@@ -55,7 +57,7 @@ object LoadChecks {
                                              isCritical: Boolean = false,
                                              metadata: Seq[SparkParam] = Seq.empty
                                            ) extends LoadCheckConfig {
-    def getCalculator: LoadCheckCalculator = MinColNumLoadCheckCalculator(id.value, option.value)
+    def getCalculator: LoadCheckCalculator = MinColNumLoadCheckCalculator(id.value, option.value, isCritical)
   }
 
   /**
@@ -65,6 +67,7 @@ object LoadChecks {
    * @param description Load check description
    * @param source      Source ID to be checked
    * @param columns     Sequence of columns that must be presented in the source
+   * @param isCritical  Flag if check is critical
    * @param metadata    List of metadata parameters specific to this load check
    */
   final case class ColumnsExistsLoadCheckConfig(
@@ -75,7 +78,7 @@ object LoadChecks {
                                                  isCritical: Boolean = false,
                                                  metadata: Seq[SparkParam] = Seq.empty
                                                ) extends LoadCheckConfig {
-    def getCalculator: LoadCheckCalculator = ColumnsExistsLoadCheckCalculator(id.value, columns.value)
+    def getCalculator: LoadCheckCalculator = ColumnsExistsLoadCheckCalculator(id.value, columns.value, isCritical)
   }
 
   /**
@@ -86,6 +89,7 @@ object LoadChecks {
    * @param source      Source ID to be checked
    * @param schema      Schema ID to match with
    * @param ignoreOrder If true than order of columns in schemas is ignored
+   * @param isCritical  Flag if check is critical
    * @param metadata    List of metadata parameters specific to this load check
    */
   final case class SchemaMatchLoadCheckConfig(
@@ -97,7 +101,7 @@ object LoadChecks {
                                                isCritical: Boolean = false,
                                                metadata: Seq[SparkParam] = Seq.empty
                                              ) extends LoadCheckConfig {
-    def getCalculator: LoadCheckCalculator = SchemaMatchLoadCheckCalculator(id.value, schema.value, ignoreOrder)
+    def getCalculator: LoadCheckCalculator = SchemaMatchLoadCheckCalculator(id.value, schema.value, ignoreOrder, isCritical)
   }
                                       
   

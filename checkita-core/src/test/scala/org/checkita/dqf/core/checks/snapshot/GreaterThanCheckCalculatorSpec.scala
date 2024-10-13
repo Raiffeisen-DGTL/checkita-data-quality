@@ -30,7 +30,7 @@ class GreaterThanCheckCalculatorSpec extends AnyWordSpec with Matchers {
       )
 
       allCombinations.foreach(t =>
-        GreaterThanCheckCalculator("greater_than_check", t._1, t._2, t._3)
+        GreaterThanCheckCalculator("greater_than_check", t._1, t._2, t._3, isCritical = false)
           .run(metricResults).status shouldEqual t._4
       )
     }

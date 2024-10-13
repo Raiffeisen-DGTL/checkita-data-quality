@@ -70,7 +70,7 @@ class AverageBoundRangeCheckCalculatorSpec extends AnyWordSpec with Matchers {
           ("avg_mag_error", 0.0, 0.091, TrendCheckRule.Datetime, "5d", Some("3d"), CalculatorStatus.Failure),
           ("avg_mag_error", 0.0, 0.054, TrendCheckRule.Datetime, "7d", Some("3d"), CalculatorStatus.Success),
           ("avg_mag_error", 0.0, 0.053, TrendCheckRule.Datetime, "7d", Some("3d"), CalculatorStatus.Failure),
-          
+
           ("99th_quantile", 0.068, 0.0, TrendCheckRule.Record, "7d", None, CalculatorStatus.Error),
           ("99th_quantile", 0.068, 0.0, TrendCheckRule.Record, "7", Some("3d"), CalculatorStatus.Error),
           ("99th_quantile", 0.068, 0.0, TrendCheckRule.Datetime, "7", None, CalculatorStatus.Error),
@@ -81,12 +81,12 @@ class AverageBoundRangeCheckCalculatorSpec extends AnyWordSpec with Matchers {
         )
 
       allCombinations.foreach(t =>
-        AverageBoundRangeCheckCalculator("avg_bound_full_check", t._1, t._2, t._3, t._4, t._5, t._6)
+        AverageBoundRangeCheckCalculator("avg_bound_full_check", t._1, t._2, t._3, isCritical = false, t._4, t._5, t._6)
           .run(metricResults).status shouldEqual t._7
       )
       // error if storage menger is not provided:
       AverageBoundRangeCheckCalculator(
-        "avg_bound_full_check", "99th_quantile", 0.068, 0, TrendCheckRule.Datetime, "7d", Some("3d")
+        "avg_bound_full_check", "99th_quantile", 0.068, 0, isCritical = false, TrendCheckRule.Datetime, "7d", Some("3d")
       ).run(metricResults)(jobId, None, settings, spark, fs).status shouldEqual CalculatorStatus.Error
     }
   }

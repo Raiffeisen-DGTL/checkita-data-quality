@@ -15,10 +15,12 @@ import scala.annotation.tailrec
  *
  * @param checkId Load check ID
  * @param requiredColumns Sequence of required columns
+ * @param isCritical Flag if check is critical
  */
 final case class ColumnsExistsLoadCheckCalculator(
                                                    checkId: String,
-                                                   requiredColumns: Seq[String]
+                                                   requiredColumns: Seq[String],
+                                                   isCritical: Boolean
                                                  ) extends LoadCheckCalculator {
 
   val checkName: LoadCheckName = LoadCheckName.ColumnsExist
@@ -67,7 +69,8 @@ final case class ColumnsExistsLoadCheckCalculator(
       source.id,
       expected,
       status,
-      getMessage(source.id, status, statusMsg)
+      getMessage(source.id, status, statusMsg),
+      isCritical
     )
   }
 }

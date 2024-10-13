@@ -110,6 +110,7 @@ CREATE TABLE "${defaultSchema}"."results_check"
     "upper_bound"        DOUBLE PRECISION,
     "status"             VARCHAR(512) NOT NULL,
     "message"            TEXT,
+    "is_critical"        BOOLEAN      NOT NULL,
     "reference_date"     TIMESTAMP    NOT NULL,
     "execution_date"     TIMESTAMP    NOT NULL,
     UNIQUE ("job_id", "check_id", "reference_date")
@@ -128,6 +129,7 @@ INSERT INTO "${defaultSchema}"."results_check" (
     "upper_bound",
     "status",
     "message",
+    "is_critical",
     "reference_date",
     "execution_date"
 ) SELECT "job_id",
@@ -143,6 +145,7 @@ INSERT INTO "${defaultSchema}"."results_check" (
          "upper_bound",
          "status",
          "message",
+         "is_critical",
          "reference_date",
          "execution_date"
 FROM "${defaultSchema}"."results_check_backup";
@@ -161,6 +164,7 @@ CREATE TABLE "${defaultSchema}"."results_check_load"
     "expected"       VARCHAR(512) NOT NULL,
     "status"         VARCHAR(512) NOT NULL,
     "message"        TEXT,
+    "is_critical"    BOOLEAN      NOT NULL,
     "reference_date" TIMESTAMP    NOT NULL,
     "execution_date" TIMESTAMP    NOT NULL,
     UNIQUE ("job_id", "check_id", "reference_date")
@@ -175,6 +179,7 @@ INSERT INTO "${defaultSchema}"."results_check_load" (
     "expected",
     "status",
     "message",
+    "is_critical",
     "reference_date",
     "execution_date"
 ) SELECT "job_id",
@@ -186,6 +191,7 @@ INSERT INTO "${defaultSchema}"."results_check_load" (
          "expected",
          "status",
          "message",
+         "is_critical",
          "reference_date",
          "execution_date"
 FROM "${defaultSchema}"."results_check_load_backup";

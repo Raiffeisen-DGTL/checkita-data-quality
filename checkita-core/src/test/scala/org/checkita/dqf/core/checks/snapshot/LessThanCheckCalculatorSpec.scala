@@ -30,7 +30,7 @@ class LessThanCheckCalculatorSpec extends AnyWordSpec with Matchers {
       )
 
       allCombinations.foreach(t =>
-        LessThanCheckCalculator("less_than_check", t._1, t._2, t._3)
+        LessThanCheckCalculator("less_than_check", t._1, t._2, t._3, isCritical = false)
           .run(metricResults).status shouldEqual t._4
       )
     }

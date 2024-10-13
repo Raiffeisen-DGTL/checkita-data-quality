@@ -12,10 +12,12 @@ import org.checkita.dqf.readers.SchemaReaders.SourceSchema
  *
  * @param checkId Load check ID
  * @param requiredColNum Minimum required number of columns.
+ * @param isCritical Flag if check is critical
  */
 final case class MinColNumLoadCheckCalculator(
                                                checkId: String,
-                                               requiredColNum: Int
+                                               requiredColNum: Int,
+                                               isCritical: Boolean
                                              ) extends LoadCheckCalculator {
 
   val checkName: LoadCheckName = LoadCheckName.MinColNum
@@ -44,7 +46,8 @@ final case class MinColNumLoadCheckCalculator(
       source.id,
       expected,
       status,
-      getMessage(source.id, status, statusMsg)
+      getMessage(source.id, status, statusMsg),
+      isCritical
     )
   }
 }

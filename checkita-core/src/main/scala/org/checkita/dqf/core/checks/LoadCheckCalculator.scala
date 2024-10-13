@@ -16,6 +16,7 @@ abstract class LoadCheckCalculator {
   val checkName: LoadCheckName
   val expected: String
   val detailsMsg: String // details message to insert into final check message
+  val isCritical: Boolean
 
   /**
    * Generates comprehensive check message
@@ -62,7 +63,8 @@ abstract class LoadCheckCalculator {
         source.id,
         expected,
         CalculatorStatus.Error,
-        s"Unable to perform load check due to following error: ${err.getMessage}"
+        s"Unable to perform load check due to following error: ${err.getMessage}",
+        isCritical
       )
     }
 }

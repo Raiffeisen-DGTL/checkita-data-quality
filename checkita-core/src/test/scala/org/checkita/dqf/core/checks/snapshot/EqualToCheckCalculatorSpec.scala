@@ -27,7 +27,7 @@ class EqualToCheckCalculatorSpec extends AnyWordSpec with Matchers {
       )
       
       allCombinations.foreach(t =>
-        EqualToCheckCalculator("equal_to_check", t._1, t._2, t._3)
+        EqualToCheckCalculator("equal_to_check", t._1, t._2, t._3, isCritical = false)
           .run(metricResults).status shouldEqual t._4
       )
     }

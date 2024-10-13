@@ -46,6 +46,7 @@ object Models {
     val sourceId: String
     val status: String
     val message: Option[String]
+    val isCritical: Boolean
     val referenceDate: Timestamp
     val executionDate: Timestamp
 
@@ -115,6 +116,7 @@ object Models {
                                upperBound: Option[Double],
                                status: String,
                                message: Option[String],
+                               isCritical: Boolean,
                                referenceDate: Timestamp,
                                executionDate: Timestamp) extends CheckResult {
     val entityType: String = "checkResult"
@@ -129,6 +131,7 @@ object Models {
                                    expected: String,
                                    status: String,
                                    message: Option[String],
+                                   isCritical: Boolean,
                                    referenceDate: Timestamp,
                                    executionDate: Timestamp) extends CheckResult {
     val entityType: String = "loadCheckResult"
@@ -226,11 +229,7 @@ object Models {
               jobConfig: JobState,
               metricErrors: Seq[ResultMetricError]
              )(implicit jobId: String, settings: AppSettings): ResultSet = {
-      val (criticalChecks, criticalLoadChecks) = readJobConfig(jobConfig.config) match {
-        case Right(job) =>
-          (job.checks.map(_.getAllChecks.filter(_.isCritical).map(_.id.value)).getOrElse(Seq.empty),
-            job.loadChecks.map(_.getAllLoadChecks.filter(_.isCritical).map(_.id.value)).getOrElse(Seq.empty))
-      }
+      val criticalChecks = (checks ++ loadChecks).filter(_.isCritical).map(_.checkId)
       val failedChecks = checks.filter(_.status != CalculatorStatus.Success.toString).map(_.checkId)
       val failedLoadChecks = loadChecks.filter(_.status != CalculatorStatus.Success.toString).map(_.checkId)
       val metricsWithErrors = metricErrors.map(_.metricId).distinct
@@ -240,12 +239,13 @@ object Models {
       val failureToleranceViolationChecks: Seq[String] = settings.checkFailureTolerance.entryName match {
         case "Critical" =>
           val failedCritical = (checks ++ loadChecks)
-            .filter(r => (criticalChecks ++ criticalLoadChecks).contains(r.checkId) && r.status == "Failure")
+            .filter(r => criticalChecks.contains(r.checkId) && r.status == "Failure")
             .map(_.checkId)
 
           if (failedCritical.nonEmpty) {
             failedCritical
           } else Seq.empty
+
         case "All" if failedChk.nonEmpty =>
           failedChk
         case _ => Seq.empty

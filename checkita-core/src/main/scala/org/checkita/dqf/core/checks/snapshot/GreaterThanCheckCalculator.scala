@@ -12,11 +12,13 @@ import org.checkita.dqf.core.checks.CheckName
  * @param baseMetric Base metric to check
  * @param compareMetric Metric to compare with
  * @param compareThreshold Threshold to compare with
+ * @param isCritical Flag if check is critical
  */
 case class GreaterThanCheckCalculator(checkId: String,
                                       baseMetric: String,
                                       compareMetric: Option[String],
-                                      compareThreshold: Option[Double]
+                                      compareThreshold: Option[Double],
+                                      isCritical: Boolean
                                      ) extends CompareCheckCalculator {
   val checkName: CheckName = CheckName.GreaterThan
   protected val compareFunc: (Double, Double) => Boolean = (x, y) => x > y

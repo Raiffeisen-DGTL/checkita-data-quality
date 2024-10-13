@@ -52,6 +52,7 @@ class Tables(val profile: JdbcProfile) {
     def sourceId: Rep[String] = column[String]("source_id")
     def status: Rep[String] = column[String]("status")
     def message: Rep[Option[String]] = column[Option[String]]("message")
+    def isCritical: Rep[Boolean] = column[Boolean]("is_critical")
 
     def getUniqueCond(r: R): Rep[Boolean] =
       jobId === r.jobId && checkId === r.checkId && referenceDate === r.referenceDate
@@ -151,6 +152,7 @@ class Tables(val profile: JdbcProfile) {
       upperBound,
       status,
       message,
+      isCritical,
       referenceDate,
       executionDate
     ) <> (ResultCheck.tupled, ResultCheck.unapply)
@@ -171,6 +173,7 @@ class Tables(val profile: JdbcProfile) {
       expected,
       status,
       message,
+      isCritical,
       referenceDate,
       executionDate
     ) <> (ResultCheckLoad.tupled, ResultCheckLoad.unapply)

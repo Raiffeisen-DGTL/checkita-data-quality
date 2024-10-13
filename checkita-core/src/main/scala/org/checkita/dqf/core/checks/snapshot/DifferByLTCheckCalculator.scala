@@ -16,11 +16,13 @@ import org.checkita.dqf.storage.Managers.DqStorageManager
  * @param baseMetric Base metric to check
  * @param compareMetric Metric to compare with
  * @param compareThreshold Maximum difference threshold
+ * @param isCritical Flag if check is critical
  */
 case class DifferByLTCheckCalculator(checkId: String,
                                      baseMetric: String,
                                      compareMetric: Option[String],
-                                     compareThreshold: Double
+                                     compareThreshold: Double,
+                                     isCritical: Boolean
                                     ) extends CheckCalculator {
   val checkName: CheckName = CheckName.DifferByLT
   protected val windowString: Option[String] = None
@@ -92,6 +94,7 @@ case class DifferByLTCheckCalculator(checkId: String,
       Some(uBound(compareMetricCalcRes)),
       status = status,
       message = getMessage(baseMetricCalcRes, Some(compareMetricCalcRes), status, statusString),
+      isCritical = isCritical,
       resultType = ResultType.Check
     )
   }
@@ -128,6 +131,7 @@ case class DifferByLTCheckCalculator(checkId: String,
       compareMetricCalcRes.map(uBound),
       status = CalculatorStatus.Error,
       message = msg,
+      isCritical = isCritical,
       resultType = ResultType.Check
     )
   }
@@ -148,6 +152,7 @@ case class DifferByLTCheckCalculator(checkId: String,
     None,
     status = CalculatorStatus.Error,
     message = notFoundErrMsg,
+    isCritical = isCritical,
     resultType = ResultType.Check
   )
   

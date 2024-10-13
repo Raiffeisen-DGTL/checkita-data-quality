@@ -52,12 +52,12 @@ class AverageBoundLowerCheckCalculatorSpec extends AnyWordSpec with Matchers {
       )
 
       allCombinations.foreach(t =>
-        AverageBoundLowerCheckCalculator("avg_bound_lower_check", t._1, t._2, t._3, t._4, t._5)
+        AverageBoundLowerCheckCalculator("avg_bound_lower_check", t._1, t._2, isCritical = false, t._3, t._4, t._5)
           .run(metricResults).status shouldEqual t._6
       )
       // error if storage menger is not provided:
       AverageBoundLowerCheckCalculator(
-        "avg_bound_full_check", "99th_quantile", 0.068, TrendCheckRule.Datetime, "7d", Some("3d")
+        "avg_bound_full_check", "99th_quantile", 0.068, isCritical = false, TrendCheckRule.Datetime, "7d", Some("3d")
       ).run(metricResults)(jobId, None, settings, spark, fs).status shouldEqual CalculatorStatus.Error
     }
   }

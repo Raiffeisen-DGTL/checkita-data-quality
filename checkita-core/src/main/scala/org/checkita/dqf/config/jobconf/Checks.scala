@@ -61,6 +61,7 @@ object Checks {
    * @param metric        Reference to a metric ID over which the check is performed
    * @param compareMetric Reference to a metric ID to compare with
    * @param threshold     Threshold value indicating maximum difference between metric and compareMetric
+   * @param isCritical    Flag if check is critical
    * @param metadata      List of metadata parameters specific to this check
    */
   final case class DifferByLtCheckConfig(
@@ -73,7 +74,7 @@ object Checks {
                                           metadata: Seq[SparkParam] = Seq.empty
                                         ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = DifferByLTCheckCalculator(
-      id.value, metric.value, compareMetric.map(_.value), threshold.get
+      id.value, metric.value, compareMetric.map(_.value), threshold.get, isCritical
     ) // there is a validation check to ensure that compareMetric and threshold are not empty.
   }
 
@@ -97,7 +98,7 @@ object Checks {
                                        metadata: Seq[SparkParam] = Seq.empty
                                      ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = EqualToCheckCalculator(
-      id.value, metric.value, compareMetric.map(_.value), threshold
+      id.value, metric.value, compareMetric.map(_.value), threshold, isCritical
     )
   }
 
@@ -121,7 +122,7 @@ object Checks {
                                         metadata: Seq[SparkParam] = Seq.empty
                                       ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = LessThanCheckCalculator(
-      id.value, metric.value, compareMetric.map(_.value), threshold
+      id.value, metric.value, compareMetric.map(_.value), threshold, isCritical
     )
   }
 
@@ -145,7 +146,7 @@ object Checks {
                                            metadata: Seq[SparkParam] = Seq.empty
                                          ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = GreaterThanCheckCalculator(
-      id.value, metric.value, compareMetric.map(_.value), threshold
+      id.value, metric.value, compareMetric.map(_.value), threshold, isCritical
     )
   }
 
@@ -174,7 +175,7 @@ object Checks {
                                                 metadata: Seq[SparkParam] = Seq.empty
                                               ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundFullCheckCalculator(
-      id.value, metric.value, threshold.value, rule, windowSize.value, windowOffset.map(_.value)
+      id.value, metric.value, threshold.value, isCritical, rule, windowSize.value, windowOffset.map(_.value)
     )
   }
 
@@ -203,7 +204,7 @@ object Checks {
                                                  metadata: Seq[SparkParam] = Seq.empty
                                                ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundUpperCheckCalculator(
-      id.value, metric.value, threshold.value, rule, windowSize.value, windowOffset.map(_.value)
+      id.value, metric.value, threshold.value, isCritical, rule, windowSize.value, windowOffset.map(_.value)
     )
   }
 
@@ -232,7 +233,7 @@ object Checks {
                                                  metadata: Seq[SparkParam] = Seq.empty
                                                ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundLowerCheckCalculator(
-      id.value, metric.value, threshold.value, rule, windowSize.value, windowOffset.map(_.value)
+      id.value, metric.value, threshold.value, isCritical, rule, windowSize.value, windowOffset.map(_.value)
     )
   }
 
@@ -264,7 +265,7 @@ object Checks {
                                                ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundRangeCheckCalculator(
       id.value, metric.value, thresholdLower.value, thresholdUpper.value,
-      rule, windowSize.value, windowOffset.map(_.value)
+      isCritical, rule, windowSize.value, windowOffset.map(_.value)
     )
   }
 
@@ -289,7 +290,7 @@ object Checks {
                                         metadata: Seq[SparkParam] = Seq.empty
                                       ) extends TrendCheckConfig {
     def getCalculator: CheckCalculator = TopNRankCheckCalculator(
-      id.value, metric.value, targetNumber.value, threshold.value
+      id.value, metric.value, targetNumber.value, threshold.value, isCritical
     )
   }
 
@@ -309,7 +310,7 @@ object Checks {
                                     metadata: Seq[SparkParam] = Seq.empty
                                   ) extends CheckConfig {
     override val metric: NonEmptyString = "unsupported"
-    override def getCalculator: CheckCalculator = ExpressionCheckCalculator(id.value, formula.value)
+    override def getCalculator: CheckCalculator = ExpressionCheckCalculator(id.value, formula.value, isCritical)
   }
   
   /**

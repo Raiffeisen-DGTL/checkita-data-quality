@@ -92,6 +92,7 @@ abstract class CompareCheckCalculator extends CheckCalculator {
       Some(compareResult),
       status = status,
       message = getMessage(baseMetricCalcRes, compareMetricCalcRes, status, statusString),
+      isCritical = isCritical,
       resultType = ResultType.Check
     )
 
@@ -129,6 +130,7 @@ abstract class CompareCheckCalculator extends CheckCalculator {
       uBound(compareMetricCalcRes, compareThreshold),
       status = CalculatorStatus.Error,
       message = msg,
+      isCritical = isCritical,
       resultType = ResultType.Check
     )
   }
@@ -150,6 +152,7 @@ abstract class CompareCheckCalculator extends CheckCalculator {
       compareThreshold, // otherwise None as we can't get result for compareMetric
       status = CalculatorStatus.Error,
       message = notFoundErrMsg,
+      isCritical = isCritical,
       resultType = ResultType.Check
     )
 }

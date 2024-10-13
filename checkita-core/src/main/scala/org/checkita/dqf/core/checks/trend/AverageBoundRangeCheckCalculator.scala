@@ -12,6 +12,7 @@ import org.checkita.dqf.core.checks.CheckName
  * @param baseMetric Base metric ID
  * @param compareThresholdLower Lower threshold
  * @param compareThresholdUpper Upper threshold
+ * @param isCritical Flag if check is critical
  * @param rule Rule to build time window (either record or duration)
  * @param windowSize Size of the window to pull historical results
  * @param windowOffset Offset current date/record
@@ -20,6 +21,7 @@ case class AverageBoundRangeCheckCalculator(checkId: String,
                                             baseMetric: String,
                                             compareThresholdLower: Double,
                                             compareThresholdUpper: Double,
+                                            isCritical: Boolean,
                                             rule: TrendCheckRule,
                                             windowSize: String,
                                             windowOffset: Option[String]
