@@ -63,8 +63,7 @@ abstract class LoadCheckCalculator {
         source.id,
         expected,
         CalculatorStatus.Error,
-        s"Unable to perform load check due to following error: ${err.getMessage}",
-        isCritical
+        s"Unable to perform load check due to following error: ${err.getMessage}"
       )
     }
 }

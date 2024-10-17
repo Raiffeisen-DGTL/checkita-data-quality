@@ -260,7 +260,7 @@ trait DQJob extends Logging {
                 case CalculatorStatus.Error => log.warn(s"$stage Load check calculation error: ${lcResult.message}")
               }
 
-              lcResult.finalize(lc.description.map(_.value), lc.metadataString)
+              lcResult.finalize(lc.description.map(_.value), lc.metadataString, lc.isCritical)
             }
           case None =>
             log.info(s"$stage There are no load checks found for source '${src.id}'.")
@@ -320,7 +320,7 @@ trait DQJob extends Logging {
             case CalculatorStatus.Error => log.warn(s"$stage Check calculation error: ${chkResult.message}")
           }
 
-          chkResult.finalize(chk.description.map(_.value), chk.metadataString)
+          chkResult.finalize(chk.description.map(_.value), chk.metadataString, chk.isCritical)
         }
       } else {
         log.info(s"$stage No checks are defined.")

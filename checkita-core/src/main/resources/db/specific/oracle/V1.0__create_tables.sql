@@ -43,7 +43,6 @@ CREATE TABLE "${defaultSchema}"."results_check"
     "upper_bound"        DOUBLE PRECISION,
     "status"             VARCHAR(512) NOT NULL,
     "message"            CLOB,
-    "is_critical"        VARCHAR(512) NOT NULL,
     "reference_date"     TIMESTAMP    NOT NULL,
     "execution_date"     TIMESTAMP    NOT NULL,
     UNIQUE ("job_id", "check_id", "reference_date")
@@ -58,7 +57,6 @@ CREATE TABLE "${defaultSchema}"."results_check_load"
     "expected"       VARCHAR(512) NOT NULL,
     "status"         VARCHAR(512) NOT NULL,
     "message"        CLOB,
-    "is_critical"    VARCHAR(512) NOT NULL,
     "reference_date" TIMESTAMP    NOT NULL,
     "execution_date" TIMESTAMP    NOT NULL,
     UNIQUE ("job_id", "check_id", "reference_date")

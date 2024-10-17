@@ -60,7 +60,6 @@ case class TopNRankCheckCalculator(checkId: String,
     Some(compareThreshold),
     status = CalculatorStatus.Error,
     message = errMsg,
-    isCritical = isCritical,
     resultType = ResultType.Check
   )
 
@@ -165,7 +164,6 @@ case class TopNRankCheckCalculator(checkId: String,
       Some(compareThreshold),
       status = status,
       message = getMessage(baseMetricResults.head, None, status, statusString),
-      isCritical = isCritical,
       resultType = ResultType.Check
     )
   }

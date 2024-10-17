@@ -56,8 +56,7 @@ final case class SchemaMatchLoadCheckCalculator(
       source.id,
       expected,
       status,
-      getMessage(source.id, status, statusMsg),
-      isCritical
+      getMessage(source.id, status, statusMsg)
     )
   }
 

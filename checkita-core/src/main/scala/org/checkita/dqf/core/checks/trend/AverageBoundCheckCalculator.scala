@@ -39,7 +39,6 @@ abstract class AverageBoundCheckCalculator extends CheckCalculator with WindowPa
     None,
     status = CalculatorStatus.Error,
     message = errMsg,
-    isCritical = isCritical,
     resultType = ResultType.Check
   )
   
@@ -119,7 +118,6 @@ abstract class AverageBoundCheckCalculator extends CheckCalculator with WindowPa
       uBound(avgResult),
       status = status,
       message = getMessage(baseMetricCalcRes, None, status, statusString),
-      isCritical = isCritical,
       resultType = ResultType.Check
     )
 

@@ -229,7 +229,6 @@ object Models {
               jobConfig: JobState,
               metricErrors: Seq[ResultMetricError]
              )(implicit jobId: String, settings: AppSettings): ResultSet = {
-      val criticalChecks = (checks ++ loadChecks).filter(_.isCritical).map(_.checkId)
       val failedChecks = checks.filter(_.status != CalculatorStatus.Success.toString).map(_.checkId)
       val failedLoadChecks = loadChecks.filter(_.status != CalculatorStatus.Success.toString).map(_.checkId)
       val metricsWithErrors = metricErrors.map(_.metricId).distinct
@@ -239,7 +238,7 @@ object Models {
       val failureToleranceViolationChecks: Seq[String] = settings.checkFailureTolerance.entryName match {
         case "Critical" =>
           val failedCritical = (checks ++ loadChecks)
-            .filter(r => criticalChecks.contains(r.checkId) && r.status == "Failure")
+            .filter(r => r.isCritical && r.status == "Failure")
             .map(_.checkId)
 
           if (failedCritical.nonEmpty) {

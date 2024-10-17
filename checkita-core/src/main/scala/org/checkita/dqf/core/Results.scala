@@ -193,7 +193,6 @@ object Results {
    * @param upperBound        Allowed upper bound for base metric value
    * @param status            Check status
    * @param message           Check message
-   * @param isCritical        Flag if check is critical
    * @param resultType        Type of result
    *                          
    * @note Expression checks can utilize multiple metrics. Therefore, compareMetric field is represented as
@@ -211,7 +210,6 @@ object Results {
                                           upperBound: Option[Double],
                                           status: CalculatorStatus,
                                           message: String,
-                                          isCritical: Boolean,
                                           resultType: ResultType = ResultType.Check
                                         ) extends TypedResult {
 
@@ -226,7 +224,8 @@ object Results {
      * @return Finalized check result
      */
     def finalize(description: Option[String],
-                 metadata: Option[String])(implicit jobId: String, settings: AppSettings): ResultCheck =
+                 metadata: Option[String],
+                 isCritical: Boolean)(implicit jobId: String, settings: AppSettings): ResultCheck =
       ResultCheck(
         jobId,
         checkId,
@@ -256,7 +255,6 @@ object Results {
    * @param expected   Expected value
    * @param status     Check status
    * @param message    Check message
-   * @param isCritical Flag if check is critical
    * @param resultType Type of result
    */
   final case class LoadCheckCalculatorResult(
@@ -266,7 +264,6 @@ object Results {
                                               expected: String,
                                               status: CalculatorStatus,
                                               message: String,
-                                              isCritical: Boolean,
                                               resultType: ResultType = ResultType.LoadCheck
                                             ) {
     /**
@@ -280,7 +277,8 @@ object Results {
      * @return Finalized load check result
      */
     def finalize(description: Option[String],
-                 metadata: Option[String])(implicit jobId: String, settings: AppSettings): ResultCheckLoad =
+                 metadata: Option[String],
+                 isCritical: Boolean)(implicit jobId: String, settings: AppSettings): ResultCheckLoad =
       ResultCheckLoad(
         jobId,
         checkId,

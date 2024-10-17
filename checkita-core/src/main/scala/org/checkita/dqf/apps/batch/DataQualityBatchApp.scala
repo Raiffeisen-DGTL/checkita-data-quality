@@ -28,7 +28,8 @@ object DataQualityBatchApp extends Logging {
         results match {
           case Right(res) =>
             if (res.failureToleranceViolationChecks.nonEmpty) {
-              throw new RuntimeException(s"Critical checks failed: ${res.failureToleranceViolationChecks.mkString(", ")}")
+              log.error(s"Following checks violate application failure tolerance: ${res.failureToleranceViolationChecks.mkString(", ")}")
+              sys.exit(1)
             } else log.info("Checkita Data Quality batch application completed successfully.")
           case Left(errs) =>
             log.error("Checkita Data Quality batch application finished with following errors:")

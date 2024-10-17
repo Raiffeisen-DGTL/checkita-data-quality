@@ -1,91 +1,3 @@
-EXEC sp_rename '${defaultSchema}.results_metric_regular', 'results_metric_regular_backup';
-CREATE TABLE "${defaultSchema}"."results_metric_regular"
-(
-    "job_id"            VARCHAR(512)     NOT NULL,
-    "metric_id"         VARCHAR(512)     NOT NULL,
-    "metric_name"       VARCHAR(512)     NOT NULL,
-    "description"       VARCHAR(MAX),
-    "metadata"          VARCHAR(MAX),
-    "source_id"         VARCHAR(512)     NOT NULL,
-    "column_names"      VARCHAR(MAX),
-    "params"            VARCHAR(MAX),
-    "result"            DOUBLE PRECISION NOT NULL,
-    "additional_result" VARCHAR(2048),
-    "reference_date"    DATETIME         NOT NULL,
-    "execution_date"    DATETIME         NOT NULL,
-    UNIQUE ("job_id", "metric_id", "reference_date")
-);
-INSERT INTO "${defaultSchema}"."results_metric_regular" (
-    "job_id",
-    "metric_id",
-    "metric_name",
-    "description",
-    "metadata",
-    "source_id",
-    "column_names",
-    "params",
-    "result",
-    "additional_result",
-    "reference_date",
-    "execution_date"
-) SELECT "job_id",
-         "metric_id",
-         "metric_name",
-         "description",
-         null,
-         "source_id",
-         "column_names",
-         "params",
-         "result",
-         "additional_result",
-         "reference_date",
-         "execution_date"
-FROM "${defaultSchema}"."results_metric_regular_backup";
-DROP TABLE "${defaultSchema}"."results_metric_regular_backup";
-
-EXEC sp_rename '${defaultSchema}.results_metric_composed', 'results_metric_composed_backup';
-CREATE TABLE "${defaultSchema}"."results_metric_composed"
-(
-    "job_id"            VARCHAR(512)     NOT NULL,
-    "metric_id"         VARCHAR(512)     NOT NULL,
-    "metric_name"       VARCHAR(512)     NOT NULL,
-    "description"       VARCHAR(MAX),
-    "metadata"          VARCHAR(MAX),
-    "source_id"         VARCHAR(512)     NOT NULL,
-    "formula"           VARCHAR(MAX)     NOT NULL,
-    "result"            DOUBLE PRECISION NOT NULL,
-    "additional_result" VARCHAR(2048),
-    "reference_date"    DATETIME         NOT NULL,
-    "execution_date"    DATETIME         NOT NULL,
-    UNIQUE ("job_id", "metric_id", "reference_date")
-);
-INSERT INTO "${defaultSchema}"."results_metric_composed" (
-    "job_id",
-    "metric_id",
-    "metric_name",
-    "description",
-    "metadata",
-    "source_id",
-    "formula",
-    "result",
-    "additional_result",
-    "reference_date",
-    "execution_date"
-) SELECT "job_id",
-         "metric_id",
-         "metric_name",
-         "description",
-         null,
-         "source_id",
-         "formula",
-         "result",
-         "additional_result",
-         "reference_date",
-         "execution_date"
-FROM "${defaultSchema}"."results_metric_composed_backup";
-DROP TABLE "${defaultSchema}"."results_metric_composed_backup";
-
-
 EXEC sp_rename '${defaultSchema}.results_check', 'results_check_backup';
 CREATE TABLE "${defaultSchema}"."results_check"
 (
@@ -102,6 +14,7 @@ CREATE TABLE "${defaultSchema}"."results_check"
     "upper_bound"        DOUBLE PRECISION,
     "status"             VARCHAR(512) NOT NULL,
     "message"            VARCHAR(MAX),
+    "is_critical"        BIT          NOT NULL,
     "reference_date"     DATETIME     NOT NULL,
     "execution_date"     DATETIME     NOT NULL,
     UNIQUE ("job_id", "check_id", "reference_date")
@@ -120,6 +33,7 @@ INSERT INTO "${defaultSchema}"."results_check" (
     "upper_bound",
     "status",
     "message",
+    "is_critical",
     "reference_date",
     "execution_date"
 ) SELECT "job_id",
@@ -135,6 +49,7 @@ INSERT INTO "${defaultSchema}"."results_check" (
          "upper_bound",
          "status",
          "message",
+         false,
          "reference_date",
          "execution_date"
 FROM "${defaultSchema}"."results_check_backup";
@@ -153,6 +68,7 @@ CREATE TABLE "${defaultSchema}"."results_check_load"
     "expected"       VARCHAR(512) NOT NULL,
     "status"         VARCHAR(512) NOT NULL,
     "message"        VARCHAR(MAX),
+    "is_critical"    BIT          NOT NULL,
     "reference_date" DATETIME     NOT NULL,
     "execution_date" DATETIME     NOT NULL,
     UNIQUE ("job_id", "check_id", "reference_date")
@@ -167,6 +83,7 @@ INSERT INTO "${defaultSchema}"."results_check_load" (
     "expected",
     "status",
     "message",
+    "is_critical",
     "reference_date",
     "execution_date"
 ) SELECT "job_id",
@@ -178,6 +95,7 @@ INSERT INTO "${defaultSchema}"."results_check_load" (
          "expected",
          "status",
          "message",
+         false,
          "reference_date",
          "execution_date"
 FROM "${defaultSchema}"."results_check_load_backup";

@@ -94,7 +94,6 @@ case class DifferByLTCheckCalculator(checkId: String,
       Some(uBound(compareMetricCalcRes)),
       status = status,
       message = getMessage(baseMetricCalcRes, Some(compareMetricCalcRes), status, statusString),
-      isCritical = isCritical,
       resultType = ResultType.Check
     )
   }
@@ -131,7 +130,6 @@ case class DifferByLTCheckCalculator(checkId: String,
       compareMetricCalcRes.map(uBound),
       status = CalculatorStatus.Error,
       message = msg,
-      isCritical = isCritical,
       resultType = ResultType.Check
     )
   }
@@ -152,7 +150,6 @@ case class DifferByLTCheckCalculator(checkId: String,
     None,
     status = CalculatorStatus.Error,
     message = notFoundErrMsg,
-    isCritical = isCritical,
     resultType = ResultType.Check
   )
   

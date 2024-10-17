@@ -134,7 +134,6 @@ case class ExpressionCheckCalculator(checkId: String, formula: String, isCritica
         s"Result: ${CalculatorStatus.Error.toString}. " +
         s"Unable to perform check due to following errors: ${errors.mkString(" ").replace("\n", "")}"
     ),
-    isCritical = isCritical,
     resultType = ResultType.Check
   )
 
@@ -185,7 +184,6 @@ case class ExpressionCheckCalculator(checkId: String, formula: String, isCritica
               None,
               status = status,
               message = message,
-              isCritical = isCritical,
               resultType = ResultType.Check
             )
           case scala.util.Failure(e) => resultOnError(e)
