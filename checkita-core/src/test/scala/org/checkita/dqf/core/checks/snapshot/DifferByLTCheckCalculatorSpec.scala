@@ -23,7 +23,7 @@ class DifferByLTCheckCalculatorSpec extends AnyWordSpec with Matchers {
       )
 
       allCombinations.foreach(t =>
-        DifferByLTCheckCalculator("less_than_check", t._1, t._2, t._3, isCritical = false)
+        DifferByLTCheckCalculator("less_than_check", t._1, t._2, t._3)
           .run(metricResults).status shouldEqual t._4
       )
     }

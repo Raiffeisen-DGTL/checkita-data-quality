@@ -69,7 +69,7 @@ class SchemaMatchLoadCheckCalculatorSpec extends AnyWordSpec with Matchers {
       val schemas = Seq(schema1, schema2, schema3, schema4).map(s => s.id -> s).toMap
       
       allCombinations.foreach(t =>
-        SchemaMatchLoadCheckCalculator("check", t._1, t._2, isCritical = false)
+        SchemaMatchLoadCheckCalculator("check", t._1, t._2)
           .run(flatSrc, schemas)(settings.copy(enableCaseSensitivity = t._3)).status shouldEqual t._4
       )
     }
@@ -121,7 +121,7 @@ class SchemaMatchLoadCheckCalculatorSpec extends AnyWordSpec with Matchers {
       val schemas = Seq(schema1, schema2, schema3, schema4).map(s => s.id -> s).toMap
 
       allCombinations.foreach(t =>
-        SchemaMatchLoadCheckCalculator("check", t._1, t._2, isCritical = false)
+        SchemaMatchLoadCheckCalculator("check", t._1, t._2)
           .run(nestedSrc, schemas)(settings.copy(enableCaseSensitivity = t._3)).status shouldEqual t._4
       )
     }

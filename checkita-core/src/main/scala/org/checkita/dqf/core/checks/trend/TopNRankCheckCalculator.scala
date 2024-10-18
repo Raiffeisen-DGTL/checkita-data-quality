@@ -20,13 +20,11 @@ import scala.util.Try
  * @param checkId Check ID
  * @param baseMetric Base metric ID
  * @param compareThreshold Jacquard distance threshold
- * @param isCritical Flag if check is critical
  */
 case class TopNRankCheckCalculator(checkId: String,
                                    baseMetric: String,
                                    targetNumber: Int,
                                    compareThreshold: Double,
-                                   isCritical: Boolean
                                   ) extends CheckCalculator with WindowParams {
   override val checkName: CheckName = CheckName.TopNRank
   override val compareMetric: Option[String] = None

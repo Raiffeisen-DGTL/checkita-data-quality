@@ -16,13 +16,11 @@ import scala.annotation.tailrec
  *
  * @param checkId Load check ID
  * @param schemaId Sequence of required columns
- * @param isCritical Flag if check is critical
  */
 final case class SchemaMatchLoadCheckCalculator(
                                                  checkId: String,
                                                  schemaId: String,
                                                  ignoreOrder: Boolean,
-                                                 isCritical: Boolean
                                                ) extends LoadCheckCalculator {
 
   val checkName: LoadCheckName = LoadCheckName.SchemaMatch

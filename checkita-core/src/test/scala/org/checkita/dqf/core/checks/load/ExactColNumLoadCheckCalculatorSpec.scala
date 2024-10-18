@@ -13,15 +13,15 @@ class ExactColNumLoadCheckCalculatorSpec extends AnyWordSpec with Matchers {
   
   "ExactColNumLoadCheckCalculator" must {
     "return correct result for source with flat schema" in {
-      val test = ExactColNumLoadCheckCalculator("exact_col_check", 5, isCritical = false)
+      val test = ExactColNumLoadCheckCalculator("exact_col_check", 5)
         .run(flatSrc, schemas).status shouldEqual CalculatorStatus.Success
-      ExactColNumLoadCheckCalculator("exact_col_check", 2, isCritical = false)
+      ExactColNumLoadCheckCalculator("exact_col_check", 2)
         .run(flatSrc, schemas).status shouldEqual CalculatorStatus.Failure
     }
     "return correct result for source with nested schema" in {
-      ExactColNumLoadCheckCalculator("exact_col_check", 2, isCritical = false)
+      ExactColNumLoadCheckCalculator("exact_col_check", 2)
         .run(nestedSrc, schemas).status shouldEqual CalculatorStatus.Success
-      ExactColNumLoadCheckCalculator("exact_col_check", 5, isCritical = false)
+      ExactColNumLoadCheckCalculator("exact_col_check", 5)
         .run(nestedSrc, schemas).status shouldEqual CalculatorStatus.Failure
     }
   }

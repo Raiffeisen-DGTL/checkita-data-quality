@@ -36,7 +36,7 @@ object LoadChecks {
                                                isCritical: Boolean = false,
                                                metadata: Seq[SparkParam] = Seq.empty
                                              ) extends LoadCheckConfig {
-    def getCalculator: LoadCheckCalculator = ExactColNumLoadCheckCalculator(id.value, option.value, isCritical)
+    def getCalculator: LoadCheckCalculator = ExactColNumLoadCheckCalculator(id.value, option.value)
   }
 
   /**
@@ -57,7 +57,7 @@ object LoadChecks {
                                              isCritical: Boolean = false,
                                              metadata: Seq[SparkParam] = Seq.empty
                                            ) extends LoadCheckConfig {
-    def getCalculator: LoadCheckCalculator = MinColNumLoadCheckCalculator(id.value, option.value, isCritical)
+    def getCalculator: LoadCheckCalculator = MinColNumLoadCheckCalculator(id.value, option.value)
   }
 
   /**
@@ -78,7 +78,7 @@ object LoadChecks {
                                                  isCritical: Boolean = false,
                                                  metadata: Seq[SparkParam] = Seq.empty
                                                ) extends LoadCheckConfig {
-    def getCalculator: LoadCheckCalculator = ColumnsExistsLoadCheckCalculator(id.value, columns.value, isCritical)
+    def getCalculator: LoadCheckCalculator = ColumnsExistsLoadCheckCalculator(id.value, columns.value)
   }
 
   /**
@@ -101,7 +101,7 @@ object LoadChecks {
                                                isCritical: Boolean = false,
                                                metadata: Seq[SparkParam] = Seq.empty
                                              ) extends LoadCheckConfig {
-    def getCalculator: LoadCheckCalculator = SchemaMatchLoadCheckCalculator(id.value, schema.value, ignoreOrder, isCritical)
+    def getCalculator: LoadCheckCalculator = SchemaMatchLoadCheckCalculator(id.value, schema.value, ignoreOrder)
   }
                                       
   

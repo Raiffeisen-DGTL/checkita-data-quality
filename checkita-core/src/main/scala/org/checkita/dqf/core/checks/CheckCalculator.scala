@@ -17,7 +17,6 @@ abstract class CheckCalculator {
   val checkName: CheckName
   val baseMetric: String
   val compareMetric: Option[String]
-  val isCritical: Boolean
   
   protected def windowString: Option[String]
   protected val notFoundErrMsg: String = 

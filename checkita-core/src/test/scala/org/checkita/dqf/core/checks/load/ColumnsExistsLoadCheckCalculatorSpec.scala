@@ -13,10 +13,10 @@ class ColumnsExistsLoadCheckCalculatorSpec extends AnyWordSpec with Matchers {
   
   "ColumnsExistsLoadCheckCalculator" must {
     val caseInsensitiveCheck = ColumnsExistsLoadCheckCalculator(
-      "col_exists_check", Seq("name", "somevalue1", "datetime"), isCritical = false
+      "col_exists_check", Seq("name", "somevalue1", "datetime")
     )
     val caseSensitiveCheck = ColumnsExistsLoadCheckCalculator(
-      "col_exists_check", Seq("name", "someValue1", "dateTime"), isCritical = false
+      "col_exists_check", Seq("name", "someValue1", "dateTime")
     )
     
     "return correct result for source with flat schema" in {

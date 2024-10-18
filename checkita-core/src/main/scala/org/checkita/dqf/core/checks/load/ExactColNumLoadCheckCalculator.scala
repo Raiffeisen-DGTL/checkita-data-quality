@@ -11,13 +11,11 @@ import org.checkita.dqf.readers.SchemaReaders.SourceSchema
  * verifies if number of columns in the source is equal to required one.
  * @param checkId Load check ID
  * @param requiredColNum Required number of columns.
- * @param isCritical Flag if check is critical
  * @note Counts top level columns only.
  */
 final case class ExactColNumLoadCheckCalculator(
                                                  checkId: String,
-                                                 requiredColNum: Int,
-                                                 isCritical: Boolean
+                                                 requiredColNum: Int
                                                ) extends LoadCheckCalculator {
   
   val checkName: LoadCheckName = LoadCheckName.ExactColNum

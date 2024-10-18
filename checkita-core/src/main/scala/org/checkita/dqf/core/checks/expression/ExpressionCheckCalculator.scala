@@ -20,7 +20,6 @@ import scala.util.Try
  *
  * @param checkId Check ID
  * @param formula Boolean expression to evaluate
- * @param isCritical Flag if check is critical
  *                
  * @todo Expression check calculator is quite different from other check calculators and,
  *       therefore, does not conform to basic CheckCalculator class. Thus, implementation
@@ -31,7 +30,7 @@ import scala.util.Try
  *       Concluding the above, it is quite likely, that check calculators will be refactored
  *       later without changing the external API.
  */
-case class ExpressionCheckCalculator(checkId: String, formula: String, isCritical: Boolean) extends CheckCalculator with FormulaParser {
+case class ExpressionCheckCalculator(checkId: String, formula: String) extends CheckCalculator with FormulaParser {
 
   private lazy val formulaMetrics: Seq[String] = getTokens(formula).distinct
   

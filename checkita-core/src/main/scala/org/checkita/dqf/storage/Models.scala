@@ -237,13 +237,9 @@ object Models {
 
       val failureToleranceViolationChecks: Seq[String] = settings.checkFailureTolerance.entryName match {
         case "Critical" =>
-          val failedCritical = (checks ++ loadChecks)
+          (checks ++ loadChecks)
             .filter(r => r.isCritical && r.status == "Failure")
             .map(_.checkId)
-
-          if (failedCritical.nonEmpty) {
-            failedCritical
-          } else Seq.empty
 
         case "All" if failedChk.nonEmpty =>
           failedChk
