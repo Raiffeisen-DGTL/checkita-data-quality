@@ -70,7 +70,7 @@ class AverageBoundRangeCheckCalculatorSpec extends AnyWordSpec with Matchers {
           ("avg_mag_error", 0.0, 0.091, TrendCheckRule.Datetime, "5d", Some("3d"), CalculatorStatus.Failure),
           ("avg_mag_error", 0.0, 0.054, TrendCheckRule.Datetime, "7d", Some("3d"), CalculatorStatus.Success),
           ("avg_mag_error", 0.0, 0.053, TrendCheckRule.Datetime, "7d", Some("3d"), CalculatorStatus.Failure),
-          
+
           ("99th_quantile", 0.068, 0.0, TrendCheckRule.Record, "7d", None, CalculatorStatus.Error),
           ("99th_quantile", 0.068, 0.0, TrendCheckRule.Record, "7", Some("3d"), CalculatorStatus.Error),
           ("99th_quantile", 0.068, 0.0, TrendCheckRule.Datetime, "7", None, CalculatorStatus.Error),

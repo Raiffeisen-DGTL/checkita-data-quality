@@ -164,6 +164,7 @@ Therefore, it is required that there will be only one set of results per Data Qu
 | expected       | STRING      | NOT NULL   |
 | status         | STRING      | NOT NULL   |
 | message        | STRING      |            |
+| is_critical    | BOOLEAN     | NOT NULL   |
 | reference_date | TIMESTAMP   | NOT NULL   |
 | execution_date | TIMESTAMP   | NOT NULL   |
 
@@ -190,6 +191,7 @@ Therefore, it is required that there will be only one set of results per Data Qu
 | upper_bound        | DOUBLE      |            |
 | status             | STRING      | NOT NULL   |
 | message            | STRING      |            |
+| is_critical        | BOOLEAN     | NOT NULL   |
 | reference_date     | TIMESTAMP   | NOT NULL   |
 | execution_date     | TIMESTAMP   | NOT NULL   |
 
@@ -306,6 +308,7 @@ CREATE EXTERNAL TABLE ${schema_name}.results_check_load
     expected       STRING COMMENT '',
     status         STRING COMMENT '',
     message        STRING COMMENT '',
+    is_critical    BOOLEAN COMMENT '',
     reference_date TIMESTAMP COMMENT '',
     execution_date TIMESTAMP COMMENT ''
 )
@@ -329,6 +332,7 @@ CREATE EXTERNAL TABLE ${schema_name}.results_check
     upper_bound        DOUBLE COMMENT '',
     status             STRING COMMENT '',
     message            STRING COMMENT '',
+    is_critical        BOOLEAN COMMENT '',
     reference_date     TIMESTAMP COMMENT '',
     execution_date     TIMESTAMP COMMENT ''
 )

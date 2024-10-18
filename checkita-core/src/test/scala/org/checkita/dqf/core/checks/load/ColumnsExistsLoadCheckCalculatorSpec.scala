@@ -42,5 +42,5 @@ class ColumnsExistsLoadCheckCalculatorSpec extends AnyWordSpec with Matchers {
       ).status shouldEqual CalculatorStatus.Success
     }
   }
-  
+
 }

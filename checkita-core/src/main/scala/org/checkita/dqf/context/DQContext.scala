@@ -25,6 +25,7 @@ import org.checkita.dqf.readers.SourceReaders._
 import org.checkita.dqf.readers.VirtualSourceReaders.VirtualSourceReaderOps
 import org.checkita.dqf.storage.Connections.DqStorageConnection
 import org.checkita.dqf.storage.Managers.DqStorageManager
+import org.checkita.dqf.storage.Models.ResultSet
 import org.checkita.dqf.utils.Common.{getPrependVars, prepareConfig}
 import org.checkita.dqf.utils.Logging
 import org.checkita.dqf.utils.ResultUtils._
@@ -101,7 +102,8 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       s"  - enableCaseSensitivity:    ${settings.enableCaseSensitivity}",
       s"  - errorDumpSize:            ${settings.errorDumpSize}",
       s"  - outputRepartition:        ${settings.outputRepartition}",
-      s"  - metricEngineAPI:          ${settings.metricEngineAPI.entryName}"
+      s"  - metricEngineAPI:          ${settings.metricEngineAPI.entryName}",
+      s"  - checkFailureTolerance:    ${settings.checkFailureTolerance.entryName}"
     )
     val logStorageConf = settings.storageConfig match {
       case Some(conf) => Seq(
@@ -683,5 +685,5 @@ object DQContext {
     AppSettings.build(appConfig, referenceDate, isLocal, isShared, doMigration, prependVariables, logLvl)
       .flatMap(settings => build(settings))
   }
-  
+
 }

@@ -58,6 +58,9 @@ object Implicits {
   implicit val metricEnginAPIConverter: ConfigConvert[MetricEngineAPI] =
     ConfigConvert[String].xmap[MetricEngineAPI](MetricEngineAPI.withNameInsensitive, _.toString.toLowerCase)
 
+  implicit val checkFailureToleranceConverter: ConfigConvert[CheckFailureTolerance] =
+    ConfigConvert[String].xmap[CheckFailureTolerance](CheckFailureTolerance.withNameInsensitive, _.toString.toLowerCase)
+
   implicit val dqStorageTypeConverter: ConfigConvert[DQStorageType] =
     ConfigConvert[String].xmap[DQStorageType](DQStorageType.withNameInsensitive, _.toString.toLowerCase)
     

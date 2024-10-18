@@ -224,7 +224,8 @@ object Results {
      * @return Finalized check result
      */
     def finalize(description: Option[String],
-                 metadata: Option[String])(implicit jobId: String, settings: AppSettings): ResultCheck =
+                 metadata: Option[String],
+                 isCritical: Boolean)(implicit jobId: String, settings: AppSettings): ResultCheck =
       ResultCheck(
         jobId,
         checkId,
@@ -239,6 +240,7 @@ object Results {
         upperBound,
         status.toString,
         Some(message),
+        isCritical,
         settings.referenceDateTime.getUtcTS,
         settings.executionDateTime.getUtcTS
       )
@@ -275,7 +277,8 @@ object Results {
      * @return Finalized load check result
      */
     def finalize(description: Option[String],
-                 metadata: Option[String])(implicit jobId: String, settings: AppSettings): ResultCheckLoad =
+                 metadata: Option[String],
+                 isCritical: Boolean)(implicit jobId: String, settings: AppSettings): ResultCheckLoad =
       ResultCheckLoad(
         jobId,
         checkId,
@@ -286,6 +289,7 @@ object Results {
         expected,
         status.toString,
         Some(message),
+        isCritical,
         settings.referenceDateTime.getUtcTS,
         settings.executionDateTime.getUtcTS
       )

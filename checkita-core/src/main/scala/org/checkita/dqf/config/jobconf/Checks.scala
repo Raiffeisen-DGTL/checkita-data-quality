@@ -18,6 +18,7 @@ object Checks {
    */
   sealed abstract class CheckConfig extends JobConfigEntity {
     val metric: NonEmptyString
+    val isCritical: Boolean
     def getCalculator: CheckCalculator
   }
 
@@ -60,6 +61,7 @@ object Checks {
    * @param metric        Reference to a metric ID over which the check is performed
    * @param compareMetric Reference to a metric ID to compare with
    * @param threshold     Threshold value indicating maximum difference between metric and compareMetric
+   * @param isCritical    Flag if check is critical
    * @param metadata      List of metadata parameters specific to this check
    */
   final case class DifferByLtCheckConfig(
@@ -68,6 +70,7 @@ object Checks {
                                           metric: NonEmptyString,
                                           compareMetric: Option[NonEmptyString],
                                           threshold: Option[Double],
+                                          isCritical: Boolean = false,
                                           metadata: Seq[SparkParam] = Seq.empty
                                         ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = DifferByLTCheckCalculator(
@@ -83,6 +86,7 @@ object Checks {
    * @param metric        Reference to a metric ID over which the check is performed
    * @param compareMetric Reference to a metric ID to compare with
    * @param threshold     Explicit threshold value to compare with
+   * @param isCritical    Flag if check is critical
    * @param metadata      List of metadata parameters specific to this check
    */
   final case class EqualToCheckConfig(
@@ -91,6 +95,7 @@ object Checks {
                                        metric: NonEmptyString,
                                        compareMetric: Option[NonEmptyString],
                                        threshold: Option[Double],
+                                       isCritical: Boolean = false,
                                        metadata: Seq[SparkParam] = Seq.empty
                                      ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = EqualToCheckCalculator(
@@ -106,6 +111,7 @@ object Checks {
    * @param metric        Reference to a metric ID over which the check is performed
    * @param compareMetric Reference to a metric ID to compare with
    * @param threshold     Explicit threshold value to compare with
+   * @param isCritical    Flag if check is critical
    * @param metadata      List of metadata parameters specific to this check
    */
   final case class LessThanCheckConfig(
@@ -114,6 +120,7 @@ object Checks {
                                         metric: NonEmptyString,
                                         compareMetric: Option[NonEmptyString],
                                         threshold: Option[Double],
+                                        isCritical: Boolean = false,
                                         metadata: Seq[SparkParam] = Seq.empty
                                       ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = LessThanCheckCalculator(
@@ -129,6 +136,7 @@ object Checks {
    * @param metric        Reference to a metric ID over which the check is performed
    * @param compareMetric Reference to a metric ID to compare with
    * @param threshold     Explicit threshold value to compare with
+   * @param isCritical    Flag if check is critical
    * @param metadata      List of metadata parameters specific to this check
    */
   final case class GreaterThanCheckConfig(
@@ -137,6 +145,7 @@ object Checks {
                                            metric: NonEmptyString,
                                            compareMetric: Option[NonEmptyString],
                                            threshold: Option[Double],
+                                           isCritical: Boolean = false,
                                            metadata: Seq[SparkParam] = Seq.empty
                                          ) extends SnapshotCheckConfig {
     def getCalculator: CheckCalculator = GreaterThanCheckCalculator(
@@ -155,6 +164,7 @@ object Checks {
    *                     (either a number of records or duration).
    * @param windowOffset Optional window offset (either a number of records or duration)
    * @param threshold    Threshold value to calculate upper and lower bounds to compare with.
+   * @param isCritical   Flag if check is critical
    * @param metadata     List of metadata parameters specific to this check
    */
   final case class AverageBoundFullCheckConfig(
@@ -165,6 +175,7 @@ object Checks {
                                                 windowSize: NonEmptyString,
                                                 windowOffset: Option[NonEmptyString],
                                                 threshold: PercentileDouble,
+                                                isCritical: Boolean = false,
                                                 metadata: Seq[SparkParam] = Seq.empty
                                               ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundFullCheckCalculator(
@@ -183,6 +194,7 @@ object Checks {
    *                     (either a number of records or duration).
    * @param windowOffset Optional window offset (either a number of records or duration)
    * @param threshold    Threshold value to calculate upper bound to compare with.
+   * @param isCritical   Flag if check is critical
    * @param metadata     List of metadata parameters specific to this check
    */
   final case class AverageBoundUpperCheckConfig(
@@ -193,6 +205,7 @@ object Checks {
                                                  windowSize: NonEmptyString,
                                                  windowOffset: Option[NonEmptyString],
                                                  threshold: PercentileDouble,
+                                                 isCritical: Boolean = false,
                                                  metadata: Seq[SparkParam] = Seq.empty
                                                ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundUpperCheckCalculator(
@@ -211,6 +224,7 @@ object Checks {
    *                     (either a number of records or duration).
    * @param windowOffset Optional window offset (either a number of records or duration)
    * @param threshold    Threshold value to calculate lower bound to compare with.
+   * @param isCritical   Flag if check is critical
    * @param metadata     List of metadata parameters specific to this check
    */
   final case class AverageBoundLowerCheckConfig(
@@ -221,6 +235,7 @@ object Checks {
                                                  windowSize: NonEmptyString,
                                                  windowOffset: Option[NonEmptyString],
                                                  threshold: PercentileDouble,
+                                                 isCritical: Boolean = false,
                                                  metadata: Seq[SparkParam] = Seq.empty
                                                ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundLowerCheckCalculator(
@@ -240,6 +255,7 @@ object Checks {
    * @param windowOffset   Optional window offset (either a number of records or duration)
    * @param thresholdLower Threshold value to calculate lower bound to compare with.
    * @param thresholdUpper Threshold value to calculate upper bound to compare with.
+   * @param isCritical     Flag if check is critical
    * @param metadata       List of metadata parameters specific to this check
    */
   final case class AverageBoundRangeCheckConfig(
@@ -251,6 +267,7 @@ object Checks {
                                                  windowOffset: Option[NonEmptyString],
                                                  thresholdLower: PercentileDouble,
                                                  thresholdUpper: PercentileDouble,
+                                                 isCritical: Boolean = false,
                                                  metadata: Seq[SparkParam] = Seq.empty
                                                ) extends TrendCheckConfig with AverageBoundCheckConfig {
     def getCalculator: CheckCalculator = AverageBoundRangeCheckCalculator(
@@ -268,6 +285,7 @@ object Checks {
    * @param targetNumber Number of records from TopN metric result (R <= N)
    * @param threshold    Threshold value representing maximum allowed Jacquard distance
    *                     between current and previous R-records from TopN metric result.
+   * @param isCritical   Flag if check is critical
    * @param metadata     List of metadata parameters specific to this check
    */
   final case class TopNRankCheckConfig(
@@ -276,6 +294,7 @@ object Checks {
                                         metric: NonEmptyString,
                                         targetNumber: PositiveInt,
                                         threshold: PercentileDouble,
+                                        isCritical: Boolean = false,
                                         metadata: Seq[SparkParam] = Seq.empty
                                       ) extends TrendCheckConfig {
     def getCalculator: CheckCalculator = TopNRankCheckCalculator(
@@ -289,12 +308,14 @@ object Checks {
    * @param id          Check ID
    * @param description Check description
    * @param formula     Check formula: boolean expression referring to metric results.
+   * @param isCritical  Flag if check is critical
    * @param metadata    List of metadata parameters specific to this check.
    */
   final case class ExpressionCheck(
                                     id: ID,
                                     description: Option[NonEmptyString],
                                     formula: NonEmptyString,
+                                    isCritical: Boolean = false,
                                     metadata: Seq[SparkParam] = Seq.empty
                                   ) extends CheckConfig {
     override val metric: NonEmptyString = "unsupported"

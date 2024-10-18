@@ -10,6 +10,19 @@ import scala.collection.immutable
 
 object Enums {
 
+
+  sealed trait CheckFailureTolerance extends EnumEntry
+
+  object CheckFailureTolerance extends Enum[CheckFailureTolerance] {
+    case object None extends CheckFailureTolerance
+
+    case object Critical extends CheckFailureTolerance
+
+    case object All extends CheckFailureTolerance
+
+    override def values: immutable.IndexedSeq[CheckFailureTolerance] = findValues
+  }
+
   /**
    * Metrics can be processed either with use of Spark RDD API or Spark DF API.
    */

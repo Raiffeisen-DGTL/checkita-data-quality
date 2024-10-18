@@ -10,7 +10,7 @@ import org.checkita.dqf.core.checks.CommonChecksVals._
 class AverageBoundFullCheckCalculatorSpec extends AnyWordSpec with Matchers {
 
   "AverageBoundFullCheckCalculator" must {
-    
+
     "return correct result for metrics results except TopN metric results" in {
       // all combinations: (baseMetric, compareThreshold, rule, windowSize, windowOffset)
       val allCombinations: Seq[(String, Double, TrendCheckRule, String, Option[String], CalculatorStatus)] = Seq(
@@ -20,7 +20,7 @@ class AverageBoundFullCheckCalculatorSpec extends AnyWordSpec with Matchers {
         ("99th_quantile", 0.058, TrendCheckRule.Record, "5", None, CalculatorStatus.Failure),
         ("99th_quantile", 0.054, TrendCheckRule.Record, "7", None, CalculatorStatus.Success),
         ("99th_quantile", 0.053, TrendCheckRule.Record, "7", None, CalculatorStatus.Failure),
-        
+
         ("99th_quantile", 0.016, TrendCheckRule.Datetime, "3d", None, CalculatorStatus.Success),
         ("99th_quantile", 0.015, TrendCheckRule.Datetime, "3d", None, CalculatorStatus.Failure),
         ("99th_quantile", 0.059, TrendCheckRule.Datetime, "5d", None, CalculatorStatus.Success),
