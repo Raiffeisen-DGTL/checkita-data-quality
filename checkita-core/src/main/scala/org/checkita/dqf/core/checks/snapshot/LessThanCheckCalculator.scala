@@ -15,7 +15,7 @@ import org.checkita.dqf.core.checks.CheckName
 case class LessThanCheckCalculator(checkId: String,
                                    baseMetric: String,
                                    compareMetric: Option[String],
-                                   compareThreshold: Option[Double],
+                                   compareThreshold: Option[Double]
                                   ) extends CompareCheckCalculator {
   val checkName: CheckName = CheckName.LessThan
   protected val compareFunc: (Double, Double) => Boolean = (x, y) => x < y

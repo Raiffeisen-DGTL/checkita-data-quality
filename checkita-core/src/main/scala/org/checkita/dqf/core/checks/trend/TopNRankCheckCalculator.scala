@@ -24,7 +24,7 @@ import scala.util.Try
 case class TopNRankCheckCalculator(checkId: String,
                                    baseMetric: String,
                                    targetNumber: Int,
-                                   compareThreshold: Double,
+                                   compareThreshold: Double
                                   ) extends CheckCalculator with WindowParams {
   override val checkName: CheckName = CheckName.TopNRank
   override val compareMetric: Option[String] = None

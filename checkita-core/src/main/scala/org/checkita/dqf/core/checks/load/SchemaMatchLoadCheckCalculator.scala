@@ -20,7 +20,7 @@ import scala.annotation.tailrec
 final case class SchemaMatchLoadCheckCalculator(
                                                  checkId: String,
                                                  schemaId: String,
-                                                 ignoreOrder: Boolean,
+                                                 ignoreOrder: Boolean
                                                ) extends LoadCheckCalculator {
 
   val checkName: LoadCheckName = LoadCheckName.SchemaMatch
