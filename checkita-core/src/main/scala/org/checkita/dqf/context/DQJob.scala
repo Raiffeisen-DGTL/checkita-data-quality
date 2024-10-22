@@ -581,14 +581,12 @@ trait DQJob extends Logging {
    * Top-level processing function: aggregates and runs all processing stages in required order.
    *
    * @param regularMetricsProcessor Regular metric processor used to calculate regular metric results.
-   * @param migrationState          Status of storage migration run
    * @param stagePrefix             Prefix to stage names. Used for logging in streaming applications to
    *                                indicate window for which results are processed.
    * @param settings                Implicit application settings object
    * @return Either final results set or a list of processing errors
    */
   protected def processAll(regularMetricsProcessor: RegularMetricsProcessor,
-                           migrationState: Result[String],
                            stagePrefix: Option[String] = None)
                           (implicit settings: AppSettings): Result[ResultSet] = {
 
@@ -634,7 +632,7 @@ trait DQJob extends Logging {
       metricErrors
     )
     // Save results to storage
-    val resSaveState = migrationState.flatMap(_ => saveResults(getStage(storageStage), resSet))
+    val resSaveState = saveResults(getStage(storageStage), resSet)
 
     // process targets:
     val saveTargetsState = processTargets(getStage(targetsStage), resSet)

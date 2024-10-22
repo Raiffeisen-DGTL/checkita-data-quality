@@ -172,7 +172,16 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
   override def run(): Unit = {
     log.info(s"$bufferStage Starting stream windows processing...")
     val migrationState = runStorageMigration(storageStage)(settings)
-    var continueRun: Boolean = true
+    
+    // continue to run only if storage migration was successful.
+    // Otherwise log storage migration errors and stop.
+    var continueRun: Boolean = migrationState match {
+      case Right(_) => true
+      case Left(errs) =>
+        errs.foreach(log.error)
+        false
+    }
+    
     while (continueRun) {
       val windowsToProcess = getWindowsToProcess
       if (windowsToProcess.isEmpty) {
@@ -193,7 +202,7 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
 
             log.info(s"$windowStage Results buffer got all results for this window, starting to process them.")
 
-            val resSet: Result[ResultSet] = processAll(regularMetricsProcessor, migrationState, Some(windowStage))
+            val resSet: Result[ResultSet] = processAll(regularMetricsProcessor, Some(windowStage))
 
             val windowStatus = resSet.mapValue { _ => // cleaning buffer
               log.info(s"$windowStage DQ Results processed successfully. Cleaning processor buffer...")
@@ -228,11 +237,12 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
               case Left(errs) =>
                 log.error(s"$windowStage Window results processing yielded following errors:")
                 errs.foreach(log.error)
-                Try(spark.streams.active.head.stop()) // todo: implement a graceful query stop with status reporting to main application
                 continueRun = false
             }
         }
       }
     }
+    // todo: implement a graceful query stop with status reporting to main application
+    Try(spark.streams.active.head.stop())
   }
 }
