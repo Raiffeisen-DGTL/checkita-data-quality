@@ -41,6 +41,7 @@ object SourceReaders {
      */
     protected def toSource(config: T, df: DataFrame, checkpoint: Option[Checkpoint] = None)
                           (implicit settings: AppSettings): Source = {
+      if (config.persist.nonEmpty) df.persist(config.persist.get)
       Source.validated(
         config.id.value, df, config.keyFields.map(_.value), checkpoint = checkpoint
       )(settings.enableCaseSensitivity)
@@ -114,22 +115,6 @@ object SourceReaders {
     }.toResult(
       preMsg = s"Unable to read streaming source '${config.id.value}' due to following error: "
     )
-
-    /**
-     * Finalizes the reading process by optionally persisting the DataFrame and converting it to a Source.
-     *
-     * @param config      Source configuration
-     * @param df          Spark Dataframe
-     * @param checkpoint  Initial source checkpoint (applicable only to streaming sources)
-     * @param settings    Implicit application settings object
-     * @return Source
-     */
-    def finalizeSource(config: T,
-                       df: DataFrame,
-                       checkpoint: Option[Checkpoint] = None)(implicit settings: AppSettings): Source = {
-      if (config.persist.nonEmpty) df.persist(config.persist.get)
-      toSource(config, df, checkpoint)
-    }
   }
 
   sealed trait SimpleFileReader { this: SourceReader[_] =>
@@ -212,7 +197,7 @@ object SourceReaders {
       require(conn.isInstanceOf[JdbcConnection[_]], s"Table source '${config.id.value}' refers to non-Jdbc connection.")
       
       val df = conn.asInstanceOf[JdbcConnection[_]].loadDataFrame(config)
-      finalizeSource(config, df)
+      toSource(config, df)
     }
   }
 
@@ -253,14 +238,14 @@ object SourceReaders {
       
       readMode match {
         case ReadMode.Batch =>
-          finalizeSource(config, kafkaConn.loadDataFrame(config), Some(Checkpoint.init(config)))
+          toSource(config, kafkaConn.loadDataFrame(config), Some(Checkpoint.init(config)))
         case ReadMode.Stream => 
           val checkpoint = checkpoints.get(config.id.value)
             .map(_.asInstanceOf[KafkaCheckpoint])
             .map(chk => kafkaConn.validateOrFixCheckpoint(chk, config))
             .getOrElse(kafkaConn.initCheckpoint(config))
           val df = conn.asInstanceOf[KafkaConnection].loadDataStream(config, checkpoint)
-          finalizeSource(config, df, Some(checkpoint))
+          toSource(config, df, Some(checkpoint))
       }
     }
   }
@@ -300,7 +285,7 @@ object SourceReaders {
         s"Table source '${config.id.value}' refers to not pivotal greenplum connection.")
 
       val df = conn.asInstanceOf[PivotalConnection].loadDataFrame(config)
-      finalizeSource(config, df)
+      toSource(config, df)
     }
   }
 
@@ -341,7 +326,7 @@ object SourceReaders {
           }.reduce(_ && _)
         )
       } else preDf
-      finalizeSource(config, df)
+      toSource(config, df)
     }
   }
 
@@ -418,7 +403,7 @@ object SourceReaders {
       val df = rawDf.map(c => getRow(c.getString(0), sourceSchema.columnWidths)).select(
         sourceSchema.schema.map(f => col(f.name).cast(f.dataType)): _*
       )
-      finalizeSource(config, if (readMode == ReadMode.Batch) df else df.prepareStream(config.windowBy))
+      toSource(config, if (readMode == ReadMode.Batch) df else df.prepareStream(config.windowBy))
     }
   }
 
@@ -481,7 +466,7 @@ object SourceReaders {
         }
       } else throw new FileNotFoundException(s"Delimited text file or directory not found: ${config.path.value}")
 
-      finalizeSource(config, if (readMode == ReadMode.Batch) df else df.prepareStream(config.windowBy))
+      toSource(config, if (readMode == ReadMode.Batch) df else df.prepareStream(config.windowBy))
     }
   }
 
@@ -511,7 +496,7 @@ object SourceReaders {
                                       schemas: Map[String, SourceSchema],
                                       connections: Map[String, DQConnection],
                                       checkpoints: Map[String, Checkpoint]): Source =
-      finalizeSource(config, fileReader(readMode, config.path.value, "Avro", config.schema.map(_.value), config.windowBy))
+      toSource(config, fileReader(readMode, config.path.value, "Avro", config.schema.map(_.value), config.windowBy))
   }
 
   /**
@@ -539,7 +524,7 @@ object SourceReaders {
                                       schemas: Map[String, SourceSchema],
                                       connections: Map[String, DQConnection],
                                       checkpoints: Map[String, Checkpoint]): Source =
-      finalizeSource(config, fileReader(readMode, config.path.value, "Parquet", config.schema.map(_.value), config.windowBy))
+      toSource(config, fileReader(readMode, config.path.value, "Parquet", config.schema.map(_.value), config.windowBy))
   }
 
   /**
@@ -566,7 +551,7 @@ object SourceReaders {
                                       schemas: Map[String, SourceSchema],
                                       connections: Map[String, DQConnection],
                                       checkpoints: Map[String, Checkpoint]): Source =
-      finalizeSource(config, fileReader(readMode, config.path.value, "ORC", config.schema.map(_.value), config.windowBy))
+      toSource(config, fileReader(readMode, config.path.value, "ORC", config.schema.map(_.value), config.windowBy))
   }
 
   implicit object CustomSourceReader extends SourceReader[CustomSource] {
@@ -606,7 +591,7 @@ object SourceReaders {
           config.path.map(_.value).map(p => reader.load(p)).getOrElse(reader.load())
       }
 
-      finalizeSource(config, df)
+      toSource(config, df)
     }
   }
 
