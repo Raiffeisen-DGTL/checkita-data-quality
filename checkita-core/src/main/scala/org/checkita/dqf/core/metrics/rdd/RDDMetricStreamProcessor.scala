@@ -80,7 +80,15 @@ object RDDMetricStreamProcessor extends RDDMetricProcessor with Logging {
         s". Please ensure that keyFields are always exist within streamed messages."
       )
 
-      val metricsByColumns = getGroupedMetrics(streamMetrics, df.schema.fieldNames)
+      // exclude special columns used for windowing and checkpointing:
+      val metricsByColumns = getGroupedMetrics(
+        streamMetrics,
+        df.schema.fieldNames.filterNot(Seq(
+          streamConf.windowTsCol,
+          streamConf.eventTsCol,
+          streamConf.checkpointCol
+        ).contains)
+      )
 
       // get and register metric error accumulator:
       val metricErrorAccumulator = getAndRegisterErrorAccumulator

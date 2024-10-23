@@ -88,8 +88,10 @@ object Serialization {
      * @param value JValue to cast to string
      * @return String representation of JValue
      */
-    private def JValueToString(value: Any): String = value match {
+    private def jValueToString(value: Any): String = value match {
       case jStr: JString => jStr.extract[String]
+      case jDbl: JDouble => jDbl.num.toString
+      case jBool: JBool => jBool.value.toString
       case jArr: JArray => write(jArr)
       case jObj: JObject => write(jObj)
       case jMap: Map[_, _] => write(jMap)
@@ -140,7 +142,7 @@ object Serialization {
      * @return Spark Row with result data
      */
     def toRow: Row = Row.fromSeq(
-      unifiedSchema.map(c => JValueToString(unifiedRepr(c.name)))
+      unifiedSchema.map(c => jValueToString(unifiedRepr(c.name)))
     )
 
     /**
@@ -151,14 +153,14 @@ object Serialization {
      *       Thus, tsv format with flat structure is more appropriated for visual inspection.
      */
     def toTsvString: String = flatRepr.map{
-      case (_, value) => JValueToString(value)
+      case (_, value) => jValueToString(value)
     }.mkString("\t")
 
     /**
      * Gets flattened map of field name to string representation of field values.
      * @return Map fieldName -> fieldValue as string
      */
-    def getFieldsMap: Map[String, String] = flatRepr.map{ case (k, v) => (k, JValueToString(v)) }.toMap
+    def getFieldsMap: Map[String, String] = flatRepr.map{ case (k, v) => (k, jValueToString(v)) }.toMap
     
     /** Getter to retrieve TSV header (conforms to flattened tsv string) */
     def getTsvHeader: String = getFields.mkString("\t")

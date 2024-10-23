@@ -13,7 +13,7 @@ import org.checkita.dqf.connections.jdbc.JdbcConnection
 import org.checkita.dqf.connections.kafka.KafkaConnection
 import org.checkita.dqf.connections.greenplum.PivotalConnection
 import org.checkita.dqf.core.Source
-import org.checkita.dqf.core.streaming.Checkpoints.Checkpoint
+import org.checkita.dqf.core.streaming.Checkpoints.{Checkpoint, KafkaCheckpoint}
 import org.checkita.dqf.readers.SchemaReaders.SourceSchema
 import org.checkita.dqf.utils.Common.paramsSeqToMap
 import org.checkita.dqf.utils.ResultUtils._
@@ -233,11 +233,19 @@ object SourceReaders {
       require(conn.isInstanceOf[KafkaConnection], 
         s"Kafka source '${config.id.value}' refers to not a Kafka connection.")
 
-      val df = readMode match {
-        case ReadMode.Batch => conn.asInstanceOf[KafkaConnection].loadDataFrame(config)
-        case ReadMode.Stream => conn.asInstanceOf[KafkaConnection].loadDataStream(config)
+      val kafkaConn = conn.asInstanceOf[KafkaConnection]
+      
+      readMode match {
+        case ReadMode.Batch =>
+          toSource(config, kafkaConn.loadDataFrame(config), Some(Checkpoint.init(config)))
+        case ReadMode.Stream => 
+          val checkpoint = checkpoints.get(config.id.value)
+            .map(_.asInstanceOf[KafkaCheckpoint])
+            .map(chk => kafkaConn.validateOrFixCheckpoint(chk, config))
+            .getOrElse(kafkaConn.initCheckpoint(config))
+          val df = conn.asInstanceOf[KafkaConnection].loadDataStream(config, checkpoint)
+          toSource(config, df, Some(checkpoint))
       }
-      toSource(config, df, Some(Checkpoint.init(config)))
     }
   }
 

@@ -131,7 +131,8 @@ final case class DQBatchJob(jobConfig: JobConfig,
     logPreMsg()
     // Run storage migration if necessary
     val migrationState = runStorageMigration(storageStage)
-    val resSet = processAll(BatchRegularMetricProcessor, migrationState)
+    // Continue to run job only if storage migration was successful (or omitted):
+    val resSet = migrationState.flatMap(_ => processAll(BatchRegularMetricProcessor))
     resSet.tap(_ => logPostMsg())
   }
 }

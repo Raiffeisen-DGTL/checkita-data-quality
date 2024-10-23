@@ -25,7 +25,7 @@ case class StreamConfig(
                          allowEmptyWindows: Boolean = false,
                          checkpointDir: Option[URI] = None
                        ) {
-  // random column names are generated to be used for windowing:
+  // random column names are generated to be used for windowing and checkpointing:
   lazy val windowTsCol: String = UUID.randomUUID.toString.replace("-", "")
   lazy val eventTsCol: String = UUID.randomUUID.toString.replace("-", "")
   lazy val checkpointCol: String = UUID.randomUUID.toString.replace("-", "")
