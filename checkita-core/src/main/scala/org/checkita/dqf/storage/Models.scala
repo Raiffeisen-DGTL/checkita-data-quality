@@ -1,7 +1,7 @@
 package org.checkita.dqf.storage
 
 import org.checkita.dqf.appsettings.AppSettings
-import org.checkita.dqf.config.IO.readJobConfig
+import org.checkita.dqf.config.Enums.CheckFailureTolerance
 import org.checkita.dqf.core.CalculatorStatus
 import org.checkita.dqf.utils.Common.camelToSnakeCase
 import shapeless.{::, HList, HNil}
@@ -235,14 +235,12 @@ object Models {
       val status = if (failedChecks.length + failedLoadChecks.length == 0) "SUCCESS" else "FAILURE"
       val failedChk = failedChecks ++ failedLoadChecks
 
-      val failureToleranceViolationChecks: Seq[String] = settings.checkFailureTolerance.entryName match {
-        case "Critical" =>
+      val failureToleranceViolationChecks: Seq[String] = settings.checkFailureTolerance match {
+        case CheckFailureTolerance.Critical => 
           (checks ++ loadChecks)
             .filter(r => r.isCritical && r.status == "Failure")
             .map(_.checkId)
-
-        case "All" if failedChk.nonEmpty =>
-          failedChk
+        case CheckFailureTolerance.All if failedChk.nonEmpty => failedChk
         case _ => Seq.empty
       }
       val summary = ResultSummaryMetrics(
