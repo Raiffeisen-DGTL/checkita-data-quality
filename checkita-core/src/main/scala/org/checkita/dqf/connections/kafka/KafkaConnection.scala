@@ -14,7 +14,7 @@ import org.checkita.dqf.config.Enums.KafkaTopicFormat
 import org.checkita.dqf.config.jobconf.Connections.KafkaConnectionConfig
 import org.checkita.dqf.config.jobconf.Sources.KafkaSourceConfig
 import org.checkita.dqf.connections.{DQConnection, DQStreamingConnection}
-import org.checkita.dqf.core.streaming.Checkpoints.{Checkpoint, KafkaCheckpoint}
+import org.checkita.dqf.core.streaming.Checkpoints.KafkaCheckpoint
 import org.checkita.dqf.readers.SchemaReaders.SourceSchema
 import org.checkita.dqf.utils.Common.{jsonFormats, paramsSeqToMap}
 import org.checkita.dqf.utils.ResultUtils._

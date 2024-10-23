@@ -2,7 +2,7 @@ package org.checkita.dqf.connections
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.checkita.dqf.appsettings.AppSettings
-import org.checkita.dqf.core.streaming.Checkpoints.{Checkpoint, KafkaCheckpoint}
+import org.checkita.dqf.core.streaming.Checkpoints.Checkpoint
 import org.checkita.dqf.readers.SchemaReaders.SourceSchema
 
 /**
@@ -18,7 +18,7 @@ trait DQStreamingConnection { this: DQConnection =>
    * @param sourceConfig Kafka source configuration
    * @return Kafka checkpoint
    */
-  def initCheckpoint(sourceConfig: SourceType): KafkaCheckpoint
+  def initCheckpoint(sourceConfig: SourceType): CheckpointType
 
   /**
    * Validates checkpoint structure and makes updates in case if
