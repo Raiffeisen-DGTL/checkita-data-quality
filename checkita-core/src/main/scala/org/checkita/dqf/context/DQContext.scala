@@ -276,6 +276,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     reduceToMap(sources.map{ srcConf =>
       log.info(s"$sourceStage Reading source '${srcConf.id.value}'...")
       val source = if (readAsStream) srcConf.readStream else srcConf.read
+      if (srcConf.persist.nonEmpty) log.info(s"$sourceStage Persisting source '${srcConf.id.value}' to ${srcConf.persist.get.toString}.")
       source.mapValue(s => Seq(s.id -> s))
         .tap(_ => log.info(s"$sourceStage Success!")) // immediate logging of success state
         .tap(_.foreach(s => log.debug(s._2.df.schema.treeString))) // debug source schema

@@ -22,6 +22,7 @@ object Sources {
   sealed abstract class SourceConfig extends JobConfigEntity {
     val keyFields: Seq[NonEmptyString]
     val streamable: Boolean
+    val persist: Option[StorageLevel]
   }
 
   /**
@@ -32,6 +33,7 @@ object Sources {
    * @param connection  Connection ID (must be JDBC connection)
    * @param table       Table to read
    * @param query       Query to execute
+   * @param persist     Spark storage level in order to persist dataframe during job execution.
    * @param keyFields   Sequence of key fields (columns that identify data row)
    * @param metadata    List of metadata parameters specific to this source
    * @note Either table to read or query to execute must be defined but not both.
@@ -42,6 +44,7 @@ object Sources {
                                       connection: ID,
                                       table: Option[NonEmptyString],
                                       query: Option[NonEmptyString],
+                                      persist: Option[StorageLevel],
                                       keyFields: Seq[NonEmptyString] = Seq.empty,
                                       metadata: Seq[SparkParam] = Seq.empty
                                     ) extends SourceConfig {
@@ -68,6 +71,7 @@ object Sources {
    * @param description Source description
    * @param schema      Hive schema
    * @param table       Hive table
+   * @param persist     Spark storage level in order to persist dataframe during job execution.
    * @param partitions  Sequence of partitions to read.
    *                    The order of partition columns should correspond to order in which
    *                    partition columns are defined in hive table DDL.
@@ -79,6 +83,7 @@ object Sources {
                                      description: Option[NonEmptyString],
                                      schema: NonEmptyString,
                                      table: NonEmptyString,
+                                     persist: Option[StorageLevel],
                                      partitions: Seq[HivePartition] = Seq.empty,
                                      keyFields: Seq[NonEmptyString] = Seq.empty,
                                      metadata: Seq[SparkParam] = Seq.empty
@@ -98,6 +103,7 @@ object Sources {
    *                         If none is set, then "earliest" is used in batch jobs and "latest is used in streaming jobs.
    * @param endingOffsets    Json-string defining ending offset. Applicable only to batch jobs.
    *                         If none is set then "latest" is used.
+   * @param persist          Spark storage level in order to persist dataframe during job execution.
    * @param windowBy         Source of timestamp used to build windows. Applicable only for streaming jobs!
    *                         Default: processingTime - uses current timestamp at the moment when Spark processes row.
    *                         Other options are:
@@ -127,6 +133,7 @@ object Sources {
                                       topicPattern: Option[NonEmptyString],
                                       startingOffsets: Option[NonEmptyString], // earliest for batch, latest for stream
                                       endingOffsets: Option[NonEmptyString], // latest for batch, ignored for stream.
+                                      persist: Option[StorageLevel],
                                       windowBy: StreamWindowing = ProcessingTime,
                                       keyFormat: KafkaTopicFormat = KafkaTopicFormat.String,
                                       valueFormat: KafkaTopicFormat = KafkaTopicFormat.String,
@@ -147,6 +154,7 @@ object Sources {
    * @param description Source description
    * @param connection  Connection ID (must be pivotal connection)
    * @param table       Table to read
+   * @param persist     Spark storage level in order to persist dataframe during job execution.
    * @param keyFields   Sequence of key fields (columns that identify data row)
    * @param metadata    List of metadata parameters specific to this source
    */
@@ -155,6 +163,7 @@ object Sources {
                                           description: Option[NonEmptyString],
                                           connection: ID,
                                           table: Option[NonEmptyString],
+                                          persist: Option[StorageLevel],
                                           keyFields: Seq[NonEmptyString] = Seq.empty,
                                           metadata: Seq[SparkParam] = Seq.empty
                                         ) extends SourceConfig {
@@ -177,6 +186,7 @@ object Sources {
    * @param description Source description
    * @param path        Path to file
    * @param schema      Schema ID (must be either fixedFull or fixedShort schema)
+   * @param persist     Spark storage level in order to persist dataframe during job execution.
    * @param windowBy    Source of timestamp used to build windows. Applicable only for streaming jobs!
    *                    Default: processingTime - uses current timestamp at the moment when Spark processes row.
    *                    Other options are:
@@ -191,6 +201,7 @@ object Sources {
                                           description: Option[NonEmptyString],
                                           path: URI,
                                           schema: Option[ID],
+                                          persist: Option[StorageLevel],
                                           windowBy: StreamWindowing = ProcessingTime,
                                           keyFields: Seq[NonEmptyString] = Seq.empty,
                                           metadata: Seq[SparkParam] = Seq.empty
@@ -209,6 +220,7 @@ object Sources {
    * @param escape      Escape symbol (default: \)
    * @param header      Boolean flag indicating whether schema should be read from file header (default: false)
    * @param schema      Schema ID (only if header = false)
+   * @param persist     Spark storage level in order to persist dataframe during job execution.
    * @param windowBy    Source of timestamp used to build windows. Applicable only for streaming jobs!
    *                    Default: processingTime - uses current timestamp at the moment when Spark processes row.
    *                    Other options are:
@@ -223,6 +235,7 @@ object Sources {
                                               description: Option[NonEmptyString],
                                               path: URI,
                                               schema: Option[ID],
+                                              persist: Option[StorageLevel],
                                               delimiter: NonEmptyString = ",",
                                               quote: NonEmptyString = "\"",
                                               escape: NonEmptyString = "\\",
@@ -241,6 +254,7 @@ object Sources {
    * @param description Source description
    * @param path        Path to file
    * @param schema      Schema ID
+   * @param persist     Spark storage level in order to persist dataframe during job execution.
    * @param windowBy    Source of timestamp used to build windows. Applicable only for streaming jobs!
    *                    Default: processingTime - uses current timestamp at the moment when Spark processes row.
    *                    Other options are:
@@ -255,6 +269,7 @@ object Sources {
                                          description: Option[NonEmptyString],
                                          path: URI,
                                          schema: Option[ID],
+                                         persist: Option[StorageLevel],
                                          windowBy: StreamWindowing = ProcessingTime,
                                          keyFields: Seq[NonEmptyString] = Seq.empty,
                                          metadata: Seq[SparkParam] = Seq.empty
@@ -269,6 +284,7 @@ object Sources {
    * @param description Source description
    * @param path        Path to file
    * @param schema      Schema ID
+   * @param persist     Spark storage level in order to persist dataframe during job execution.
    * @param windowBy    Source of timestamp used to build windows. Applicable only for streaming jobs!
    *                    Default: processingTime - uses current timestamp at the moment when Spark processes row.
    *                    Other options are:
@@ -283,6 +299,7 @@ object Sources {
                                         description: Option[NonEmptyString],
                                         path: URI,
                                         schema: Option[ID],
+                                        persist: Option[StorageLevel],
                                         windowBy: StreamWindowing = ProcessingTime,
                                         keyFields: Seq[NonEmptyString] = Seq.empty,
                                         metadata: Seq[SparkParam] = Seq.empty
@@ -297,6 +314,7 @@ object Sources {
    * @param description Source description
    * @param path        Path to file
    * @param schema      Schema ID
+   * @param persist     Spark storage level in order to persist dataframe during job execution.
    * @param windowBy    Source of timestamp used to build windows. Applicable only for streaming jobs!
    *                    Default: processingTime - uses current timestamp at the moment when Spark processes row.
    *                    Other options are:
@@ -311,6 +329,7 @@ object Sources {
                                             description: Option[NonEmptyString],
                                             path: URI,
                                             schema: Option[ID],
+                                            persist: Option[StorageLevel],
                                             windowBy: StreamWindowing = ProcessingTime,
                                             keyFields: Seq[NonEmptyString] = Seq.empty,
                                             metadata: Seq[SparkParam] = Seq.empty
@@ -327,6 +346,7 @@ object Sources {
    * @param format      Source format to set in spark reader.
    * @param path        Path to load the source from (if required)
    * @param schema      Explicit schema applied to source data (if required)
+   * @param persist     Spark storage level in order to persist dataframe during job execution.
    * @param options     List of additional spark options required to read the source (if any)
    * @param keyFields   Sequence of key fields (columns that identify data row)
    * @param metadata    List of metadata parameters specific to this source
@@ -337,6 +357,7 @@ object Sources {
                                  format: NonEmptyString,
                                  path: Option[URI],
                                  schema: Option[ID],
+                                 persist: Option[StorageLevel],
                                  options: Seq[SparkParam] = Seq.empty,
                                  keyFields: Seq[NonEmptyString] = Seq.empty,
                                  metadata: Seq[SparkParam] = Seq.empty
