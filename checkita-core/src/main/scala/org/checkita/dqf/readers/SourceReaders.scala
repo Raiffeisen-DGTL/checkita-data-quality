@@ -36,6 +36,7 @@ object SourceReaders {
      *
      * @param config     Source configuration
      * @param df         Spark Dataframe
+     * @param readMode   Mode in which source is read. Either 'batch' or 'stream'
      * @param checkpoint Initial source checkpoint (applicable only to streaming sources)
      * @return Source
      */
