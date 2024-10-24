@@ -275,8 +275,8 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
     
     reduceToMap(sources.map{ srcConf =>
       log.info(s"$sourceStage Reading source '${srcConf.id.value}'...")
-      val source = if (readAsStream) srcConf.readStream else srcConf.read
       if (srcConf.persist.nonEmpty) log.info(s"$sourceStage Persisting source '${srcConf.id.value}' to ${srcConf.persist.get.toString}.")
+      val source = if (readAsStream) srcConf.readStream else srcConf.read
       source.mapValue(s => Seq(s.id -> s))
         .tap(_ => log.info(s"$sourceStage Success!")) // immediate logging of success state
         .tap(_.foreach(s => log.debug(s._2.df.schema.treeString))) // debug source schema
@@ -333,6 +333,11 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
         curVsAndRest <- Try(getNextVS(vs, parents)).toResult()
         newSource <- {
           log.info(s"$virtualSourceStage Reading virtual source '${curVsAndRest._1.id.value}'...")
+          if (curVsAndRest._1.persist.nonEmpty) {
+            log.info(
+              s"$virtualSourceStage Persisting virtual source '${curVsAndRest._1.id.value}' to ${curVsAndRest._1.persist.get.toString}."
+            )
+          }
           (if (readAsStream) curVsAndRest._1.readStream(parents) else curVsAndRest._1.read(parents))
             .tap(_ => log.info(s"$virtualSourceStage Success!")) // immediate logging of success state
             .tap(s => log.debug(s.df.schema.treeString)) // debug source schema
@@ -350,10 +355,6 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
             } // save virtual source if save option is configured.
             .mapLeft(_.map(e => s"$virtualSourceStage $e")) // update error messages with running stage
         }
-        _ <- Try(curVsAndRest._1.persist.foreach{ sLvl =>
-          log.info(s"$virtualSourceStage Persisting virtual source '${curVsAndRest._1.id.value}' to ${sLvl.toString}.")
-          newSource.df.persist(sLvl)
-        }).toResult()
       } yield newSource -> curVsAndRest._2
 
       val updatedVirtualSource = newAndRest.map(_._2)

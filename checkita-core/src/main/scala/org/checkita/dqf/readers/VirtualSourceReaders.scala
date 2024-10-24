@@ -69,7 +69,7 @@ object VirtualSourceReaders {
         
         val df = getDataFrame(config, parents, readMode)
         // persist if necessary:
-        if (config.persist.nonEmpty) df.persist(config.persist.get)
+        if (config.persist.nonEmpty && readMode == ReadMode.Batch) df.persist(config.persist.get)
         Source.validated(
           config.id.value, df, config.keyFields.map(_.value), config.parents, checkpoint
         )(settings.enableCaseSensitivity)

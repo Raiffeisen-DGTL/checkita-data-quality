@@ -17,7 +17,9 @@ object Sources {
    * Base class for all source configurations.
    * All sources are described as DQ entities that might have an optional sequence of keyFields
    * which will uniquely identify data row in error collection reports.
-   * In addition, it should be indicated whether this source is streamable or not.
+   * It should also be indicated whether this source is streamable or not.
+   * Additionally, the persist field specifies an optional storage level
+   * in order to persist source during job execution.
    */
   sealed abstract class SourceConfig extends JobConfigEntity {
     val keyFields: Seq[NonEmptyString]
@@ -368,12 +370,10 @@ object Sources {
   /**
    * Base class for all virtual source configurations.
    * In addition to basic source configuration,
-   * virtual sources might have following optional parameters:
-   *   - spark persist storage level in order to persist virtual source during job execution
+   * virtual sources might have following optional parameter:
    *   - save configuration in order to save virtual source as a file.
    */
   sealed abstract class VirtualSourceConfig extends SourceConfig {
-    val persist: Option[StorageLevel]
     val save: Option[FileOutputConfig]
     val parents: Seq[String]
     val windowBy: Option[StreamWindowing]
