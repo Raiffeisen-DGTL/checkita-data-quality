@@ -592,6 +592,41 @@ object PostValidation {
     }.toVector
 
   /**
+   * Ensure validity of ARIMA model order parameters in ARIMA trend metric configuration.
+   *
+   * @note This check is run at post-validation stage, as it is quite difficult to derive 
+   *       pureconfig readers for sealed trait families (thus approach is used to define kinded configurations)
+   *       to run check during config parsing.
+   */
+  val validateArimaTrendMetricOrder: ConfigObject => Vector[ConfigReaderFailure] = root =>
+    Try(root.toConfig.getObjectList("jobConfig.metrics.trend").asScala)
+      .getOrElse(List.empty).zipWithIndex
+      .filter(c => c._1.toConfig.getString("kind").toLowerCase == "arima")
+      .flatMap {
+        case (tm, idx) =>
+          val order = tm.toConfig.getStringList("order").asScala.map(_.toInt)
+          val validations = Seq(
+            (
+              (p: Int, d: Int, q: Int) => Seq(p, d, q).exists(_ < 0),
+              "ARIMA model order parameters must be non-negative."
+            ),
+            (
+              (p: Int, _: Int, q: Int) => p + q <= 0,
+              "Either AR (p) or MA (q) order of ARIMA model (or both) must be non-zero."
+            )
+          )
+          order match {
+            case Seq(p, d, q) => validations.filter(_._1(p, d, q)).map{
+              case (_, msg) => ConvertFailure(
+                UserValidationFailed(msg),
+                None,
+                s"jobConfig.metrics.trend.$idx.${tm.get("id").renderWithOpts}"
+              )
+            }
+          }
+      }.toVector
+  
+  /**
    * Validation to check if DQ job configuration contains missing references
    * from load checks to sources
    *
@@ -753,6 +788,7 @@ object PostValidation {
     validateComposedMetrics,
     validateMetricCrossReferences,
     validateTrendMetricWindowSettings,
+    validateArimaTrendMetricOrder,
     validateLoadCheckRefs,
     validateLoadCheckSchemaRefs,
     validateSnapshotCheckRefs,

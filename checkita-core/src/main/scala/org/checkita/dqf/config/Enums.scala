@@ -3,8 +3,6 @@ package org.checkita.dqf.config
 import enumeratum.{Enum, EnumEntry}
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.functions.expr
-import org.apache.spark.sql.types.TimestampType
-import org.checkita.dqf.config.Parsers.idParser
 
 import scala.collection.immutable
 
