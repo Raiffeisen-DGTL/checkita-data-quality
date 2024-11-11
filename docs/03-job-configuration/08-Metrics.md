@@ -801,10 +801,26 @@ Thus, trend metrics are defined `trend` subsection using following set of parame
 
 * `id` - *Required*. Trend metric ID;
 * `description` - *Optional*. Trend metric description.
-* `kind` - *Required*. Kind of statistic to be calculated over historical metric results.
-    * Available trend metric kinds are: `avg`, `std`, `min`, `max`, `sum`, `median`, `firstQuartile`, `thirdQuartile`, `quantile`.
+* `kind` - *Required*. Kind of statistic to be calculated over historical metric results. 
+  Available trend metric kinds are: 
+    * `avg` - average of the collected results,
+    * `std` - standard deviation of the collected results,
+    * `min` - minimum value from the collected results,
+    * `max` - maximum value from the collected results,
+    * `sum` - sum of the collected results,
+    * `median` - median value of the collected results,
+    * `firstQuartile` - first quartile of the collected results,
+    * `thirdQuartile` - third quartile of the collected results,
+    * `quantile` - arbitrary quantile of the collected results. It is required to set quantile parameter as shown below.
+    * `linreg` - predicts metric result based on linear regression model trained on collected results.
+      `referenceDate` is transformed to epoch time and used to as X-values. Thus, metric result is
+      predicted for current value of `referenceData`.
+    * `arima` - predicts metric result based on ARIMA model trained on collected results. It is required
+      to provide ARIMA model order parameters: auto-regression (p) order, integration (d) order and 
+      moving average (q) order as shown below. It is up to user to chose optimal ARIMA model parameters.
 * `quantile` - *Required*. **ONLY FOR `quantile` TREND METRIC**. Quantile to compute over historical metric results
   (must be a number in range `[0, 1]`).
+* `order` - *Required*. **ONLY FOR `arima` TREND METRIC**. List of ARIMA model order parameters (AR, I, MA): `[p, d, q]`.
 * `lookupMetric` - *Required*. Lookup metric ID: metric which results will be pulled from DQ storage.
 * `rule` - *Required*. The rule for loading historical metric results from DQ storage. There are two rules supported:
     * `record` - loads specified number of historical metric result records.
