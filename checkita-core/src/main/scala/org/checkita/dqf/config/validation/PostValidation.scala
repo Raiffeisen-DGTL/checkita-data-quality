@@ -604,7 +604,7 @@ object PostValidation {
       .filter(c => c._1.toConfig.getString("kind").toLowerCase == "arima")
       .flatMap {
         case (tm, idx) =>
-          val order = tm.toConfig.getStringList("order").asScala.map(_.toInt)
+          val order = tm.toConfig.getStringList("order").asScala.toSeq.map(_.toInt)
           val validations = Seq(
             (
               (p: Int, d: Int, q: Int) => Seq(p, d, q).exists(_ < 0),
