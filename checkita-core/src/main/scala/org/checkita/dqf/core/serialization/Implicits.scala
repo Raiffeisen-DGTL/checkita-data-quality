@@ -326,6 +326,10 @@ object Implicits extends SerDeTransformations
           getProductSerDe(ThirdQuartileTrendMetricConfig.unapply, ThirdQuartileTrendMetricConfig.tupled)
         case MetricName.TrendQuantile =>
           getProductSerDe(QuantileTrendMetricConfig.unapply, QuantileTrendMetricConfig.tupled)
+        case MetricName.TrendLinReg =>
+          getProductSerDe(LinregTrendMetricConfig.unapply, LinregTrendMetricConfig.tupled)
+        case MetricName.TrendArima =>
+          getProductSerDe(ArimaTrendMetricConfig.unapply, ArimaTrendMetricConfig.tupled)
       }
       serDe.asInstanceOf[SerDe[RegularMetric]]
     }

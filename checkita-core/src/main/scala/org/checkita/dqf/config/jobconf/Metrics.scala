@@ -1,7 +1,6 @@
 package org.checkita.dqf.config.jobconf
 
 import eu.timepit.refined.types.string.NonEmptyString
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
 import org.json4s.jackson.Serialization.write
 import org.checkita.dqf.config.Enums.TrendCheckRule
 import org.checkita.dqf.config.RefinedTypes._
@@ -20,6 +19,7 @@ import org.checkita.dqf.core.metrics.rdd.regular.BasicNumericRDDMetrics._
 import org.checkita.dqf.core.metrics.rdd.regular.AlgebirdRDDMetrics._
 import org.checkita.dqf.core.metrics.rdd.regular.MultiColumnRDDMetrics._
 import org.checkita.dqf.core.metrics.rdd.regular.FileRDDMetrics._
+import org.checkita.dqf.core.metrics.trend.{ARIMAModel, DescriptiveStatisticModel, LinearRegressionModel, TrendMetricModel}
 import org.checkita.dqf.utils.Common.{getFieldsMap, jsonFormats}
 
 
@@ -98,7 +98,7 @@ object Metrics {
   }
 
   /**
-   * Base class for trend metrics that computes statistics over historical metric results.
+   * Base class for trend metrics that computes their values based on historical metric results.
    */
   sealed abstract class TrendMetricConfig extends MetricConfig with TrendMetric {
     val lookupMetric: ID
@@ -1296,7 +1296,7 @@ object Metrics {
                                          windowOffset: Option[NonEmptyString],
                                          metadata: Seq[SparkParam] = Seq.empty
                                        ) extends TrendMetricConfig {
-    val aggFunc: DescriptiveStatistics => Double = stats => stats.getMean
+    val model: TrendMetricModel = DescriptiveStatisticModel.Avg
     val metricName: MetricName = MetricName.TrendAvg
     val paramString: Option[String] = None
   }
@@ -1321,7 +1321,7 @@ object Metrics {
                                          windowOffset: Option[NonEmptyString],
                                          metadata: Seq[SparkParam] = Seq.empty
                                        ) extends TrendMetricConfig {
-    val aggFunc: DescriptiveStatistics => Double = stats => stats.getStandardDeviation
+    val model: TrendMetricModel = DescriptiveStatisticModel.Std
     val metricName: MetricName = MetricName.TrendStd
     val paramString: Option[String] = None
   }
@@ -1346,7 +1346,7 @@ object Metrics {
                                          windowOffset: Option[NonEmptyString],
                                          metadata: Seq[SparkParam] = Seq.empty
                                        ) extends TrendMetricConfig {
-    val aggFunc: DescriptiveStatistics => Double = stats => stats.getMin
+    val model: TrendMetricModel = DescriptiveStatisticModel.Min
     val metricName: MetricName = MetricName.TrendMin
     val paramString: Option[String] = None
   }
@@ -1371,7 +1371,7 @@ object Metrics {
                                          windowOffset: Option[NonEmptyString],
                                          metadata: Seq[SparkParam] = Seq.empty
                                        ) extends TrendMetricConfig {
-    val aggFunc: DescriptiveStatistics => Double = stats => stats.getMax
+    val model: TrendMetricModel = DescriptiveStatisticModel.Max
     val metricName: MetricName = MetricName.TrendMax
     val paramString: Option[String] = None
   }
@@ -1396,7 +1396,7 @@ object Metrics {
                                          windowOffset: Option[NonEmptyString],
                                          metadata: Seq[SparkParam] = Seq.empty
                                        ) extends TrendMetricConfig {
-    val aggFunc: DescriptiveStatistics => Double = stats => stats.getSum
+    val model: TrendMetricModel = DescriptiveStatisticModel.Sum
     val metricName: MetricName = MetricName.TrendSum
     val paramString: Option[String] = None
   }
@@ -1421,7 +1421,7 @@ object Metrics {
                                             windowOffset: Option[NonEmptyString],
                                             metadata: Seq[SparkParam] = Seq.empty
                                           ) extends TrendMetricConfig {
-    val aggFunc: DescriptiveStatistics => Double = stats => stats.getPercentile(50)
+    val model: TrendMetricModel = DescriptiveStatisticModel.Median
     val metricName: MetricName = MetricName.TrendMedian
     val paramString: Option[String] = None
   }
@@ -1446,7 +1446,7 @@ object Metrics {
                                                    windowOffset: Option[NonEmptyString],
                                                    metadata: Seq[SparkParam] = Seq.empty
                                                  ) extends TrendMetricConfig {
-    val aggFunc: DescriptiveStatistics => Double = stats => stats.getPercentile(25)
+    val model: TrendMetricModel = DescriptiveStatisticModel.FirstQuantile
     val metricName: MetricName = MetricName.TrendFirstQ
     val paramString: Option[String] = None
   }
@@ -1471,7 +1471,7 @@ object Metrics {
                                                    windowOffset: Option[NonEmptyString],
                                                    metadata: Seq[SparkParam] = Seq.empty
                                                  ) extends TrendMetricConfig {
-    val aggFunc: DescriptiveStatistics => Double = stats => stats.getPercentile(75)
+    val model: TrendMetricModel = DescriptiveStatisticModel.ThirdQuantile
     val metricName: MetricName = MetricName.TrendThirdQ
     val paramString: Option[String] = None
   }
@@ -1498,9 +1498,65 @@ object Metrics {
                                               windowOffset: Option[NonEmptyString],
                                               metadata: Seq[SparkParam] = Seq.empty
                                             ) extends TrendMetricConfig {
-    val aggFunc: DescriptiveStatistics => Double = stats => stats.getPercentile(quantile.value * 100)
+    val model: TrendMetricModel = new DescriptiveStatisticModel.Quantile(quantile.value * 100)
     val metricName: MetricName = MetricName.TrendQuantile
     val paramString: Option[String] = Some(write(Map("quantile" -> quantile.value)))
+  }
+  
+  /**
+   * Linear regression trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class LinregTrendMetricConfig(
+                                              id: ID,
+                                              description: Option[NonEmptyString],
+                                              lookupMetric: ID,
+                                              rule: TrendCheckRule,
+                                              windowSize: NonEmptyString,
+                                              windowOffset: Option[NonEmptyString],
+                                              metadata: Seq[SparkParam] = Seq.empty
+                                            ) extends TrendMetricConfig {
+    val model: TrendMetricModel = LinearRegressionModel
+    val metricName: MetricName = MetricName.TrendLinReg
+    val paramString: Option[String] = None
+  }
+  
+  /**
+   * ARIMA trend metric configuration
+   *
+   * @param id           Metric ID
+   * @param description  Metric Description
+   * @param lookupMetric Metric which historical results to pull for statistic calculation
+   * @param rule         Window calculation rule: by datetime or by number of records.
+   * @param order        Sequence of ARIMA order parameters: [p, d, q]
+   * @param windowSize   Size of the window for average metric value calculation (either a number of records or duration).
+   * @param windowOffset Optional window offset (either a number of records or duration)
+   * @param metadata     List of metadata parameters specific to this metric
+   */
+  final case class ArimaTrendMetricConfig(
+                                            id: ID,
+                                            description: Option[NonEmptyString],
+                                            lookupMetric: ID,
+                                            rule: TrendCheckRule,
+                                            order: ThreeElemIntSeq,
+                                            windowSize: NonEmptyString,
+                                            windowOffset: Option[NonEmptyString],
+                                            metadata: Seq[SparkParam] = Seq.empty
+                                          ) extends TrendMetricConfig {
+    val model: TrendMetricModel = order.value match {
+      case Seq(p, d, q) => new ARIMAModel(p, d, q)
+    }
+    val metricName: MetricName = MetricName.TrendArima
+    val paramString: Option[String] = order.value match {
+      case Seq(p, d, q) => Some(write(Map("p" -> p, "d" -> d, "q" -> q)))
+    }
   }
   
   /** Data Quality job configuration section describing regular metrics

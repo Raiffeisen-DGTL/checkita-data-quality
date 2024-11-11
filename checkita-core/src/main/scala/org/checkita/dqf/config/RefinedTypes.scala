@@ -38,10 +38,11 @@ object RefinedTypes {
   type NonEmptyURISeq = Seq[URI] Refined NonEmpty
   
   /**
-   * Refinements for double sequences:
+   * Refinements for numeric sequences:
    */
   type NonEmptyDoubleSeq = Seq[Double] Refined NonEmpty
-
+  type ThreeElemIntSeq = Seq[Int] Refined Size[Equal[W.`3`.T]]
+  
   /**
    * All IDs are parsers via SparkSqlParser so they are valid SparkSQL identifiers
    * This is required to eliminate any issues with interoperability with Spark.

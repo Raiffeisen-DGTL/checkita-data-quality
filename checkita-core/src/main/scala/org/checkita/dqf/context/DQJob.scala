@@ -388,7 +388,7 @@ trait DQJob extends Logging {
       log.info(s"$stage Finalize trend metric results...")
       metResults.toSeq.flatMap(_._2).filter(_.resultType == ResultType.TrendMetric)
         .map { r =>
-          val mConfig = metricsMap.get(r.metricId)
+          val mConfig = trendMetricsMap.get(r.metricId)
           val desc = mConfig.flatMap(_.description).map(_.value)
           val params = mConfig.flatMap(_.paramString)
           val metadata = mConfig.flatMap(_.metadataString)

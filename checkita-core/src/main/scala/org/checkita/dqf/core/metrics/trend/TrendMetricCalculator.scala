@@ -1,8 +1,5 @@
 package org.checkita.dqf.core.metrics.trend
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
-import org.apache.commons.math3.stat.descriptive.rank.Percentile
-import org.apache.commons.math3.stat.descriptive.rank.Percentile.EstimationType
 import org.checkita.dqf.appsettings.AppSettings
 import org.checkita.dqf.core.CalculatorStatus
 import org.checkita.dqf.core.Results.{MetricCalculatorResult, ResultType}
@@ -11,27 +8,10 @@ import org.checkita.dqf.core.metrics.TrendMetric
 import org.checkita.dqf.storage.Managers.DqStorageManager
 import org.checkita.dqf.storage.Models._
 
+import java.sql.Timestamp
 import scala.util.{Failure, Success, Try}
 
 object TrendMetricCalculator {
-  
-  /**
-   * Function which aggregates historical metric results and computes a desired statistic.
-   *
-   * @param data Historical metric results
-   * @return Statistic computed over historical metric results.
-   *
-   * @note Linear method is used to compute quantiles (method #7 in [1]).
-   *
-   * [1] R. J. Hyndman and Y. Fan, "Sample quantiles in statistical packages,
-   *     "The American Statistician, 50(4), pp. 361-365, 1996
-   */
-  private def aggregate(data: Seq[Double], f: DescriptiveStatistics => Double): Double = {
-    val stats = new DescriptiveStatistics
-    stats.setPercentileImpl(new Percentile().withEstimationType(EstimationType.R_7))
-    data.foreach(stats.addValue)
-    f(stats)
-  }
 
   /**
    * Returns metric calculator result with error status and corresponding error message
@@ -63,7 +43,7 @@ object TrendMetricCalculator {
                             lookupMetResultType: ResultType)
                            (implicit jobId: String,
                             manager: Option[DqStorageManager],
-                            settings: AppSettings): Seq[Double] = {
+                            settings: AppSettings): Seq[(Timestamp, Double)] = {
     require(
       manager.nonEmpty,
       s"In order to perform trend metric calculation it is required to have a valid connection to results storage."
@@ -85,7 +65,9 @@ object TrendMetricCalculator {
       )
     }
     
-    val resultVals = historyResults.map(_.result).filterNot(_.isNaN)
+    val resultVals = historyResults
+      .filterNot(_.result.isNaN)
+      .map(r => (r.referenceDate, r.result))
     
     if (resultVals.isEmpty) throw new IllegalArgumentException(
       s"Unable to perform calculation of trend metric '${tm.metricId}' due to historical results were not found " +
@@ -120,13 +102,13 @@ object TrendMetricCalculator {
                                            manager: Option[DqStorageManager],
                                            settings: AppSettings): MetricCalculatorResult = Try {
     val historicalResults = loadHistoricalResults(tm, lookupMetResultType)
-    aggregate(historicalResults, tm.aggFunc)
+    tm.model.infer(historicalResults, settings.referenceDateTime.getUtcTS)
   } match {
     case Success(result) => MetricCalculatorResult(
       tm.metricId,
       tm.metricName.entryName,
-      result,
-      None,
+      result._1,
+      result._2,
       lookupMetSourceIds,
       Seq.empty,
       Seq.empty,
