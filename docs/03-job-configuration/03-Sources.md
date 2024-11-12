@@ -53,9 +53,9 @@ Common parameters for sources of any file type are:
   or `s3a://` to read from S3.
 * `persist` - *Optional*. One of the allowed Spark StorageLevels used to cache sources.
   By default, sources are not cached. Supported Spark StorageLevels are:
-  * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
-    `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
-    `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
+    * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
+      `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
+      `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see 
   [Metric Error Collection](../02-general-information/04-ErrorCollection.md) chapter.
@@ -130,9 +130,9 @@ In order to read data from Hive table it is required to provide following:
   > partitions or an explicit list of partition values but not both.
 * `persist` - *Optional*. One of the allowed Spark StorageLevels used to cache sources.
   By default, sources are not cached. Supported Spark StorageLevels are:
-  * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
-    `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
-    `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
+    * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
+      `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
+      `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-information/04-ErrorCollection.md) chapter.
@@ -157,9 +157,9 @@ supply following parameters:
 * `query` - *Optional*. Query to execute. Query result is read as table source.
 * `persist` - *Optional*. One of the allowed Spark StorageLevels used to cache sources.
   By default, sources are not cached. Supported Spark StorageLevels are:
-  * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
-    `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
-    `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
+    * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
+      `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
+      `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-information/04-ErrorCollection.md) chapter.
@@ -212,9 +212,9 @@ parameters:
   For more information, see [Spark Kafka Integration Guide](https://spark.apache.org/docs/2.3.2/structured-streaming-kafka-integration.html).
 * `persist` - *Optional*. One of the allowed Spark StorageLevels used to cache sources.
   By default, sources are not cached. Supported Spark StorageLevels are:
-  * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
-    `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
-    `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
+    * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
+      `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
+      `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-information/04-ErrorCollection.md) chapter.
@@ -240,9 +240,9 @@ In order to read data from Greenplum table using pivotal connector it is require
 * `table` - *Optional*. Table to read.
 * `persist` - *Optional*. One of the allowed Spark StorageLevels used to cache sources.
   By default, sources are not cached. Supported Spark StorageLevels are:
-  * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
-    `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
-    `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
+    * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
+      `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
+      `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-information/04-ErrorCollection.md) chapter.
@@ -263,9 +263,9 @@ provide following parameters:
 * `options` - *Optional*. Additional Spark parameters used to read data from the given source.
 * `persist` - *Optional*. One of the allowed Spark StorageLevels used to cache sources.
   By default, sources are not cached. Supported Spark StorageLevels are:
-  * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
-    `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
-    `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
+    * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
+      `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
+      `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see
   [Metric Error Collection](../02-general-information/04-ErrorCollection.md) chapter.
