@@ -47,7 +47,7 @@ case class ComposedMetricCalculator(primitiveMetrics: Seq[MetricCalculatorResult
    * @return composed metric result
    */
   def run(ex: ComposedMetric): MetricCalculatorResult = Try {
-    val formulaWithParameters = ex.metricFormula
+    val formulaWithParameters = prepareFormula(ex.metricFormula)
     val formulaWithValues = replaceMetricsInFormula(formulaWithParameters)
     val result = evalArithmetic(formulaWithValues)
     val sourceIds = getTokens(formulaWithParameters).flatMap(metricSourceMap).distinct

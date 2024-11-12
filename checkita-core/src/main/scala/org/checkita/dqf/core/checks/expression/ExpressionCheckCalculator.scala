@@ -165,13 +165,16 @@ case class ExpressionCheckCalculator(checkId: String, formula: String) extends C
         val resMap = results.map{ case (k, v) => k -> v.result.toString }
         val srcIds = results.values.flatMap(_.sourceIds).toSeq
         Try {
-          val formulaWithValues = renderTemplate(formula, resMap)
-          evalBoolean(formulaWithValues)
+          val clearFormula = prepareFormula(formula)
+          val formulaWithValues = renderTemplate(clearFormula, resMap)
+          (evalBoolean(formulaWithValues), clearFormula, formulaWithValues)
         } match {
           case scala.util.Success(result) => 
-            val status = if (result) CalculatorStatus.Success else CalculatorStatus.Failure
-            val message = s"Evaluation of check '$checkId' for expression '$formula' completed with value '$result'. " +
-              s"Result: ${status.toString}"
+            val status = if (result._1) CalculatorStatus.Success else CalculatorStatus.Failure
+            val message =
+              s"Evaluation of check '$checkId' for expression '${result._2}' " + "" +
+                s"which was rendered to '${result._3}' and completed with value '${result._1}'. " +
+                s"Result: ${status.toString}"
             CheckCalculatorResult(
               checkId,
               checkName.entryName,
