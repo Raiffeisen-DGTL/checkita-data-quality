@@ -163,7 +163,7 @@ case class ExpressionCheckCalculator(checkId: String, formula: String) extends C
       case Left(errs) => resultOnError(errs)
       case Right(results) => 
         val resMap = results.map{ case (k, v) => k -> v.result.toString }
-        val srcIds = results.values.flatMap(_.sourceIds).toSeq
+        val srcIds = results.values.flatMap(_.sourceIds).toSeq.distinct
         Try {
           val clearFormula = prepareFormula(formula)
           val formulaWithValues = renderTemplate(clearFormula, resMap)

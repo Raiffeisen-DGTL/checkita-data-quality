@@ -5,7 +5,7 @@ import org.apache.spark.sql.SparkSession
 import org.checkita.dqf.appsettings.AppSettings
 import org.checkita.dqf.config.ConfigEncryptor
 import org.checkita.dqf.config.IO.{RenderOptions, writeEncryptedJobConfig, writeJobConfig}
-import org.checkita.dqf.config.jobconf.Checks.{CheckConfig, SnapshotCheckConfig, TrendCheckConfig}
+import org.checkita.dqf.config.jobconf.Checks.{CheckConfig, ExpressionCheck, SnapshotCheckConfig, TrendCheckConfig}
 import org.checkita.dqf.config.jobconf.JobConfig
 import org.checkita.dqf.config.jobconf.LoadChecks.LoadCheckConfig
 import org.checkita.dqf.config.jobconf.Metrics.{ComposedMetricConfig, RegularMetricConfig, TopNMetricConfig, TrendMetricConfig}
@@ -294,12 +294,13 @@ trait DQJob extends Logging {
 
         val filterOutMissingMetricRefs = (allChecks: Seq[CheckConfig]) =>
           if (settings.streamConfig.allowEmptyWindows) allChecks.filter{ chk =>
-            val metricId = chk.metric.value
-            val compareMetricId = chk match {
-              case config: SnapshotCheckConfig => config.compareMetric.map(_.value)
-              case _ => None
+            val metricRefs = chk match {
+              case snapshotCheck: SnapshotCheckConfig => 
+                snapshotCheck.compareMetric.map(_.value).toSeq :+ snapshotCheck.metric.value
+              case trendCheck: TrendCheckConfig => Seq(trendCheck.metric.value)
+              case expressionCheck: ExpressionCheck => getTokens(expressionCheck.formula.value)
             }
-            val predicate = (compareMetricId.toSeq :+ metricId).forall(metResults.contains)
+            val predicate = metricRefs.forall(metResults.contains)
             if (!predicate) log.warn(
               s"$stage Didn't got all required metric results for check '${chk.id.value}'. " +
                 "Streaming configuration parameter 'allowEmptyWindows' is set to 'true'. " +

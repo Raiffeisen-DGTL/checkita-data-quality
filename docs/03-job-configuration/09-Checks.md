@@ -38,6 +38,9 @@ Snapshot checks are configured using common set of parameters, which are:
 * `metric` - *Required*. Metric ID which results is checked.
 * `compareMetric` - *Optional*. Metric ID which result is used as a threshold.
 * `threshold` - *Optional*. Explicit threshold value.
+* `isCritical` - *Optional, default is `false`*. Boolean flag identifying whether this check is critical or not.
+  Check criticality is important when application check failure tolerance is set to `CRITICAL`. 
+  For more information, see [Check Failure Tolerance](../02-general-information/08-CheckFailureTolerance.md).
 * `metadata` - *Optional*. List of user-defined metadata parameters specific to this check where each parameter
   is a string in format: `param.name=param.value`.
 
@@ -86,6 +89,9 @@ Trend checks are configured using following set of parameters:
   for `averageBoundRange` check.
 * `thresholdUpper` - *Required*. Sets maximum allowed upper deviation from historical average metric result. *Used only
   for `averageBoundRange` check.
+* `isCritical` - *Optional, default is `false`*. Boolean flag identifying whether this check is critical or not.
+  Check criticality is important when application check failure tolerance is set to `CRITICAL`.
+  For more information, see [Check Failure Tolerance](../02-general-information/08-CheckFailureTolerance.md).
 * `metadata` - *Optional*. List of user-defined metadata parameters specific to this metric where each parameter
   is a string in format: `param.name=param.value`.
 
@@ -110,6 +116,9 @@ Top N rank check is configured using following parameters:
   This number should be less than or equal to number of collected top values in top N metric.
 * `threshold` - *Required*. Maximum allowed Jacquard distance between current and previous sets of records from 
   top N metric result. Should be a number in interval `[0, 1]`.
+* `isCritical` - *Optional, default is `false`*. Boolean flag identifying whether this check is critical or not.
+  Check criticality is important when application check failure tolerance is set to `CRITICAL`.
+  For more information, see [Check Failure Tolerance](../02-general-information/08-CheckFailureTolerance.md).
 * `metadata` - *Optional*. List of user-defined metadata parameters specific to this metric where each parameter
   is a string in format: `param.name=param.value`.
 
@@ -136,6 +145,9 @@ Expression checks are configured using following set of parameters:
 * `id` - *Required*. Check ID
 * `description` - *Optional*. Description of the check.
 * `formula` - *Required*. Check formula: boolean expression referring to metric results.
+* `isCritical` - *Optional, default is `false`*. Boolean flag identifying whether this check is critical or not.
+  Check criticality is important when application check failure tolerance is set to `CRITICAL`.
+  For more information, see [Check Failure Tolerance](../02-general-information/08-CheckFailureTolerance.md).
 * `metadata` - *Optional*. List of user-defined metadata parameters specific to this check where each parameter
   is a string in format: `param.name=param.value`.
 
@@ -197,13 +209,13 @@ jobConfig: {
         }
       ]
       equalTo: [
-        {id: "zero_nulls", description: "Hive Table1 mustn't contain nulls", metric: "hive_table_nulls", threshold: 0}
+        {id: "zero_nulls", description: "Hive Table1 mustn't contain nulls", metric: "hive_table_nulls", threshold: 0, isCritical: true}
       ]
       greaterThan: [
-        {id: "completeness_check", metric: "orc_data_compl", threshold: 0.99}
+        {id: "completeness_check", metric: "orc_data_compl", threshold: 0.99, isCritical: true}
       ]
       lessThan: [
-        {id: "null_threshold", metric: "pct_of_null", threshold: 0.01}
+        {id: "null_threshold", metric: "pct_of_null", threshold: 0.01, isCritical: true}
       ]
     }
     expression: [
