@@ -54,6 +54,7 @@ nav:
       - 02-general-information/05-StreamingMode.md
       - 02-general-information/06-MetricSQLEquivalency.md
       - 02-general-information/07-MetricCalculatorEngines.md
+      - 02-general-information/08-CheckFailureTolerance.md
   - Job Configuration:
       - 03-job-configuration/index.md
       - 03-job-configuration/01-Connections.md

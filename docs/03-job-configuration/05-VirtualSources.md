@@ -20,8 +20,8 @@ The following types of virtual sources are supported:
 
 All types of virtual sources have common features:
 
-* It is possible to cache virtual sources in memory or on disk. This could be handful when virtual sources is used as
-  parent for more than one virtual source. In such cases caching virtual source allows not to calculate it multiple times.
+* It is possible to cache virtual sources in memory or on disk. This could be handful when virtual source is used as
+  a parent for more than one virtual source. In such cases caching virtual source allows not to calculate it multiple times.
 * Virtual source can be saved as a file in one of the supported format. This feature can be used for debugging purposes
   or just to keep data transformations applied during quality checks.
 

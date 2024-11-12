@@ -69,6 +69,10 @@ that controls various aspects of data quality job execution:
 * `metricEngineAPI` - Sets engine to be used for regular metric processing: `rdd` (RDD-engine) or `df` (DF-engine) are
   available. It is recommended to use DF-engine for batch applications while streaming applications support only
   RDD-engine. *Optional, default is `rdd`*.
+* `checkFailureTolerance` - Sets check failure tolerance for the application, i.e. whether the application should 
+  return non-zero exit code when some the checks have failed. 
+  For more info, see [Check Failure Tolerance](../02-general-information/08-CheckFailureTolerance.md).
+    *Optional, default is `none`*
 
 If `enablers` section is missing then default values are used for all parameters above.
 

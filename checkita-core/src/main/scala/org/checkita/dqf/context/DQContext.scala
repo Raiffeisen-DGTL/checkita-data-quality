@@ -531,7 +531,7 @@ class DQContext(settings: AppSettings, spark: SparkSession, fs: FileSystem) exte
       settings.streamConfig.checkpointDir match {
         case Some(dir) => 
           log.info(s"$checkpointStage Reading from checkpoint directory: ${dir.value}")
-          log.info(s"$checkpointStage Searching checkpoint for jobId = '$jobId' and jobHas = '$jh'")
+          log.info(s"$checkpointStage Searching checkpoint for jobId = '$jobId' and jobHash = '$jh'")
           CheckpointIO.readCheckpoint(dir.value, jobId, jh)
         case None => 
           log.info(s"$checkpointStage Checkpoint directory is not set.")

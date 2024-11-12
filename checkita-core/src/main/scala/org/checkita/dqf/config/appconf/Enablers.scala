@@ -16,7 +16,9 @@ import org.checkita.dqf.config.Enums.{CheckFailureTolerance, MetricEngineAPI}
  * @param errorDumpSize         Maximum number of errors to be collected per single metric per partition.
  * @param outputRepartition     Sets the number of partitions when writing outputs. By default writes single file.
  * @param metricEngineAPI       Metric processor API used to process metrics: either Spark RDD or Spark DF.
- * @param checkFailureTolerance Returns the failure status if any of the checks fail.
+ * @param checkFailureTolerance Sets check failure tolerance for the application i.e.
+ *                              whether the application should return non-zero exit code when some the checks
+ *                              have failed.
  */
 final case class Enablers(
                            allowSqlQueries: Boolean = false,
