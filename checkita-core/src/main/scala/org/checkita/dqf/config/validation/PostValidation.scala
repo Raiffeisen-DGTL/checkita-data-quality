@@ -473,12 +473,12 @@ object PostValidation {
     val compMetPrefix = "jobConfig.metrics.composed"
 
     Try(root.toConfig.getObjectList(compMetPrefix).asScala).getOrElse(List.empty).zipWithIndex.flatMap { compMet =>
-      val formula = compMet._1.get("formula").renderWithOpts
+      val p = new FormulaParser {} // anonymous class
+      val formula = p.prepareFormula(compMet._1.toConfig.getString("formula"))
       val comMetPath = s"$compMetPrefix.${compMet._2}.formula"
       val mIds = getTokens(formula)
       val mResMap = mIds.map(_ -> Random.nextDouble().toString).toMap
       val parsedFormula = renderTemplate(formula, mResMap)
-      val p = new FormulaParser {} // anonymous class
 
       Seq(parsedFormula).filter(f => Try(p.evalArithmetic(f)).isFailure).map { _ =>
         ConvertFailure(
@@ -707,12 +707,12 @@ object PostValidation {
     ).map(f => f.value.toString).toSet
     
     Try(root.toConfig.getObjectList(exprChkPrefix).asScala).getOrElse(List.empty).zipWithIndex.flatMap { exprChk =>
-      val formula = exprChk._1.get("formula").renderWithOpts
+      val p = new FormulaParser {} // anonymous class
+      val formula = p.prepareFormula(exprChk._1.toConfig.getString("formula"))
       val exprChkPath = s"$exprChkPrefix.${exprChk._2}.formula"
       val mIds = getTokens(formula)
       val mResMap = mIds.map(_ -> Random.nextDouble().toString).toMap
       val parsedFormula = renderTemplate(formula, mResMap)
-      val p = new FormulaParser {} // anonymous class
 
       mIds.filterNot(allMetIds.contains).map{ m =>
         ConvertFailure(

@@ -40,6 +40,17 @@ trait FormulaParser extends JavaTokenParsers {
   }
 
   /**
+   * Prepares formula for rendering and evaluation by
+   * removing white space characters, repetitive spaces and 
+   * also by trimming leading and and trailing spaces.
+   *
+   * @param formula Raw formula to prepare
+   * @return Formula prepared for futher rendering and evaluation.
+   */
+  def prepareFormula(formula: String): String =
+    formula.replaceAll("""[\f\n\r\t\v]""", " ").replaceAll("""\s+""", " ").trim
+  
+  /**
    * Evaluates tree of arithmetic operations. 
    * Boolean operators are not supported here!
    *
