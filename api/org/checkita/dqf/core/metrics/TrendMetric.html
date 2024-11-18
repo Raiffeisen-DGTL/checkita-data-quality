@@ -270,7 +270,7 @@
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base class for trend metrics.
-All trend metrics must have defined following:</p><ul><li>metric ID</li><li>metric name</li><li>lookup metric ID: metric which results will be pulled from DQ storage</li><li>aggregation function to compute statistic over historical metric results</li><li>rule to build time window: either record or duration</li><li>size of the window to pull historical results</li><li>offset from current date or record (depending on rule)
+All trend metrics must have defined following:</p><ul><li>metric ID</li><li>metric name</li><li>lookup metric ID: metric which results will be pulled from DQ storage</li><li>model used to predict metric value based on historical metric results</li><li>rule to build time window: either record or duration</li><li>size of the window to pull historical results</li><li>offset from current date or record (depending on rule)
 </li></ul></div><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
@@ -280,7 +280,7 @@ All trend metrics must have defined following:</p><ul><li>metric ID</li><li>metr
             <span class="toggle">
               Known Subclasses
             </span>
-            <div class="subClasses hiddenContent"><a href="../../config/jobconf/Metrics$$AvgTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.AvgTrendMetricConfig">AvgTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$FirstQuartileTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.FirstQuartileTrendMetricConfig">FirstQuartileTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$MaxTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.MaxTrendMetricConfig">MaxTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$MedianTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.MedianTrendMetricConfig">MedianTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$MinTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.MinTrendMetricConfig">MinTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$QuantileTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.QuantileTrendMetricConfig">QuantileTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$StdTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.StdTrendMetricConfig">StdTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$SumTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.SumTrendMetricConfig">SumTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$ThirdQuartileTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.ThirdQuartileTrendMetricConfig">ThirdQuartileTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$TrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.TrendMetricConfig">TrendMetricConfig</a></div>
+            <div class="subClasses hiddenContent"><a href="../../config/jobconf/Metrics$$ArimaTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.ArimaTrendMetricConfig">ArimaTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$AvgTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.AvgTrendMetricConfig">AvgTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$FirstQuartileTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.FirstQuartileTrendMetricConfig">FirstQuartileTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$LinregTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.LinregTrendMetricConfig">LinregTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$MaxTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.MaxTrendMetricConfig">MaxTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$MedianTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.MedianTrendMetricConfig">MedianTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$MinTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.MinTrendMetricConfig">MinTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$QuantileTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.QuantileTrendMetricConfig">QuantileTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$StdTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.StdTrendMetricConfig">StdTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$SumTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.SumTrendMetricConfig">SumTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$ThirdQuartileTrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.ThirdQuartileTrendMetricConfig">ThirdQuartileTrendMetricConfig</a>, <a href="../../config/jobconf/Metrics$$TrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.TrendMetricConfig">TrendMetricConfig</a></div>
           </div></div>
         
 
@@ -330,23 +330,7 @@ All trend metrics must have defined following:</p><ul><li>metric ID</li><li>metr
 
         <div class="values members">
               <h3>Abstract Value Members</h3>
-              <ol><li name="org.checkita.dqf.core.metrics.TrendMetric#aggFunc" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="aggFunc:org.apache.commons.math3.stat.descriptive.DescriptiveStatistics=&gt;Double"></a><a id="aggFunc:(DescriptiveStatistics)⇒Double"></a>
-      <span class="permalink">
-      <a href="../../../../../org/checkita/dqf/core/metrics/TrendMetric.html#aggFunc:org.apache.commons.math3.stat.descriptive.DescriptiveStatistics=&gt;Double" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">aggFunc</span><span class="result">: (<span class="extype" name="org.apache.commons.math3.stat.descriptive.DescriptiveStatistics">DescriptiveStatistics</span>) ⇒ <span class="extype" name="scala.Double">Double</span></span>
-      </span>
-      
-      
-    </li><li name="org.checkita.dqf.core.metrics.TrendMetric#lookupMetricId" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+              <ol><li name="org.checkita.dqf.core.metrics.TrendMetric#lookupMetricId" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="lookupMetricId:String"></a>
       <span class="permalink">
       <a href="../../../../../org/checkita/dqf/core/metrics/TrendMetric.html#lookupMetricId:String" title="Permalink">
@@ -391,6 +375,22 @@ All trend metrics must have defined following:</p><ul><li>metric ID</li><li>metr
       </span>
       <span class="symbol">
         <span class="name">metricName</span><span class="result">: <a href="MetricName.html" class="extype" name="org.checkita.dqf.core.metrics.MetricName">MetricName</a></span>
+      </span>
+      
+      
+    </li><li name="org.checkita.dqf.core.metrics.TrendMetric#model" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="model:org.checkita.dqf.core.metrics.trend.TrendMetricModel"></a><a id="model:TrendMetricModel"></a>
+      <span class="permalink">
+      <a href="../../../../../org/checkita/dqf/core/metrics/TrendMetric.html#model:org.checkita.dqf.core.metrics.trend.TrendMetricModel" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">model</span><span class="result">: <a href="trend/TrendMetricModel.html" class="extype" name="org.checkita.dqf.core.metrics.trend.TrendMetricModel">TrendMetricModel</a></span>
       </span>
       
       

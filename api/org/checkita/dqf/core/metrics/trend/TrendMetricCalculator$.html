@@ -167,8 +167,24 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="org.checkita.dqf.core.metrics">metrics</a></dd></dl></div>
     </li><li class="current-entities indented6">
                         <span class="separator"></span>
+                        <a class="class" href="ARIMAModel.html" title=""></a>
+                        <a href="ARIMAModel.html" title="">ARIMAModel</a>
+                      </li><li class="current-entities indented6">
+                        <a class="object" href="DescriptiveStatisticModel$.html" title="Supported statistics"></a>
+                        <a class="class" href="DescriptiveStatisticModel.html" title="Base class to compute statistics over historical metric results."></a>
+                        <a href="DescriptiveStatisticModel.html" title="Base class to compute statistics over historical metric results.">DescriptiveStatisticModel</a>
+                      </li><li class="current-entities indented6">
+                        <span class="separator"></span>
+                        <a class="object" href="LinearRegressionModel$.html" title="Simple linear regression model for trend metrics"></a>
+                        <a href="LinearRegressionModel$.html" title="Simple linear regression model for trend metrics">LinearRegressionModel</a>
+                      </li><li class="current-entities indented6">
+                        <span class="separator"></span>
                         <a class="object" href="" title=""></a>
                         <a href="" title="">TrendMetricCalculator</a>
+                      </li><li class="current-entities indented6">
+                        <span class="separator"></span>
+                        <a class="trait" href="TrendMetricModel.html" title="Trait that should be implemented by all trend metrics as it provides the fundamental method for inferring trend metric value."></a>
+                        <a href="TrendMetricModel.html" title="Trait that should be implemented by all trend metrics as it provides the fundamental method for inferring trend metric value.">TrendMetricModel</a>
                       </li>
               </ul>
             </div>
@@ -451,9 +467,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="org.checkita.dqf.core.metrics.trend.TrendMetricCalculator#loadHistoricalResults" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="loadHistoricalResults(tm:org.checkita.dqf.core.metrics.TrendMetric,lookupMetResultType:org.checkita.dqf.core.Results.ResultType)(implicitjobId:String,implicitmanager:Option[org.checkita.dqf.storage.Managers.DqStorageManager],implicitsettings:org.checkita.dqf.appsettings.AppSettings):Seq[Double]"></a><a id="loadHistoricalResults(TrendMetric,ResultType)(String,Option[DqStorageManager],AppSettings):Seq[Double]"></a>
+      <a id="loadHistoricalResults(tm:org.checkita.dqf.core.metrics.TrendMetric,lookupMetResultType:org.checkita.dqf.core.Results.ResultType)(implicitjobId:String,implicitmanager:Option[org.checkita.dqf.storage.Managers.DqStorageManager],implicitsettings:org.checkita.dqf.appsettings.AppSettings):Seq[(java.sql.Timestamp,Double)]"></a><a id="loadHistoricalResults(TrendMetric,ResultType)(String,Option[DqStorageManager],AppSettings):Seq[(Timestamp,Double)]"></a>
       <span class="permalink">
-      <a href="../../../../../../org/checkita/dqf/core/metrics/trend/TrendMetricCalculator$.html#loadHistoricalResults(tm:org.checkita.dqf.core.metrics.TrendMetric,lookupMetResultType:org.checkita.dqf.core.Results.ResultType)(implicitjobId:String,implicitmanager:Option[org.checkita.dqf.storage.Managers.DqStorageManager],implicitsettings:org.checkita.dqf.appsettings.AppSettings):Seq[Double]" title="Permalink">
+      <a href="../../../../../../org/checkita/dqf/core/metrics/trend/TrendMetricCalculator$.html#loadHistoricalResults(tm:org.checkita.dqf.core.metrics.TrendMetric,lookupMetResultType:org.checkita.dqf.core.Results.ResultType)(implicitjobId:String,implicitmanager:Option[org.checkita.dqf.storage.Managers.DqStorageManager],implicitsettings:org.checkita.dqf.appsettings.AppSettings):Seq[(java.sql.Timestamp,Double)]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -462,7 +478,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">loadHistoricalResults</span><span class="params">(<span name="tm">tm: <a href="../TrendMetric.html" class="extype" name="org.checkita.dqf.core.metrics.TrendMetric">TrendMetric</a></span>, <span name="lookupMetResultType">lookupMetResultType: <a href="../../Results$$ResultType.html" class="extype" name="org.checkita.dqf.core.Results.ResultType">ResultType</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="jobId">jobId: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="manager">manager: <span class="extype" name="scala.Option">Option</span>[<a href="../../../storage/Managers$$DqStorageManager.html" class="extype" name="org.checkita.dqf.storage.Managers.DqStorageManager">DqStorageManager</a>]</span>, <span name="settings">settings: <a href="../../../appsettings/AppSettings.html" class="extype" name="org.checkita.dqf.appsettings.AppSettings">AppSettings</a></span>)</span><span class="result">: <a href="../../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Double">Double</span>]</span>
+        <span class="name">loadHistoricalResults</span><span class="params">(<span name="tm">tm: <a href="../TrendMetric.html" class="extype" name="org.checkita.dqf.core.metrics.TrendMetric">TrendMetric</a></span>, <span name="lookupMetResultType">lookupMetResultType: <a href="../../Results$$ResultType.html" class="extype" name="org.checkita.dqf.core.Results.ResultType">ResultType</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="jobId">jobId: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="manager">manager: <span class="extype" name="scala.Option">Option</span>[<a href="../../../storage/Managers$$DqStorageManager.html" class="extype" name="org.checkita.dqf.storage.Managers.DqStorageManager">DqStorageManager</a>]</span>, <span name="settings">settings: <a href="../../../appsettings/AppSettings.html" class="extype" name="org.checkita.dqf.appsettings.AppSettings">AppSettings</a></span>)</span><span class="result">: <a href="../../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[(<span class="extype" name="java.sql.Timestamp">Timestamp</span>, <span class="extype" name="scala.Double">Double</span>)]</span>
       </span>
       
       

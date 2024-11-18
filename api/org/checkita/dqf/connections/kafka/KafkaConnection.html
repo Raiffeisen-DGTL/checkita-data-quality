@@ -260,7 +260,23 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="org.checkita.dqf.connections.kafka.KafkaConnection.SourceType" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+              <ol><li name="org.checkita.dqf.connections.kafka.KafkaConnection.CheckpointType" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="CheckpointType=org.checkita.dqf.core.streaming.Checkpoints.KafkaCheckpoint"></a><a id="CheckpointType:CheckpointType"></a>
+      <span class="permalink">
+      <a href="../../../../../org/checkita/dqf/connections/kafka/KafkaConnection.html#CheckpointType=org.checkita.dqf.core.streaming.Checkpoints.KafkaCheckpoint" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">CheckpointType</span><span class="result alias"> = <a href="../../core/streaming/Checkpoints$$KafkaCheckpoint.html" class="extype" name="org.checkita.dqf.core.streaming.Checkpoints.KafkaCheckpoint">KafkaCheckpoint</a></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.checkita.dqf.connections.kafka.KafkaConnection">KafkaConnection</a> → <a href="../DQStreamingConnection.html" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a></dd></dl></div>
+    </li><li name="org.checkita.dqf.connections.kafka.KafkaConnection.SourceType" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="SourceType=org.checkita.dqf.config.jobconf.Sources.KafkaSourceConfig"></a><a id="SourceType:SourceType"></a>
       <span class="permalink">
       <a href="../../../../../org/checkita/dqf/connections/kafka/KafkaConnection.html#SourceType=org.checkita.dqf.config.jobconf.Sources.KafkaSourceConfig" title="Permalink">
@@ -477,6 +493,23 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.checkita.dqf.connections.kafka.KafkaConnection">KafkaConnection</a> → <a href="../DQConnection.html" class="extype" name="org.checkita.dqf.connections.DQConnection">DQConnection</a></dd></dl></div>
+    </li><li name="org.checkita.dqf.connections.kafka.KafkaConnection#initCheckpoint" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="initCheckpoint(sourceConfig:KafkaConnection.this.SourceType):KafkaConnection.this.CheckpointType"></a><a id="initCheckpoint(SourceType):CheckpointType"></a>
+      <span class="permalink">
+      <a href="../../../../../org/checkita/dqf/connections/kafka/KafkaConnection.html#initCheckpoint(sourceConfig:KafkaConnection.this.SourceType):KafkaConnection.this.CheckpointType" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">initCheckpoint</span><span class="params">(<span name="sourceConfig">sourceConfig: <a href="#SourceType=org.checkita.dqf.config.jobconf.Sources.KafkaSourceConfig" class="extmbr" name="org.checkita.dqf.connections.kafka.KafkaConnection.SourceType">SourceType</a></span>)</span><span class="result">: <a href="#CheckpointType=org.checkita.dqf.core.streaming.Checkpoints.KafkaCheckpoint" class="extmbr" name="org.checkita.dqf.connections.kafka.KafkaConnection.CheckpointType">CheckpointType</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Creates initial checkpoint for provided Kafka source configuration.</p><div class="fullcomment"><div class="comment cmt"><p>Creates initial checkpoint for provided Kafka source configuration.
+</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Kafka source configuration</p></dd><dt>returns</dt><dd class="cmt"><p>Kafka checkpoint</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.checkita.dqf.connections.kafka.KafkaConnection">KafkaConnection</a> → <a href="../DQStreamingConnection.html" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -512,9 +545,9 @@
 </p><div class="fullcomment"><div class="comment cmt"><p>Loads external data into dataframe given a source configuration
 </p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Source configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Implicit Map of all explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt>returns</dt><dd class="cmt"><p>Spark DataFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.checkita.dqf.connections.kafka.KafkaConnection">KafkaConnection</a> → <a href="../DQConnection.html" class="extype" name="org.checkita.dqf.connections.DQConnection">DQConnection</a></dd></dl></div>
     </li><li name="org.checkita.dqf.connections.kafka.KafkaConnection#loadDataStream" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="loadDataStream(sourceConfig:KafkaConnection.this.SourceType)(implicitsettings:org.checkita.dqf.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,org.checkita.dqf.readers.SchemaReaders.SourceSchema],implicitcheckpoints:Map[String,org.checkita.dqf.core.streaming.Checkpoints.Checkpoint]):org.apache.spark.sql.DataFrame"></a><a id="loadDataStream(SourceType)(AppSettings,SparkSession,Map[String,SourceSchema],Map[String,Checkpoint]):DataFrame"></a>
+      <a id="loadDataStream(sourceConfig:KafkaConnection.this.SourceType,checkpoint:KafkaConnection.this.CheckpointType)(implicitsettings:org.checkita.dqf.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,org.checkita.dqf.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame"></a><a id="loadDataStream(SourceType,CheckpointType)(AppSettings,SparkSession,Map[String,SourceSchema]):DataFrame"></a>
       <span class="permalink">
-      <a href="../../../../../org/checkita/dqf/connections/kafka/KafkaConnection.html#loadDataStream(sourceConfig:KafkaConnection.this.SourceType)(implicitsettings:org.checkita.dqf.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,org.checkita.dqf.readers.SchemaReaders.SourceSchema],implicitcheckpoints:Map[String,org.checkita.dqf.core.streaming.Checkpoints.Checkpoint]):org.apache.spark.sql.DataFrame" title="Permalink">
+      <a href="../../../../../org/checkita/dqf/connections/kafka/KafkaConnection.html#loadDataStream(sourceConfig:KafkaConnection.this.SourceType,checkpoint:KafkaConnection.this.CheckpointType)(implicitsettings:org.checkita.dqf.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,org.checkita.dqf.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -523,12 +556,12 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">loadDataStream</span><span class="params">(<span name="sourceConfig">sourceConfig: <a href="#SourceType=org.checkita.dqf.config.jobconf.Sources.KafkaSourceConfig" class="extmbr" name="org.checkita.dqf.connections.kafka.KafkaConnection.SourceType">SourceType</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../../appsettings/AppSettings.html" class="extype" name="org.checkita.dqf.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="schemas">schemas: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../../readers/SchemaReaders$$SourceSchema.html" class="extype" name="org.checkita.dqf.readers.SchemaReaders.SourceSchema">SourceSchema</a>]</span>, <span name="checkpoints">checkpoints: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../../core/streaming/Checkpoints$$Checkpoint.html" class="extype" name="org.checkita.dqf.core.streaming.Checkpoints.Checkpoint">Checkpoint</a>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
+        <span class="name">loadDataStream</span><span class="params">(<span name="sourceConfig">sourceConfig: <a href="#SourceType=org.checkita.dqf.config.jobconf.Sources.KafkaSourceConfig" class="extmbr" name="org.checkita.dqf.connections.kafka.KafkaConnection.SourceType">SourceType</a></span>, <span name="checkpoint">checkpoint: <a href="#CheckpointType=org.checkita.dqf.core.streaming.Checkpoints.KafkaCheckpoint" class="extmbr" name="org.checkita.dqf.connections.kafka.KafkaConnection.CheckpointType">CheckpointType</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../../appsettings/AppSettings.html" class="extype" name="org.checkita.dqf.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="schemas">schemas: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../../readers/SchemaReaders$$SourceSchema.html" class="extype" name="org.checkita.dqf.readers.SchemaReaders.SourceSchema">SourceSchema</a>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
       </span>
       
       <p class="shortcomment cmt">Loads stream into a dataframe given the stream configuration
 </p><div class="fullcomment"><div class="comment cmt"><p>Loads stream into a dataframe given the stream configuration
-</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Source configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Implicit Map of all explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt class="param">checkpoints</dt><dd class="cmt"><p>Map of initial checkpoints read from checkpoint directory</p></dd><dt>returns</dt><dd class="cmt"><p>Spark Streaming DataFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.checkita.dqf.connections.kafka.KafkaConnection">KafkaConnection</a> → <a href="../DQStreamingConnection.html" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Source configuration</p></dd><dt class="param">checkpoint</dt><dd class="cmt"><p>Checkpoint to start stream from.</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Implicit Map of all explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt>returns</dt><dd class="cmt"><p>Spark Streaming DataFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.checkita.dqf.connections.kafka.KafkaConnection">KafkaConnection</a> → <a href="../DQStreamingConnection.html" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -615,6 +648,25 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="org.checkita.dqf.connections.kafka.KafkaConnection#validateOrFixCheckpoint" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="validateOrFixCheckpoint(checkpoint:KafkaConnection.this.CheckpointType,sourceConfig:KafkaConnection.this.SourceType):KafkaConnection.this.CheckpointType"></a><a id="validateOrFixCheckpoint(CheckpointType,SourceType):CheckpointType"></a>
+      <span class="permalink">
+      <a href="../../../../../org/checkita/dqf/connections/kafka/KafkaConnection.html#validateOrFixCheckpoint(checkpoint:KafkaConnection.this.CheckpointType,sourceConfig:KafkaConnection.this.SourceType):KafkaConnection.this.CheckpointType" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateOrFixCheckpoint</span><span class="params">(<span name="checkpoint">checkpoint: <a href="#CheckpointType=org.checkita.dqf.core.streaming.Checkpoints.KafkaCheckpoint" class="extmbr" name="org.checkita.dqf.connections.kafka.KafkaConnection.CheckpointType">CheckpointType</a></span>, <span name="sourceConfig">sourceConfig: <a href="#SourceType=org.checkita.dqf.config.jobconf.Sources.KafkaSourceConfig" class="extmbr" name="org.checkita.dqf.connections.kafka.KafkaConnection.SourceType">SourceType</a></span>)</span><span class="result">: <a href="#CheckpointType=org.checkita.dqf.core.streaming.Checkpoints.KafkaCheckpoint" class="extmbr" name="org.checkita.dqf.connections.kafka.KafkaConnection.CheckpointType">CheckpointType</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Validates checkpoint structure and makes updates in case if
+checkpoint structure needs to be changed.</p><div class="fullcomment"><div class="comment cmt"><p>Validates checkpoint structure and makes updates in case if
+checkpoint structure needs to be changed.
+</p></div><dl class="paramcmts block"><dt class="param">checkpoint</dt><dd class="cmt"><p>Checkpoint to validate and fix (if needed).</p></dd><dt class="param">sourceConfig</dt><dd class="cmt"><p>Source configuration</p></dd><dt>returns</dt><dd class="cmt"><p>Either original checkpoint if it is valid or a fixed checkpoint.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.checkita.dqf.connections.kafka.KafkaConnection">KafkaConnection</a> → <a href="../DQStreamingConnection.html" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
@@ -698,7 +750,8 @@
         <span class="name">writeData</span><span class="params">(<span name="data">data: <a href="KafkaOutput.html" class="extype" name="org.checkita.dqf.connections.kafka.KafkaOutput">KafkaOutput</a></span>)</span><span class="result">: <a href="../../utils/ResultUtils$.html#Result[T]=Either[Vector[String],T]" class="extmbr" name="org.checkita.dqf.utils.ResultUtils.Result">Result</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       
-      <p class="shortcomment cmt">Sends data to Kafka topic.</p><div class="fullcomment"><div class="comment cmt"><p>Sends data to Kafka topic.</p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>Data to be send</p></dd><dt>returns</dt><dd class="cmt"><p>Status of operation: either &quot;Success&quot; string or a list of errors.</p></dd></dl></div>
+      <p class="shortcomment cmt">Sends data to Kafka topic.</p><div class="fullcomment"><div class="comment cmt"><p>Sends data to Kafka topic.
+</p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>Data to be send</p></dd><dt>returns</dt><dd class="cmt"><p>Status of operation: either &quot;Success&quot; string or a list of errors.</p></dd></dl></div>
     </li>
               </ol>
             </div>

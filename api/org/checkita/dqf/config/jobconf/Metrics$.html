@@ -325,6 +325,24 @@
       <p class="shortcomment cmt">Sequence completeness regular metric configuration
 </p><div class="fullcomment"><div class="comment cmt"><p>Sequence completeness regular metric configuration
 </p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Metric ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Metric description</p></dd><dt class="param">source</dt><dd class="cmt"><p>Source ID over which metric is being calculated</p></dd><dt class="param">columns</dt><dd class="cmt"><p>Sequence of columns which are used for metric calculation</p></dd><dt class="param">params</dt><dd class="cmt"><p>Metric parameters</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this metric</p></dd></dl></div>
+    </li><li name="org.checkita.dqf.config.jobconf.Metrics.ArimaTrendMetricConfig" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ArimaTrendMetricConfigextendsMetrics.TrendMetricConfigwithProductwithSerializable"></a><a id="ArimaTrendMetricConfig:ArimaTrendMetricConfig"></a>
+      <span class="permalink">
+      <a href="../../../../../org/checkita/dqf/config/jobconf/Metrics$$ArimaTrendMetricConfig.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="ARIMA trend metric configuration" href="Metrics$$ArimaTrendMetricConfig.html"><span class="name">ArimaTrendMetricConfig</span></a><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="org.checkita.dqf.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="lookupMetric">lookupMetric: <a href="../RefinedTypes$$ID.html" class="extype" name="org.checkita.dqf.config.RefinedTypes.ID">ID</a></span>, <span name="rule">rule: <a href="../Enums$$TrendCheckRule.html" class="extype" name="org.checkita.dqf.config.Enums.TrendCheckRule">TrendCheckRule</a></span>, <span name="order">order: <a href="../RefinedTypes$.html#ThreeElemIntSeq=eu.timepit.refined.api.Refined[Seq[Int],eu.timepit.refined.collection.Size[eu.timepit.refined.generic.Equal[Int(3)]]]" class="extmbr" name="org.checkita.dqf.config.RefinedTypes.ThreeElemIntSeq">ThreeElemIntSeq</a></span>, <span name="windowSize">windowSize: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="windowOffset">windowOffset: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="org.checkita.dqf.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Metrics$$TrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.TrendMetricConfig">TrendMetricConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">ARIMA trend metric configuration
+</p><div class="fullcomment"><div class="comment cmt"><p>ARIMA trend metric configuration
+</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Metric ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Metric Description</p></dd><dt class="param">lookupMetric</dt><dd class="cmt"><p>Metric which historical results to pull for statistic calculation</p></dd><dt class="param">rule</dt><dd class="cmt"><p>Window calculation rule: by datetime or by number of records.</p></dd><dt class="param">order</dt><dd class="cmt"><p>Sequence of ARIMA order parameters: [p, d, q]</p></dd><dt class="param">windowSize</dt><dd class="cmt"><p>Size of the window for average metric value calculation (either a number of records or duration).</p></dd><dt class="param">windowOffset</dt><dd class="cmt"><p>Optional window offset (either a number of records or duration)</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this metric</p></dd></dl></div>
     </li><li name="org.checkita.dqf.config.jobconf.Metrics.AvgNumberMetricConfig" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="AvgNumberMetricConfigextendsMetrics.SingleColumnRegularMetricConfigwithProductwithSerializable"></a><a id="AvgNumberMetricConfig:AvgNumberMetricConfig"></a>
       <span class="permalink">
@@ -737,6 +755,24 @@
       <p class="shortcomment cmt">Levenshtein distance regular metric configuration
 </p><div class="fullcomment"><div class="comment cmt"><p>Levenshtein distance regular metric configuration
 </p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Metric ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Metric description</p></dd><dt class="param">source</dt><dd class="cmt"><p>Source ID over which metric is being calculated</p></dd><dt class="param">columns</dt><dd class="cmt"><p>Sequence of columns which are used for metric calculation</p></dd><dt class="param">params</dt><dd class="cmt"><p>Metric parameters</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this metric</p></dd><dt class="param">reversed</dt><dd class="cmt"><p>Boolean flag indicating whether error collection logic should be reversed for this metric</p></dd></dl></div>
+    </li><li name="org.checkita.dqf.config.jobconf.Metrics.LinregTrendMetricConfig" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="LinregTrendMetricConfigextendsMetrics.TrendMetricConfigwithProductwithSerializable"></a><a id="LinregTrendMetricConfig:LinregTrendMetricConfig"></a>
+      <span class="permalink">
+      <a href="../../../../../org/checkita/dqf/config/jobconf/Metrics$$LinregTrendMetricConfig.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="Linear regression trend metric configuration" href="Metrics$$LinregTrendMetricConfig.html"><span class="name">LinregTrendMetricConfig</span></a><span class="params">(<span name="id">id: <a href="../RefinedTypes$$ID.html" class="extype" name="org.checkita.dqf.config.RefinedTypes.ID">ID</a></span>, <span name="description">description: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="lookupMetric">lookupMetric: <a href="../RefinedTypes$$ID.html" class="extype" name="org.checkita.dqf.config.RefinedTypes.ID">ID</a></span>, <span name="rule">rule: <a href="../Enums$$TrendCheckRule.html" class="extype" name="org.checkita.dqf.config.Enums.TrendCheckRule">TrendCheckRule</a></span>, <span name="windowSize">windowSize: <span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span></span>, <span name="windowOffset">windowOffset: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="eu.timepit.refined.types.string.NonEmptyString">NonEmptyString</span>]</span>, <span name="metadata">metadata: <a href="../../../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<a href="../RefinedTypes$.html#SparkParam=eu.timepit.refined.api.Refined[String,eu.timepit.refined.string.MatchesRegex[String(&quot;^\\S+?\\=[\\S\\s]+$&quot;)]]" class="extmbr" name="org.checkita.dqf.config.RefinedTypes.SparkParam">SparkParam</a>] = <span class="symbol"><span class="name"><a href="../../../../../scala/index.html">Seq.empty</a></span></span></span>)</span><span class="result"> extends <a href="Metrics$$TrendMetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.TrendMetricConfig">TrendMetricConfig</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Linear regression trend metric configuration
+</p><div class="fullcomment"><div class="comment cmt"><p>Linear regression trend metric configuration
+</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>Metric ID</p></dd><dt class="param">description</dt><dd class="cmt"><p>Metric Description</p></dd><dt class="param">lookupMetric</dt><dd class="cmt"><p>Metric which historical results to pull for statistic calculation</p></dd><dt class="param">rule</dt><dd class="cmt"><p>Window calculation rule: by datetime or by number of records.</p></dd><dt class="param">windowSize</dt><dd class="cmt"><p>Size of the window for average metric value calculation (either a number of records or duration).</p></dd><dt class="param">windowOffset</dt><dd class="cmt"><p>Optional window offset (either a number of records or duration)</p></dd><dt class="param">metadata</dt><dd class="cmt"><p>List of metadata parameters specific to this metric</p></dd></dl></div>
     </li><li name="org.checkita.dqf.config.jobconf.Metrics.MaxNumberMetricConfig" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="MaxNumberMetricConfigextendsMetrics.AnyColumnRegularMetricConfigwithProductwithSerializable"></a><a id="MaxNumberMetricConfig:MaxNumberMetricConfig"></a>
       <span class="permalink">
@@ -1473,10 +1509,10 @@ Metric error collection logic might be reversed provided with corresponding bool
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a title="Base class for trend metrics that computes statistics over historical metric results." href="Metrics$$TrendMetricConfig.html"><span class="name">TrendMetricConfig</span></a><span class="result"> extends <a href="Metrics$$MetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.MetricConfig">MetricConfig</a> with <a href="../../core/metrics/TrendMetric.html" class="extype" name="org.checkita.dqf.core.metrics.TrendMetric">TrendMetric</a></span>
+        <a title="Base class for trend metrics that computes their values based on historical metric results." href="Metrics$$TrendMetricConfig.html"><span class="name">TrendMetricConfig</span></a><span class="result"> extends <a href="Metrics$$MetricConfig.html" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.MetricConfig">MetricConfig</a> with <a href="../../core/metrics/TrendMetric.html" class="extype" name="org.checkita.dqf.core.metrics.TrendMetric">TrendMetric</a></span>
       </span>
       
-      <p class="shortcomment cmt">Base class for trend metrics that computes statistics over historical metric results.</p>
+      <p class="shortcomment cmt">Base class for trend metrics that computes their values based on historical metric results.</p>
     </li></ol>
             </div>
 

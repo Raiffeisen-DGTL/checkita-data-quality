@@ -9,14 +9,14 @@
 <link href="../02-ApplicationSubmit/" rel="prev"/>
 <link href="../04-APIServer/" rel="next"/>
 <link href="../../logo/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.6.0, mkdocs-material-9.5.31" name="generator"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.5.44" name="generator"/>
 <title>Data Quality Results Storage - Checkita Data Quality</title>
-<link href="../../assets/stylesheets/main.3cba04c6.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/main.0253249f.min.css" rel="stylesheet"/>
 <link href="../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
 <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 </head>
 <body data-md-color-accent="indigo" data-md-color-primary="yellow" data-md-color-scheme="slate" dir="ltr">
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
@@ -35,7 +35,7 @@
 <img alt="logo" src="../../logo/logo.png"/>
 </a>
 <label class="md-header__button md-icon" for="__drawer">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
 </label>
 <div class="md-header__title" data-md-component="header-title">
 <div class="md-header__ellipsis">
@@ -54,7 +54,7 @@
 </div>
 </div>
 <label class="md-header__button md-icon" for="__search">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
 </label>
 <div class="md-search" data-md-component="search" role="dialog">
 <label class="md-search__overlay" for="__search"></label>
@@ -62,12 +62,12 @@
 <form class="md-search__form" name="search">
 <input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
 <label class="md-search__icon md-icon" for="__search">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
 </label>
 <nav aria-label="Search" class="md-search__options">
 <button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
 </button>
 </nav>
 </form>
@@ -86,7 +86,7 @@
 <div class="md-header__source">
 <a class="md-source" data-md-component="source" href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository">
 <div class="md-source__icon md-icon">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
 </div>
 <div class="md-source__repository">
     checkita-data-quality
@@ -197,7 +197,7 @@
 <div class="md-nav__source">
 <a class="md-source" data-md-component="source" href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository">
 <div class="md-source__icon md-icon">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
 </div>
 <div class="md-source__repository">
     checkita-data-quality
@@ -407,6 +407,13 @@
 <a class="md-nav__link" href="../../02-general-information/07-MetricCalculatorEngines/">
 <span class="md-ellipsis">
     Metric Calculator Engines Overview and Benchmarking
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-general-information/08-CheckFailureTolerance/">
+<span class="md-ellipsis">
+    Check Failure Tolerance
   </span>
 </a>
 </li>
@@ -998,6 +1005,11 @@ Therefore, it is required that there will be only one set of results per Data Qu
 <td></td>
 </tr>
 <tr>
+<td>is_critical</td>
+<td>BOOLEAN</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
 <td>reference_date</td>
 <td>TIMESTAMP</td>
 <td>NOT NULL</td>
@@ -1092,6 +1104,11 @@ Therefore, it is required that there will be only one set of results per Data Qu
 <td></td>
 </tr>
 <tr>
+<td>is_critical</td>
+<td>BOOLEAN</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
 <td>reference_date</td>
 <td>TIMESTAMP</td>
 <td>NOT NULL</td>
@@ -1156,141 +1173,136 @@ Therefore, it is required that there will be only one set of results per Data Qu
 </span><span id="__span-0-7">DROP TABLE IF EXISTS ${schema_name}.results_metric_regular;
 </span><span id="__span-0-8">CREATE EXTERNAL TABLE ${schema_name}.results_metric_regular
 </span><span id="__span-0-9">(
-</span><span id="__span-0-10">    job_id            STRING COMMENT '',
-</span><span id="__span-0-11">    metric_id         STRING COMMENT '',
-</span><span id="__span-0-12">    metric_name       STRING COMMENT '',
-</span><span id="__span-0-13">    description       STRING COMMENT '',
-</span><span id="__span-0-14">    metadata          STRING COMMENT '',
-</span><span id="__span-0-15">    source_id         STRING COMMENT '',
-</span><span id="__span-0-16">    column_names      STRING COMMENT '',
-</span><span id="__span-0-17">    params            STRING COMMENT '',
-</span><span id="__span-0-18">    result            DOUBLE COMMENT '',
-</span><span id="__span-0-19">    additional_result STRING COMMENT '',
-</span><span id="__span-0-20">    reference_date    TIMESTAMP COMMENT '',
-</span><span id="__span-0-21">    execution_date    TIMESTAMP COMMENT ''
-</span><span id="__span-0-22">)
-</span><span id="__span-0-23">COMMENT 'Data Quality Regular Metrics Results'
-</span><span id="__span-0-24">PARTITIONED BY (job_id STRING)
-</span><span id="__span-0-25">STORED AS PARQUET
-</span><span id="__span-0-26">LOCATION '${schema_dir}/results_metric_regular';
-</span><span id="__span-0-27">
-</span><span id="__span-0-28">DROP TABLE IF EXISTS ${schema_name}.results_metric_composed;
-</span><span id="__span-0-29">CREATE EXTERNAL TABLE ${schema_name}.results_metric_composed
-</span><span id="__span-0-30">(
-</span><span id="__span-0-31">    job_id            STRING COMMENT '',
-</span><span id="__span-0-32">    metric_id         STRING COMMENT '',
-</span><span id="__span-0-33">    metric_name       STRING COMMENT '',
-</span><span id="__span-0-34">    description       STRING COMMENT '',
-</span><span id="__span-0-35">    metadata          STRING COMMENT '',
-</span><span id="__span-0-36">    source_id         STRING COMMENT '',
-</span><span id="__span-0-37">    formula           STRING COMMENT '',
-</span><span id="__span-0-38">    result            DOUBLE COMMENT '',
-</span><span id="__span-0-39">    additional_result STRING COMMENT '',
-</span><span id="__span-0-40">    reference_date    TIMESTAMP COMMENT '',
-</span><span id="__span-0-41">    execution_date    TIMESTAMP COMMENT ''
-</span><span id="__span-0-42">)
-</span><span id="__span-0-43">COMMENT 'Data Quality Composed Metrics Results'
-</span><span id="__span-0-44">PARTITIONED BY (job_id STRING)
-</span><span id="__span-0-45">STORED AS PARQUET
-</span><span id="__span-0-46">LOCATION '${schema_dir}/results_metric_composed';
-</span><span id="__span-0-47">
-</span><span id="__span-0-48">DROP TABLE IF EXISTS ${schema_name}.results_metric_trend;
-</span><span id="__span-0-49">CREATE EXTERNAL TABLE ${schema_name}.results_metric_trend
-</span><span id="__span-0-50">(
-</span><span id="__span-0-51">  job_id            STRING COMMENT '',
-</span><span id="__span-0-52">  metric_id         STRING COMMENT '',
-</span><span id="__span-0-53">  metric_name       STRING COMMENT '',
-</span><span id="__span-0-54">  description       STRING COMMENT '',
-</span><span id="__span-0-55">  metadata          STRING COMMENT '',
-</span><span id="__span-0-56">  source_id         STRING COMMENT '',
-</span><span id="__span-0-57">  params            STRING COMMENT '',
-</span><span id="__span-0-58">  result            DOUBLE COMMENT '',
-</span><span id="__span-0-59">  additional_result STRING COMMENT '',
-</span><span id="__span-0-60">  reference_date    TIMESTAMP COMMENT '',
-</span><span id="__span-0-61">  execution_date    TIMESTAMP COMMENT ''
-</span><span id="__span-0-62">)
-</span><span id="__span-0-63">COMMENT 'Data Quality Trend Metrics Results'
-</span><span id="__span-0-64">PARTITIONED BY (job_id STRING)
-</span><span id="__span-0-65">STORED AS PARQUET
-</span><span id="__span-0-66">LOCATION '${schema_dir}/results_metric_trend';
-</span><span id="__span-0-67">
-</span><span id="__span-0-68">DROP TABLE IF EXISTS ${schema_name}.results_metric_error;
-</span><span id="__span-0-69">CREATE EXTERNAL TABLE ${schema_name}.results_metric_error
-</span><span id="__span-0-70">(
-</span><span id="__span-0-71">    job_id            STRING COMMENT '',
-</span><span id="__span-0-72">    metric_id         STRING COMMENT '',
-</span><span id="__span-0-73">    source_id         STRING COMMENT '',
-</span><span id="__span-0-74">    source_key_fields STRING COMMENT '',
-</span><span id="__span-0-75">    metric_columns    STRING COMMENT '',
-</span><span id="__span-0-76">    status            STRING COMMENT '',
-</span><span id="__span-0-77">    message           STRING COMMENT '',
-</span><span id="__span-0-78">    row_data          STRING COMMENT '',
-</span><span id="__span-0-79">    error_hash        STRING COMMENT '',
-</span><span id="__span-0-80">    reference_date    TIMESTAMP COMMENT '',
-</span><span id="__span-0-81">    execution_date    TIMESTAMP COMMENT '',
-</span><span id="__span-0-82">)
-</span><span id="__span-0-83">COMMENT 'Data Quality Metrics Error Results'
-</span><span id="__span-0-84">PARTITIONED BY (job_id STRING)
-</span><span id="__span-0-85">STORED AS PARQUET
-</span><span id="__span-0-86">LOCATION '${schema_dir}/results_metric_error';
-</span><span id="__span-0-87">
-</span><span id="__span-0-88">DROP TABLE IF EXISTS ${schema_name}.results_check_load;
-</span><span id="__span-0-89">CREATE EXTERNAL TABLE ${schema_name}.results_check_load
-</span><span id="__span-0-90">(
-</span><span id="__span-0-91">    job_id         STRING COMMENT '',
-</span><span id="__span-0-92">    check_id       STRING COMMENT '',
-</span><span id="__span-0-93">    check_name     STRING COMMENT '',
-</span><span id="__span-0-94">    description    STRING COMMENT '',
-</span><span id="__span-0-95">    metadata       STRING COMMENT '',
-</span><span id="__span-0-96">    source_id      STRING COMMENT '',
-</span><span id="__span-0-97">    expected       STRING COMMENT '',
-</span><span id="__span-0-98">    status         STRING COMMENT '',
-</span><span id="__span-0-99">    message        STRING COMMENT '',
-</span><span id="__span-0-100">    reference_date TIMESTAMP COMMENT '',
-</span><span id="__span-0-101">    execution_date TIMESTAMP COMMENT ''
-</span><span id="__span-0-102">)
-</span><span id="__span-0-103">COMMENT 'Data Quality Load Checks Results'
-</span><span id="__span-0-104">PARTITIONED BY (job_id STRING)
-</span><span id="__span-0-105">STORED AS PARQUET
-</span><span id="__span-0-106">LOCATION '${schema_dir}/results_check_load';
-</span><span id="__span-0-107">
-</span><span id="__span-0-108">DROP TABLE IF EXISTS ${schema_name}.results_check;
-</span><span id="__span-0-109">CREATE EXTERNAL TABLE ${schema_name}.results_check
-</span><span id="__span-0-110">(
-</span><span id="__span-0-111">    job_id             STRING COMMENT '',
-</span><span id="__span-0-112">    check_id           STRING COMMENT '',
-</span><span id="__span-0-113">    check_name         STRING COMMENT '',
-</span><span id="__span-0-114">    description        STRING COMMENT '',
-</span><span id="__span-0-115">    metadata           STRING COMMENT '',
-</span><span id="__span-0-116">    source_id          STRING COMMENT '',
-</span><span id="__span-0-117">    base_metric        STRING COMMENT '',
-</span><span id="__span-0-118">    compared_metric    STRING COMMENT '',
-</span><span id="__span-0-119">    compared_threshold DOUBLE COMMENT '',
-</span><span id="__span-0-120">    lower_bound        DOUBLE COMMENT '',
-</span><span id="__span-0-121">    upper_bound        DOUBLE COMMENT '',
-</span><span id="__span-0-122">    status             STRING COMMENT '',
-</span><span id="__span-0-123">    message            STRING COMMENT '',
-</span><span id="__span-0-124">    reference_date     TIMESTAMP COMMENT '',
-</span><span id="__span-0-125">    execution_date     TIMESTAMP COMMENT ''
-</span><span id="__span-0-126">)
-</span><span id="__span-0-127">COMMENT 'Data Quality Checks Results'
-</span><span id="__span-0-128">PARTITIONED BY (job_id STRING)
-</span><span id="__span-0-129">STORED AS PARQUET
-</span><span id="__span-0-130">LOCATION '${schema_dir}/results_check';
-</span><span id="__span-0-131">
-</span><span id="__span-0-132">DROP TABLE IF EXISTS ${schema_name}.job_state;
-</span><span id="__span-0-133">CREATE EXTERNAL TABLE ${schema_name}.job_state
-</span><span id="__span-0-134">(
-</span><span id="__span-0-135">    job_id            STRING COMMENT '',
-</span><span id="__span-0-136">    config            STRING COMMENT '',
-</span><span id="__span-0-137">    version_info      STRING COMMENT '',
-</span><span id="__span-0-138">    reference_date    TIMESTAMP COMMENT '',
-</span><span id="__span-0-139">    execution_date    TIMESTAMP COMMENT ''
-</span><span id="__span-0-140">)
-</span><span id="__span-0-141">COMMENT 'Data Quality Job State'
-</span><span id="__span-0-142">PARTITIONED BY (job_id STRING)
-</span><span id="__span-0-143">STORED AS PARQUET
-</span><span id="__span-0-144">LOCATION '${schema_dir}/job_state';
+</span><span id="__span-0-10">    metric_id         STRING COMMENT '',
+</span><span id="__span-0-11">    metric_name       STRING COMMENT '',
+</span><span id="__span-0-12">    description       STRING COMMENT '',
+</span><span id="__span-0-13">    metadata          STRING COMMENT '',
+</span><span id="__span-0-14">    source_id         STRING COMMENT '',
+</span><span id="__span-0-15">    column_names      STRING COMMENT '',
+</span><span id="__span-0-16">    params            STRING COMMENT '',
+</span><span id="__span-0-17">    result            DOUBLE COMMENT '',
+</span><span id="__span-0-18">    additional_result STRING COMMENT '',
+</span><span id="__span-0-19">    reference_date    TIMESTAMP COMMENT '',
+</span><span id="__span-0-20">    execution_date    TIMESTAMP COMMENT ''
+</span><span id="__span-0-21">)
+</span><span id="__span-0-22">COMMENT 'Data Quality Regular Metrics Results'
+</span><span id="__span-0-23">PARTITIONED BY (job_id STRING)
+</span><span id="__span-0-24">STORED AS PARQUET
+</span><span id="__span-0-25">LOCATION '${schema_dir}/results_metric_regular';
+</span><span id="__span-0-26">
+</span><span id="__span-0-27">DROP TABLE IF EXISTS ${schema_name}.results_metric_composed;
+</span><span id="__span-0-28">CREATE EXTERNAL TABLE ${schema_name}.results_metric_composed
+</span><span id="__span-0-29">(
+</span><span id="__span-0-30">    metric_id         STRING COMMENT '',
+</span><span id="__span-0-31">    metric_name       STRING COMMENT '',
+</span><span id="__span-0-32">    description       STRING COMMENT '',
+</span><span id="__span-0-33">    metadata          STRING COMMENT '',
+</span><span id="__span-0-34">    source_id         STRING COMMENT '',
+</span><span id="__span-0-35">    formula           STRING COMMENT '',
+</span><span id="__span-0-36">    result            DOUBLE COMMENT '',
+</span><span id="__span-0-37">    additional_result STRING COMMENT '',
+</span><span id="__span-0-38">    reference_date    TIMESTAMP COMMENT '',
+</span><span id="__span-0-39">    execution_date    TIMESTAMP COMMENT ''
+</span><span id="__span-0-40">)
+</span><span id="__span-0-41">COMMENT 'Data Quality Composed Metrics Results'
+</span><span id="__span-0-42">PARTITIONED BY (job_id STRING)
+</span><span id="__span-0-43">STORED AS PARQUET
+</span><span id="__span-0-44">LOCATION '${schema_dir}/results_metric_composed';
+</span><span id="__span-0-45">
+</span><span id="__span-0-46">DROP TABLE IF EXISTS ${schema_name}.results_metric_trend;
+</span><span id="__span-0-47">CREATE EXTERNAL TABLE ${schema_name}.results_metric_trend
+</span><span id="__span-0-48">(
+</span><span id="__span-0-49">  metric_id         STRING COMMENT '',
+</span><span id="__span-0-50">  metric_name       STRING COMMENT '',
+</span><span id="__span-0-51">  description       STRING COMMENT '',
+</span><span id="__span-0-52">  metadata          STRING COMMENT '',
+</span><span id="__span-0-53">  source_id         STRING COMMENT '',
+</span><span id="__span-0-54">  params            STRING COMMENT '',
+</span><span id="__span-0-55">  result            DOUBLE COMMENT '',
+</span><span id="__span-0-56">  additional_result STRING COMMENT '',
+</span><span id="__span-0-57">  reference_date    TIMESTAMP COMMENT '',
+</span><span id="__span-0-58">  execution_date    TIMESTAMP COMMENT ''
+</span><span id="__span-0-59">)
+</span><span id="__span-0-60">COMMENT 'Data Quality Trend Metrics Results'
+</span><span id="__span-0-61">PARTITIONED BY (job_id STRING)
+</span><span id="__span-0-62">STORED AS PARQUET
+</span><span id="__span-0-63">LOCATION '${schema_dir}/results_metric_trend';
+</span><span id="__span-0-64">
+</span><span id="__span-0-65">DROP TABLE IF EXISTS ${schema_name}.results_metric_error;
+</span><span id="__span-0-66">CREATE EXTERNAL TABLE ${schema_name}.results_metric_error
+</span><span id="__span-0-67">(
+</span><span id="__span-0-68">    metric_id         STRING COMMENT '',
+</span><span id="__span-0-69">    source_id         STRING COMMENT '',
+</span><span id="__span-0-70">    source_key_fields STRING COMMENT '',
+</span><span id="__span-0-71">    metric_columns    STRING COMMENT '',
+</span><span id="__span-0-72">    status            STRING COMMENT '',
+</span><span id="__span-0-73">    message           STRING COMMENT '',
+</span><span id="__span-0-74">    row_data          STRING COMMENT '',
+</span><span id="__span-0-75">    error_hash        STRING COMMENT '',
+</span><span id="__span-0-76">    reference_date    TIMESTAMP COMMENT '',
+</span><span id="__span-0-77">    execution_date    TIMESTAMP COMMENT ''
+</span><span id="__span-0-78">)
+</span><span id="__span-0-79">COMMENT 'Data Quality Metrics Error Results'
+</span><span id="__span-0-80">PARTITIONED BY (job_id STRING)
+</span><span id="__span-0-81">STORED AS PARQUET
+</span><span id="__span-0-82">LOCATION '${schema_dir}/results_metric_error';
+</span><span id="__span-0-83">
+</span><span id="__span-0-84">DROP TABLE IF EXISTS ${schema_name}.results_check_load;
+</span><span id="__span-0-85">CREATE EXTERNAL TABLE ${schema_name}.results_check_load
+</span><span id="__span-0-86">(
+</span><span id="__span-0-87">    check_id       STRING COMMENT '',
+</span><span id="__span-0-88">    check_name     STRING COMMENT '',
+</span><span id="__span-0-89">    description    STRING COMMENT '',
+</span><span id="__span-0-90">    metadata       STRING COMMENT '',
+</span><span id="__span-0-91">    source_id      STRING COMMENT '',
+</span><span id="__span-0-92">    expected       STRING COMMENT '',
+</span><span id="__span-0-93">    status         STRING COMMENT '',
+</span><span id="__span-0-94">    message        STRING COMMENT '',
+</span><span id="__span-0-95">    is_critical    BOOLEAN COMMENT '',
+</span><span id="__span-0-96">    reference_date TIMESTAMP COMMENT '',
+</span><span id="__span-0-97">    execution_date TIMESTAMP COMMENT ''
+</span><span id="__span-0-98">)
+</span><span id="__span-0-99">COMMENT 'Data Quality Load Checks Results'
+</span><span id="__span-0-100">PARTITIONED BY (job_id STRING)
+</span><span id="__span-0-101">STORED AS PARQUET
+</span><span id="__span-0-102">LOCATION '${schema_dir}/results_check_load';
+</span><span id="__span-0-103">
+</span><span id="__span-0-104">DROP TABLE IF EXISTS ${schema_name}.results_check;
+</span><span id="__span-0-105">CREATE EXTERNAL TABLE ${schema_name}.results_check
+</span><span id="__span-0-106">(
+</span><span id="__span-0-107">    check_id           STRING COMMENT '',
+</span><span id="__span-0-108">    check_name         STRING COMMENT '',
+</span><span id="__span-0-109">    description        STRING COMMENT '',
+</span><span id="__span-0-110">    metadata           STRING COMMENT '',
+</span><span id="__span-0-111">    source_id          STRING COMMENT '',
+</span><span id="__span-0-112">    base_metric        STRING COMMENT '',
+</span><span id="__span-0-113">    compared_metric    STRING COMMENT '',
+</span><span id="__span-0-114">    compared_threshold DOUBLE COMMENT '',
+</span><span id="__span-0-115">    lower_bound        DOUBLE COMMENT '',
+</span><span id="__span-0-116">    upper_bound        DOUBLE COMMENT '',
+</span><span id="__span-0-117">    status             STRING COMMENT '',
+</span><span id="__span-0-118">    message            STRING COMMENT '',
+</span><span id="__span-0-119">    is_critical        BOOLEAN COMMENT '',
+</span><span id="__span-0-120">    reference_date     TIMESTAMP COMMENT '',
+</span><span id="__span-0-121">    execution_date     TIMESTAMP COMMENT ''
+</span><span id="__span-0-122">)
+</span><span id="__span-0-123">COMMENT 'Data Quality Checks Results'
+</span><span id="__span-0-124">PARTITIONED BY (job_id STRING)
+</span><span id="__span-0-125">STORED AS PARQUET
+</span><span id="__span-0-126">LOCATION '${schema_dir}/results_check';
+</span><span id="__span-0-127">
+</span><span id="__span-0-128">DROP TABLE IF EXISTS ${schema_name}.job_state;
+</span><span id="__span-0-129">CREATE EXTERNAL TABLE ${schema_name}.job_state
+</span><span id="__span-0-130">(
+</span><span id="__span-0-131">    config            STRING COMMENT '',
+</span><span id="__span-0-132">    version_info      STRING COMMENT '',
+</span><span id="__span-0-133">    reference_date    TIMESTAMP COMMENT '',
+</span><span id="__span-0-134">    execution_date    TIMESTAMP COMMENT ''
+</span><span id="__span-0-135">)
+</span><span id="__span-0-136">COMMENT 'Data Quality Job State'
+</span><span id="__span-0-137">PARTITIONED BY (job_id STRING)
+</span><span id="__span-0-138">STORED AS PARQUET
+</span><span id="__span-0-139">LOCATION '${schema_dir}/job_state';
 </span></code></pre></div>
 </article>
 </div>
@@ -1315,8 +1327,8 @@ Therefore, it is required that there will be only one set of results per Data Qu
 <div class="md-dialog" data-md-component="dialog">
 <div class="md-dialog__inner md-typeset"></div>
 </div>
-<script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
-<script src="../../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
+<script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
 <script>document$.subscribe(() => {
             window.update_swagger_ui_iframe_height = function (id) {
                 var iFrameID = document.getElementById(id);

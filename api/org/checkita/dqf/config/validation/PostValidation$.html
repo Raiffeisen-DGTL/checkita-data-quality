@@ -598,6 +598,25 @@ Map(node -&gt; List(adjacent node))
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="org.checkita.dqf.config.validation.PostValidation#validateArimaTrendMetricOrder" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="validateArimaTrendMetricOrder:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateArimaTrendMetricOrder:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
+      <span class="permalink">
+      <a href="../../../../../org/checkita/dqf/config/validation/PostValidation$.html#validateArimaTrendMetricOrder:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateArimaTrendMetricOrder</span><span class="result">: (<span class="extype" name="com.typesafe.config.ConfigObject">ConfigObject</span>) ⇒ <a href="../../../../../scala/index.html#Vector[+A]=scala.collection.immutable.Vector[A]" class="extmbr" name="scala.Vector">Vector</a>[<span class="extype" name="pureconfig.error.ConfigReaderFailure">ConfigReaderFailure</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Ensure validity of ARIMA model order parameters in ARIMA trend metric configuration.</p><div class="fullcomment"><div class="comment cmt"><p>Ensure validity of ARIMA model order parameters in ARIMA trend metric configuration.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>This check is run at post-validation stage, as it is quite difficult to derive
+      pureconfig readers for sealed trait families (thus approach is used to define kinded configurations)
+      to run check during config parsing.</p></span></dd></dl></div>
     </li><li name="org.checkita.dqf.config.validation.PostValidation#validateBatchOrStream" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="validateBatchOrStream:com.typesafe.config.ConfigObject=&gt;Vector[pureconfig.error.ConfigReaderFailure]"></a><a id="validateBatchOrStream:(ConfigObject)⇒Vector[ConfigReaderFailure]"></a>
       <span class="permalink">

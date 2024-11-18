@@ -325,14 +325,33 @@
         <div id="allMembers">
         
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.checkita.dqf.connections.DQStreamingConnection.CheckpointType" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CheckpointType&lt;:org.checkita.dqf.core.streaming.Checkpoints.Checkpoint"></a><a id="CheckpointType:(DQStreamingConnection.this)#CheckpointType"></a>
+      <span class="permalink">
+      <a href="../../../../org/checkita/dqf/connections/DQStreamingConnection.html#CheckpointType&lt;:org.checkita.dqf.core.streaming.Checkpoints.Checkpoint" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">CheckpointType</span><span class="result"> &lt;: <a href="../core/streaming/Checkpoints$$Checkpoint.html" class="extype" name="org.checkita.dqf.core.streaming.Checkpoints.Checkpoint">Checkpoint</a></span>
+      </span>
+      
+      
+    </li></ol>
+            </div>
 
         <div class="values members">
               <h3>Abstract Value Members</h3>
-              <ol><li name="org.checkita.dqf.connections.DQStreamingConnection#loadDataStream" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="loadDataStream(sourceConfig:DQStreamingConnection.this.SourceType)(implicitsettings:org.checkita.dqf.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,org.checkita.dqf.readers.SchemaReaders.SourceSchema],implicitcheckpoints:Map[String,org.checkita.dqf.core.streaming.Checkpoints.Checkpoint]):org.apache.spark.sql.DataFrame"></a><a id="loadDataStream((DQStreamingConnection.this)#SourceType)(AppSettings,SparkSession,Map[String,SourceSchema],Map[String,Checkpoint]):DataFrame"></a>
+              <ol><li name="org.checkita.dqf.connections.DQStreamingConnection#initCheckpoint" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="initCheckpoint(sourceConfig:DQStreamingConnection.this.SourceType):DQStreamingConnection.this.CheckpointType"></a><a id="initCheckpoint((DQStreamingConnection.this)#SourceType):(DQStreamingConnection.this)#CheckpointType"></a>
       <span class="permalink">
-      <a href="../../../../org/checkita/dqf/connections/DQStreamingConnection.html#loadDataStream(sourceConfig:DQStreamingConnection.this.SourceType)(implicitsettings:org.checkita.dqf.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,org.checkita.dqf.readers.SchemaReaders.SourceSchema],implicitcheckpoints:Map[String,org.checkita.dqf.core.streaming.Checkpoints.Checkpoint]):org.apache.spark.sql.DataFrame" title="Permalink">
+      <a href="../../../../org/checkita/dqf/connections/DQStreamingConnection.html#initCheckpoint(sourceConfig:DQStreamingConnection.this.SourceType):DQStreamingConnection.this.CheckpointType" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -341,12 +360,48 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">loadDataStream</span><span class="params">(<span name="sourceConfig">sourceConfig: (<a href="" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a>.this)#<span class="extype" name="org.checkita.dqf.connections.DQConnection.SourceType">SourceType</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="org.checkita.dqf.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="schemas">schemas: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../readers/SchemaReaders$$SourceSchema.html" class="extype" name="org.checkita.dqf.readers.SchemaReaders.SourceSchema">SourceSchema</a>]</span>, <span name="checkpoints">checkpoints: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../core/streaming/Checkpoints$$Checkpoint.html" class="extype" name="org.checkita.dqf.core.streaming.Checkpoints.Checkpoint">Checkpoint</a>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
+        <span class="name">initCheckpoint</span><span class="params">(<span name="sourceConfig">sourceConfig: (<a href="" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a>.this)#<span class="extype" name="org.checkita.dqf.connections.DQConnection.SourceType">SourceType</span></span>)</span><span class="result">: (<a href="" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a>.this)#<span class="extype" name="org.checkita.dqf.connections.DQStreamingConnection.CheckpointType">CheckpointType</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Creates initial checkpoint for provided Kafka source configuration.</p><div class="fullcomment"><div class="comment cmt"><p>Creates initial checkpoint for provided Kafka source configuration.
+</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Kafka source configuration</p></dd><dt>returns</dt><dd class="cmt"><p>Kafka checkpoint</p></dd></dl></div>
+    </li><li name="org.checkita.dqf.connections.DQStreamingConnection#loadDataStream" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="loadDataStream(sourceConfig:DQStreamingConnection.this.SourceType,checkpoint:DQStreamingConnection.this.CheckpointType)(implicitsettings:org.checkita.dqf.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,org.checkita.dqf.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame"></a><a id="loadDataStream((DQStreamingConnection.this)#SourceType,(DQStreamingConnection.this)#CheckpointType)(AppSettings,SparkSession,Map[String,SourceSchema]):DataFrame"></a>
+      <span class="permalink">
+      <a href="../../../../org/checkita/dqf/connections/DQStreamingConnection.html#loadDataStream(sourceConfig:DQStreamingConnection.this.SourceType,checkpoint:DQStreamingConnection.this.CheckpointType)(implicitsettings:org.checkita.dqf.appsettings.AppSettings,implicitspark:org.apache.spark.sql.SparkSession,implicitschemas:Map[String,org.checkita.dqf.readers.SchemaReaders.SourceSchema]):org.apache.spark.sql.DataFrame" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">loadDataStream</span><span class="params">(<span name="sourceConfig">sourceConfig: (<a href="" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a>.this)#<span class="extype" name="org.checkita.dqf.connections.DQConnection.SourceType">SourceType</span></span>, <span name="checkpoint">checkpoint: (<a href="" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a>.this)#<span class="extype" name="org.checkita.dqf.connections.DQStreamingConnection.CheckpointType">CheckpointType</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="settings">settings: <a href="../appsettings/AppSettings.html" class="extype" name="org.checkita.dqf.appsettings.AppSettings">AppSettings</a></span>, <span name="spark">spark: <span class="extype" name="org.apache.spark.sql.SparkSession">SparkSession</span></span>, <span name="schemas">schemas: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../readers/SchemaReaders$$SourceSchema.html" class="extype" name="org.checkita.dqf.readers.SchemaReaders.SourceSchema">SourceSchema</a>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
       </span>
       
       <p class="shortcomment cmt">Loads stream into a dataframe given the stream configuration
 </p><div class="fullcomment"><div class="comment cmt"><p>Loads stream into a dataframe given the stream configuration
-</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Stream configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Implicit Map of all explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt class="param">checkpoints</dt><dd class="cmt"><p>Map of initial checkpoints read from checkpoint directory</p></dd><dt>returns</dt><dd class="cmt"><p>Spark Streaming DataFrame</p></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">sourceConfig</dt><dd class="cmt"><p>Stream configuration</p></dd><dt class="param">checkpoint</dt><dd class="cmt"><p>Checkpoint for given stream configuration</p></dd><dt class="param">settings</dt><dd class="cmt"><p>Implicit application settings object</p></dd><dt class="param">spark</dt><dd class="cmt"><p>Implicit spark session object</p></dd><dt class="param">schemas</dt><dd class="cmt"><p>Implicit Map of all explicitly defined schemas (schemaId -&gt; SourceSchema)</p></dd><dt>returns</dt><dd class="cmt"><p>Spark Streaming DataFrame</p></dd></dl></div>
+    </li><li name="org.checkita.dqf.connections.DQStreamingConnection#validateOrFixCheckpoint" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="validateOrFixCheckpoint(checkpoint:DQStreamingConnection.this.CheckpointType,sourceConfig:DQStreamingConnection.this.SourceType):DQStreamingConnection.this.CheckpointType"></a><a id="validateOrFixCheckpoint((DQStreamingConnection.this)#CheckpointType,(DQStreamingConnection.this)#SourceType):(DQStreamingConnection.this)#CheckpointType"></a>
+      <span class="permalink">
+      <a href="../../../../org/checkita/dqf/connections/DQStreamingConnection.html#validateOrFixCheckpoint(checkpoint:DQStreamingConnection.this.CheckpointType,sourceConfig:DQStreamingConnection.this.SourceType):DQStreamingConnection.this.CheckpointType" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateOrFixCheckpoint</span><span class="params">(<span name="checkpoint">checkpoint: (<a href="" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a>.this)#<span class="extype" name="org.checkita.dqf.connections.DQStreamingConnection.CheckpointType">CheckpointType</span></span>, <span name="sourceConfig">sourceConfig: (<a href="" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a>.this)#<span class="extype" name="org.checkita.dqf.connections.DQConnection.SourceType">SourceType</span></span>)</span><span class="result">: (<a href="" class="extype" name="org.checkita.dqf.connections.DQStreamingConnection">DQStreamingConnection</a>.this)#<span class="extype" name="org.checkita.dqf.connections.DQStreamingConnection.CheckpointType">CheckpointType</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Validates checkpoint structure and makes updates in case if
+checkpoint structure needs to be changed.</p><div class="fullcomment"><div class="comment cmt"><p>Validates checkpoint structure and makes updates in case if
+checkpoint structure needs to be changed.
+</p></div><dl class="paramcmts block"><dt class="param">checkpoint</dt><dd class="cmt"><p>Checkpoint to validate and fix (if needed).</p></dd><dt class="param">sourceConfig</dt><dd class="cmt"><p>Source configuration</p></dd><dt>returns</dt><dd class="cmt"><p>Either original checkpoint if it is valid or a fixed checkpoint.</p></dd></dl></div>
     </li></ol>
             </div>
 

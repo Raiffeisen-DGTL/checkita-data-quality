@@ -9,21 +9,21 @@
 <link href="../../03-job-configuration/12-JobConfigExample/" rel="prev"/>
 <link href="../../contribution/" rel="next"/>
 <link href="../../logo/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.6.0, mkdocs-material-9.5.31" name="generator"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.5.44" name="generator"/>
 <title>Changelog - Checkita Data Quality</title>
-<link href="../../assets/stylesheets/main.3cba04c6.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/main.0253249f.min.css" rel="stylesheet"/>
 <link href="../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
 <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 </head>
 <body data-md-color-accent="indigo" data-md-color-primary="yellow" data-md-color-scheme="slate" dir="ltr">
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#200-2024-08-07">
+<a class="md-skip" href="#210-2024-11-18">
           Skip to content
         </a>
 </div>
@@ -35,7 +35,7 @@
 <img alt="logo" src="../../logo/logo.png"/>
 </a>
 <label class="md-header__button md-icon" for="__drawer">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
 </label>
 <div class="md-header__title" data-md-component="header-title">
 <div class="md-header__ellipsis">
@@ -54,7 +54,7 @@
 </div>
 </div>
 <label class="md-header__button md-icon" for="__search">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
 </label>
 <div class="md-search" data-md-component="search" role="dialog">
 <label class="md-search__overlay" for="__search"></label>
@@ -62,12 +62,12 @@
 <form class="md-search__form" name="search">
 <input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
 <label class="md-search__icon md-icon" for="__search">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
 </label>
 <nav aria-label="Search" class="md-search__options">
 <button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
 </button>
 </nav>
 </form>
@@ -86,7 +86,7 @@
 <div class="md-header__source">
 <a class="md-source" data-md-component="source" href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository">
 <div class="md-source__icon md-icon">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
 </div>
 <div class="md-source__repository">
     checkita-data-quality
@@ -197,7 +197,7 @@
 <div class="md-nav__source">
 <a class="md-source" data-md-component="source" href="https://github.com/Raiffeisen-DGTL/checkita-data-quality" title="Go to repository">
 <div class="md-source__icon md-icon">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
 </div>
 <div class="md-source__repository">
     checkita-data-quality
@@ -325,6 +325,13 @@
 <a class="md-nav__link" href="../../02-general-information/07-MetricCalculatorEngines/">
 <span class="md-ellipsis">
     Metric Calculator Engines Overview and Benchmarking
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-general-information/08-CheckFailureTolerance/">
+<span class="md-ellipsis">
+    Check Failure Tolerance
   </span>
 </a>
 </li>
@@ -456,12 +463,12 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#200-2024-08-07">
+<a class="md-nav__link" href="#210-2024-11-18">
 <span class="md-ellipsis">
-      2.0.0 (2024-08-07)
+      2.1.0 (2024-11-18)
     </span>
 </a>
-<nav aria-label="2.0.0 (2024-08-07)" class="md-nav">
+<nav aria-label="2.1.0 (2024-11-18)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
 <a class="md-nav__link" href="#bug-fixes">
@@ -472,6 +479,31 @@
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#features">
+<span class="md-ellipsis">
+      Features
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#200-2024-08-07">
+<span class="md-ellipsis">
+      2.0.0 (2024-08-07)
+    </span>
+</a>
+<nav aria-label="2.0.0 (2024-08-07)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#bug-fixes_1">
+<span class="md-ellipsis">
+      Bug Fixes
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#features_1">
 <span class="md-ellipsis">
       Features
     </span>
@@ -496,7 +528,7 @@
 <nav aria-label="1.7.2 (2024-06-21)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_1">
+<a class="md-nav__link" href="#bug-fixes_2">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -514,7 +546,7 @@
 <nav aria-label="1.7.1 (2024-05-27)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_2">
+<a class="md-nav__link" href="#bug-fixes_3">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -532,14 +564,14 @@
 <nav aria-label="1.7.0 (2024-05-13)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_3">
+<a class="md-nav__link" href="#bug-fixes_4">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_1">
+<a class="md-nav__link" href="#features_2">
 <span class="md-ellipsis">
       Features
     </span>
@@ -557,7 +589,7 @@
 <nav aria-label="1.6.0 (2024-04-16)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_2">
+<a class="md-nav__link" href="#features_3">
 <span class="md-ellipsis">
       Features
     </span>
@@ -575,14 +607,14 @@
 <nav aria-label="1.5.0 (2024-03-29)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_4">
+<a class="md-nav__link" href="#bug-fixes_5">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_3">
+<a class="md-nav__link" href="#features_4">
 <span class="md-ellipsis">
       Features
     </span>
@@ -600,7 +632,7 @@
 <nav aria-label="1.4.2 (2024-03-20)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_5">
+<a class="md-nav__link" href="#bug-fixes_6">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -618,7 +650,7 @@
 <nav aria-label="1.4.1 (2024-03-14)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_6">
+<a class="md-nav__link" href="#bug-fixes_7">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -636,7 +668,7 @@
 <nav aria-label="1.4.0 (2024-03-13)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_4">
+<a class="md-nav__link" href="#features_5">
 <span class="md-ellipsis">
       Features
     </span>
@@ -654,7 +686,7 @@
 <nav aria-label="1.3.2 (2024-03-11)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_7">
+<a class="md-nav__link" href="#bug-fixes_8">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -672,7 +704,7 @@
 <nav aria-label="1.3.1 (2024-3-4)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_8">
+<a class="md-nav__link" href="#bug-fixes_9">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -690,7 +722,7 @@
 <nav aria-label="1.3.0 (2024-3-4)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_5">
+<a class="md-nav__link" href="#features_6">
 <span class="md-ellipsis">
       Features
     </span>
@@ -708,7 +740,7 @@
 <nav aria-label="1.2.1 (2024-2-26)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_9">
+<a class="md-nav__link" href="#bug-fixes_10">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -726,14 +758,14 @@
 <nav aria-label="1.2.0 (2024-2-16)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_10">
+<a class="md-nav__link" href="#bug-fixes_11">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_6">
+<a class="md-nav__link" href="#features_7">
 <span class="md-ellipsis">
       Features
     </span>
@@ -751,7 +783,7 @@
 <nav aria-label="1.1.1 (2023-12-20)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_11">
+<a class="md-nav__link" href="#bug-fixes_12">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -769,7 +801,7 @@
 <nav aria-label="1.1.0 (2023-12-08)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_7">
+<a class="md-nav__link" href="#features_8">
 <span class="md-ellipsis">
       Features
     </span>
@@ -787,7 +819,7 @@
 <nav aria-label="1.0.1 (2023-11-13)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_12">
+<a class="md-nav__link" href="#bug-fixes_13">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -805,14 +837,14 @@
 <nav aria-label="1.0.0 (2023-11-01)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_13">
+<a class="md-nav__link" href="#bug-fixes_14">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_8">
+<a class="md-nav__link" href="#features_9">
 <span class="md-ellipsis">
       Features
     </span>
@@ -830,7 +862,7 @@
 <nav aria-label="0.3.5 (2023-09-19)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_14">
+<a class="md-nav__link" href="#bug-fixes_15">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -848,14 +880,14 @@
 <nav aria-label="0.3.4 (2023-09-14)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_9">
+<a class="md-nav__link" href="#features_10">
 <span class="md-ellipsis">
       Features
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_15">
+<a class="md-nav__link" href="#bug-fixes_16">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -873,7 +905,7 @@
 <nav aria-label="0.3.3 (2023-09-04)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_10">
+<a class="md-nav__link" href="#features_11">
 <span class="md-ellipsis">
       Features
     </span>
@@ -891,14 +923,14 @@
 <nav aria-label="0.3.2 (2023-08-25)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_11">
+<a class="md-nav__link" href="#features_12">
 <span class="md-ellipsis">
       Features
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_16">
+<a class="md-nav__link" href="#bug-fixes_17">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -916,7 +948,7 @@
 <nav aria-label="0.3.1 (2023-08-17)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_17">
+<a class="md-nav__link" href="#bug-fixes_18">
 <span class="md-ellipsis">
       Bug Fixes
     </span>
@@ -932,31 +964,6 @@
     </span>
 </a>
 <nav aria-label="0.3.0 (2023-07-31)" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#features_12">
-<span class="md-ellipsis">
-      Features
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bug-fixes_18">
-<span class="md-ellipsis">
-      Bug Fixes
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#020-2023-06-21">
-<span class="md-ellipsis">
-      0.2.0 (2023-06-21)
-    </span>
-</a>
-<nav aria-label="0.2.0 (2023-06-21)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
 <a class="md-nav__link" href="#features_13">
@@ -976,12 +983,12 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#0110-2023-06-15">
+<a class="md-nav__link" href="#020-2023-06-21">
 <span class="md-ellipsis">
-      0.1.10 (2023-06-15)
+      0.2.0 (2023-06-21)
     </span>
 </a>
-<nav aria-label="0.1.10 (2023-06-15)" class="md-nav">
+<nav aria-label="0.2.0 (2023-06-21)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
 <a class="md-nav__link" href="#features_14">
@@ -1001,12 +1008,12 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#019-2023-05-17">
+<a class="md-nav__link" href="#0110-2023-06-15">
 <span class="md-ellipsis">
-      0.1.9 (2023-05-17)
+      0.1.10 (2023-06-15)
     </span>
 </a>
-<nav aria-label="0.1.9 (2023-05-17)" class="md-nav">
+<nav aria-label="0.1.10 (2023-06-15)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
 <a class="md-nav__link" href="#features_15">
@@ -1026,12 +1033,12 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#018-2023-04-20">
+<a class="md-nav__link" href="#019-2023-05-17">
 <span class="md-ellipsis">
-      0.1.8 (2023-04-20)
+      0.1.9 (2023-05-17)
     </span>
 </a>
-<nav aria-label="0.1.8 (2023-04-20)" class="md-nav">
+<nav aria-label="0.1.9 (2023-05-17)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
 <a class="md-nav__link" href="#features_16">
@@ -1051,12 +1058,12 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#017-2023-04-04">
+<a class="md-nav__link" href="#018-2023-04-20">
 <span class="md-ellipsis">
-      0.1.7 (2023-04-04)
+      0.1.8 (2023-04-20)
     </span>
 </a>
-<nav aria-label="0.1.7 (2023-04-04)" class="md-nav">
+<nav aria-label="0.1.8 (2023-04-20)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
 <a class="md-nav__link" href="#features_17">
@@ -1076,12 +1083,12 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#016-2022-08-23">
+<a class="md-nav__link" href="#017-2023-04-04">
 <span class="md-ellipsis">
-      0.1.6 (2022-08-23)
+      0.1.7 (2023-04-04)
     </span>
 </a>
-<nav aria-label="0.1.6 (2022-08-23)" class="md-nav">
+<nav aria-label="0.1.7 (2023-04-04)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
 <a class="md-nav__link" href="#features_18">
@@ -1101,6 +1108,31 @@
 </nav>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#016-2022-08-23">
+<span class="md-ellipsis">
+      0.1.6 (2022-08-23)
+    </span>
+</a>
+<nav aria-label="0.1.6 (2022-08-23)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#features_19">
+<span class="md-ellipsis">
+      Features
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#bug-fixes_25">
+<span class="md-ellipsis">
+      Bug Fixes
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#015-2022-07-01">
 <span class="md-ellipsis">
       0.1.5 (2022-07-01)
@@ -1109,7 +1141,7 @@
 <nav aria-label="0.1.5 (2022-07-01)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_19">
+<a class="md-nav__link" href="#features_20">
 <span class="md-ellipsis">
       Features
     </span>
@@ -1127,7 +1159,7 @@
 <nav aria-label="0.1.4 (2022-06-22)" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#features_20">
+<a class="md-nav__link" href="#features_21">
 <span class="md-ellipsis">
       Features
     </span>
@@ -1196,12 +1228,28 @@
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
 <h1>Changelog</h1>
-<h2 id="200-2024-08-07"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.2...v2.0.0">2.0.0</a> (2024-08-07)</h2>
+<h2 id="210-2024-11-18"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v2.0.0...v2.1.0">2.1.0</a> (2024-11-18)</h2>
 <h3 id="bug-fixes">Bug Fixes</h3>
+<ul>
+<li>added checkpoint initialization and validation for kafka streams (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/62">#62</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/1af4105d31b2725cedbc4ecbb07e5b4a1bbc5627">1af4105</a>)</li>
+<li>added logger name in props (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/59">#59</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/1a1d5a8d212e9248dd436729616bc9b4b966298b">1a1d5a8</a>)</li>
+<li>expression checks calculation for streaming jobs (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/66">#66</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/13217c9b35f18973d19f970e12770b4e8d71a134">13217c9</a>)</li>
+<li>hive and file storage (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/60">#60</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/bdedfad1d8645914880207e2342ebcec8ed961bc">bdedfad</a>)</li>
+<li>update expressions parsing (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/65">#65</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/886d29c07cbdc700f9b48d4f8b082fe6c7c1e18d">886d29c</a>)</li>
+</ul>
+<h3 id="features">Features</h3>
+<ul>
+<li>added job config generator for api server (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/54">#54</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/51050a83ddf64230c071f1a17b134202ca1bb98b">51050a8</a>)</li>
+<li>added persist for regular sources (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/63">#63</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/8070fc12a13c6e90bd5ad29ddba041fc40131e44">8070fc1</a>)</li>
+<li>adding arima and linear regression trend metrics (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/64">#64</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/54231d83c8040e8991a610da5002a0c2999fd490">54231d8</a>)</li>
+<li>fail flag for checks (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/61">#61</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/cf32cbd8bf832f8cd61630db28b53c6c0369923e">cf32cbd</a>)</li>
+</ul>
+<h2 id="200-2024-08-07"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.2...v2.0.0">2.0.0</a> (2024-08-07)</h2>
+<h3 id="bug-fixes_1">Bug Fixes</h3>
 <ul>
 <li>added spark-xml lib for reading xml kafka topics (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/48">#48</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/22c376187748974e1dae97bee9d32c32053f9053">22c3761</a>)</li>
 </ul>
-<h3 id="features">Features</h3>
+<h3 id="features_1">Features</h3>
 <ul>
 <li>add support of <code>*</code> for selection of all source columns in metric configuration (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/49">#49</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/ca09fe4259039605cdfa52867b008807e21cc398">ca09fe4</a>)</li>
 <li>change project domain (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/52">#52</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/6020463420b120d1c0af97adb7766922f5e190c7">6020463</a>)</li>
@@ -1242,110 +1290,110 @@ API methods (still in development, will be completed shortly)</li>
 <li>minor bug fixes.</li>
 </ul>
 <h2 id="172-2024-06-21"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.1...v1.7.2">1.7.2</a> (2024-06-21)</h2>
-<h3 id="bug-fixes_1">Bug Fixes</h3>
+<h3 id="bug-fixes_2">Bug Fixes</h3>
 <ul>
 <li>filter NaN values from historical metric results in trend checks to avoid errors during computation of average metric value. (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/44">#44</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/d6da0f1c0d1259602def9ea39639186bc12fd31a">d6da0f1</a>)</li>
 </ul>
 <h2 id="171-2024-05-27"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.0...v1.7.1">1.7.1</a> (2024-05-27)</h2>
-<h3 id="bug-fixes_2">Bug Fixes</h3>
+<h3 id="bug-fixes_3">Bug Fixes</h3>
 <ul>
 <li>prevent division by zero in check calculators (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/42">#42</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/c19578f47a54c7de1483c51fdf87efe6843c0bba">c19578f</a>)</li>
 </ul>
 <h2 id="170-2024-05-13"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.6.0...v1.7.0">1.7.0</a> (2024-05-13)</h2>
-<h3 id="bug-fixes_3">Bug Fixes</h3>
+<h3 id="bug-fixes_4">Bug Fixes</h3>
 <ul>
 <li>modify unique key constraint for regular metrics results table (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/38">#38</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/6a67b2f34616caf2f377cfe05efda4e482695e40">6a67b2f</a>)</li>
 <li>update covariance metric logic (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/39">#39</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/0951ddcdf315e3408aa085989edf854216f385f4">0951ddc</a>)</li>
 </ul>
-<h3 id="features_1">Features</h3>
+<h3 id="features_2">Features</h3>
 <ul>
 <li>adding schema registry reader and corresponding schema configuration (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/40">#40</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/be4820473515abec31f9af16b46d4300c6fba885">be48204</a>)</li>
 </ul>
 <h2 id="160-2024-04-16"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.5.0...v1.6.0">1.6.0</a> (2024-04-16)</h2>
-<h3 id="features_2">Features</h3>
+<h3 id="features_3">Features</h3>
 <ul>
 <li>refactor kafka source API and enhance virtual sources resolving logic (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/37">#37</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/8ea9c239b0c60c985a7ddc5eda8a3af4ab8c4171">8ea9c23</a>)</li>
 </ul>
 <h2 id="150-2024-03-29"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.4.2...v1.5.0">1.5.0</a> (2024-03-29)</h2>
-<h3 id="bug-fixes_4">Bug Fixes</h3>
+<h3 id="bug-fixes_5">Bug Fixes</h3>
 <ul>
 <li>implement custom Spark collection accumulator to limit total number of collected errors (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/35">#35</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/f36e09ffa59ac6d51f8235be26f1a85c0f5f4ddf">f36e09f</a>)</li>
 <li>update JobConfig and added test for config encryptor (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/34">#34</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/bc8bfd8f52d20d0c78adf449afdcfac550febf32">bc8bfd8</a>)</li>
 </ul>
-<h3 id="features_3">Features</h3>
+<h3 id="features_4">Features</h3>
 <ul>
 <li>added functionality to reverse error collection logic for regular metrics with conditional criteria (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/36">#36</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/92443771af22d0a835a6cd1f04a5ea99a40ae200">9244377</a>)</li>
 </ul>
 <h2 id="142-2024-03-20"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.4.1...v1.4.2">1.4.2</a> (2024-03-20)</h2>
-<h3 id="bug-fixes_5">Bug Fixes</h3>
+<h3 id="bug-fixes_6">Bug Fixes</h3>
 <ul>
 <li>fixed bugs in HLL metric calculators and in email validation (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/33">#33</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/8009ed56d0a2b61acc96689ea6e31589bae39e37">8009ed5</a>)</li>
 </ul>
 <h2 id="141-2024-03-14"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.4.0...v1.4.1">1.4.1</a> (2024-03-14)</h2>
-<h3 id="bug-fixes_6">Bug Fixes</h3>
+<h3 id="bug-fixes_7">Bug Fixes</h3>
 <ul>
 <li>fixed bug in results saving logic (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/32">#32</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/613b596c2867ecdf71d565d759d39a17abf866dd">613b596</a>)</li>
 </ul>
 <h2 id="140-2024-03-13"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.3.2...v1.4.0">1.4.0</a> (2024-03-13)</h2>
-<h3 id="features_4">Features</h3>
+<h3 id="features_5">Features</h3>
 <ul>
 <li>new db table to store metric errors (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/31">#31</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/37db1edc940d870815dda2ba86d3d2b277ba0650">37db1ed</a>)</li>
 </ul>
 <h2 id="132-2024-03-11"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.3.1...v1.3.2">1.3.2</a> (2024-03-11)</h2>
-<h3 id="bug-fixes_7">Bug Fixes</h3>
+<h3 id="bug-fixes_8">Bug Fixes</h3>
 <ul>
 <li>resolve config values substitution logic during encryption/decryption. (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/30">#30</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/b252f9d2ca4b9eec3c0ad92692b5fa323b4ed953">b252f9d</a>)</li>
 </ul>
 <h2 id="131-2024-3-4"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.3.0...v1.3.1">1.3.1</a> (2024-3-4)</h2>
-<h3 id="bug-fixes_8">Bug Fixes</h3>
+<h3 id="bug-fixes_9">Bug Fixes</h3>
 <ul>
 <li>update prepare-release scripts in order to fix auto-versioning and changelog formatting. (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/29">#29</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/9a30d59ec0b6e84225e0bbbf458546b50887c083">9a30d59</a>)</li>
 </ul>
 <h2 id="130-2024-3-4"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.2.1...v1.3.0">1.3.0</a> (2024-3-4)</h2>
-<h3 id="features_5">Features</h3>
+<h3 id="features_6">Features</h3>
 <ul>
 <li>job configuration enhancements: added description and metadata fields and refactored hive source partition filtering (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/28">#28</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/7cf24db0d4999e064612f0658ddf0f836488ec86">7cf24db</a>)</li>
 </ul>
 <h2 id="121-2024-2-26"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.2.0...v1.2.1">1.2.1</a> (2024-2-26)</h2>
-<h3 id="bug-fixes_9">Bug Fixes</h3>
+<h3 id="bug-fixes_10">Bug Fixes</h3>
 <ul>
 <li>enhance casting methods for proper conversion of primitive values to target types (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/27">#27</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/744384b77cee7bac7c23d3af700ae7fb78c0a846">744384b</a>)</li>
 </ul>
 <h2 id="120-2024-2-16"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.1.1...v1.2.0">1.2.0</a> (2024-2-16)</h2>
-<h3 id="bug-fixes_10">Bug Fixes</h3>
+<h3 id="bug-fixes_11">Bug Fixes</h3>
 <ul>
 <li>docs update (describe new type of conn) and minor fixes (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/23">#23</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/c6abb811159df60499516594dde4900fd8a4ca1a">c6abb81</a>)</li>
 <li>minor code fixes (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/25">#25</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/688929d3e8e41ff14d51d619d1acb3ba1990faa3">688929d</a>)</li>
 </ul>
-<h3 id="features_6">Features</h3>
+<h3 id="features_7">Features</h3>
 <ul>
 <li>added ClickHouse connection (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/22">#22</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/d8add795b47f126bbd707a6d9d6011c16dfa4caf">d8add79</a>)</li>
 <li>added Greenplum connection  (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/21">#21</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/5756eff0d7803599129cb73e176bc6f8861a2df1">5756eff</a>)</li>
 <li>new entity in storage db - job config state (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/24">#24</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/fbe650c6cf79dc0e8991c8e88111ec482916b8ee">fbe650c</a>)</li>
 </ul>
 <h2 id="111-2023-12-20"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.1.0...v1.1.1">1.1.1</a> (2023-12-20)</h2>
-<h3 id="bug-fixes_11">Bug Fixes</h3>
+<h3 id="bug-fixes_12">Bug Fixes</h3>
 <ul>
 <li>enhance kakfa windowing for streams and enable avro kafka message format (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/20">#20</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/a5e9827213da36ebc8932195018943204c3db309">a5e9827</a>)</li>
 </ul>
 <h2 id="110-2023-12-08"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.0.1...v1.1.0">1.1.0</a> (2023-12-08)</h2>
-<h3 id="features_7">Features</h3>
+<h3 id="features_8">Features</h3>
 <ul>
 <li>added new type connections (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/17">#17</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/205cbc8c989a2ce4a40de03c04a944651aec023f">205cbc8</a>)</li>
 <li>adding functionality to run quality checks over streaming sources (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/19">#19</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/0895fed14972a9311a53454146765ace522936b0">0895fed</a>)</li>
 <li>adding streaming sources and stream readers (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/16">#16</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/b5398fa2c8b22fac191e5853aed6f29d5d4f3821">b5398fa</a>)</li>
 </ul>
 <h2 id="101-2023-11-13"><a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.0.0...v1.0.1">1.0.1</a> (2023-11-13)</h2>
-<h3 id="bug-fixes_12">Bug Fixes</h3>
+<h3 id="bug-fixes_13">Bug Fixes</h3>
 <ul>
 <li>sbt assembly fixes and custom source restoring (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/12">#12</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/b6855ea89adcfb5af0a0b742ce4a0d8a42f343ac">b6855ea</a>)</li>
 </ul>
 <h2 id="100-2023-11-01">1.0.0 (2023-11-01)</h2>
-<h3 id="bug-fixes_13">Bug Fixes</h3>
+<h3 id="bug-fixes_14">Bug Fixes</h3>
 <ul>
 <li>fixes related to project build for different version of Spark (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/10">#10</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/c7218bd96b377a5e3cdfbcde4ee899bff5488a03">c7218bd</a>), closes <a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/7">#7</a></li>
 </ul>
-<h3 id="features_8">Features</h3>
+<h3 id="features_9">Features</h3>
 <ul>
 <li>added template support for email subject (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/9">#9</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/9246f7ff2511646088cf206a72667f4882c698ff">9246f7f</a>), closes <a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/6">#6</a></li>
 <li>adding duplicateValues metric (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/8">#8</a>) (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/da77daab62c3dd9bb7e5d5fb4c340fa53a233c07">da77daa</a>), closes <a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/5">#5</a></li>
@@ -1353,25 +1401,25 @@ API methods (still in development, will be completed shortly)</li>
 <li>Publishing major update of Checkita DQ (<a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/09af3a2f065c0649849a026db41c5d3703d6233d">09af3a2</a>), closes <a href="https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/3">#3</a></li>
 </ul>
 <h2 id="035-2023-09-19">0.3.5 (2023-09-19)</h2>
-<h3 id="bug-fixes_14">Bug Fixes</h3>
+<h3 id="bug-fixes_15">Bug Fixes</h3>
 <ul>
 <li>Ensure that JDBC connection is alive prior saving results.
   There could be situation when Application runs quite long and DB server can close idle connection due to
   inactivity. In such cases it is required to open it again before saving results.</li>
 </ul>
 <h2 id="034-2023-09-14">0.3.4 (2023-09-14)</h2>
-<h3 id="features_9">Features</h3>
+<h3 id="features_10">Features</h3>
 <ul>
 <li>Added support of customisable email subject templates.</li>
 </ul>
-<h3 id="bug-fixes_15">Bug Fixes</h3>
+<h3 id="bug-fixes_16">Bug Fixes</h3>
 <ul>
 <li>Fixed duplicateValues metric: some duplicate values can only be determined during metric calculator merge.</li>
 <li>Fix sender name for check Alert. It was hardcoded but need to refer the name configured in application configuration file.</li>
 <li>Fixed email encoding: changed to UTF-8</li>
 </ul>
 <h2 id="033-2023-09-04">0.3.3 (2023-09-04)</h2>
-<h3 id="features_10">Features</h3>
+<h3 id="features_11">Features</h3>
 <ul>
 <li>Added new metric: duplicateValues.</li>
 <li>Enhanced joinSql virtual source by allowing to supply it with arbitrary number of parent sources.</li>
@@ -1379,7 +1427,7 @@ API methods (still in development, will be completed shortly)</li>
 <li>Docs update</li>
 </ul>
 <h2 id="032-2023-08-25">0.3.2 (2023-08-25)</h2>
-<h3 id="features_11">Features</h3>
+<h3 id="features_12">Features</h3>
 <ul>
 <li>Added email sender name customization</li>
 <li>Added functionality to provide html and markdown templates to build body of check alerts and 
@@ -1387,13 +1435,13 @@ API methods (still in development, will be completed shortly)</li>
 <li>Added custom source</li>
 <li>Docs update</li>
 </ul>
-<h3 id="bug-fixes_16">Bug Fixes</h3>
+<h3 id="bug-fixes_17">Bug Fixes</h3>
 <ul>
 <li>Pass both source and virtual sources to target processors</li>
 <li>Fix json serialization bugs.</li>
 </ul>
 <h2 id="031-2023-08-17">0.3.1 (2023-08-17)</h2>
-<h3 id="bug-fixes_17">Bug Fixes</h3>
+<h3 id="bug-fixes_18">Bug Fixes</h3>
 <ul>
 <li>Fix params json when sending results to kafka</li>
 <li>Add sourceId and sourceKeyFields to errorCollection reports (or kafka messages)</li>
@@ -1402,7 +1450,7 @@ API methods (still in development, will be completed shortly)</li>
 <li>Add MD5 hash to message key when sending results to Kafka in order to ensure idempotent message consumption.</li>
 </ul>
 <h2 id="030-2023-07-31">0.3.0 (2023-07-31)</h2>
-<h3 id="features_12">Features</h3>
+<h3 id="features_13">Features</h3>
 <ul>
 <li>Change DB model:<ul>
 <li>Added referenceDateTime and executionDateTime</li>
@@ -1416,26 +1464,26 @@ API methods (still in development, will be completed shortly)</li>
 <li>Added option to run DQ in Shared Spark Context</li>
 <li>Added new types of history DB: Hive and File (both managed by spark without extra services)</li>
 </ul>
-<h3 id="bug-fixes_18">Bug Fixes</h3>
+<h3 id="bug-fixes_19">Bug Fixes</h3>
 <ul>
 <li>Fixed SQL checks</li>
 <li>Made DQ case-insensitive in terms of column names</li>
 <li>Docs updates</li>
 </ul>
 <h2 id="020-2023-06-21">0.2.0 (2023-06-21)</h2>
-<h3 id="features_13">Features</h3>
+<h3 id="features_14">Features</h3>
 <ul>
 <li>Adding support of Spark 2.4+ and Spark 3+</li>
 <li>Project is rebuild for Scala 2.12.18</li>
 <li>Added test for HdfsReader</li>
 </ul>
-<h3 id="bug-fixes_19">Bug Fixes</h3>
+<h3 id="bug-fixes_20">Bug Fixes</h3>
 <ul>
 <li>Fixed HdfsReader in terms of loading fixed-width files: added casting to requested column types</li>
 <li>HBase source is temporarily turned off (due to connector is incompatible with newer versions of Scala and Spark)</li>
 </ul>
 <h2 id="0110-2023-06-15">0.1.10 (2023-06-15)</h2>
-<h3 id="features_14">Features</h3>
+<h3 id="features_15">Features</h3>
 <ul>
 <li>Adding Kafka support:<ul>
 <li>New section in run configuration to describe connection to Kafka Brokers</li>
@@ -1452,12 +1500,12 @@ API methods (still in development, will be completed shortly)</li>
 <li>Added new DQ application argument -v to pass extra variables to be prepended to application configuration file. Can be used to pass secrets for email, mattermost and storage DB on startup.</li>
 <li>Documentation is updated according to new features.</li>
 </ul>
-<h3 id="bug-fixes_20">Bug Fixes</h3>
+<h3 id="bug-fixes_21">Bug Fixes</h3>
 <ul>
 <li>Fixed email configuration for cases when smpt support anonymous connection (user and password are undefined)</li>
 </ul>
 <h2 id="019-2023-05-17">0.1.9 (2023-05-17)</h2>
-<h3 id="features_15">Features</h3>
+<h3 id="features_16">Features</h3>
 <ul>
 <li>Enable mailing notifications</li>
 <li>Added summary section to targets to set up summary reports sending via email</li>
@@ -1468,7 +1516,7 @@ API methods (still in development, will be completed shortly)</li>
 <li>Update application config files with default production settings for mailing</li>
 <li>Update documentation</li>
 </ul>
-<h3 id="bug-fixes_21">Bug Fixes</h3>
+<h3 id="bug-fixes_22">Bug Fixes</h3>
 <ul>
 <li>Update spark accumulator for metric error collection</li>
 <li>Add TLS Support to mailer</li>
@@ -1477,7 +1525,7 @@ API methods (still in development, will be completed shortly)</li>
 <li>Prevent empty file creation when errors accumulator is empty (this is also the case when keyFields are not set)</li>
 </ul>
 <h2 id="018-2023-04-20">0.1.8 (2023-04-20)</h2>
-<h3 id="features_16">Features</h3>
+<h3 id="features_17">Features</h3>
 <ul>
 <li>Enable metric error collection.</li>
 <li>Add keyFields to source for purpose of metric error collection.</li>
@@ -1486,20 +1534,20 @@ API methods (still in development, will be completed shortly)</li>
   DQ configuration file in runtime and may be references within it.</li>
 <li>Updated documentation to reflect aforementioned changes.</li>
 </ul>
-<h3 id="bug-fixes_22">Bug Fixes</h3>
+<h3 id="bug-fixes_23">Bug Fixes</h3>
 <ul>
 <li>Updated metric tests to cover Statusable calculation.</li>
 <li>Refactored configuration file parsing: now the variables are prepended to configuration file by means of streams
   and no temporary file is created.</li>
 </ul>
 <h2 id="017-2023-04-04">0.1.7 (2023-04-04)</h2>
-<h3 id="features_17">Features</h3>
+<h3 id="features_18">Features</h3>
 <ul>
 <li>Added numberNutBetween metric</li>
 <li>Added new results view to database init sql</li>
 <li>Added jobId to metric results model</li>
 </ul>
-<h3 id="bug-fixes_23">Bug Fixes</h3>
+<h3 id="bug-fixes_24">Bug Fixes</h3>
 <ul>
 <li>Fixed composed metric calculator: increased power operation priority</li>
 <li>Fixed database config reading</li>
@@ -1507,12 +1555,12 @@ API methods (still in development, will be completed shortly)</li>
 <li>Fixed HistoryDBManager to additionally filter query results by jobId</li>
 </ul>
 <h2 id="016-2022-08-23">0.1.6 (2022-08-23)</h2>
-<h3 id="features_18">Features</h3>
+<h3 id="features_19">Features</h3>
 <ul>
 <li>Added unit tests for column and file metric calculators;</li>
 <li>Refactored date-related metrics to make them work with timestamp column type correctly;</li>
 </ul>
-<h3 id="bug-fixes_24">Bug Fixes</h3>
+<h3 id="bug-fixes_25">Bug Fixes</h3>
 <ul>
 <li>Fix build.sbt for production environment</li>
 <li>Add hive meta schema initialisation (script for schema initialisation in DQ database, not part of DQ application);</li>
@@ -1520,13 +1568,13 @@ API methods (still in development, will be completed shortly)</li>
 <li>Other minor bug fixes. </li>
 </ul>
 <h2 id="015-2022-07-01">0.1.5 (2022-07-01)</h2>
-<h3 id="features_19">Features</h3>
+<h3 id="features_20">Features</h3>
 <ul>
 <li>Added documentation</li>
 <li>SBT build is updated in terms of assembling uber-jars.</li>
 </ul>
 <h2 id="014-2022-06-22">0.1.4 (2022-06-22)</h2>
-<h3 id="features_20">Features</h3>
+<h3 id="features_21">Features</h3>
 <ul>
 <li>New ConfigReader is added</li>
 <li>Format of metrics configuration file should be set within application.conf (0.x for old format 1.x for new format)</li>
@@ -1555,8 +1603,8 @@ API methods (still in development, will be completed shortly)</li>
 <div class="md-dialog" data-md-component="dialog">
 <div class="md-dialog__inner md-typeset"></div>
 </div>
-<script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
-<script src="../../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
+<script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
 <script>document$.subscribe(() => {
             window.update_swagger_ui_iframe_height = function (id) {
                 var iFrameID = document.getElementById(id);

@@ -280,7 +280,9 @@
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base class for all source configurations.
 All sources are described as DQ entities that might have an optional sequence of keyFields
 which will uniquely identify data row in error collection reports.
-In addition, it should be indicated whether this source is streamable or not.
+It should also be indicated whether this source is streamable or not.
+Additionally, the persist field specifies an optional storage level
+in order to persist source during job execution.
 </p></div><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
@@ -404,6 +406,22 @@ In addition, it should be indicated whether this source is streamable or not.
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>JobConfigEntity</dd></dl></div>
+    </li><li name="org.checkita.dqf.config.jobconf.Sources.SourceConfig#persist" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="persist:Option[org.apache.spark.storage.StorageLevel]"></a><a id="persist:Option[StorageLevel]"></a>
+      <span class="permalink">
+      <a href="../../../../../org/checkita/dqf/config/jobconf/Sources$$SourceConfig.html#persist:Option[org.apache.spark.storage.StorageLevel]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">persist</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.storage.StorageLevel">StorageLevel</span>]</span>
+      </span>
+      
+      
     </li><li name="org.checkita.dqf.config.jobconf.Sources.SourceConfig#streamable" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="streamable:Boolean"></a>
       <span class="permalink">

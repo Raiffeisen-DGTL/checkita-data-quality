@@ -179,6 +179,10 @@
                         <a href="Metrics$$ApproxSequenceCompletenessMetricConfig.html" title="Sequence completeness regular metric configuration">ApproxSequenceCompletenessMetricConfig</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
+                        <a class="class" href="Metrics$$ArimaTrendMetricConfig.html" title="ARIMA trend metric configuration"></a>
+                        <a href="Metrics$$ArimaTrendMetricConfig.html" title="ARIMA trend metric configuration">ArimaTrendMetricConfig</a>
+                      </li><li class="current-entities indented6">
+                        <span class="separator"></span>
                         <a class="class" href="Metrics$$AvgNumberMetricConfig.html" title="Average number regular metric configuration"></a>
                         <a href="Metrics$$AvgNumberMetricConfig.html" title="Average number regular metric configuration">AvgNumberMetricConfig</a>
                       </li><li class="current-entities indented6">
@@ -269,6 +273,10 @@
                         <span class="separator"></span>
                         <a class="class" href="Metrics$$LevenshteinDistanceMetricConfig.html" title="Levenshtein distance regular metric configuration"></a>
                         <a href="Metrics$$LevenshteinDistanceMetricConfig.html" title="Levenshtein distance regular metric configuration">LevenshteinDistanceMetricConfig</a>
+                      </li><li class="current-entities indented6">
+                        <span class="separator"></span>
+                        <a class="class" href="Metrics$$LinregTrendMetricConfig.html" title="Linear regression trend metric configuration"></a>
+                        <a href="Metrics$$LinregTrendMetricConfig.html" title="Linear regression trend metric configuration">LinregTrendMetricConfig</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
                         <a class="class" href="Metrics$$MaxNumberMetricConfig.html" title="Max number regular metric configuration"></a>
@@ -423,8 +431,8 @@
                         <a href="Metrics$$TopNMetricConfig.html" title="TopN regular metric configuration">TopNMetricConfig</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
-                        <a class="class" href="Metrics$$TrendMetricConfig.html" title="Base class for trend metrics that computes statistics over historical metric results."></a>
-                        <a href="Metrics$$TrendMetricConfig.html" title="Base class for trend metrics that computes statistics over historical metric results.">TrendMetricConfig</a>
+                        <a class="class" href="Metrics$$TrendMetricConfig.html" title="Base class for trend metrics that computes their values based on historical metric results."></a>
+                        <a href="Metrics$$TrendMetricConfig.html" title="Base class for trend metrics that computes their values based on historical metric results.">TrendMetricConfig</a>
                       </li>
               </ul>
             </div>
@@ -578,22 +586,6 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="org.checkita.dqf.config.jobconf.Metrics.MinTrendMetricConfig#aggFunc" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="aggFunc:org.apache.commons.math3.stat.descriptive.DescriptiveStatistics=&gt;Double"></a><a id="aggFunc:(DescriptiveStatistics)⇒Double"></a>
-      <span class="permalink">
-      <a href="../../../../../org/checkita/dqf/config/jobconf/Metrics$$MinTrendMetricConfig.html#aggFunc:org.apache.commons.math3.stat.descriptive.DescriptiveStatistics=&gt;Double" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">aggFunc</span><span class="result">: (<span class="extype" name="org.apache.commons.math3.stat.descriptive.DescriptiveStatistics">DescriptiveStatistics</span>) ⇒ <span class="extype" name="scala.Double">Double</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.MinTrendMetricConfig">MinTrendMetricConfig</a> → <a href="../../core/metrics/TrendMetric.html" class="extype" name="org.checkita.dqf.core.metrics.TrendMetric">TrendMetric</a></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
@@ -832,6 +824,22 @@
       </span>
       <span class="symbol">
         <span class="name">metricName</span><span class="result">: <a href="../../core/metrics/MetricName.html" class="extype" name="org.checkita.dqf.core.metrics.MetricName">MetricName</a></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.MinTrendMetricConfig">MinTrendMetricConfig</a> → <a href="../../core/metrics/TrendMetric.html" class="extype" name="org.checkita.dqf.core.metrics.TrendMetric">TrendMetric</a></dd></dl></div>
+    </li><li name="org.checkita.dqf.config.jobconf.Metrics.MinTrendMetricConfig#model" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="model:org.checkita.dqf.core.metrics.trend.TrendMetricModel"></a><a id="model:TrendMetricModel"></a>
+      <span class="permalink">
+      <a href="../../../../../org/checkita/dqf/config/jobconf/Metrics$$MinTrendMetricConfig.html#model:org.checkita.dqf.core.metrics.trend.TrendMetricModel" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">model</span><span class="result">: <a href="../../core/metrics/trend/TrendMetricModel.html" class="extype" name="org.checkita.dqf.core.metrics.trend.TrendMetricModel">TrendMetricModel</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.checkita.dqf.config.jobconf.Metrics.MinTrendMetricConfig">MinTrendMetricConfig</a> → <a href="../../core/metrics/TrendMetric.html" class="extype" name="org.checkita.dqf.core.metrics.TrendMetric">TrendMetric</a></dd></dl></div>
