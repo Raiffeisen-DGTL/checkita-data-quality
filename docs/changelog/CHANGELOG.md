@@ -1,3 +1,22 @@
+## [2.1.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v2.0.0...v2.1.0) (2024-11-18)
+
+
+### Bug Fixes
+
+* added checkpoint initialization and validation for kafka streams ([#62](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/62)) ([1af4105](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/1af4105d31b2725cedbc4ecbb07e5b4a1bbc5627))
+* added logger name in props ([#59](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/59)) ([1a1d5a8](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/1a1d5a8d212e9248dd436729616bc9b4b966298b))
+* expression checks calculation for streaming jobs ([#66](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/66)) ([13217c9](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/13217c9b35f18973d19f970e12770b4e8d71a134))
+* hive and file storage ([#60](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/60)) ([bdedfad](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/bdedfad1d8645914880207e2342ebcec8ed961bc))
+* update expressions parsing ([#65](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/65)) ([886d29c](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/886d29c07cbdc700f9b48d4f8b082fe6c7c1e18d))
+
+
+### Features
+
+* added job config generator for api server ([#54](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/54)) ([51050a8](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/51050a83ddf64230c071f1a17b134202ca1bb98b))
+* added persist for regular sources ([#63](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/63)) ([8070fc1](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/8070fc12a13c6e90bd5ad29ddba041fc40131e44))
+* adding arima and linear regression trend metrics ([#64](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/64)) ([54231d8](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/54231d83c8040e8991a610da5002a0c2999fd490))
+* fail flag for checks ([#61](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/61)) ([cf32cbd](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/cf32cbd8bf832f8cd61630db28b53c6c0369923e))
+
 ## [2.0.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v1.7.2...v2.0.0) (2024-08-07)
 
 
