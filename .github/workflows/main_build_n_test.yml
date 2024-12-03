@@ -29,5 +29,7 @@ jobs:
           echo "-Xmx2G" > .jvmopts
           echo "-Xms1G" >> .jvmopts
           echo "-Xss100m" >> .jvmopts
-      - name: Compile and Test for Scala ${{ matrix.scala-version }} and Spark ${{ matrix.spark-version }}
+      - name: Compile and Test CORE for Scala ${{ matrix.scala-version }} and Spark ${{ matrix.spark-version }}
         run: sbt -DASSY_MODE=WITHSPARK -DSCALA_VERSION=${{ matrix.scala-version }} -DSPARK_VERSION=${{ matrix.spark-version }} -Duser.timezone="Europe/Moscow" checkita-core/clean checkita-core/compile checkita-core/test
+      - name: Compile API for Scala ${{ matrix.scala-version }} and Spark ${{ matrix.spark-version }}
+        run: sbt -DASSY_MODE=WITHSPARK -DSCALA_VERSION=${{ matrix.scala-version }} -DSPARK_VERSION=${{ matrix.spark-version }} -Duser.timezone="Europe/Moscow" checkita-api/clean checkita-api/compile
