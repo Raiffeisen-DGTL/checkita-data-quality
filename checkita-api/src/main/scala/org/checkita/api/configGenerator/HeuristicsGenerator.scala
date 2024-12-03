@@ -447,7 +447,7 @@ object HeuristicsGenerator extends Logging{
           email = Seq(
             CheckAlertEmailTargetConfig(
               id = ID("alert"),
-              checks = metricsForTarget,
+              checks = metricsForTarget.toSeq,
               recipients = Refined.unsafeApply(Seq(Email("change@change.com"))),
               subjectTemplate = None,
               template = None,
