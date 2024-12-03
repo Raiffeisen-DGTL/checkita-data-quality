@@ -300,7 +300,8 @@ object HeuristicsGenerator extends Logging{
             description = None,
             connection = ID(f"$connType%s_id"),
             table = Option(Refined.unsafeApply(f"$source")),
-            query = None
+            query = None,
+            persist = None
           )
         )
       } else Seq.empty,
@@ -310,7 +311,8 @@ object HeuristicsGenerator extends Logging{
             id = ID(f"$source"),
             description = None,
             table = Refined.unsafeApply(f"$source"),
-            schema = Refined.unsafeApply("CHANGE")
+            schema = Refined.unsafeApply("CHANGE"),
+            persist = None
           )
         )
         case _ => Seq.empty
@@ -324,7 +326,8 @@ object HeuristicsGenerator extends Logging{
             topics = Seq(Refined.unsafeApply("CHANGE")),
             topicPattern = None,
             startingOffsets = None,
-            endingOffsets = None
+            endingOffsets = None,
+            persist = None
           )
         )
         case _ => Seq.empty
@@ -335,7 +338,8 @@ object HeuristicsGenerator extends Logging{
             id = ID(f"$source"),
             description = None,
             connection = ID(f"$connType%s_id"),
-            table = Option(Refined.unsafeApply(f"$source"))
+            table = Option(Refined.unsafeApply(f"$source")),
+            persist = None
           )
         )
         case _ => Seq.empty
@@ -347,7 +351,8 @@ object HeuristicsGenerator extends Logging{
               id = ID(f"$source"),
               description = None,
               path = Refined.unsafeApply(sourcesMap("loc")),
-              schema = None
+              schema = None,
+              persist = None
             )
           )
           case "parquet" => Seq(
@@ -355,7 +360,8 @@ object HeuristicsGenerator extends Logging{
               id = ID(f"$source"),
               description = None,
               path = Refined.unsafeApply(sourcesMap("loc")),
-              schema = None
+              schema = None,
+              persist = None
             )
           )
           case "orc" => Seq(
@@ -363,7 +369,8 @@ object HeuristicsGenerator extends Logging{
               id = ID(f"$source"),
               description = None,
               path = Refined.unsafeApply(sourcesMap("loc")),
-              schema = None
+              schema = None,
+              persist = None
             )
           )
           case _ => connType match {
@@ -372,7 +379,8 @@ object HeuristicsGenerator extends Logging{
                 id = ID(f"$source"),
                 description = None,
                 path = Refined.unsafeApply("CHANGE"),
-                schema = None
+                schema = None,
+                persist = None
               )
             )
             case "delimited" => Seq(
@@ -380,7 +388,8 @@ object HeuristicsGenerator extends Logging{
                 id = ID(f"$source"),
                 description = None,
                 path = Refined.unsafeApply("CHANGE"),
-                schema = None
+                schema = None,
+                persist = None
               )
             )
             case _ => Seq.empty
@@ -395,7 +404,8 @@ object HeuristicsGenerator extends Logging{
             description = None,
             path = Option(Refined.unsafeApply("CHANGE")),
             schema = None,
-            format = Refined.unsafeApply("CHANGE")
+            format = Refined.unsafeApply("CHANGE"),
+            persist = None
           )
         )
         case _ => Seq.empty
@@ -437,7 +447,7 @@ object HeuristicsGenerator extends Logging{
           email = Seq(
             CheckAlertEmailTargetConfig(
               id = ID("alert"),
-              checks = metricsForTarget,
+              checks = metricsForTarget.toSeq,
               recipients = Refined.unsafeApply(Seq(Email("change@change.com"))),
               subjectTemplate = None,
               template = None,

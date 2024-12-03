@@ -25,7 +25,7 @@ object HeuristicsRoutes extends Logging {
   )
 
   private object ConnTypeQueryParamMatcher extends QueryParamDecoderMatcher[String]("conn_type") {
-    override def unapply(params: Map[String, Seq[String]]): Option[String] = {
+    override def unapply(params: Map[String, collection.Seq[String]]): Option[String] = {
       params.get("conn_type").flatMap(_.headOption).map(_.toLowerCase).filter(validConnTypes.contains)
     }
   }
