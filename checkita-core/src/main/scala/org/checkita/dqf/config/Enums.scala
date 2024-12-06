@@ -80,8 +80,8 @@ object Enums {
     val windowBy: String = s"custom(${windowByExpr.toString()}"
   }
   object StreamWindowing {
-    private val customPattern = """^custom\((.+)\)$""".r
-    def apply(s: String): StreamWindowing = s match {
+    private val customPattern = """^custom\((?s)(.+)\)$""".r
+    def apply(s: String): StreamWindowing = s.trim match {
       case "processingTime" => ProcessingTime
       case "eventTime" => EventTime
       case custom if customPattern.pattern.matcher(custom).matches() =>
