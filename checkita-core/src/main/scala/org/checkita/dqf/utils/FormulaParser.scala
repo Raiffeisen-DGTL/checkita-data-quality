@@ -17,6 +17,8 @@ trait FormulaParser extends JavaTokenParsers {
   case class BoolBinaryFunc(t1: Tree, t2: Tree, f: (Boolean, Boolean) => Boolean) extends Tree
   case class BoolCompareFunc(t1: Tree, t2: Tree, f: (Double, Double) => Boolean) extends Tree
   case class Bool(t: Boolean) extends Tree
+  case class CaseWhen(cases: Seq[(Tree, Tree)], elseBranch: Tree) extends Tree
+  case class IfElse(condition: Tree, ifBranch: Tree, elseBranch: Tree) extends Tree
 
   /**
    * API to parse and evaluate arithmetic expression.
@@ -61,6 +63,10 @@ trait FormulaParser extends JavaTokenParsers {
     case UnaryFunc(t1, f) => f(eval(t1))
     case BinaryFunc(t1, t2, f) => f(eval(t1), eval(t2))
     case Num(t) => t
+    case CaseWhen(cases, elseBranch) =>
+      cases.collectFirst { case (cond, branch) if boolEval(cond) => eval(branch) }.getOrElse(eval(elseBranch))
+    case IfElse(cond, ifBranch, elseBranch) =>
+      if (boolEval(cond)) eval(ifBranch) else eval(elseBranch)
     case other => throw new MatchError(s"Illegal operation for arithmetic expression: ${other.getClass.getSimpleName}")
   }
 
@@ -161,7 +167,7 @@ trait FormulaParser extends JavaTokenParsers {
 
   private lazy val bool: Parser[Bool] = "true" ^^ (_ => Bool(true)) | "false" ^^ (_ => Bool(false))
 
-  private lazy val expr: Parser[Tree] = opt("[+-]".r) ~ term ~ rep("[+-]".r ~ term) ^^ {
+  private lazy val expr: Parser[Tree] = caseWhenExpr | ifElseExpr | opt("[+-]".r) ~ term ~ rep("[+-]".r ~ term) ^^ {
     case s ~ t ~ ts =>
       val signed = s match {
         case None => t
@@ -208,4 +214,24 @@ trait FormulaParser extends JavaTokenParsers {
   }
 
   private lazy val num: Parser[Num] = floatingPointNumber ^^ (t => Num(t.toDouble))
+
+  private lazy val comparisonWithEquals: Parser[Tree] = expr ~ "=" ~ expr ^^ {
+    case t1 ~ "=" ~ t2 => BoolCompareFunc(t1, t2, _ == _)
+  }
+
+  private lazy val whenExpr: Parser[(Tree, Tree)] =
+    ("(?i)when".r ~> (comparisonWithEquals | boolExpr)) ~ ("(?i)then".r ~> expr) ^^ {
+      case condExpr ~ thenExpr => (condExpr, thenExpr)
+  }
+
+  private lazy val caseWhenExpr: Parser[Tree] =
+    "(?i)case".r ~> rep1sep(whenExpr, "(?i)when".r) ~ opt("(?i)else".r ~> expr) <~ "(?i)end".r ^^ {
+    case conditions ~ Some(elseExpr) => CaseWhen(conditions, elseExpr)
+    case conditions ~ None           => CaseWhen(conditions, Num(0.0))
+  }
+
+  private lazy val ifElseExpr: Parser[Tree] =
+    "(?i)if".r ~> (comparisonWithEquals | boolExpr) ~ expr ~ ("(?i)else".r ~> expr) ^^ {
+      case condition ~ thanBranch ~ elseBranch => IfElse(condition, thanBranch, elseBranch)
+    }
 }
