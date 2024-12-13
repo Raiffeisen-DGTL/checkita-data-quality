@@ -215,23 +215,19 @@ trait FormulaParser extends JavaTokenParsers {
 
   private lazy val num: Parser[Num] = floatingPointNumber ^^ (t => Num(t.toDouble))
 
-  private lazy val comparisonWithEquals: Parser[Tree] = expr ~ "=" ~ expr ^^ {
-    case t1 ~ "=" ~ t2 => BoolCompareFunc(t1, t2, _ == _)
-  }
-
   private lazy val whenExpr: Parser[(Tree, Tree)] =
-    ("(?i)when".r ~> (comparisonWithEquals | boolExpr)) ~ ("(?i)then".r ~> expr) ^^ {
+    "(?i)when".r ~> boolExpr ~ ("(?i)then".r ~> expr) ^^ {
       case condExpr ~ thenExpr => (condExpr, thenExpr)
   }
 
   private lazy val caseWhenExpr: Parser[Tree] =
-    "(?i)case".r ~> rep1sep(whenExpr, "(?i)when".r) ~ opt("(?i)else".r ~> expr) <~ "(?i)end".r ^^ {
+    "(?i)case".r ~> rep1(whenExpr) ~ opt("(?i)else".r ~> expr) <~ "(?i)end".r ^^ {
     case conditions ~ Some(elseExpr) => CaseWhen(conditions, elseExpr)
     case conditions ~ None           => CaseWhen(conditions, Num(0.0))
   }
 
   private lazy val ifElseExpr: Parser[Tree] =
-    "(?i)if".r ~> (comparisonWithEquals | boolExpr) ~ expr ~ ("(?i)else".r ~> expr) ^^ {
+    "(?i)if".r ~> boolExpr ~ expr ~ ("(?i)else".r ~> expr) ^^ {
       case condition ~ thanBranch ~ elseBranch => IfElse(condition, thanBranch, elseBranch)
     }
 }
