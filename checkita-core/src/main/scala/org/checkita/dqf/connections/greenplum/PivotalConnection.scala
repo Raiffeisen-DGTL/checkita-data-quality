@@ -76,6 +76,8 @@ case class PivotalConnection(config: GreenplumConnectionConfig) extends DQConnec
     props.put("url", connectionUrl)
     props.put("dbschema", currentSchema.get)
     props.put("dbtable", sourceConfig.table.map(_.value).get)
-    spark.read.format("greenplum").options(props.asScala).load()
+
+    val allOptions = props.asScala ++ paramsSeqToMap(sourceConfig.options.map(_.value))
+    spark.read.format("greenplum").options(allOptions).load()
   }
 }

@@ -47,6 +47,7 @@ object Sources {
                                       table: Option[NonEmptyString],
                                       query: Option[NonEmptyString],
                                       persist: Option[StorageLevel],
+                                      options: Seq[SparkParam] = Seq.empty,
                                       keyFields: Seq[NonEmptyString] = Seq.empty,
                                       metadata: Seq[SparkParam] = Seq.empty
                                     ) extends SourceConfig {
@@ -166,6 +167,7 @@ object Sources {
                                           connection: ID,
                                           table: Option[NonEmptyString],
                                           persist: Option[StorageLevel],
+                                          options: Seq[SparkParam] = Seq.empty,
                                           keyFields: Seq[NonEmptyString] = Seq.empty,
                                           metadata: Seq[SparkParam] = Seq.empty
                                         ) extends SourceConfig {
@@ -243,6 +245,7 @@ object Sources {
                                               escape: NonEmptyString = "\\",
                                               header: Boolean = false,
                                               windowBy: StreamWindowing = ProcessingTime,
+                                              options: Seq[SparkParam] = Seq.empty,
                                               keyFields: Seq[NonEmptyString] = Seq.empty,
                                               metadata: Seq[SparkParam] = Seq.empty
                                             ) extends FileSourceConfig with DelimitedFileConfig {

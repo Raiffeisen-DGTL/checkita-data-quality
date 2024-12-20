@@ -21,7 +21,7 @@ import scala.util.Try
  */
 abstract class JdbcConnection[T <: JdbcConnectionConfig] extends DQConnection {
   type SourceType = TableSourceConfig
-  
+
   val config: T
   protected val connectionUrl: String
   protected val jdbcDriver: String
@@ -38,7 +38,7 @@ abstract class JdbcConnection[T <: JdbcConnectionConfig] extends DQConnection {
     config.password.map(_.value).foreach(props.put("password", _))
     props
   }
-  
+
     /**
      * Checks connection.
      *
@@ -64,26 +64,26 @@ abstract class JdbcConnection[T <: JdbcConnectionConfig] extends DQConnection {
                    (implicit settings: AppSettings,
                     spark: SparkSession,
                     schemas: Map[String, SourceSchema]): DataFrame = {
-    
+
     val props = getProperties
     paramsSeqToMap(sparkParams).foreach{ case (k, v) => props.put(k, v) }
-    
+    props.put("url", connectionUrl)
+
     (sourceConfig.table.map(_.value), sourceConfig.query.map(_.value)) match {
-      case (Some(t), None) => 
-        val table = currentSchema.map(s => s + "." + t).getOrElse(t)
-        spark.read.jdbc(connectionUrl, table, props)
+      case (Some(t), None) => props.put("dbtable", s"$t")
       case (None, Some(q)) => if (settings.allowSqlQueries) {
-          props.put("url", connectionUrl)
-          props.put("dbtable", s"($q) t")
-          spark.read.format("jdbc").options(props.asScala).load()
-        } else throw new UnsupportedOperationException(
-          "FORBIDDEN: Can't load table source with query due to usage of arbitrary SQL queries is not allowed. " + 
-            "In order to use arbitrary sql queries set `allowSqlQueries` to true in application settings."
-        )
+        props.put("dbtable", s"($q) t")
+      } else throw new UnsupportedOperationException(
+        "FORBIDDEN: Can't load table source with query due to usage of arbitrary SQL queries is not allowed. " +
+          "In order to use arbitrary sql queries set `allowSqlQueries` to true in application settings."
+      )
       case (t, q) => throw new IllegalArgumentException(
         s"Either table or query to read must be defined for table source but not both. " +
           s"Got following: table = $t, query = $q."
       )
     }
+
+    val allOptions = props.asScala ++ paramsSeqToMap(sourceConfig.options.map(_.value))
+    spark.read.format("jdbc").options(allOptions).load()
   }
 }

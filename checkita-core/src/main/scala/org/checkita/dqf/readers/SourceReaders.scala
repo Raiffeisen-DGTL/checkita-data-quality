@@ -455,14 +455,16 @@ object SourceReaders {
         "mode" -> (if (readMode == ReadMode.Batch) "FAILFAST" else "PERMISSIVE")
       )
 
+      val allOptions = readOptions ++ paramsSeqToMap(config.options.map(_.value))
+
       val df = if (fs.exists(new Path(config.path.value))) {
         (config.header, config.schema.map(_.value)) match {
-          case (true, None) => reader(readOptions + ("header" -> "true"), None)
+          case (true, None) => reader(allOptions + ("header" -> "true"), None)
           case (false, Some(schema)) =>
             val sourceSchema = schemas.getOrElse(schema, throw new NoSuchElementException(
               s"Schema with id = '$schema' not found."
             ))
-            reader(readOptions, Some(sourceSchema.schema))
+            reader(allOptions, Some(sourceSchema.schema))
           case _ => throw new IllegalArgumentException(
             "For delimited file sources schema must either be read from header or from explicit schema but not from both."
           )
