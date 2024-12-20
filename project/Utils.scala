@@ -19,7 +19,6 @@ object Utils {
       "3\\.3\\.[0-4]".r -> "3.3.2",
       "3\\.4\\.[0-4]".r -> "3.3.4",
       "3\\.5\\.[0-3]".r -> "3.3.4"
-
     )
 
     val sparkDeps: Map[String, ModuleID] = Map(
