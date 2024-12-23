@@ -95,11 +95,6 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
       .filter{ case (k, _) => processedSources.contains(k) }
       .values.min
 
-//      .filter{ case (_, v) => v != Long.MinValue }
-
-    // -1 if none of the streams has updated its watermark value:
-//    val minWatermark = if (currentWatermarks.isEmpty) -1 else currentWatermarks.min
-
     log.debug(s"$bufferStage Minimum watermark: $minWatermark")
 
     val filterWindows = (windows: Iterable[(String, Long)]) =>
