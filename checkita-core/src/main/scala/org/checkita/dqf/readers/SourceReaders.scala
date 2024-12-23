@@ -155,7 +155,7 @@ object SourceReaders {
           val sch = schema.getOrElse(throw new IllegalArgumentException(
             s"Schema is missing but it must be provided to read $format files as a stream."
           ))
-          spark.readStream.format(format.toLowerCase).schema(sch.schema).load(path).prepareStream(windowBy)
+          spark.readStream.format(format.toLowerCase).options(opt).schema(sch.schema).load(path).prepareStream(windowBy)
       }
 
       if (fs.exists(new Path(path))) {
