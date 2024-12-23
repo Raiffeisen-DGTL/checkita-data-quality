@@ -137,7 +137,8 @@ object SourceReaders {
                              path: String,
                              format: String,
                              schemaId: Option[String],
-                             windowBy: StreamWindowing)
+                             windowBy: StreamWindowing,
+                             opt: Map[String, String])
                             (implicit settings: AppSettings,
                              spark: SparkSession,
                              fs: FileSystem,
@@ -145,7 +146,7 @@ object SourceReaders {
 
       val reader = (schema: Option[SourceSchema]) => readMode match {
         case ReadMode.Batch =>
-          val batchReader = spark.read.format(format.toLowerCase)
+          val batchReader = spark.read.format(format.toLowerCase).options(opt)
           if (format.toLowerCase == "avro")
             schema.map(sch => batchReader.option("avroSchema", sch.toAvroSchema))
               .getOrElse(batchReader).load(path)
@@ -395,12 +396,13 @@ object SourceReaders {
       val allStringSchema = StructType(sourceSchema.schema.map(
         col => StructField(col.name, StringType, nullable = true)
       ))
+      val readOptions = paramsSeqToMap(config.options.map(_.value))
 
       implicit val encoder: ExpressionEncoder[Row] = getRowEncoder(allStringSchema)
 
       val rawDf = if (fs.exists(new Path(config.path.value))) readMode match {
-        case ReadMode.Batch => spark.read.text(config.path.value)
-        case ReadMode.Stream => spark.readStream.text(config.path.value)
+        case ReadMode.Batch => spark.read.options(readOptions).text(config.path.value)
+        case ReadMode.Stream => spark.readStream.options(readOptions).text(config.path.value)
       } else throw new FileNotFoundException(s"Fixed-width text file or directory not found: ${config.path.value}")
 
       val df = rawDf.map(c => getRow(c.getString(0), sourceSchema.columnWidths)).select(
@@ -500,8 +502,14 @@ object SourceReaders {
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
                                       connections: Map[String, DQConnection],
-                                      checkpoints: Map[String, Checkpoint]): Source =
-      toSource(config, fileReader(readMode, config.path.value, "Avro", config.schema.map(_.value), config.windowBy), readMode)
+                                      checkpoints: Map[String, Checkpoint]): Source = {
+      val readOptions = paramsSeqToMap(config.options.map(_.value))
+      toSource(
+        config,
+        fileReader(readMode, config.path.value, "Avro", config.schema.map(_.value), config.windowBy, readOptions),
+        readMode
+      )
+    }
   }
 
   /**
@@ -528,8 +536,14 @@ object SourceReaders {
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
                                       connections: Map[String, DQConnection],
-                                      checkpoints: Map[String, Checkpoint]): Source =
-      toSource(config, fileReader(readMode, config.path.value, "Parquet", config.schema.map(_.value), config.windowBy), readMode)
+                                      checkpoints: Map[String, Checkpoint]): Source = {
+      val readOptions = paramsSeqToMap(config.options.map(_.value))
+      toSource(
+        config,
+        fileReader(readMode, config.path.value, "Parquet", config.schema.map(_.value), config.windowBy, readOptions),
+        readMode
+      )
+    }
   }
 
   /**
@@ -555,8 +569,14 @@ object SourceReaders {
                                       fs: FileSystem,
                                       schemas: Map[String, SourceSchema],
                                       connections: Map[String, DQConnection],
-                                      checkpoints: Map[String, Checkpoint]): Source =
-      toSource(config, fileReader(readMode, config.path.value, "ORC", config.schema.map(_.value), config.windowBy), readMode)
+                                      checkpoints: Map[String, Checkpoint]): Source = {
+      val readOptions = paramsSeqToMap(config.options.map(_.value))
+      toSource(
+        config,
+        fileReader(readMode, config.path.value, "ORC", config.schema.map(_.value), config.windowBy, readOptions),
+        readMode
+      )
+    }
   }
 
   implicit object CustomSourceReader extends SourceReader[CustomSource] {
