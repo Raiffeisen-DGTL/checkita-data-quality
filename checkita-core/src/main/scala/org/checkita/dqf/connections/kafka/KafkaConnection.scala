@@ -208,6 +208,11 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
   /**
    * Gets latest offsets for provided topic partitions.
    *
+   * @note Decrement the latest offsets by 1 as the actual stream reading will
+   *       start from offset + 1 for each topic partition.
+   *       See [[loadDataStream]] for stream reading implementation.
+   *
+   *
    * @param topicPartitions Topic partitions to search offsets for.
    * @param consumer        Kafka consumer used to fetch offset data.
    * @tparam A Type of message key (needed only for proper function signature)
@@ -217,11 +222,15 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
   private def getLatestOffsets[A, B](topicPartitions: Seq[TopicPartition], 
                                      consumer: KafkaConsumer[A, B]): Map[(String, Int), Long] =
     consumer.endOffsets(topicPartitions.asJava).asScala.map {
-      case (t, o) => (t.topic(), t.partition()) -> o.toLong
+      case (t, o) => (t.topic(), t.partition()) -> (o.toLong - 1)
     }.toMap
 
   /**
    * Gets earliest offsets for provided topic partitions.
+   *
+   * @note Decrement the earliest offsets by 1 as the actual stream reading will
+   *       start from offset + 1 for each topic partition.
+   *       See [[loadDataStream]] for stream reading implementation.
    *
    * @param topicPartitions Topic partitions to search offsets for.
    * @param consumer        Kafka consumer used to fetch offset data.
@@ -232,11 +241,15 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
   private def getEarliestOffsets[A, B](topicPartitions: Seq[TopicPartition],
                                        consumer: KafkaConsumer[A, B]): Map[(String, Int), Long] =
     consumer.beginningOffsets(topicPartitions.asJava).asScala.map {
-      case (t, o) => (t.topic(), t.partition()) -> o.toLong
+      case (t, o) => (t.topic(), t.partition()) -> (o.toLong - 1)
     }.toMap
 
   /**
    * Tries to parse starting offsets string.
+   *
+   * @note Decrement starting offsets by 1 as the actual stream reading will
+   *       start from offset + 1 for each topic partition.
+   *       See [[loadDataStream]] for stream reading implementation.
    *
    * @param srcId           Source ID for which the starting offsets are parsed.
    * @param startingOffsets Starting offsets string.
@@ -247,7 +260,7 @@ case class KafkaConnection(config: KafkaConnectionConfig) extends DQConnection w
     for {
       (topic, parts) <- parse(startingOffsets).extract[Map[String, Map[String, Long]]]
       (part, offset) <- parts
-    } yield (topic, part.toInt) -> offset
+    } yield (topic, part.toInt) -> (offset - 1)
   }.toResult(
     s"Unable to parse startingOffsets string for stream '$srcId' due to following error:"
   )
