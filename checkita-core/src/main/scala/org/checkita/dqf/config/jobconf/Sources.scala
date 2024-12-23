@@ -79,6 +79,7 @@ object Sources {
    * @param partitions  Sequence of partitions to read.
    *                    The order of partition columns should correspond to order in which
    *                    partition columns are defined in hive table DDL.
+   * @param options     Sequence of additional Kafka options
    * @param keyFields   Sequence of key fields (columns that identify data row)
    * @param metadata    List of metadata parameters specific to this source
    */
@@ -89,6 +90,7 @@ object Sources {
                                      table: NonEmptyString,
                                      persist: Option[StorageLevel],
                                      partitions: Seq[HivePartition] = Seq.empty,
+                                     options: Seq[SparkParam] = Seq.empty,
                                      keyFields: Seq[NonEmptyString] = Seq.empty,
                                      metadata: Seq[SparkParam] = Seq.empty
                                    ) extends SourceConfig {

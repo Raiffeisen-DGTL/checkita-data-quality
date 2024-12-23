@@ -56,6 +56,7 @@ Common parameters for sources of any file type are:
     * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
       `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
       `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
+* `options` - *Optional*. Additional Spark parameters used to read data from the given source.
 * `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
   Key fields are primarily used in error collection reports. For more details on error collection, see 
   [Metric Error Collection](../02-general-information/04-ErrorCollection.md) chapter.
@@ -260,7 +261,6 @@ provide following parameters:
 * `format` - *Required*. Spark DataFrame reader format that is used to read from the given source.
 * `path` - *Optional*. Path to read data from (if required).
 * `schema` - *Optional*. Explicit schema to be applied to data from the given source (if required).
-* `options` - *Optional*. Additional Spark parameters used to read data from the given source.
 * `persist` - *Optional*. One of the allowed Spark StorageLevels used to cache sources.
   By default, sources are not cached. Supported Spark StorageLevels are:
     * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,

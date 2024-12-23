@@ -321,7 +321,8 @@ object SourceReaders {
                                       connections: Map[String, DQConnection],
                                       checkpoints: Map[String, Checkpoint]): Source = {
       val tableName = s"${config.schema.value}.${config.table.value}"
-      val preDf = spark.read.table(tableName)
+      val readOptions = paramsSeqToMap(config.options.map(_.value))
+      val preDf = spark.read.options(readOptions).table(tableName)
       val df = if (config.partitions.nonEmpty) {
         preDf.filter(
           config.partitions.map { p =>
