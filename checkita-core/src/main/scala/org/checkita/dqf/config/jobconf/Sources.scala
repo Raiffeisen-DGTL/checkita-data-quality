@@ -36,6 +36,7 @@ object Sources {
    * @param table       Table to read
    * @param query       Query to execute
    * @param persist     Spark storage level in order to persist dataframe during job execution.
+   * @param options     List of additional spark options required to read the source (if any)
    * @param keyFields   Sequence of key fields (columns that identify data row)
    * @param metadata    List of metadata parameters specific to this source
    * @note Either table to read or query to execute must be defined but not both.
@@ -47,6 +48,7 @@ object Sources {
                                       table: Option[NonEmptyString],
                                       query: Option[NonEmptyString],
                                       persist: Option[StorageLevel],
+                                      options: Seq[SparkParam] = Seq.empty,
                                       keyFields: Seq[NonEmptyString] = Seq.empty,
                                       metadata: Seq[SparkParam] = Seq.empty
                                     ) extends SourceConfig {
@@ -77,6 +79,7 @@ object Sources {
    * @param partitions  Sequence of partitions to read.
    *                    The order of partition columns should correspond to order in which
    *                    partition columns are defined in hive table DDL.
+   * @param options     Sequence of additional Kafka options
    * @param keyFields   Sequence of key fields (columns that identify data row)
    * @param metadata    List of metadata parameters specific to this source
    */
@@ -87,6 +90,7 @@ object Sources {
                                      table: NonEmptyString,
                                      persist: Option[StorageLevel],
                                      partitions: Seq[HivePartition] = Seq.empty,
+                                     options: Seq[SparkParam] = Seq.empty,
                                      keyFields: Seq[NonEmptyString] = Seq.empty,
                                      metadata: Seq[SparkParam] = Seq.empty
                                    ) extends SourceConfig {
@@ -157,6 +161,7 @@ object Sources {
    * @param connection  Connection ID (must be pivotal connection)
    * @param table       Table to read
    * @param persist     Spark storage level in order to persist dataframe during job execution.
+   * @param options     List of additional spark options required to read the source (if any)
    * @param keyFields   Sequence of key fields (columns that identify data row)
    * @param metadata    List of metadata parameters specific to this source
    */
@@ -166,6 +171,7 @@ object Sources {
                                           connection: ID,
                                           table: Option[NonEmptyString],
                                           persist: Option[StorageLevel],
+                                          options: Seq[SparkParam] = Seq.empty,
                                           keyFields: Seq[NonEmptyString] = Seq.empty,
                                           metadata: Seq[SparkParam] = Seq.empty
                                         ) extends SourceConfig {
@@ -195,6 +201,7 @@ object Sources {
    *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
    *                    - customTime(columnName) - uses arbitrary user-defined column
    *                      (column must be of TimestampType)
+   * @param options     List of additional spark options required to read the source (if any)
    * @param keyFields   Sequence of key fields (columns that identify data row)
    * @param metadata    List of metadata parameters specific to this source
    */
@@ -205,6 +212,7 @@ object Sources {
                                           schema: Option[ID],
                                           persist: Option[StorageLevel],
                                           windowBy: StreamWindowing = ProcessingTime,
+                                          options: Seq[SparkParam] = Seq.empty,
                                           keyFields: Seq[NonEmptyString] = Seq.empty,
                                           metadata: Seq[SparkParam] = Seq.empty
                                         ) extends FileSourceConfig with FixedFileConfig {
@@ -229,6 +237,7 @@ object Sources {
    *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
    *                    - customTime(columnName) - uses arbitrary user-defined column
    *                      (column must be of TimestampType)
+   * @param options     List of additional spark options required to read the source (if any)
    * @param keyFields   Sequence of key fields (columns that identify data row)
    * @param metadata    List of metadata parameters specific to this source
    */
@@ -243,6 +252,7 @@ object Sources {
                                               escape: NonEmptyString = "\\",
                                               header: Boolean = false,
                                               windowBy: StreamWindowing = ProcessingTime,
+                                              options: Seq[SparkParam] = Seq.empty,
                                               keyFields: Seq[NonEmptyString] = Seq.empty,
                                               metadata: Seq[SparkParam] = Seq.empty
                                             ) extends FileSourceConfig with DelimitedFileConfig {
@@ -263,6 +273,7 @@ object Sources {
    *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
    *                    - customTime(columnName) - uses arbitrary user-defined column
    *                      (column must be of TimestampType)
+   * @param options     List of additional spark options required to read the source (if any)
    * @param keyFields   Sequence of key fields (columns that identify data row)
    * @param metadata    List of metadata parameters specific to this source
    */
@@ -273,6 +284,7 @@ object Sources {
                                          schema: Option[ID],
                                          persist: Option[StorageLevel],
                                          windowBy: StreamWindowing = ProcessingTime,
+                                         options: Seq[SparkParam] = Seq.empty,
                                          keyFields: Seq[NonEmptyString] = Seq.empty,
                                          metadata: Seq[SparkParam] = Seq.empty
                                        ) extends FileSourceConfig with AvroFileConfig {
@@ -293,6 +305,7 @@ object Sources {
    *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
    *                    - customTime(columnName) - uses arbitrary user-defined column
    *                      (column must be of TimestampType)
+   * @param options     List of additional spark options required to read the source (if any)
    * @param keyFields   Sequence of key fields (columns that identify data row)
    * @param metadata    List of metadata parameters specific to this source
    */
@@ -303,6 +316,7 @@ object Sources {
                                         schema: Option[ID],
                                         persist: Option[StorageLevel],
                                         windowBy: StreamWindowing = ProcessingTime,
+                                        options: Seq[SparkParam] = Seq.empty,
                                         keyFields: Seq[NonEmptyString] = Seq.empty,
                                         metadata: Seq[SparkParam] = Seq.empty
                                       ) extends FileSourceConfig with OrcFileConfig {
@@ -323,6 +337,7 @@ object Sources {
    *                    - eventTime - uses column with name 'timestamp' (column must be of TimestampType).
    *                    - customTime(columnName) - uses arbitrary user-defined column
    *                      (column must be of TimestampType)
+   * @param options     List of additional spark options required to read the source (if any)
    * @param keyFields   Sequence of key fields (columns that identify data row)
    * @param metadata    List of metadata parameters specific to this source
    */
@@ -333,6 +348,7 @@ object Sources {
                                             schema: Option[ID],
                                             persist: Option[StorageLevel],
                                             windowBy: StreamWindowing = ProcessingTime,
+                                            options: Seq[SparkParam] = Seq.empty,
                                             keyFields: Seq[NonEmptyString] = Seq.empty,
                                             metadata: Seq[SparkParam] = Seq.empty
                                           ) extends FileSourceConfig with ParquetFileConfig {
