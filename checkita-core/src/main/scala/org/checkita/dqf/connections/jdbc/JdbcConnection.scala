@@ -70,7 +70,9 @@ abstract class JdbcConnection[T <: JdbcConnectionConfig] extends DQConnection {
     props.put("url", connectionUrl)
 
     (sourceConfig.table.map(_.value), sourceConfig.query.map(_.value)) match {
-      case (Some(t), None) => props.put("dbtable", s"$t")
+      case (Some(t), None) =>
+        val table = currentSchema.map(s => s + "." + t).getOrElse(t)
+        props.put("dbtable", s"$table")
       case (None, Some(q)) => if (settings.allowSqlQueries) {
         props.put("dbtable", s"($q) t")
       } else throw new UnsupportedOperationException(
