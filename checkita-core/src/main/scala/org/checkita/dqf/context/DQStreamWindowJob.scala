@@ -91,13 +91,9 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
    * @return Sequence of windows ready to be processed.
    */
   private def getWindowsToProcess: Seq[Long] = {
-    val currentWatermarks = buffer.watermarks.readOnlySnapshot()
+    val minWatermark = buffer.watermarks.readOnlySnapshot()
       .filter{ case (k, _) => processedSources.contains(k) }
-      .filter{ case (_, v) => v != Long.MinValue }
-      .values.toSeq
-
-    // -1 if none of the streams has updated its watermark value:
-    val minWatermark = if (currentWatermarks.isEmpty) -1 else currentWatermarks.min
+      .values.min
 
     log.debug(s"$bufferStage Minimum watermark: $minWatermark")
 
