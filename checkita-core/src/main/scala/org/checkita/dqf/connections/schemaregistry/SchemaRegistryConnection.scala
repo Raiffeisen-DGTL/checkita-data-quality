@@ -43,14 +43,21 @@ case class SchemaRegistryConnection(config: RegistrySchemaConfig) {
     val baseUrls = config.baseUrls.value.map(_.value).asJava
     val connProps = paramsSeqToMap(config.properties.map(_.value)).toOptionMap
     val connHeaders = paramsSeqToMap(config.headers.map(_.value)).toOptionMap
-    val nullProps: java.util.Map[String, Any] = null 
+    val defaultProps = Map(
+      "host.http.connect.timeout.ms" -> config.connectionTimeoutMs.toString,
+      "http.read.timeout.ms" -> config.connectionTimeoutMs.toString
+    )
+
     (connProps, connHeaders) match {
       case (Some(props), Some(headers)) => 
-        new CachedSchemaRegistryClient(baseUrls, cacheCapacity, props.asJava, headers.asJava)
-      case (Some(props), None) => new CachedSchemaRegistryClient(baseUrls, cacheCapacity, props.asJava)
+        val enhancedProps = props ++ defaultProps
+        new CachedSchemaRegistryClient(baseUrls, cacheCapacity, enhancedProps.asJava, headers.asJava)
+      case (Some(props), None) =>
+        val enhancedProps = props ++ defaultProps
+        new CachedSchemaRegistryClient(baseUrls, cacheCapacity, enhancedProps.asJava)
       case (None, Some(headers)) => 
-        new CachedSchemaRegistryClient(baseUrls, cacheCapacity, nullProps, headers.asJava)
-      case _ => new CachedSchemaRegistryClient(baseUrls, cacheCapacity)
+        new CachedSchemaRegistryClient(baseUrls, cacheCapacity, defaultProps.asJava, headers.asJava)
+      case _ => new CachedSchemaRegistryClient(baseUrls, cacheCapacity, defaultProps.asJava)
     }
   }
 

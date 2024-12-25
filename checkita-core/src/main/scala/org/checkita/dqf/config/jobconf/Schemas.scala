@@ -134,16 +134,19 @@ object Schemas {
    * Schema configuration that is used to read schema from
    * Confluent Schema Registry.
    *
-   * @param id               Schema ID
-   * @param description      Schema description
-   * @param baseUrls         List of urls to connect to Schema Registry
-   * @param schemaId         Schema ID to search in schema registry
-   * @param schemaSubject    Schema subject to search in schema registry 
-   * @param version          Schema version (by default latest available version is fetched)
-   * @param validateDefaults Boolean flag enabling or disabling default values validation in Avro schema.
-   * @param properties       List of additional connection properties: sequence of strings in format `key=value`.
-   * @param headers          List of additional HTML headers: sequence of strings in format `key=value`.
-   * @param metadata         List of metadata parameters specific to this schema
+   * @param id                  Schema ID
+   * @param description         Schema description
+   * @param baseUrls            List of urls to connect to Schema Registry
+   * @param schemaId            Schema ID to search in schema registry
+   * @param schemaSubject       Schema subject to search in schema registry
+   * @param version             Schema version (by default latest available version is fetched)
+   * @param validateDefaults    Boolean flag enabling or disabling default values validation in Avro schema.
+   * @param properties          List of additional connection properties: sequence of strings in format `key=value`.
+   * @param headers             List of additional HTML headers: sequence of strings in format `key=value`.
+   * @param metadata            List of metadata parameters specific to this schema
+   * @param connectionTimeoutMs Maximum time in milliseconds to wait for a response from the Schema Registry.
+   * @param retryAttempts       Number of retry attempts in case of a failure.
+   * @param retryIntervalMs     Delay in milliseconds between retry attempts.
    */
   final case class RegistrySchemaConfig(
                                          id: ID,
@@ -155,7 +158,10 @@ object Schemas {
                                          validateDefaults: Boolean = false,
                                          properties: Seq[SparkParam] = Seq.empty,
                                          headers: Seq[SparkParam] = Seq.empty,
-                                         metadata: Seq[SparkParam] = Seq.empty
+                                         metadata: Seq[SparkParam] = Seq.empty,
+                                         connectionTimeoutMs: Int = 60000,
+                                         retryAttempts: Int = 3,
+                                         retryIntervalMs: Long = 5000L
                                        ) extends SchemaConfig
 
 }
