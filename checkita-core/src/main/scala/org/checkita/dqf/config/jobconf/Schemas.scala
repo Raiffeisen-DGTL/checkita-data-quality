@@ -161,7 +161,7 @@ object Schemas {
                                          metadata: Seq[SparkParam] = Seq.empty,
                                          connectionTimeoutMs: Int = 60000,
                                          retryAttempts: Int = 3,
-                                         retryIntervalMs: Long = 5000L
+                                         retryIntervalMs: Int = 5000
                                        ) extends SchemaConfig
 
 }

@@ -242,7 +242,7 @@ object SchemaReaders {
      * @return          The result of the successfully executed function, or throws an exception if all attempts fail.
      */
     @tailrec
-    private def retry(attempts: Int, backOffMs: Long)(fn: => String): String = {
+    private def retry(attempts: Int, backOffMs: Int)(fn: => String): String = {
       Try(fn) match {
         case Success(result) => result
         case Failure(e) =>
