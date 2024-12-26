@@ -10,7 +10,8 @@ import org.checkita.dqf.connections.schemaregistry.SchemaRegistryConnection
 import org.checkita.dqf.utils.ResultUtils._
 
 import java.io.File
-import scala.util.Try
+import scala.annotation.tailrec
+import scala.util.{Failure, Success, Try}
 
 object SchemaReaders {
 
@@ -233,6 +234,26 @@ object SchemaReaders {
 
   implicit object RegistrySchemaReader extends SchemaReader[RegistrySchemaConfig] {
     /**
+     * Executes a function with retries in case of failure, waiting for a fixed delay between attempts.
+     *
+     * @param attempts  Maximum number of attempts. Must be greater than 0.
+     * @param backOffMs Delay in milliseconds between retries.
+     * @param fn        The function to execute.
+     * @return          The result of the successfully executed function, or throws an exception if all attempts fail.
+     */
+    @tailrec
+    private def retry(attempts: Int, backOffMs: Int)(fn: => String): String = {
+      Try(fn) match {
+        case Success(result) => result
+        case Failure(e) =>
+          if (attempts > 1) {
+            Thread.sleep(backOffMs)
+            retry(attempts - 1, backOffMs)(fn)
+          } else throw e
+      }
+    }
+
+    /**
      * Tries to read schema given the schema configuration
      *
      * @param config Schema configuration
@@ -242,8 +263,14 @@ object SchemaReaders {
     override def tryToRead(config: RegistrySchemaConfig)(implicit spark: SparkSession): SourceSchema = {
       val conn = SchemaRegistryConnection(config)
       val rawSchema = (config.schemaId, config.schemaSubject.map(_.value)) match {
-        case (Some(id), None) => conn.getSchemaById(id, config.version)
-        case (None, Some(subject)) => conn.getSchemaBySubject(subject, config.version)
+        case (Some(id), None) =>
+          retry(config.retryAttempts, config.retryIntervalMs){
+            conn.getSchemaById(id, config.version)
+          }
+        case (None, Some(subject)) =>
+          retry(config.retryAttempts, config.retryIntervalMs){
+            conn.getSchemaBySubject(subject, config.version)
+          }
         case _ => throw new IllegalArgumentException(
           "Schema can be read from registry either by its ID or by its subject but not both."
         )
