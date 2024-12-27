@@ -127,6 +127,10 @@ To retrieve schema from Confluent Schema Registry it is required to set up follo
   sequence of strings in format `key=value`.
 * `metadata` - *Optional*. List of user-defined metadata parameters specific to this schema where each parameter
   is a string in format: `param.name=param.value`.
+* `connectionTimeoutMs` - *Optional*, default is 60000. Maximum time in milliseconds to wait 
+  for a response from the Schema Registry.
+* `retryAttempts` - *Optional*, default is 3. Number of retry attempts in case of a failure.
+* `retryIntervalMs` - *Optional*, default is 5000. Delay in milliseconds between retry attempts.
 
 ## Supported Type Literals
 
