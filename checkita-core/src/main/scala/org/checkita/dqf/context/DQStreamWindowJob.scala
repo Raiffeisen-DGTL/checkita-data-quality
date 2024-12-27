@@ -91,10 +91,12 @@ final case class DQStreamWindowJob(jobConfig: JobConfig,
    * @return Sequence of windows ready to be processed.
    */
   private def getWindowsToProcess: Seq[Long] = {
-    val minWatermark = buffer.watermarks.readOnlySnapshot()
+    val watermarks = buffer.watermarks.readOnlySnapshot()
       .filter{ case (k, _) => processedSources.contains(k) }
-      .values.min
 
+    val minWatermark = watermarks.values.min
+
+    log.debug(s"$bufferStage Watermarks per stream: ${watermarks.map(_.productIterator.mkString(":")).mkString("{", ",", "}")}")
     log.debug(s"$bufferStage Minimum watermark: $minWatermark")
 
     val filterWindows = (windows: Iterable[(String, Long)]) =>
