@@ -1,3 +1,20 @@
+## [2.2.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v2.1.0...v2.2.0) (2024-12-27)
+
+
+### Bug Fixes
+
+* refactor late records processing ([#73](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/73)) ([bdf8f00](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/bdf8f00d059176895b97c96bb0e57e855d718ffb))
+* resolve API server build ([#67](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/67)) ([d1321e8](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/d1321e8efec65ec61231c51ffd81c64575c1bd29))
+* resolve bugs related to minimum watermark search and kafka initial offsets: ([#71](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/71)) ([3e3261a](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/3e3261abc7ff29ff3387bd52bdbfc4aab8238be9))
+* update regex pattern in windowBy ([#68](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/68)) ([5cb41e6](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/5cb41e62d67d6fba5861d288b9f0c6dbb7a163ac))
+
+
+### Features
+
+* add timeout and retry settings for schema registry connection ([#72](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/72)) ([3297b90](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/3297b901fad4d4c05dd6d4c79abe25f0e23e825c))
+* added options params for some sources ([#70](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/70)) ([2bacc35](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/2bacc35b0e0cc988a37c81214a7ac8dd38c22c27))
+* added support for case-when and if-else in composed metrics ([#69](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/69)) ([cfd6f07](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/cfd6f07ad7f0cbbe01bc4ab02c4905b719d19455))
+
 ## [2.1.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v2.0.0...v2.1.0) (2024-11-18)
 
 
