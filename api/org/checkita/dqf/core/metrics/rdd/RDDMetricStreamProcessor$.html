@@ -306,9 +306,9 @@ links errors to a streaming window to which record belongs that has produced the
 links errors to a streaming window to which record belongs that has produced these errors
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.checkita.dqf.core.metrics.rdd.RDDMetricStreamProcessor">RDDMetricStreamProcessor</a> → <a href="RDDMetricProcessor.html" class="extype" name="org.checkita.dqf.core.metrics.rdd.RDDMetricProcessor">RDDMetricProcessor</a></dd></dl></div>
     </li><li name="org.checkita.dqf.core.metrics.rdd.RDDMetricStreamProcessor.MicroBatchState" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="MicroBatchState=(Long,Map[Long,org.checkita.dqf.core.metrics.rdd.RDDMetricProcessor.GroupedCalculators],Option[org.checkita.dqf.core.streaming.Checkpoints.Checkpoint])"></a><a id="MicroBatchState:MicroBatchState"></a>
+      <a id="MicroBatchState=(Long,Map[Long,org.checkita.dqf.core.metrics.rdd.RDDMetricProcessor.GroupedCalculators],Option[org.checkita.dqf.core.streaming.Checkpoints.Checkpoint],Int)"></a><a id="MicroBatchState:MicroBatchState"></a>
       <span class="permalink">
-      <a href="../../../../../../org/checkita/dqf/core/metrics/rdd/RDDMetricStreamProcessor$.html#MicroBatchState=(Long,Map[Long,org.checkita.dqf.core.metrics.rdd.RDDMetricProcessor.GroupedCalculators],Option[org.checkita.dqf.core.streaming.Checkpoints.Checkpoint])" title="Permalink">
+      <a href="../../../../../../org/checkita/dqf/core/metrics/rdd/RDDMetricStreamProcessor$.html#MicroBatchState=(Long,Map[Long,org.checkita.dqf.core.metrics.rdd.RDDMetricProcessor.GroupedCalculators],Option[org.checkita.dqf.core.streaming.Checkpoints.Checkpoint],Int)" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -317,11 +317,11 @@ links errors to a streaming window to which record belongs that has produced the
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">MicroBatchState</span><span class="result alias"> = (<span class="extype" name="scala.Long">Long</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Long">Long</span>, <a href="RDDMetricProcessor$.html#GroupedCalculators=Map[Seq[String],Seq[(org.checkita.dqf.core.metrics.rdd.RDDMetricCalculator,Seq[org.checkita.dqf.core.metrics.RegularMetric])]]" class="extmbr" name="org.checkita.dqf.core.metrics.rdd.RDDMetricProcessor.GroupedCalculators">GroupedCalculators</a>], <span class="extype" name="scala.Option">Option</span>[<a href="../../streaming/Checkpoints$$Checkpoint.html" class="extype" name="org.checkita.dqf.core.streaming.Checkpoints.Checkpoint">Checkpoint</a>])</span>
+        <span class="name">MicroBatchState</span><span class="result alias"> = (<span class="extype" name="scala.Long">Long</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Long">Long</span>, <a href="RDDMetricProcessor$.html#GroupedCalculators=Map[Seq[String],Seq[(org.checkita.dqf.core.metrics.rdd.RDDMetricCalculator,Seq[org.checkita.dqf.core.metrics.RegularMetric])]]" class="extmbr" name="org.checkita.dqf.core.metrics.rdd.RDDMetricProcessor.GroupedCalculators">GroupedCalculators</a>], <span class="extype" name="scala.Option">Option</span>[<a href="../../streaming/Checkpoints$$Checkpoint.html" class="extype" name="org.checkita.dqf.core.streaming.Checkpoints.Checkpoint">Checkpoint</a>], <span class="extype" name="scala.Int">Int</span>)</span>
       </span>
       
       <p class="shortcomment cmt">Type alias for micro-batch state used in streaming applications only.</p><div class="fullcomment"><div class="comment cmt"><p>Type alias for micro-batch state used in streaming applications only.
-State includes following:</p><ul><li>Maximum observed event timestamp</li><li>Map of grouped calculators per each window in a stream.
+State includes following:</p><ul><li>Maximum observed event timestamp</li><li>Map of grouped calculators per each window in a stream</li><li>Updated state of checkpoint (in case if checkpoint provided)</li><li>Number of late records that were skipped
 </li></ul></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>window is identified by its start time as unix epoch (in seconds).</p></span></dd></dl></div>
     </li></ol>
             </div>
