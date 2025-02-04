@@ -31,12 +31,13 @@ class ARIMAModel(p: Int, d: Int, q: Int) extends TrendMetricModel {
 
     assert(Seq(p, d, q).forall(_ >= 0), "Negative parameters for ARIMA model are not allowed.")
     assert(p + q > 0, "Either AR (p) or MA (q) parameter of ARIMA model or both must be non-zero.")
+
+    val minDataSize = 2 * (math.max(p, q) + hannanRissanenMaxLagDelta) + d + 2
     assert(
-      data.size > 2 * (math.max(p, q) + hannanRissanenMaxLagDelta) + d + 1,
+      data.size >= minDataSize,
       "In order to fit ARIMA model, the size of historical data set must be greater than " +
         s"'2 * (max(p, q) + $hannanRissanenMaxLagDelta) + d + 1' of ARIMA order defined in trend metric: " +
-        s"dataset contains ${data.size} metric results but minimum required size is " +
-        2 * (math.max(p, q) + hannanRissanenMaxLagDelta) + d + 2
+        s"dataset contains ${data.size} metric results but minimum required size is $minDataSize"
     )
     
     val model = new ARIMAOptimizer(data.sortBy(_._1.getTime).map(_._2), this.p, this.d, this.q).fit
