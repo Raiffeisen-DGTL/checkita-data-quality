@@ -20,6 +20,7 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: 'sbt'
+      - uses: sbt/setup-sbt@v1
       - name: Set SBT Options
         run: echo "-DSPARK_VERSION=3.5.1" > .sbtopts
       - name: Upload Dependency Graph

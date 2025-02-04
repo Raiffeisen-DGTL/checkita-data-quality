@@ -42,6 +42,7 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: 'sbt'
+      - uses: sbt/setup-sbt@v1
       - name: Generate ScalaDoc
         run: sbt -DSPARK_VERSION=3.5.0 checkita-core/doc
       - uses: actions/setup-python@v4

@@ -24,6 +24,7 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: 'sbt'
+      - uses: sbt/setup-sbt@v1
       - name: Set JVM Options  # Checkita uses some compile-heavy libraries.
         run: |
           echo "-Xmx2G" > .jvmopts
