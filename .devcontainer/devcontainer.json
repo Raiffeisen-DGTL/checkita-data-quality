@@ -1,0 +1,43 @@
+{
+	"name": "Checkita DQ Dev Container",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": "."
+	},
+	"customizations": {
+		"jetbrains": {
+			"backend": "IntelliJ",
+			"plugins": [
+				"org.intellij.scala"
+			]
+		},
+		"vscode": {
+			"settings": {
+				"files.eol": "\n",
+				"files.trimTrailingWhitespace": true,
+				"editor.fontSize": 12,
+				"editor.fontFamily": "JetBrains Mono",
+				"editor.formatOnSave": true,
+				"[scala]": {
+					"editor.defaultFormatter": "scalameta.metals"
+				},
+				"metals.autoImportBuilds": "initial"
+			},
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"scalameta.metals",
+				"scala-lang.scala",
+				"vscjava.vscode-java-pack",
+				"usernamehw.errorlens",
+				"aws-toolkit.aws-toolkit",
+				"tamasfe.even-better-toml"
+			]
+		}
+	},
+	"forwardPorts": [
+		4040 // Spark UI
+	],
+	"postCreateCommand": "bash .devcontainer/post-create.sh",
+	"remoteUser": "vscode"
+}
