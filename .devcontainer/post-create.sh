@@ -2,10 +2,10 @@
 set -e
 
 # Install Scala using Coursier
-echo "Installing Scala 2.12.20..."
+echo "Installing Scala 2.12.18..."
 curl -fL https://github.com/coursier/coursier/releases/latest/download/cs-x86_64-pc-linux.gz | gzip -d > cs
 chmod +x cs
-./cs setup -y --jvm 11 --apps scala:2.12.20,sbt,scalafmt,scalafix,coursier
+./cs setup -y --apps scala:2.12.18,sbt,scalafmt,scalafix,coursier
 rm cs
 
 # Ensure PATH is set correctly for the current session and future sessions
