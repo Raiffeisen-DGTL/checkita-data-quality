@@ -1,8 +1,19 @@
 {
 	"name": "Checkita DQ Dev Container",
-	"build": {
-		"dockerfile": "Dockerfile",
-		"context": "."
+	"image": "mcr.microsoft.com/devcontainers/java:1-17-bullseye",
+	"features": {
+		"ghcr.io/devcontainers/features/aws-cli:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/python:1": {
+			"version": "3.12",
+			"installPath": "/usr/local/python"
+		},
+		"ghcr.io/devcontainers-extra/features/spark-sdkman": {
+			"version": "3.5.6",
+			"jdkVersion": "17",
+			"jdkDistro": "ms"
+		}
 	},
 	"customizations": {
 		"jetbrains": {
@@ -38,6 +49,5 @@
 	"forwardPorts": [
 		4040 // Spark UI
 	],
-	"postCreateCommand": "bash .devcontainer/post-create.sh",
 	"remoteUser": "vscode"
 }
