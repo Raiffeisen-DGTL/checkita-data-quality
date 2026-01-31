@@ -29,6 +29,7 @@ project/plugins/project/
 # build directories
 /target
 /checkita-core/target
+/checkita-api/target
 /project/target
 /project/project
 
@@ -96,7 +97,7 @@ $RECYCLE.BIN/
 /tmp
 /out
 
-# use this package for experimentation and do not track it in VSC: 
+# use this package for experimentation and do not track it in VSC:
 /checkita-core/src/main/scala/org/checkita/dqf/playground
 
 # ScalaDoc is generated during CI process (with GH Actions)
