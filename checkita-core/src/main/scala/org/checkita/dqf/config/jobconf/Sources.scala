@@ -179,6 +179,33 @@ object Sources {
   }
 
   /**
+   * Iceberg Table source configuration
+   *
+   * @param id          Source ID
+   * @param description Source description
+   * @param connection  Connection ID (must be Iceberg connection)
+   * @param table       Table name to read
+   * @param database    Database (namespace) within the Iceberg catalog. Defaults to "default".
+   * @param persist     Spark storage level in order to persist dataframe during job execution.
+   * @param options     List of additional spark options required to read the source (if any)
+   * @param keyFields   Sequence of key fields (columns that identify data row)
+   * @param metadata    List of metadata parameters specific to this source
+   */
+  final case class IcebergSourceConfig(
+                                        id: ID,
+                                        description: Option[NonEmptyString],
+                                        connection: ID,
+                                        table: NonEmptyString,
+                                        database: Option[NonEmptyString],
+                                        persist: Option[StorageLevel],
+                                        options: Seq[SparkParam] = Seq.empty,
+                                        keyFields: Seq[NonEmptyString] = Seq.empty,
+                                        metadata: Seq[SparkParam] = Seq.empty
+                                      ) extends SourceConfig {
+    val streamable: Boolean = false
+  }
+
+  /**
    * Base class for file source configurations.
    * All file sources are streamable and therefore must contain windowBy parameter which
    * defined source of timestamp used to build stream windows.
@@ -547,6 +574,7 @@ object Sources {
    * @param hive  Sequence of Hive table sources
    * @param kafka Sequence of sources based on Kafka topics
    * @param greenplum Sequence of greenplum sources (read from pivotal connections)
+   * @param iceberg Sequence of Iceberg table sources
    * @param file  Sequence of file sources
    * @param custom Sequence of custom sources
    */
@@ -555,6 +583,7 @@ object Sources {
                                   hive: Seq[HiveSourceConfig] = Seq.empty,
                                   kafka: Seq[KafkaSourceConfig] = Seq.empty,
                                   greenplum: Seq[GreenplumSourceConfig] = Seq.empty,
+                                  iceberg: Seq[IcebergSourceConfig] = Seq.empty,
                                   file: Seq[FileSourceConfig] = Seq.empty,
                                   custom: Seq[CustomSource] = Seq.empty
                                 ) {

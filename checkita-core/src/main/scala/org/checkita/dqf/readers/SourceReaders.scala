@@ -9,6 +9,7 @@ import org.checkita.dqf.appsettings.AppSettings
 import org.checkita.dqf.config.Enums.StreamWindowing
 import org.checkita.dqf.config.jobconf.Sources._
 import org.checkita.dqf.connections.DQConnection
+import org.checkita.dqf.connections.iceberg.IcebergConnection
 import org.checkita.dqf.connections.jdbc.JdbcConnection
 import org.checkita.dqf.connections.kafka.KafkaConnection
 import org.checkita.dqf.connections.greenplum.PivotalConnection
@@ -289,6 +290,45 @@ object SourceReaders {
         s"Table source '${config.id.value}' refers to not pivotal greenplum connection.")
 
       val df = conn.asInstanceOf[PivotalConnection].loadDataFrame(config)
+      toSource(config, df, readMode)
+    }
+  }
+
+  /**
+   * Iceberg source reader: reads table from Iceberg catalog
+   *
+   * @note In order to read iceberg source it is required to provided map of valid connections
+   */
+  implicit object IcebergSourceReader extends SourceReader[IcebergSourceConfig] {
+
+    /**
+     * Tries to read iceberg source given the source configuration.
+     *
+     * @param config      Iceberg source configuration
+     * @param readMode    Mode in which source is read. Either 'batch' or 'stream'
+     * @param settings    Implicit application settings object
+     * @param spark       Implicit spark session object
+     * @param schemas     Map of explicitly defined schemas (schemaId -> SourceSchema)
+     * @param connections Map of existing connection (connectionID -> DQConnection)
+     * @param checkpoints Map of initial checkpoints read from checkpoint directory
+     * @return Source
+     */
+    def tryToRead(config: IcebergSourceConfig,
+                  readMode: ReadMode)(implicit settings: AppSettings,
+                                      spark: SparkSession,
+                                      fs: FileSystem,
+                                      schemas: Map[String, SourceSchema],
+                                      connections: Map[String, DQConnection],
+                                      checkpoints: Map[String, Checkpoint]): Source = {
+
+      val conn = connections.getOrElse(config.connection.value, throw new NoSuchElementException(
+        s"Iceberg connection with id = '${config.connection.value}' not found."
+      ))
+
+      require(conn.isInstanceOf[IcebergConnection],
+        s"Iceberg source '${config.id.value}' refers to non-Iceberg connection.")
+
+      val df = conn.asInstanceOf[IcebergConnection].loadDataFrame(config)
       toSource(config, df, readMode)
     }
   }
@@ -649,6 +689,7 @@ object SourceReaders {
       case table: TableSourceConfig => TableSourceReader.tryToRead(table, readMode)
       case kafka: KafkaSourceConfig => KafkaSourceReader.tryToRead(kafka, readMode)
       case greenplum: GreenplumSourceConfig => GreenplumSourceReader.tryToRead(greenplum, readMode)
+      case iceberg: IcebergSourceConfig => IcebergSourceReader.tryToRead(iceberg, readMode)
       case hive: HiveSourceConfig => HiveSourceReader.tryToRead(hive, readMode)
       case fixed: FixedFileSourceConfig => FixedFileSourceReader.tryToRead(fixed, readMode)
       case delimited: DelimitedFileSourceConfig => DelimitedFileSourceReader.tryToRead(delimited, readMode)

@@ -6,6 +6,14 @@ ThisBuild / credentials += Credentials(Path.userHome / ".sbt" / ".credentials")
 ThisBuild / resolvers += "Confluent IO" at "https://packages.confluent.io/maven/"
 ThisBuild / scalacOptions ++= Utils.getScalacOptions(scalaVersion.value)
 
+addCommandAlias("integrationTest",
+  "; set `checkita-core` / Test / testOptions := Seq()" +
+  "; checkita-core / testOnly" +
+    " org.checkita.dqf.connections.jdbc.GenericJdbcOpenSearchSpec" +
+    " org.checkita.dqf.connections.jdbc.GenericJdbcE2ESpec" +
+    " org.checkita.dqf.connections.iceberg.IcebergRestCatalogSpec"
+)
+
 lazy val `checkita-data-quality` = (project in file("."))
   .aggregate(`checkita-core`, `checkita-api`)
   .settings(publish / skip := true)
@@ -17,6 +25,7 @@ lazy val `checkita-core` = (project in file("checkita-core"))
         Utils.getSparkDependencies(sparkVersion.value, assyMode.value).values
     },
     excludeDependencies ++= Utils.getExcludeDependencies(sparkVersion.value),
+    Test / testOptions += Tests.Argument("-l", "IntegrationTest"),
     Compile / doc / target := baseDirectory.value / ".." / "docs/api",
     dependencyOverrides ++= (Utils.overrideFasterXml(sparkVersion.value) :+ Utils.overrideSnakeYaml),
     assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}-uber.jar",

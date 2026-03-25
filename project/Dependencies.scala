@@ -66,6 +66,12 @@ object Dependencies {
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.15" % Test
   val scalaCollCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0"
 
+  // Testcontainers
+  val testcontainersScalatest = "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.41.0" % Test
+
+  // JDBC drivers for integration tests
+  val opensearchJdbc = "org.opensearch.driver" % "opensearch-sql-jdbc" % "1.4.0.1" % Test
+
   //JSQL
   val jsql = "com.github.jsqlparser" % "jsqlparser" % "4.5"
   
@@ -100,7 +106,9 @@ object Dependencies {
     schemaRegistry,
     scalaTest,
     scalaCollCompat,
-    sparkXml
+    sparkXml,
+    testcontainersScalatest,
+    opensearchJdbc
   )
 
   val checkita_api: Seq[ModuleID] = Seq(

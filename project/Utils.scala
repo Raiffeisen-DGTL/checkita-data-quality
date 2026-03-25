@@ -49,7 +49,11 @@ object Utils {
       }.get
     )
 
-    sparkDeps ++ sparkKafkaDeps ++ extraDeps ++ log4j2
+    val icebergTestDeps: Map[String, ModuleID] = Map(
+      "icebergRuntime" -> ("org.apache.iceberg" %% s"iceberg-spark-runtime-${sparkVersion.take(3)}" % "1.4.3" % Test)
+    )
+
+    sparkDeps ++ sparkKafkaDeps ++ extraDeps ++ icebergTestDeps ++ log4j2
   }
 
   def getExcludeDependencies(sparkVersion: String): Seq[ExclusionRule] =

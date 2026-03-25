@@ -225,6 +225,56 @@ object Connections {
                                              ) extends JdbcConnectionConfig
 
   /**
+   * Generic JDBC connection configuration for any JDBC-compatible database.
+   * Allows connecting to databases not explicitly supported by the framework
+   * (e.g. Trino, OpenSearch) by supplying the full JDBC URL and driver class name.
+   *
+   * @param id          Connection Id
+   * @param description Connection description
+   * @param url         Full JDBC URL, e.g. jdbc:trino://host:8080/catalog or jdbc:opensearch://host:9200
+   * @param driver      Fully qualified JDBC driver class name, e.g. io.trino.jdbc.TrinoDriver
+   * @param username    Username used for connection
+   * @param password    Password used for connection
+   * @param schema      Optional schema to lookup tables from. If omitted, default schema is used.
+   * @param parameters  Sequence of additional connection parameters
+   * @param metadata    List of metadata parameters specific to this connection
+   */
+  final case class GenericJdbcConnectionConfig(
+                                                id: ID,
+                                                description: Option[NonEmptyString],
+                                                url: URI,
+                                                driver: NonEmptyString,
+                                                username: Option[NonEmptyString],
+                                                password: Option[NonEmptyString],
+                                                schema: Option[NonEmptyString],
+                                                parameters: Seq[SparkParam] = Seq.empty,
+                                                metadata: Seq[SparkParam] = Seq.empty
+                                              ) extends JdbcConnectionConfig
+
+  /**
+   * Connection configuration for Apache Iceberg tables
+   *
+   * @param id          Connection Id
+   * @param description Connection description
+   * @param catalogName Spark catalog name used to register the Iceberg catalog
+   * @param catalogType Iceberg catalog type: hadoop, hive, rest, glue, nessie
+   * @param warehouse   Warehouse location (path or URI)
+   * @param catalogUri  Catalog service URI (for hive, rest, nessie catalog types)
+   * @param parameters  Sequence of additional catalog parameters
+   * @param metadata    List of metadata parameters specific to this connection
+   */
+  final case class IcebergConnectionConfig(
+                                            id: ID,
+                                            description: Option[NonEmptyString],
+                                            catalogName: NonEmptyString,
+                                            catalogType: NonEmptyString,
+                                            warehouse: Option[URI],
+                                            catalogUri: Option[URI],
+                                            parameters: Seq[SparkParam] = Seq.empty,
+                                            metadata: Seq[SparkParam] = Seq.empty
+                                          ) extends ConnectionConfig
+
+  /**
    * Data Quality job configuration section describing connections to external systems.
    *
    * @param kafka      Sequence of Kafka connections
@@ -236,6 +286,8 @@ object Connections {
    * @param h2         Sequence of H2 connections
    * @param greenplum  Sequence of Greenplum connections
    * @param clickhouse Sequence of ClickHouse connections
+   * @param jdbc       Sequence of generic JDBC connections
+   * @param iceberg    Sequence of Iceberg connections
    */
   final case class ConnectionsConfig(
                                       kafka: Seq[KafkaConnectionConfig] = Seq.empty,
@@ -246,9 +298,11 @@ object Connections {
                                       mssql: Seq[MSSQLConnectionConfig] = Seq.empty,
                                       h2: Seq[H2ConnectionConfig] = Seq.empty,
                                       greenplum: Seq[GreenplumConnectionConfig] = Seq.empty,
-                                      clickhouse: Seq[ClickHouseConnectionConfig] = Seq.empty
+                                      clickhouse: Seq[ClickHouseConnectionConfig] = Seq.empty,
+                                      jdbc: Seq[GenericJdbcConnectionConfig] = Seq.empty,
+                                      iceberg: Seq[IcebergConnectionConfig] = Seq.empty
                                     ) {
-    def getAllConnections: Seq[ConnectionConfig] = 
+    def getAllConnections: Seq[ConnectionConfig] =
       this.productIterator.toSeq.flatMap(_.asInstanceOf[Seq[Any]]).map(_.asInstanceOf[ConnectionConfig])
   }
 }
