@@ -2,6 +2,7 @@ package org.checkita.dqf.readers
 
 import org.checkita.dqf.config.jobconf.Connections._
 import org.checkita.dqf.connections.DQConnection
+import org.checkita.dqf.connections.iceberg.IcebergConnection
 import org.checkita.dqf.connections.jdbc._
 import org.checkita.dqf.connections.greenplum.PivotalConnection
 import org.checkita.dqf.connections.kafka.KafkaConnection
@@ -99,6 +100,19 @@ object ConnectionReaders {
     val constructor: ClickHouseConnectionConfig => DQConnection = ClickHouseConnection
   }
 
+  /**
+   * Generic JDBC connection reader: establishes connection to any JDBC-compatible database.
+   */
+  implicit object GenericJdbcConnectionReader extends ConnectionReader[GenericJdbcConnectionConfig] {
+    val constructor: GenericJdbcConnectionConfig => DQConnection = GenericJdbcConnection
+  }
+
+  /**
+   * Iceberg connection reader: establishes connection to Apache Iceberg catalog.
+   */
+  implicit object IcebergConnectionReader extends ConnectionReader[IcebergConnectionConfig] {
+    val constructor: IcebergConnectionConfig => DQConnection = IcebergConnection
+  }
 
   /**
    * General connection reader: invokes connection reader that matches provided connection configuration
@@ -114,6 +128,8 @@ object ConnectionReaders {
       case h2: H2ConnectionConfig => H2Connection(h2)
       case greenplum: GreenplumConnectionConfig => PivotalConnection(greenplum)
       case clickhouse: ClickHouseConnectionConfig => ClickHouseConnection(clickhouse)
+      case jdbc: GenericJdbcConnectionConfig => GenericJdbcConnection(jdbc)
+      case iceberg: IcebergConnectionConfig => IcebergConnection(iceberg)
     }
   }
 

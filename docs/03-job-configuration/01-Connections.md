@@ -14,6 +14,8 @@ systems are supported:
     * MS SQL
     * H2
     * ClickHouse
+* Generic JDBC connection to any JDBC-compatible database (e.g. Trino, Vertica, OpenSearch)
+* Connection to Apache Iceberg tables via Spark catalog API
 * Connection to message queues:
     * Kafka
 * Connection to Greenplum via pivotal connector
@@ -106,6 +108,12 @@ Configuration to MS SQL can be set up similarly to the 3 previous, using followi
 * `metadata` - *Optional*. List of user-defined metadata parameters specific to this connection where each parameter
   is a string in format: `param.name=param.value`.
 
+> **Note:** Starting from version 2.3.0 the built-in MS SQL connection uses the official Microsoft JDBC driver
+> (`com.microsoft.sqlserver.jdbc.SQLServerDriver`) instead of the legacy jTDS driver. The configuration format
+> remains unchanged — no modifications to existing job configs are required. The jTDS driver JAR is still
+> included in the distribution and can be used via the [Generic JDBC connection](#generic-jdbc-connection-configuration)
+> if needed for backward compatibility.
+
 ## H2 Connection Configuration
 
 Configuring connection to H2 database has similarly to SQLite. It is required supplying only two parameters:
@@ -167,6 +175,163 @@ command as follows:
   --conf 'spark.executor.extraJavaOptions="-Djava.security.auth.login.config=./jaas.conf"' \
   --files file.keytab,jaas.conf,<other files required for DQ>
   ```
+
+## Generic JDBC Connection Configuration
+
+Generic JDBC connection allows connecting to any JDBC-compatible database that is not explicitly supported
+by the framework (e.g. Trino, Vertica, OpenSearch, CockroachDB). The user must provide the full JDBC URL
+and the driver class name. The JDBC driver JAR must be added to the Spark application classpath
+(e.g. via `spark.jars` configuration parameter).
+
+Configuration parameters:
+
+* `id` - *Required*. Connection ID;
+* `description` - *Optional*. Connection description;
+* `url` - *Required*. Full JDBC URL including the protocol, e.g. `jdbc:trino://host:8080/catalog/schema`
+  or `jdbc:vertica://host:5433/mydb`.
+* `driver` - *Required*. Fully qualified JDBC driver class name, e.g. `io.trino.jdbc.TrinoDriver`
+  or `com.vertica.jdbc.Driver`.
+* `username` - *Optional*. Username used for connection.
+* `password` - *Optional*. Password used for connection.
+* `schema` - *Optional*. Schema to lookup tables from. If omitted, default schema is used.
+* `parameters` - *Optional*. List of Spark parameters if required where each parameter is a string in format:
+  `spark.param.name=spark.param.value`.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this connection where each parameter
+  is a string in format: `param.name=param.value`.
+
+### Trino Example
+
+```hocon
+jdbc: [
+  {
+    id: "trino_analytics"
+    url: "jdbc:trino://trino-host:8080/hive/default"
+    driver: "io.trino.jdbc.TrinoDriver"
+    username: "dq-user"
+  }
+]
+```
+
+Requires `trino-jdbc` JAR on the classpath.
+
+### Vertica Example
+
+```hocon
+jdbc: [
+  {
+    id: "vertica_dwh"
+    url: "jdbc:vertica://vertica-host:5433/analytics"
+    driver: "com.vertica.jdbc.Driver"
+    username: "dbadmin"
+    password: "secret"
+    schema: "public"
+  }
+]
+```
+
+Requires `vertica-jdbc` JAR on the classpath.
+
+### OpenSearch Example
+
+```hocon
+jdbc: [
+  {
+    id: "opensearch_logs"
+    url: "jdbc:opensearch://opensearch-host:9200"
+    driver: "org.opensearch.jdbc.Driver"
+    parameters: ["fetchSize=1000"]
+  }
+]
+```
+
+Requires `opensearch-sql-jdbc` JAR on the classpath. Note that OpenSearch SQL support has limitations
+compared to traditional RDBMS — not all SQL operations may be available.
+
+### MS SQL with Legacy jTDS Driver
+
+If you need to use the legacy jTDS driver (e.g. for compatibility with older MS SQL versions),
+you can use it via generic JDBC instead of the built-in `mssql` connection:
+
+```hocon
+jdbc: [
+  {
+    id: "mssql_jtds"
+    url: "jdbc:jtds:sqlserver://host:1433/mydb"
+    driver: "net.sourceforge.jtds.jdbc.Driver"
+    username: "user"
+    password: "pass"
+  }
+]
+```
+
+The jTDS driver JAR is included in the Checkita distribution.
+
+## Iceberg Connection Configuration
+
+Iceberg connection allows reading Apache Iceberg tables through the Spark catalog API. The connection
+configures a Spark SQL catalog that points to an Iceberg catalog service (Hive Metastore, REST, Hadoop,
+Glue, Nessie). The `iceberg-spark-runtime` JAR must be added to the Spark application classpath.
+
+Configuration parameters:
+
+* `id` - *Required*. Connection ID;
+* `description` - *Optional*. Connection description;
+* `catalogName` - *Required*. Spark catalog name used to register the Iceberg catalog.
+  Must be unique across all Iceberg connections.
+* `catalogType` - *Required*. Iceberg catalog type. Supported values: `hadoop`, `hive`, `rest`, `glue`, `nessie`.
+* `warehouse` - *Optional*. Warehouse location — a path or URI to the root of the Iceberg warehouse
+  (e.g. `hdfs:///data/warehouse`, `s3a://bucket/warehouse`, or a local path).
+* `catalogUri` - *Optional*. Catalog service URI. Required for `hive` (Thrift URI), `rest` (HTTP endpoint),
+  and `nessie` catalog types.
+* `parameters` - *Optional*. List of additional catalog parameters where each parameter is a string in format:
+  `param.name=param.value`. These are passed as `spark.sql.catalog.<catalogName>.<param.name>` properties.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this connection where each parameter
+  is a string in format: `param.name=param.value`.
+
+### Iceberg with Hive Metastore and HDFS
+
+```hocon
+iceberg: [
+  {
+    id: "iceberg_prod"
+    catalogName: "ice"
+    catalogType: "hive"
+    warehouse: "hdfs:///data/warehouse"
+    catalogUri: "thrift://hive-metastore:9083"
+  }
+]
+```
+
+### Iceberg with REST Catalog and S3
+
+```hocon
+iceberg: [
+  {
+    id: "iceberg_lakehouse"
+    catalogName: "lakehouse"
+    catalogType: "rest"
+    warehouse: "s3a://my-bucket/iceberg"
+    catalogUri: "https://iceberg-catalog.company.com"
+    parameters: ["io-impl=org.apache.iceberg.aws.s3.S3FileIO"]
+  }
+]
+```
+
+### Iceberg with Hadoop Catalog (local/HDFS)
+
+```hocon
+iceberg: [
+  {
+    id: "iceberg_local"
+    catalogName: "local_ice"
+    catalogType: "hadoop"
+    warehouse: "/tmp/iceberg/warehouse"
+  }
+]
+```
+
+**Note:** Iceberg sources are configured separately in the `sources.iceberg` section.
+See [Sources Configuration](03-Sources.md) for details.
 
 ## Greenplum Connection Configuration (via pivotal)
 
@@ -252,11 +417,35 @@ jobConfig: {
         ]
       }
     ],
+    jdbc: [
+      {
+        id: "trino_conn"
+        url: "jdbc:trino://trino-host:8080/hive/default"
+        driver: "io.trino.jdbc.TrinoDriver"
+        username: "dq-user"
+      }
+      {
+        id: "vertica_conn"
+        url: "jdbc:vertica://vertica-host:5433/analytics"
+        driver: "com.vertica.jdbc.Driver"
+        username: "dbadmin"
+        password: "pass"
+      }
+    ],
+    iceberg: [
+      {
+        id: "iceberg_prod"
+        catalogName: "ice"
+        catalogType: "hive"
+        warehouse: "hdfs:///data/warehouse"
+        catalogUri: "thrift://hive-metastore:9083"
+      }
+    ],
     greenplum: [
       {
-        id: "greenplum_db1", 
-        url: "greenplum.db.com:5432/postgres", 
-        username: "user", 
+        id: "greenplum_db1",
+        url: "greenplum.db.com:5432/postgres",
+        username: "user",
         password: "pass",
         schema: "public"
       }

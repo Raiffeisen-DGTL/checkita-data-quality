@@ -1,3 +1,24 @@
+## [Unreleased]
+
+### Features
+
+* **Generic JDBC connector** — universal JDBC connection for any database (Trino, Vertica, OpenSearch, etc.)
+  via full JDBC URL and driver class name. Key: `connections.jdbc`.
+* **Apache Iceberg connector** — read Iceberg tables via Spark catalog API with support for
+  Hadoop, Hive, REST, Glue, and Nessie catalog types. Key: `connections.iceberg`, `sources.iceberg`.
+
+### Improvements
+
+* **MS SQL driver upgrade** — built-in MS SQL connection switched from legacy jTDS (2013) to official
+  Microsoft JDBC driver. No config changes required. jTDS JAR still included for backward compatibility
+  via Generic JDBC.
+
+### Tests
+
+* Integration tests with testcontainers for OpenSearch, Iceberg REST catalog, and Vertica.
+* CI workflow for integration tests (PR: 2 combos, nightly: full matrix).
+* sbt alias `integrationTest` for running integration tests locally.
+
 ## [2.2.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v2.1.0...v2.2.0) (2024-12-27)
 
 

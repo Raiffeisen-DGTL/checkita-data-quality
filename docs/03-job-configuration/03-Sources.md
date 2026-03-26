@@ -15,14 +15,15 @@ Additionally, it is possible to cache sources that in memory or on disk in order
 This could be handful when source is used as a parent for more than one virtual source.
 In such cases caching source allows not to calculate it multiple times.
 
-Thus, currently Checkita supports four general types of sources:
+Thus, currently Checkita supports the following types of sources:
 
 * File sources: read files from local or remote file systems (HDFS, S3, etc.);
 * Hive sources: read hive table from Hive catalogue;
-* Table sources: read tables from RDBMS via JDBC connection.
+* Table sources: read tables from RDBMS via JDBC connection (including Generic JDBC for Trino, Vertica, OpenSearch, etc.);
+* Iceberg sources: read Apache Iceberg tables via Spark catalog API;
 * Kafka sources: read topics from Kafka.
 * Greenplum sources: read tables from Greenplum via Pivotal Greenplum connector.
-* Custom sources: read from sources that are not supported directly in job configuration by providing 
+* Custom sources: read from sources that are not supported directly in job configuration by providing
   all required Spark options to connect and read from unsupported source.
 
 All sources must be defined in `sources` section of job configuration. 
@@ -229,6 +230,55 @@ data quality checks.
 
 > *TIP*: In order to define JSON strings, they must be enclosed in triple quotes:
 > `"""{"name1": {"name2": "value2", "name3": "value3""}}"""`.
+
+## Iceberg Sources Configuration
+
+Iceberg sources read Apache Iceberg tables via Spark catalog API. The source must reference an Iceberg connection
+that configures the catalog. See [Connections Configuration](01-Connections.md) chapter for more details on
+Iceberg connection setup.
+
+Configuration parameters:
+
+* `id` - *Required*. Source ID;
+* `description` - *Optional*. Source description;
+* `connection` - *Required*. Connection ID to use for reading. Must refer to an Iceberg connection.
+* `table` - *Required*. Name of the Iceberg table to read.
+* `database` - *Optional*. Database (namespace) within the Iceberg catalog.
+  If omitted, the `default` namespace is used.
+* `persist` - *Optional*. One of the allowed Spark StorageLevels used to cache sources.
+  By default, sources are not cached. Supported Spark StorageLevels are:
+    * `NONE`, `DISK_ONLY`, `DISK_ONLY_2`, `MEMORY_ONLY`, `MEMORY_ONLY_2`, `MEMORY_ONLY_SER`,
+      `MEMORY_ONLY_SER_2`, `MEMORY_AND_DISK`, `MEMORY_AND_DISK_2`, `MEMORY_AND_DISK_SER`,
+      `MEMORY_AND_DISK_SER_2`, `OFF_HEAP`.
+* `options` - *Optional*. Additional Spark parameters used to read from the given source.
+* `keyFields` - *Optional*. List of columns that form a Primary Key or are used to identify row within a dataset.
+* `metadata` - *Optional*. List of user-defined metadata parameters specific to this source where each parameter
+  is a string in format: `param.name=param.value`.
+
+Example:
+
+```hocon
+sources: {
+  iceberg: [
+    {
+      id: "orders_source"
+      connection: "iceberg_prod"
+      table: "orders"
+      database: "analytics"
+      keyFields: ["order_id"]
+    }
+    {
+      id: "users_source"
+      connection: "iceberg_prod"
+      table: "users"
+      // database omitted — reads from "default" namespace
+    }
+  ]
+}
+```
+
+**Note:** The `iceberg-spark-runtime` JAR must be on the Spark classpath.
+The framework does not bundle it — the user must provide it during `spark-submit`.
 
 ## Greenplum Sources Configuration
 
