@@ -1,3 +1,15 @@
+## [2.3.0](https://github.com/Raiffeisen-DGTL/checkita-data-quality/compare/v2.2.0...v2.3.0) (2026-04-02)
+
+
+### Bug Fixes
+
+* correct minimum data size assertion for ARIMA trend metric ([#74](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/74)) ([4cdca63](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/4cdca63a7ff7781b71e61fc7c7ca84e2ca683f18))
+
+
+### Features
+
+* add Generic JDBC and Iceberg connectors ([#77](https://github.com/Raiffeisen-DGTL/checkita-data-quality/issues/77)) ([c9dceca](https://github.com/Raiffeisen-DGTL/checkita-data-quality/commit/c9dceca642185624d56185c83eb156edfc38c33b))
+
 ## [Unreleased]
 
 ### Features
